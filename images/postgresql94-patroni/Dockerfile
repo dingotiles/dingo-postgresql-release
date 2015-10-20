@@ -17,8 +17,6 @@ ADD patroni /patroni
 # Add scripts
 ADD scripts /scripts
 RUN chmod +x /scripts/*.sh
-RUN touch /pgpass /patroni/postgres.yml
-RUN chown postgres:postgres -R /patroni/ /data/ /pgpass
 
 # Command to run
 ENTRYPOINT ["/scripts/run.sh"]
@@ -30,3 +28,6 @@ EXPOSE 5432
 # Expose our data directory
 VOLUME ["/data"]
 USER postgres
+
+RUN mkdir -p /data && touch /pgpass /patroni/postgres.yml
+RUN chown postgres:postgres -R /patroni/ /data/ /pgpass
