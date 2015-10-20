@@ -1,0 +1,19 @@
+---
+platform: linux
+image: docker:///concourse/concourse-ci
+
+inputs:
+- name: boshrelease
+- name: docker-image-pg93
+  path: boshrelease/tmp/cfcommunity_postgresql_9_3_image
+- name: docker-image-pg94
+  path: boshrelease/tmp/cfcommunity_postgresql_9_4_image
+- name: docker-image-pg95
+  path: boshrelease/tmp/cfcommunity_postgresql_9_5_image
+
+params:
+  aws_access_key_id:
+  aws_secret_access_key:
+
+run:
+  path: boshrelease/ci/tasks/bump-image-layers.sh

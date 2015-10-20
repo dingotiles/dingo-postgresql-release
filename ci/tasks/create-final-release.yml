@@ -1,0 +1,17 @@
+---
+platform: linux
+image: docker:///concourse/concourse-ci
+
+inputs:
+- {name: boshrelease}
+
+params:
+  aws_access_key_id:
+  aws_secret_access_key:
+  bosh_target:
+  bosh_username: admin
+  bosh_password: admin
+
+run:
+  path: ./boshrelease/ci/tasks/create-final-release.sh
+  args: []

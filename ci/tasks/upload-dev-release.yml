@@ -1,0 +1,14 @@
+---
+platform: linux
+image: docker:///concourse/concourse-ci
+
+inputs:
+- name: boshrelease
+
+params:
+  bosh_target:
+  bosh_username: admin
+  bosh_password: admin
+
+run:
+  path: boshrelease/ci/tasks/upload-dev-release.sh
