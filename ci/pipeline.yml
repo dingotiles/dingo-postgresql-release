@@ -1,166 +1,40 @@
 ---
 groups:
-- name: images
-  jobs: [bump-layers, testflight, shipit, image-pg93, image-pg94, image-pg95]
-- name: base
-  jobs: [image-pg93-base, image-pg94-base, image-pg95-base, image-pg94-patroni]
-- name: patroni
-  jobs: [image-pg94-patroni]
+- name: pipeline
+  jobs: [image-patroni-pg94]
 jobs:
-- name: image-pg94-patroni
+- name: image-patroni-pg94
   public: true
   serial: true
   plan:
   - aggregate:
     - {get: patroni}
+    - {get: boshrelease}
+    - {get: boshrelease-images, trigger: true}
+  - task: prepare-dockerfile
+    file: boshrelease/ci/tasks/prepare-dockerfile.yml
+    config:
+      params:
+        dockerfile_root: boshrelease/images/postgresql94-patroni
   - put: docker-image-pg94-patroni
     params:
-      build: patroni
-- name: image-pg93-base
-  public: true
-  serial: true
-  plan:
-  - aggregate:
-    - {get: boshrelease}
-  - put: docker-image-pg93-base
-    params:
-      build: boshrelease/images/postgresql93-base
-- name: image-pg94-base
-  public: true
-  serial: true
-  plan:
-  - aggregate:
-    - {get: boshrelease}
-  - put: docker-image-pg94-base
-    params:
-      build: boshrelease/images/postgresql94-base
-- name: image-pg95-base
-  public: true
-  serial: true
-  plan:
-  - aggregate:
-    - {get: boshrelease}
-  - put: docker-image-pg95-base
-    params:
-      build: boshrelease/images/postgresql95-base
-
-- name: image-pg93
-  public: true
-  serial: true
-  plan:
-  - aggregate:
-    - {get: boshrelease}
-    - {get: boshrelease-image-pg93, trigger: true}
-  - put: docker-image-pg93
-    params:
-      build: boshrelease/images/postgresql93
-- name: image-pg94
-  public: true
-  serial: true
-  plan:
-  - aggregate:
-    - {get: boshrelease}
-    - {get: boshrelease-image-pg94, trigger: true}
-  - put: docker-image-pg94
-    params:
-      build: boshrelease/images/postgresql94
-- name: image-pg95
-  public: true
-  serial: true
-  plan:
-  - aggregate:
-    - {get: boshrelease}
-    - {get: boshrelease-image-pg95, trigger: true}
-  - put: docker-image-pg95
-    params:
-      build: boshrelease/images/postgresql95
-
-- name: bump-layers
-  public: true
-  serial_groups: [boshrelease]
-  plan:
-  - aggregate:
-    - {get: docker-image-pg93, passed: [image-pg93], trigger: true}
-    - {get: docker-image-pg94, passed: [image-pg94], trigger: true}
-    - {get: docker-image-pg95, passed: [image-pg95], trigger: true}
-    - {get: boshrelease}
-  - task: bump-image-blob
-    file: boshrelease/ci/tasks/bump-image-layers.yml
-    config:
-      params:
-        aws_access_key_id: {{blobstore-aws-accesss}}
-        aws_secret_access_key: {{blobstore-aws-secret}}
-  - put: boshrelease
-    params: {repository: bump-image-blob/boshrelease, rebase: true}
-
-- name: testflight
-  public: true
-  serial: true
-  plan:
-  - aggregate:
-    - {get: docker-image-pg93, passed: [bump-layers], trigger: true, params: {skip_download: true}}
-    - {get: docker-image-pg94, passed: [bump-layers], trigger: true, params: {skip_download: true}}
-    - {get: docker-image-pg95, passed: [bump-layers], trigger: true, params: {skip_download: true}}
-    - {get: boshrelease, passed: [bump-layers]}
-  - task: upload-dev-release
-    file: boshrelease/ci/tasks/upload-dev-release.yml
-    config:
-      params:
-        bosh_target: {{bosh-lite-target}}
-        bosh_username: {{bosh-lite-username}}
-        bosh_password: {{bosh-lite-password}}
-
-- name: shipit
-  public: true
-  serial: true
-  plan:
-  - get: boshrelease
-    passed: [testflight]
-  - task: create-final-release
-    file: boshrelease/ci/tasks/create-final-release.yml
-    config:
-      params:
-        aws_access_key_id: {{blobstore-aws-accesss}}
-        aws_secret_access_key: {{blobstore-aws-secret}}
-        bosh_target: {{bosh-lite-target}}
-        bosh_username: {{bosh-lite-username}}
-        bosh_password: {{bosh-lite-password}}
-  - put: boshrelease
-    params:
-      repository: create-final-release/boshrelease
-      rebase: true
+      build: prepare-dockerfile/boshrelease/images/postgresql94-patroni
 
 resources:
 - name: boshrelease
   type: git
   source:
-    uri: git@github.com:cloudfoundry-community/postgresql-docker-boshrelease.git
+    uri: git@github.com:cloudfoundry-community/patroni-boshrelease.git
     branch: {{pipeline-branch}}
     private_key: {{github-key}}
 
-- name: boshrelease-image-pg93
+- name: boshrelease-images
   type: git
   source:
-    uri: git@github.com:cloudfoundry-community/postgresql-docker-boshrelease.git
+    uri: git@github.com:cloudfoundry-community/patroni-boshrelease.git
     branch: {{pipeline-branch}}
     private_key: {{github-key}}
-    paths: [images/postgresql93/*]
-
-- name: boshrelease-image-pg94
-  type: git
-  source:
-    uri: git@github.com:cloudfoundry-community/postgresql-docker-boshrelease.git
-    branch: {{pipeline-branch}}
-    private_key: {{github-key}}
-    paths: [images/postgresql94/*]
-
-- name: boshrelease-image-pg95
-  type: git
-  source:
-    uri: git@github.com:cloudfoundry-community/postgresql-docker-boshrelease.git
-    branch: {{pipeline-branch}}
-    private_key: {{github-key}}
-    paths: [images/postgresql95/*]
+    paths: [images/*]
 
 - name: patroni
   type: git
@@ -175,59 +49,5 @@ resources:
     email: {{docker-hub-email}}
     username: {{docker-hub-username}}
     password: {{docker-hub-password}}
-    repository: cfcommunity/patroni
+    repository: cfcommunity/postgresql-patroni
     tag: "9.4"
-
-- name: docker-image-pg93-base
-  type: docker-image
-  source:
-    email: {{docker-hub-email}}
-    username: {{docker-hub-username}}
-    password: {{docker-hub-password}}
-    repository: cfcommunity/postgresql-base
-    tag: "9.3"
-
-- name: docker-image-pg94-base
-  type: docker-image
-  source:
-    email: {{docker-hub-email}}
-    username: {{docker-hub-username}}
-    password: {{docker-hub-password}}
-    repository: cfcommunity/postgresql-base
-    tag: "9.4"
-
-- name: docker-image-pg95-base
-  type: docker-image
-  source:
-    email: {{docker-hub-email}}
-    username: {{docker-hub-username}}
-    password: {{docker-hub-password}}
-    repository: cfcommunity/postgresql-base
-    tag: "9.5"
-
-- name: docker-image-pg93
-  type: docker-image
-  source:
-    email: {{docker-hub-email}}
-    username: {{docker-hub-username}}
-    password: {{docker-hub-password}}
-    repository: cfcommunity/postgresql
-    tag: "9.3"
-
-- name: docker-image-pg94
-  type: docker-image
-  source:
-    email: {{docker-hub-email}}
-    username: {{docker-hub-username}}
-    password: {{docker-hub-password}}
-    repository: cfcommunity/postgresql
-    tag: "9.4"
-
-- name: docker-image-pg95
-  type: docker-image
-  source:
-    email: {{docker-hub-email}}
-    username: {{docker-hub-username}}
-    password: {{docker-hub-password}}
-    repository: cfcommunity/postgresql
-    tag: "9.5"

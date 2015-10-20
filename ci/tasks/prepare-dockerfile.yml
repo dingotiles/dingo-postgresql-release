@@ -1,0 +1,13 @@
+---
+platform: linux
+image: docker:///concourse/concourse-ci
+
+inputs:
+- {name: boshrelease}
+- {name: patroni}
+
+params:
+  dockerfile_root:
+
+run:
+  path: ./boshrelease/ci/tasks/prepare-dockerfile.sh
