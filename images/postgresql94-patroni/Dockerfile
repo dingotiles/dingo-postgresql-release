@@ -1,7 +1,9 @@
 FROM cfcommunity/postgresql-base:9.4
 MAINTAINER Dr Nic Williams
 
-RUN apt-get install python python-psycopg2 python-yaml \
+RUN DEBIAN_FRONTEND=noninteractive \
+    apt-get update -y && \
+    apt-get install python python-psycopg2 python-yaml \
     python-requests python-boto python-dnspython python-kazoo python-pip -y && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
