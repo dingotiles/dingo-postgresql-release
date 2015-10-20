@@ -91,6 +91,12 @@ To view the start up logs for the container:
 docker logs john
 ```
 
+Confirm that the PostgreSQL node is advertising itself in etcd:
+
+```
+curl -s localhost:4001/v2/keys/service/postgresql-my-first-cluster/members
+```
+
 To run a second container that joins to the same cluster, binding to host port 40001:
 
 ```
