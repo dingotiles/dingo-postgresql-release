@@ -3,6 +3,12 @@ MAINTAINER Dr Nic Williams
 
 ADD patroni /patroni
 
+# Add scripts
+ADD scripts /scripts
+RUN chmod +x /scripts/*.sh
+
+# Command to run
+ENTRYPOINT ["/scripts/run.sh"]
 CMD [""]
 
 # Expose listen port
