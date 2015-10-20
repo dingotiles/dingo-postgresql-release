@@ -1,5 +1,12 @@
 #!/bin/bash
 
+DATA_DIR=/data
+mkdir -p $DATA_DIR
+chown postgres:postgres $DATA_DIR
+
+touch /pgpass
+chown postgres:postgres -R /patroni/ /data/ /pgpass
+
 # determine host:port to advertise into etcd for replication
 if [[ "${HOSTPORT_5432_TCP}X" != "X" ]]; then
   CONNECT_ADDRESS=${HOSTPORT_5432_TCP}
@@ -54,4 +61,5 @@ __EOF__
 
 cat /patroni/postgres.yml
 
-exec python /patroni/patroni.py /patroni/postgres.yml
+echo "Starting Patroni..."
+sudo -u postgres python /patroni/patroni.py /patroni/postgres.yml
