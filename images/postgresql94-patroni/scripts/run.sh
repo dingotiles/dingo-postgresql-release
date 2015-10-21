@@ -11,6 +11,8 @@ if [[ "${HOSTPORT_5432_TCP}X" != "X" ]]; then
 fi
 CONNECT_ADDRESS=${CONNECT_ADDRESS:-${DOCKER_IP}:5432}
 
+DOCKER_IP=$(hostname --ip-address)
+
 # TODO secure the passwords!
 
 cat > /patroni/postgres.yml <<__EOF__
