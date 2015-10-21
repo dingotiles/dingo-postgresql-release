@@ -34,7 +34,7 @@ postgresql:
   connect_address: ${CONNECT_ADDRESS}
   data_dir: /data/postgres0
   maximum_lag_on_failover: 1048576 # 1 megabyte in bytes
-  use_slots: True
+  use_slots: False
   pgpass: /tmp/pgpass
   pg_hba:
   - host all all 0.0.0.0/0 md5
