@@ -147,6 +147,85 @@ pid | usesysid |  usename   | application_name | client_addr |...
  82 |    16384 | replicator | walreceiver      | 172.17.42.1 |...
 ```
 
+### Failover the master
+
+In one terminal, tail the replica `paul` logs:
+
+```
+docker --host unix:///var/vcap/sys/run/docker/docker.sock \
+  logs -f paul
+```
+
+In another terminal, stop the current master node:
+
+```
+docker --host unix:///var/vcap/sys/run/docker/docker.sock \
+  stop john
+```
+
+The replica logs will show that the replication starts failing and eventually patroni automatically promotes the replica to be the master:
+
+```
+2015-10-21 22:06:49,068 INFO: no action.  i am a secondary and i am following a leader
+FATAL:  could not connect to the primary server: could not connect to server: Connection refused
+		Is the server running on host "10.244.20.6" and accepting
+		TCP/IP connections on port 40000?
+...
+ConnectionError: HTTPConnectionPool(host='127.0.0.1', port=8008): Max retries exceeded with url: /patroni (Caused by <class 'httplib.BadStatusLine'>: '')
+server promoting
+LOG:  received promote request
+LOG:  redo done at 0/3000028
+2015-10-21 22:06:58,572 INFO: cleared rewind flag after becoming the leader
+2015-10-21 22:06:58,572 INFO: promoted self to leader by acquiring session lock
+LOG:  selected new timeline ID: 2
+LOG:  archive recovery complete
+LOG:  MultiXact member wraparound protections are now enabled
+LOG:  autovacuum launcher started
+LOG:  database system is ready to accept connections
+2015-10-21 22:07:08,452 INFO: Lock owner: postgresql_172_17_0_63; I am postgresql_172_17_0_63
+2015-10-21 22:07:08,463 INFO: no action.  i am the leader with the lock
+```
+
+`paul` is now the master of the cluster (of 1 node)
+
+### Restore the old master
+
+The old master can be restarted (representing the healing of a network partition or return of the node during some downtime):
+
+```
+docker --host unix:///var/vcap/sys/run/docker/docker.sock \
+  start john
+docker --host unix:///var/vcap/sys/run/docker/docker.sock \
+  logs -f john
+```
+
+The old master will recognize it is no longer the master and will resynchronize itself as a follower:
+
+```
+Starting Patroni...
+2015-10-21 22:07:37,350 INFO: Starting new HTTP connection (1): 10.244.20.6
+2015-10-21 22:07:37,391 WARNING: Postgresql is not running.
+2015-10-21 22:07:37,391 INFO: Lock owner: postgresql_172_17_0_63; I am postgresql_172_17_0_64
+2015-10-21 22:07:37,425 INFO: Removed /data/postgres0/postmaster.pid
+waiting for server to start....LOG:  database system was interrupted; last known up at 2015-10-21 22:05:37 UTC
+LOG:  entering standby mode
+LOG:  database system was not properly shut down; automatic recovery in progress
+LOG:  redo starts at 0/2000060
+LOG:  record with zero length at 0/3000060
+LOG:  consistent recovery state reached at 0/3000060
+LOG:  database system is ready to accept read only connections
+LOG:  fetching timeline history file for timeline 2 from primary server
+LOG:  started streaming WAL from primary at 0/3000000 on timeline 1
+LOG:  replication terminated by primary server
+DETAIL:  End of WAL reached on timeline 1 at 0/3000060.
+LOG:  new target timeline is 2
+LOG:  restarted WAL streaming at 0/3000000 on timeline 2
+ done
+server started
+2015-10-21 22:07:38,463 INFO: started as a secondary
+2015-10-21 22:07:38,466 INFO: established a new patroni connection to the postgres cluster
+```
+
 ### Delete cluster
 
 ```
