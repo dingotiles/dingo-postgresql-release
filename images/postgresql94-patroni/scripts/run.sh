@@ -5,13 +5,14 @@ touch /pgpass
 DATA_DIR=/data
 mkdir -p $DATA_DIR
 
+DOCKER_IP=$(hostname --ip-address)
+
 # determine host:port to advertise into etcd for replication
 if [[ "${HOSTPORT_5432_TCP}X" != "X" ]]; then
   CONNECT_ADDRESS=${HOSTPORT_5432_TCP}
 fi
 CONNECT_ADDRESS=${CONNECT_ADDRESS:-${DOCKER_IP}:5432}
 
-DOCKER_IP=$(hostname --ip-address)
 
 # TODO secure the passwords!
 # TODO fix hard-coded bosh-lite 10.244.0.0/16
