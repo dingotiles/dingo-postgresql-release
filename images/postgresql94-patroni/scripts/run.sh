@@ -28,7 +28,7 @@ etcd:
   ttl: *ttl
   host: ${ETCD_CLUSTER}
 postgresql:
-  name: postgresql_${PATRONI_SCOPE} ## Replication slots do not allow dots in their name
+  name: postgresql_${DOCKER_IP//./_} ## Replication slots do not allow dots in their name
   scope: *scope
   listen: 0.0.0.0:5432
   connect_address: ${CONNECT_ADDRESS}
