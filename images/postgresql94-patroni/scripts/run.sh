@@ -14,6 +14,7 @@ CONNECT_ADDRESS=${CONNECT_ADDRESS:-${DOCKER_IP}:5432}
 DOCKER_IP=$(hostname --ip-address)
 
 # TODO secure the passwords!
+# TODO fix hard-coded bosh-lite 10.244.0.0/16
 
 cat > /patroni/postgres.yml <<__EOF__
 ttl: &ttl 30
@@ -37,6 +38,7 @@ postgresql:
   - host all all 0.0.0.0/0 md5
   - hostssl all all 0.0.0.0/0 md5
   - host replication replicator ${DOCKER_IP}/16    md5
+  - host replication replicator 10.244.0.0/16    md5
   replication:
     username: replicator
     password: replicator
