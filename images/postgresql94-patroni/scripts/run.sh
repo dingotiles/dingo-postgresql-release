@@ -1,11 +1,9 @@
 #!/bin/bash
 
+touch /pgpass
+
 DATA_DIR=/data
 mkdir -p $DATA_DIR
-chown postgres:postgres $DATA_DIR
-
-touch /pgpass
-chown postgres:postgres -R /patroni/ /data/ /pgpass
 
 # determine host:port to advertise into etcd for replication
 if [[ "${HOSTPORT_5432_TCP}X" != "X" ]]; then
@@ -59,12 +57,7 @@ postgresql:
     hot_standby: "on"
 __EOF__
 
+chown postgres:postgres -R $DATA_DIR /patroni /pgpass
 cat /patroni/postgres.yml
 
-echo "Starting Patroni..."
-# /data/postgresql0 was missing - where is it supposed to be?
-# I don't think patroni, and thus initdb, has rights to initdb
-# perhaps run.sh is run as root; and the patroni.sh invokes python?
-# To initdb I had to:
-# sudo -u postgres /usr/lib/postgresql/9.4/bin/pg_ctl -w -D /data/postgresql0 initdb -o --encoding=UTF8
-sudo -u postgres python /patroni/patroni.py /patroni/postgres.yml
+sudo -u postgres /scripts/start_pg.sh
