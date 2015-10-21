@@ -88,13 +88,14 @@ docker --host unix:///var/vcap/sys/run/docker/docker.sock \
 To view the start up logs for the container:
 
 ```
-docker logs john
+docker --host unix:///var/vcap/sys/run/docker/docker.sock \
+  logs john
 ```
 
 Confirm that the PostgreSQL node is advertising itself in etcd:
 
 ```
-curl -s localhost:4001/v2/keys/service/my-first-cluster/members | jq ".node.nodes[].value"
+curl -s localhost:4001/v2/keys/service/my_first_cluster/members | jq ".node.nodes[].value"
 "{\"role\":\"master\",\"state\":\"running\",\"conn_url\":\"postgres://replicator:replicator@10.244.20.6:40000/postgres\",\"api_url\":\"http://127.0.0.1:8008/patroni\",\"xlog_location\":23757944}"
 ```
 
