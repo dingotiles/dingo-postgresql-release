@@ -16,6 +16,7 @@ CONNECT_ADDRESS=${CONNECT_ADDRESS:-${DOCKER_IP}:5432}
 
 # TODO secure the passwords!
 # TODO fix hard-coded bosh-lite 10.244.0.0/16
+# TODO add host ip into postgresql.name to ensure unique if two containers have same local DOCKER_IP
 
 cat > /patroni/postgres.yml <<__EOF__
 ttl: &ttl 30

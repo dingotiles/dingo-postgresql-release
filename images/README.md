@@ -89,7 +89,7 @@ To view the start up logs for the container:
 
 ```
 docker --host unix:///var/vcap/sys/run/docker/docker.sock \
-  logs john
+  logs -f john
 ```
 
 Confirm that the PostgreSQL node is advertising itself in etcd:
@@ -127,7 +127,24 @@ docker --host unix:///var/vcap/sys/run/docker/docker.sock \
 To view the start up logs for the container:
 
 ```
-docker logs paul
+docker --host unix:///var/vcap/sys/run/docker/docker.sock \
+  logs -f paul
+```
+
+Confirm the additional container has added itself to the etcd list of members:
+
+```
+$ curl -s localhost:4001/v2/keys/service/my_first_cluster/members | jq ".node.nodes[].value"
+"{\"role\":\"master\",\"state\":\"running\",\"conn_url\":\"postgres://replicator:replicator@10.244.20.6:40001/postgres\",\"api_url\":\"http://127.0.0.1:8008/patroni\",\"xlog_location\":50332008}"
+"{\"role\":\"replica\",\"state\":\"running\",\"conn_url\":\"postgres://replicator:replicator@10.244.20.6:40000/postgres\",\"api_url\":\"http://127.0.0.1:8008/patroni\",\"xlog_location\":50332008}"
+```
+
+Confirm that the master has the replica registered:
+
+```
+$ psql postgres://replicator:replicator@10.244.20.6:40001/postgres -c 'select * from pg_stat_replication;'
+pid | usesysid |  usename   | application_name | client_addr |...
+ 82 |    16384 | replicator | walreceiver      | 172.17.42.1 |...
 ```
 
 ### Delete cluster
