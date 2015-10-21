@@ -6,4 +6,4 @@ export PATH=/usr/lib/postgresql/${PG_VERSION}/bin:$PATH
 
 echo "Starting Patroni..."
 cd /
-python /patroni/patroni.py /patroni/postgres.yml
+python /patroni.py /patroni/postgres.yml

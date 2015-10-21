@@ -11,8 +11,8 @@ RUN pip install python-etcd
 
 ENV PATH /usr/lib/postgresql/${PG_VERSION}/bin:$PATH
 
-
-ADD patroni /patroni
+ADD patroni/patroni.py /patroni.py
+ADD patroni/patroni /patroni
 
 # Add scripts
 ADD scripts /scripts

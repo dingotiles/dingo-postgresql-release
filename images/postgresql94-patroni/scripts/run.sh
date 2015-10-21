@@ -1,6 +1,6 @@
 #!/bin/bash
 
-touch /pgpass /patroni/pgpass
+touch /pgpass
 
 DATA_DIR=/data
 mkdir -p $DATA_DIR
@@ -61,7 +61,7 @@ postgresql:
     hot_standby: "on"
 __EOF__
 
-chown postgres:postgres -R $DATA_DIR /patroni /pgpass
+chown postgres:postgres -R $DATA_DIR /patroni /pgpass /patroni.py
 cat /patroni/postgres.yml
 
 sudo -u postgres /scripts/start_pg.sh
