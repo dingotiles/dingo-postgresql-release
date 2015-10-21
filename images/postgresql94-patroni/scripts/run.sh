@@ -45,7 +45,7 @@ postgresql:
     network:  127.0.0.1/32
   superuser:
     password: starkandwayne
-  restore: patroni/scripts/restore.py
+  restore: /patroni/patroni/scripts/restore.py
   admin:
     username: admin
     password: admin

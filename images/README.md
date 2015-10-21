@@ -77,7 +77,7 @@ To run a container, binding to host port 40000:
 ```
 docker --host unix:///var/vcap/sys/run/docker/docker.sock \
   run -d --name john -p 40000:5432 \
-    -e PATRONI_SCOPE=my-first-cluster \
+    -e PATRONI_SCOPE=my_first_cluster \
     -e ETCD_CLUSTER=${HostIP}:4001 \
     -e PORT_5432_TCP=40000 -e HOSTPORT_5432_TCP=${HostIP}:40000 \
     -e POSTGRES_USERNAME=${POSTGRES_USERNAME} \
@@ -115,7 +115,7 @@ To run a second container that joins to the same cluster, binding to host port 4
 ```
 docker --host unix:///var/vcap/sys/run/docker/docker.sock \
   run -d --name paul -p 40001:5432 \
-    -e PATRONI_SCOPE=my-first-cluster \
+    -e PATRONI_SCOPE=my_first_cluster \
     -e ETCD_CLUSTER=${HostIP}:4001 \
     -e PORT_5432_TCP=40001 -e HOSTPORT_5432_TCP=${HostIP}:40001 \
     -e POSTGRES_USERNAME=${POSTGRES_USERNAME} \
