@@ -31,7 +31,7 @@ postgresql:
   scope: *scope
   listen: 0.0.0.0:5432
   connect_address: ${CONNECT_ADDRESS}
-  data_dir: data/postgresql0
+  data_dir: /data/
   maximum_lag_on_failover: 1048576 # 1 megabyte in bytes
   pg_hba:
   - host all all 0.0.0.0/0 md5
@@ -62,4 +62,9 @@ __EOF__
 cat /patroni/postgres.yml
 
 echo "Starting Patroni..."
+# /data/postgresql0 was missing - where is it supposed to be?
+# I don't think patroni, and thus initdb, has rights to initdb
+# perhaps run.sh is run as root; and the patroni.sh invokes python?
+# To initdb I had to:
+# sudo -u postgres /usr/lib/postgresql/9.4/bin/pg_ctl -w -D /data/postgresql0 initdb -o --encoding=UTF8
 sudo -u postgres python /patroni/patroni.py /patroni/postgres.yml

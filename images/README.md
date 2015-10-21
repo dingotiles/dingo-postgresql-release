@@ -81,7 +81,7 @@ docker --host unix:///var/vcap/sys/run/docker/docker.sock \
     -e ETCD_CLUSTER=${HostIP}:4001 \
     -e PORT_5432_TCP=40000 -e HOSTPORT_5432_TCP=${HostIP}:40000 \
     -e POSTGRES_USERNAME=${POSTGRES_USERNAME} \
-    -e POSTGRES_USERNAME=${POSTGRES_PASSWORD} \
+    -e POSTGRES_PASSWORD=${POSTGRES_PASSWORD} \
     cfcommunity/postgresql-patroni:9.4
 ```
 
@@ -94,7 +94,7 @@ docker logs john
 Confirm that the PostgreSQL node is advertising itself in etcd:
 
 ```
-curl -s localhost:4001/v2/keys/service/postgresql-my-first-cluster/members
+curl -s localhost:4001/v2/keys/service/my-first-cluster/members
 ```
 
 To run a second container that joins to the same cluster, binding to host port 40001:
