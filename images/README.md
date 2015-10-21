@@ -91,11 +91,25 @@ To view the start up logs for the container:
 docker logs john
 ```
 
+Confirm that you can connected to the PostgreSQL node via the external host:port (username/password is `replicator`/`replicator` at the time of writing):
+
+```
+$ psql -h 10.244.20.6 -p 40000 -U replicator postgres
+Password for user replicator: replicator
+psql (9.4.5)
+Type "help" for help.
+
+postgres=>
+```
+
 Confirm that the PostgreSQL node is advertising itself in etcd:
 
 ```
-curl -s localhost:4001/v2/keys/service/my-first-cluster/members
+curl -s localhost:4001/v2/keys/service/my-first-cluster/members | jq ".node.nodes[].value"
+"{\"role\":\"master\",\"state\":\"running\",\"conn_url\":\"postgres://replicator:replicator@10.244.20.6:40000/postgres\",\"api_url\":\"http://127.0.0.1:8008/patroni\",\"xlog_location\":23757944}"
 ```
+
+### Expand the cluster
 
 To run a second container that joins to the same cluster, binding to host port 40001:
 

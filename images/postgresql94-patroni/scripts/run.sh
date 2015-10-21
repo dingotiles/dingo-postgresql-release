@@ -1,6 +1,6 @@
 #!/bin/bash
 
-touch /pgpass
+touch /pgpass /patroni/pgpass
 
 DATA_DIR=/data
 mkdir -p $DATA_DIR
