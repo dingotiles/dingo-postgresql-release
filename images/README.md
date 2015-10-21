@@ -130,6 +130,20 @@ To view the start up logs for the container:
 docker logs paul
 ```
 
+### Delete cluster
+
+```
+docker --host unix:///var/vcap/sys/run/docker/docker.sock rm -f john
+docker --host unix:///var/vcap/sys/run/docker/docker.sock rm -f paul
+curl -v "localhost:4001/v2/keys/service/my_first_cluster?dir=true&recursive=true" -X DELETE
+```
+
+To delete the etcd node:
+
+```
+docker --host unix:///var/vcap/sys/run/docker/docker.sock rm -f etcd
+```
+
 Copyright
 ---------
 
