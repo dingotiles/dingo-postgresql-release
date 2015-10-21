@@ -34,31 +34,39 @@ postgresql:
   connect_address: ${CONNECT_ADDRESS}
   data_dir: /data/postgres0
   maximum_lag_on_failover: 1048576 # 1 megabyte in bytes
+  use_slots: True
+  pgpass: /tmp/pgpass
   pg_hba:
   - host all all 0.0.0.0/0 md5
   - hostssl all all 0.0.0.0/0 md5
-  - host replication replicator ${DOCKER_IP}/16    md5
-  - host replication replicator 10.244.0.0/16    md5
+  - host replication replicator 0.0.0.0/0 md5
   replication:
     username: replicator
     password: replicator
     network:  127.0.0.1/32
   superuser:
     password: starkandwayne
-  restore: /patroni/patroni/scripts/restore.py
   admin:
     username: admin
     password: admin
+  # wal_e:
+  #   env_dir: /home/postgres/etc/wal-e.d/env
+  #   threshold_megabytes: 10240
+  #   threshold_backup_size_percentage: 30
+  restore: /patroni/scripts/restore.py
+  # recovery_conf:
+  #   restore_command: cp ../wal_archive/%f %p
   parameters:
     archive_mode: "on"
     wal_level: hot_standby
     archive_command: mkdir -p ../wal_archive && cp %p ../wal_archive/%f
-    max_wal_senders: 20
-    listen_addresses: 0.0.0.0
+    max_wal_senders: 5
     wal_keep_segments: 8
+    listen_addresses: 0.0.0.0
     archive_timeout: 1800s
-    max_replication_slots: 20
+    max_replication_slots: 5
     hot_standby: "on"
+    wal_log_hints: "on"
 __EOF__
 
 chown postgres:postgres -R $DATA_DIR /patroni /pgpass /patroni.py
