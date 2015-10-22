@@ -226,7 +226,29 @@ server started
 2015-10-21 22:07:38,466 INFO: established a new patroni connection to the postgres cluster
 ```
 
-### Delete cluster
+Backup/restore from AWS
+-----------------------
+
+Patroni supports [wal-e](https://github.com/wal-e/wal-e) for continuous archiving of PostgreSQL WAL files and base backups.
+
+To setup wal-e we need to pass in some environment variables to the Docker containers.
+
+-	`WALE_ENV_DIR` - directory where WAL-E environment is kept
+-	`WAL_S3_BUCKET` - a name of the S3 bucket for WAL-E
+-	`WALE_BACKUP_THRESHOLD_MEGABYTES` - if WAL amount is above that - use pg_basebackup
+-	`WALE_BACKUP_THRESHOLD_PERCENTAGE` - if WAL size exceeds a certain percentage of the latest backup size
+
+For example, create a file `wal-e.env`:
+
+```
+WALE_ENV_DIR=/data/wal-e/env
+WAL_S3_BUCKET=patroni-demo
+WALE_BACKUP_THRESHOLD_PERCENTAGE=30
+WALE_BACKUP_THRESHOLD_MEGABYTES=10240
+```
+
+Delete cluster
+--------------
 
 ```
 docker --host unix:///var/vcap/sys/run/docker/docker.sock rm -f john

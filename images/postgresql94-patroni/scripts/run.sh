@@ -13,6 +13,9 @@ if [[ "${HOSTPORT_5432_TCP}X" != "X" ]]; then
 fi
 CONNECT_ADDRESS=${CONNECT_ADDRESS:-${DOCKER_IP}:5432}
 
+POSTGRES_USERNAME=${POSTGRES_USERNAME:-pgadmin}
+POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-$(pwgen -s -1 16)}
+
 
 # TODO secure the passwords!
 # TODO fix hard-coded bosh-lite 10.244.0.0/16
@@ -42,15 +45,15 @@ postgresql:
   - host all all 0.0.0.0/0 md5
   - hostssl all all 0.0.0.0/0 md5
   - host replication replicator 0.0.0.0/0 md5
-  replication:
+  replication: # replication username, user will be created during initialization
     username: replicator
     password: replicator
     network:  127.0.0.1/32
   superuser:
-    password: starkandwayne
-  admin:
-    username: admin
-    password: admin
+    password: starkandwayne # password for postgres user. It would be set during initialization
+  admin: # user will be created during initialization. It would have CREATEDB and CREATEROLE privileges
+    username: ${POSTGRES_USERNAME}
+    password: ${POSTGRES_PASSWORD}
   # wal_e:
   #   env_dir: /home/postgres/etc/wal-e.d/env
   #   threshold_megabytes: 10240
@@ -88,5 +91,11 @@ __EOF__
 
 chown postgres:postgres -R $DATA_DIR /patroni /pgpass /patroni.py
 cat /patroni/postgres.yml
+
+echo ----------------------
+echo Admin user credentials
+echo Username ${POSTGRES_USERNAME}
+echo Password ${POSTGRES_PASSWORD}
+echo ----------------------
 
 sudo -u postgres /scripts/start_pg.sh
