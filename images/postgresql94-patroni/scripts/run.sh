@@ -58,15 +58,30 @@ postgresql:
   restore: /patroni/scripts/restore.py
   # recovery_conf:
   #   restore_command: cp ../wal_archive/%f %p
+  # parameters are converted into --<name> <value> flags on the server command line
   parameters:
-    archive_mode: "on"
-    wal_level: hot_standby
-    archive_command: mkdir -p ../wal_archive && cp %p ../wal_archive/%f
-    max_wal_senders: 5
-    wal_keep_segments: 8
+    # http://www.postgresql.org/docs/9.4/static/runtime-config-connection.html
     listen_addresses: 0.0.0.0
+    port: 5432
+    max_connections: 100
+    # ssl: "on"
+    # ssl_cert_file: "$SSL_CERTIFICATE"
+    # ssl_key_file: "$SSL_PRIVATE_KEY"
+
+    # http://www.postgresql.org/docs/9.4/static/runtime-config-wal.html
+    wal_level: hot_standby
+    wal_log_hints: "on"
+    archive_mode: "on"
+    archive_command: mkdir -p ../wal_archive && cp %p ../wal_archive/%f
     archive_timeout: 1800s
+
+    # http://www.postgresql.org/docs/9.4/static/runtime-config-replication.html
+    # - sending servers config
+    max_wal_senders: 5
     max_replication_slots: 5
+    wal_keep_segments: 8
+    wal_sender_timeout: 60
+    # - standby servers config
     hot_standby: "on"
     wal_log_hints: "on"
 __EOF__
