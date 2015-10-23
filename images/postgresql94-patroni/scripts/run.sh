@@ -1,7 +1,5 @@
 #!/bin/bash
 
-touch /pgpass
-
 DATA_DIR=/data
 mkdir -p $DATA_DIR
 
@@ -15,6 +13,29 @@ CONNECT_ADDRESS=${CONNECT_ADDRESS:-${DOCKER_IP}:5432}
 
 POSTGRES_USERNAME=${POSTGRES_USERNAME:-pgadmin}
 POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-$(pwgen -s -1 16)}
+
+WALE_ENV_DIR=${WALE_ENV_DIR:-/data/wal-e/env}
+mkdir -p $WALE_ENV_DIR
+
+# pass thru environment variables into an env dir for postgres user's archive/restore commands
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+${DIR}/envdir.sh ${WALE_ENV_DIR}
+
+if [[ "${WAL_S3_BUCKET}X" != "X" ]]; then
+  if [[ "${AWS_INSTANCE_PROFILE}X" != "X" ]]; then
+    archive_command="wal-e --aws-instance-profile wal-push '%p' -p 1"
+    restore_command="wal-e --aws-instance-profile wal-fetch '%f' '%p' -p 1"
+  else
+    # see wal-e readme for env variables to configure for S3, Swift, etc
+    archive_command="wal-e wal-push '%p' -p 1"
+    restore_command="wal-e wal-fetch '%f' '%p' -p 1"
+  fi
+  # postgres user needs to load its env variables for each wal-e command
+  archive_command="envdir ${WALE_ENV_DIR} ${archive_command}"
+  restore_command="envdir ${WALE_ENV_DIR} ${restore_command}"
+else
+  archive_command="mkdir -p ../wal_archive && cp %p ../wal_archive/%f"
+fi
 
 
 # TODO secure the passwords!
@@ -54,13 +75,10 @@ postgresql:
   admin: # user will be created during initialization. It would have CREATEDB and CREATEROLE privileges
     username: ${POSTGRES_USERNAME}
     password: ${POSTGRES_PASSWORD}
-  # wal_e:
-  #   env_dir: /home/postgres/etc/wal-e.d/env
-  #   threshold_megabytes: 10240
-  #   threshold_backup_size_percentage: 30
   restore: /patroni/scripts/restore.py
-  # recovery_conf:
-  #   restore_command: cp ../wal_archive/%f %p
+  recovery_conf:
+    restore_command: "${restore_command}"
+
   # parameters are converted into --<name> <value> flags on the server command line
   parameters:
     # http://www.postgresql.org/docs/9.4/static/runtime-config-connection.html
@@ -75,8 +93,8 @@ postgresql:
     wal_level: hot_standby
     wal_log_hints: "on"
     archive_mode: "on"
-    archive_command: mkdir -p ../wal_archive && cp %p ../wal_archive/%f
-    archive_timeout: 1800s
+    archive_command: "${archive_command}"
+    archive_timeout: 60s
 
     # http://www.postgresql.org/docs/9.4/static/runtime-config-replication.html
     # - sending servers config
