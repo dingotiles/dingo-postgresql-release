@@ -5,11 +5,8 @@ RUN DEBIAN_FRONTEND=noninteractive \
     apt-get update -y && \
     apt-get install python python-psycopg2 python-yaml \
     python-requests python-boto python-dnspython python-kazoo python-pip \
-    # envdir
+    gdb strace libxml2-dev libxslt-dev libffi-dev lzop pv \
     daemontools -y && \
-    # wal-e
-    gdb strace \
-    libxml2-dev libxslt-dev libffi-dev lzop pv \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN pip install pip --upgrade
