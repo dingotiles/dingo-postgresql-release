@@ -22,12 +22,12 @@ ${DIR}/envdir.sh ${WALE_ENV_DIR}
 
 if [[ "${WAL_S3_BUCKET}X" != "X" ]]; then
   if [[ "${AWS_INSTANCE_PROFILE}X" != "X" ]]; then
-    archive_command="wal-e --aws-instance-profile wal-push \"%p\" -p 1"
-    restore_command="wal-e --aws-instance-profile wal-fetch \"%f\" \"%p\" -p 1"
+    archive_command="wal-e --aws-instance-profile wal-push '%p' -p 1"
+    restore_command="wal-e --aws-instance-profile wal-fetch '%f' '%p' -p 1"
   else
     # see wal-e readme for env variables to configure for S3, Swift, etc
-    archive_command="wal-e wal-push \"%p\" -p 1"
-    restore_command="wal-e wal-fetch \"%f\" \"%p\" -p 1"
+    archive_command="wal-e wal-push '%p' -p 1"
+    restore_command="wal-e wal-fetch '%f' '%p' -p 1"
   fi
   # postgres user needs to load its env variables for each wal-e command
   archive_command="envdir ${WALE_ENV_DIR} ${archive_command}"

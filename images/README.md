@@ -282,6 +282,8 @@ docker --host unix:///var/vcap/sys/run/docker/docker.sock \
     -e POSTGRES_USERNAME=${POSTGRES_USERNAME} \
     -e POSTGRES_PASSWORD=${POSTGRES_PASSWORD} \
     cfcommunity/postgresql-patroni:9.4
+docker --host unix:///var/vcap/sys/run/docker/docker.sock \
+  logs -f john
 ```
 
 Now run secondary `paul`:
