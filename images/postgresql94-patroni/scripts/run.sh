@@ -15,6 +15,7 @@ POSTGRES_USERNAME=${POSTGRES_USERNAME:-pgadmin}
 POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-$(pwgen -s -1 16)}
 
 WALE_ENV_DIR=${WALE_ENV_DIR:-/data/wal-e/env}
+mkdir -p $WALE_ENV_DIR
 
 # pass thru environment variables into an env dir for postgres user's archive/restore commands
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )

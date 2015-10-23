@@ -6,7 +6,6 @@ if [[ "${dir}X" == "X" || ! -d ${dir} ]]; then
   exit 1
 fi
 
-mkdir -p $dir
 rm -rf $dir/*
 
 wal_env_var_prefixes=(WAL AWS SWIFT WABS)
