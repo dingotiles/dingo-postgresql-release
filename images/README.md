@@ -15,7 +15,8 @@ The [postgresql-docker-boshrelease](https://github.com/cloudfoundry-community/po
 ### Pull the image
 
 ```
-docker pull cfcommunity/postgresql-patroni:9.4
+docker --host unix:///var/vcap/sys/run/docker/docker.sock \
+  pull cfcommunity/postgresql-patroni:9.4
 ```
 
 ### Build the image
@@ -66,6 +67,7 @@ curl -s localhost:4001/version
 ### Configure your cluster
 
 ```
+sudo apt-get install pwgen
 POSTGRES_USERNAME=pgadmin
 POSTGRES_PASSWORD=$(pwgen -s -1 16)
 ```
@@ -95,14 +97,15 @@ docker --host unix:///var/vcap/sys/run/docker/docker.sock \
 Confirm that the PostgreSQL node is advertising itself in etcd:
 
 ```
+apt-get install jq
 curl -s localhost:4001/v2/keys/service/my_first_cluster/members | jq ".node.nodes[].value"
 "{\"role\":\"master\",\"state\":\"running\",\"conn_url\":\"postgres://replicator:replicator@10.244.20.6:40000/postgres\",\"api_url\":\"http://127.0.0.1:8008/patroni\",\"xlog_location\":23757944}"
 ```
 
-The `conn_url` can be passed directly to `psql` to confirm we can connect to the server:
+The `conn_url` can be passed directly to `psql` to confirm we can connect to the server using credentials above:
 
 ```
-$ psql postgres://replicator:replicator@10.244.20.6:40000/postgres
+$ psql postgres://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@10.244.20.6:40000/postgres
 psql (9.4.5)
 Type "help" for help.
 
@@ -226,27 +229,6 @@ server started
 2015-10-21 22:07:38,466 INFO: established a new patroni connection to the postgres cluster
 ```
 
-Backup/restore from AWS
------------------------
-
-Patroni supports [wal-e](https://github.com/wal-e/wal-e) for continuous archiving of PostgreSQL WAL files and base backups.
-
-To setup wal-e we need to pass in some environment variables to the Docker containers.
-
--	`WALE_ENV_DIR` - directory where WAL-E environment is kept
--	`WAL_S3_BUCKET` - a name of the S3 bucket for WAL-E
--	`WALE_BACKUP_THRESHOLD_MEGABYTES` - if WAL amount is above that - use pg_basebackup
--	`WALE_BACKUP_THRESHOLD_PERCENTAGE` - if WAL size exceeds a certain percentage of the latest backup size
-
-For example, create a file `wal-e.env`:
-
-```
-WALE_ENV_DIR=/data/wal-e/env
-WAL_S3_BUCKET=patroni-demo
-WALE_BACKUP_THRESHOLD_PERCENTAGE=30
-WALE_BACKUP_THRESHOLD_MEGABYTES=10240
-```
-
 Delete cluster
 --------------
 
@@ -260,6 +242,62 @@ To delete the etcd node:
 
 ```
 docker --host unix:///var/vcap/sys/run/docker/docker.sock rm -f etcd
+```
+
+Backup/restore from AWS
+-----------------------
+
+Patroni supports [wal-e](https://github.com/wal-e/wal-e) for continuous archiving of PostgreSQL WAL files and base backups.
+
+To setup wal-e we need to pass in some environment variables to the Docker containers.
+
+-	`WALE_ENV_DIR` - directory where WAL-E environment is kept
+-	`WAL_S3_BUCKET` - a name of the S3 bucket for WAL-E
+-	`WALE_BACKUP_THRESHOLD_MEGABYTES` - if WAL amount is above that - use pg_basebackup
+-	`WALE_BACKUP_THRESHOLD_PERCENTAGE` - if WAL size exceeds a certain percentage of the latest backup size
+-	`AWS_ACCESS_KEY_ID` - AWS access key
+-	`AWS_SECRET_ACCESS_KEY` - AWS secret key
+
+For example, create a local file `tmp/wal-e.env` which will be passed into `docker run`:
+
+```
+AWS_ACCESS_KEY_ID=XXX
+AWS_SECRET_ACCESS_KEY=YYY
+WAL_S3_BUCKET=ZZZ
+
+WALE_ENV_DIR=/data/wal-e/env
+WALE_BACKUP_THRESHOLD_PERCENTAGE=30
+WALE_BACKUP_THRESHOLD_MEGABYTES=10240
+```
+
+Now, when invoking `docker run` above, include this `/tmp/wal-e.env` file:
+
+```
+docker --host unix:///var/vcap/sys/run/docker/docker.sock \
+  run -d --name john -p 40000:5432 \
+    --env-file=/tmp/wal-e.env \
+    -e PATRONI_SCOPE=my_first_cluster \
+    -e ETCD_CLUSTER=${HostIP}:4001 \
+    -e PORT_5432_TCP=40000 -e HOSTPORT_5432_TCP=${HostIP}:40000 \
+    -e POSTGRES_USERNAME=${POSTGRES_USERNAME} \
+    -e POSTGRES_PASSWORD=${POSTGRES_PASSWORD} \
+    cfcommunity/postgresql-patroni:9.4
+```
+
+Now run secondary `paul`:
+
+```
+docker --host unix:///var/vcap/sys/run/docker/docker.sock \
+  run -d --name paul -p 40001:5432 \
+    --env-file=/tmp/wal-e.env \
+    -e PATRONI_SCOPE=my_first_cluster \
+    -e ETCD_CLUSTER=${HostIP}:4001 \
+    -e PORT_5432_TCP=40001 -e HOSTPORT_5432_TCP=${HostIP}:40001 \
+    -e POSTGRES_USERNAME=${POSTGRES_USERNAME} \
+    -e POSTGRES_USERNAME=${POSTGRES_PASSWORD} \
+    cfcommunity/postgresql-patroni:9.4
+docker --host unix:///var/vcap/sys/run/docker/docker.sock \
+  logs -f paul
 ```
 
 Copyright
