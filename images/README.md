@@ -145,7 +145,7 @@ $ curl -s localhost:4001/v2/keys/service/my_first_cluster/members | jq ".node.no
 Confirm that the master has the replica registered:
 
 ```
-$ psql postgres://replicator:replicator@10.244.20.6:40001/postgres -c 'select * from pg_stat_replication;'
+$ psql postgres://replicator:replicator@10.244.20.6:40000/postgres -c 'select * from pg_stat_replication;'
 pid | usesysid |  usename   | application_name | client_addr |...
  82 |    16384 | replicator | walreceiver      | 172.17.42.1 |...
 ```
@@ -263,9 +263,10 @@ For example, create a local file `tmp/wal-e.env` which will be passed into `dock
 ```
 AWS_ACCESS_KEY_ID=XXX
 AWS_SECRET_ACCESS_KEY=YYY
-WAL_S3_BUCKET=ZZZ
 
-WALE_ENV_DIR=/data/wal-e/env
+WAL_S3_BUCKET=ZZZ
+WALE_S3_PREFIX=s3://${WAL_S3_BUCKET}/my_first_cluster/wal/
+#WALE_S3_ENDPOINT=https+path://s3-us-east-1.amazonaws.com:443
 WALE_BACKUP_THRESHOLD_PERCENTAGE=30
 WALE_BACKUP_THRESHOLD_MEGABYTES=10240
 ```
