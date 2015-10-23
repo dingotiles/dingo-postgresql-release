@@ -6,6 +6,7 @@ RUN DEBIAN_FRONTEND=noninteractive \
     apt-get install python python-psycopg2 python-yaml \
     python-requests python-boto python-dnspython python-kazoo python-pip \
     gdb strace libxml2-dev libxslt-dev libffi-dev lzop pv \
+    libpq-dev \
     daemontools -y && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
