@@ -1,1 +1,37 @@
---- {}
+---
+docker/aufs-tools_20120411-3_amd64.deb:
+  object_id: d49bcfed-1ddf-43f6-a44e-c27fa21fbc7b
+  sha: 2dfc1fe386cd3f05ac7e0b4ebcf3ebc8a7f3b04d
+  size: 91762
+docker/autoconf-2.69.tar.gz:
+  object_id: e47cece0-4f3b-4abd-9686-89e9052e3bb8
+  sha: 562471cbcb0dd0fa42a76665acf0dbb68479b78a
+  size: 1927468
+docker/bridge-utils-1.5.tar.gz:
+  object_id: bdcf1d44-6aea-4cb8-9500-5bf2d37c93bb
+  sha: 1f71b6f22f5d2b6d21e146f4ac20820ad42e58ee
+  size: 33472
+docker/docker-1.8.2:
+  object_id: a663ec48-af7c-480c-8116-2e44e7b2ea4c
+  sha: ad3618b980105d907aae7bba40ca3ababb7c3d6d
+  size: 21599668
+remote_syslog/remote_syslog-0.14_linux_amd64.tar.gz:
+  object_id: 5a50b832-b7aa-4d96-a39f-9e90eedf2d9e
+  sha: c0562f6d13e5eafece5c030c835f21fcf12fccdb
+  size: 1849384
+ruby/bundler-1.10.5.gem:
+  object_id: 47bb2b65-a480-4be0-849a-39231cefaa78
+  sha: d8a934e1fcc000eb89c87697e8b73f8812bd498c
+  size: 251392
+ruby/ruby-2.1.5.tar.gz:
+  object_id: 448632a1-8533-453a-afb5-a8801681c6fb
+  sha: 9c0a238bd7839a4b51871641945a3da90997b8c2
+  size: 15127433
+ruby/rubygems-2.4.8.tgz:
+  object_id: 4c1f70d8-c1cc-405e-9e40-77f27c0d80d5
+  sha: 0db6b2f1cdd2267fe19f1f875057c2f2ce9f5696
+  size: 447712
+ruby/yaml-0.1.6.tar.gz:
+  object_id: cf573004-2371-454c-92d9-e13d4d40c390
+  sha: f3d404e11bec3c4efcddfd14c42d46f1aabe0b5d
+  size: 503012

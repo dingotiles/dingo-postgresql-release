@@ -1,0 +1,4 @@
+[submodule "src/cf-containers-broker"]
+	path = src/cf-containers-broker
+	url = https://github.com/drnic/cf-containers-broker
+	branch = host_port_env_var

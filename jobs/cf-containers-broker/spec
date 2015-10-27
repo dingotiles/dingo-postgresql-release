@@ -1,0 +1,108 @@
+---
+name: cf-containers-broker
+
+packages:
+  - bosh-helpers
+  - ruby
+  - cf-containers-broker
+  - remote_syslog
+
+templates:
+  bin/cf-containers-broker_ctl: bin/cf-containers-broker_ctl
+  bin/job_properties.sh.erb: bin/job_properties.sh
+  bin/remote_syslog_ctl: bin/remote_syslog_ctl
+  config/logrotate.cron.erb: config/logrotate.cron
+  config/logrotate.conf.erb: config/logrotate.conf
+  config/remote_syslog.yml.erb: config/remote_syslog.yml
+  config/settings.yml.erb: config/settings.yml
+  config/unicorn.conf.rb.erb: config/unicorn.conf.rb
+
+properties:
+  broker.user:
+    description: 'User which will own the CF-Containers-Broker services'
+    default: 'root'
+  broker.group:
+    description: 'Group which will own the CF-Containers-Broker services'
+    default: 'vcap'
+  broker.unicorn.worker_processes:
+    description: 'Unicorn worker processes. If the number of worker processes > 1 then you must disable the broker.fetch_images property'
+    default: '1'
+  broker.unicorn.port:
+    description: 'Unicorn listen port'
+    default: '80'
+  broker.username:
+    description: "Broker's basic auth username"
+  broker.password:
+    description: "Broker's basic auth password"
+  broker.cookie_secret:
+    description: 'A unique secret key, used to sign sessions'
+  broker.session_expiry:
+    description: 'Session expiry time of the session'
+    default: '86400'
+  broker.host:
+    description: 'Host used to register the broker'
+  broker.component_name:
+    description: 'Component name used to register the broker'
+    default: 'cf-containers-broker'
+  broker.ssl_enabled:
+    description: 'Determines use of https in dashboard url and in callback uri for calls to UAA'
+    default: false
+  broker.skip_ssl_validation:
+    description: 'Determines whether dashboard verifies SSL certificates when communicating with Cloud Controller and UAA'
+    default: true
+  broker.docker_url:
+    description: 'Docker URL (IP/Socket)'
+    default: 'unix:///var/vcap/sys/run/docker/docker.sock'
+  broker.max_containers:
+    description: 'Max number of containers'
+    default: '0'
+  broker.allocate_docker_host_ports:
+    description: 'Allocate Docker host ports when creating a container'
+    default: true
+  broker.fetch_images:
+    description: 'Fetch new/updated container images on restart'
+    default: true
+  broker.services:
+    description: 'Services and plans offered by the broker'
+  broker.logrotate.frequency:
+    description: 'Frequency to run logrotate for Docker daemon log files (crontab five time and date fields)'
+    default: '0 * * * *'
+  broker.logrotate.rotate:
+    description: 'Number of times Docker daemon log files are rotated before being removed '
+    default: '7'
+  broker.logrotate.size:
+    description: 'Size before Docker daemon log files are rotateds'
+    default: '2M'
+
+  cf.api_url:
+    description: 'URL of the CloudFoundry Cloud Controller'
+
+  nats.user:
+    description: 'Username for broker to connect to NATS'
+  nats.password:
+    description: 'Password for broker to connect to NATS'
+  nats.port:
+    description: 'IP port of Cloud Foundry NATS server'
+  nats.machines:
+    description: 'Array of IPs of each NATS cluster member'
+
+  remote_syslog.user:
+    description: 'User which will own the Remote Syslog services'
+    default: 'root'
+  remote_syslog.group:
+    description: 'Group which will own the Remote Syslog services'
+    default: 'vcap'
+  remote_syslog.address:
+    description: 'IP address for Remote Syslog'
+  remote_syslog.port:
+    description: 'TCP port of Remote Syslog'
+    default: '514'
+  remote_syslog.protocol:
+    description: 'Protocol to be used when forwarding logs to a Remote Syslog (tcp|udp|tls)'
+    default: 'udp'
+  remote_syslog.new_file_check_interval:
+    description: 'How often to check for new files'
+    default: '10s'
+  remote_syslog.debug:
+    description: 'Write a debug file'
+    default: false
