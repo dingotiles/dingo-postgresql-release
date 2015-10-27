@@ -1,0 +1,7 @@
+---
+meta:
+  subnets: (( merge ))
+
+networks:
+- name: patroni1
+  subnets: (( grab meta.subnets ))

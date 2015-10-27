@@ -1,5 +1,14 @@
 meta:
-  environment: patroni-warden
+  subnets: (( merge ))
+  cfcontainersbroker:
+    cc_api_uri: "https://api.10.244.0.34.xip.io"
+    external_host: "cf-containers-broker.10.244.0.34.xip.io"
+  nats:
+    user: nats
+    password: nats
+    port: 4222
+    machines:
+      - 10.244.0.6
 
   stemcell:
     name: bosh-warden-boshlite-ubuntu-trusty-go_agent
@@ -12,25 +21,22 @@ update:
   update_watch_time: 1000-30000
 
 jobs:
-  - name: just_install_packages
+  - name: patroni
     networks:
       - name: patroni1
+        static_ips: ~
 
 compilation:
   cloud_properties:
     name: random
 
 resource_pools:
-  - name: small_z1
+  - name: cell_z1
     cloud_properties:
       name: random
+    stemcell: (( grab meta.stemcell ))
 
 networks:
 - name: patroni1
   type: manual
-  subnets:
-  - range: 10.244.2.0/24
-    name: patroni1
-    gateway: 10.244.2.1
-    static:
-      - 10.244.2.2-10.244.2.60
+  subnets: (( grab meta.subnets ))

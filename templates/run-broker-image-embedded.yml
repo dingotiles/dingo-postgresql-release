@@ -1,0 +1,75 @@
+---
+meta:
+  cfcontainersbroker:
+    cc_api_uri: (( params "please provide CF api url" ))
+    external_host: (( params "please provide the hostname to advertise for the broker" ))
+    username: containers
+    password: containers
+    cookie_secret: 'e7247dae-a252-4393-afa3-2219c1c02efd'
+    protocol: https
+    ssl_enabled: true
+    component_name: postgresql-docker-broker
+    max_containers: 20
+  nats: (( params "please provide CF router's NATS info" ))
+
+  job_templates:
+    # run docker daemon
+    - {name: docker, release: patroni}
+    # warm docker image cache from bosh package
+    - {name: postgresql_images, release: patroni}
+    # run service broker
+    - {name: cf-containers-broker, release: patroni}
+
+properties:
+  nats: (( grab meta.nats ))
+
+  cf:
+    api_url: (( grab meta.cfcontainersbroker.cc_api_uri ))
+
+  broker:
+    name: (( grab meta.cfcontainersbroker.component_name ))
+    component_name: (( grab meta.cfcontainersbroker.component_name ))
+    protocol: (( grab meta.cfcontainersbroker.protocol ))
+    ssl_enabled: (( grab meta.cfcontainersbroker.ssl_enabled ))
+    host: (( grab meta.cfcontainersbroker.external_host ))
+    port: 80
+    username: (( grab meta.cfcontainersbroker.username ))
+    password: (( grab meta.cfcontainersbroker.password ))
+    cookie_secret: (( grab meta.cfcontainersbroker.cookie_secret ))
+    max_containers: (( grab meta.cfcontainersbroker.max_containers ))
+    fetch_images: false
+
+    services:
+      - id: '0f5c1670-6dc3-11e5-bc08-6c4008a663f0'
+        name: 'postgresql94'
+        description: 'postgresql 9.4 service for application development and testing'
+        bindable: true
+        tags:
+          - 'postgresql94'
+          - 'postgresql'
+          - 'syslog'
+        metadata:
+          displayName: 'postgresql 9.4'
+          longDescription: 'A postgresql 9.4 service for development and testing running inside a Docker container'
+          providerDisplayName: 'Stark & Wayne LLC'
+          documentationUrl: 'https://github.com/cloudfoundry-community/postgresql-docker-boshrelease'
+          supportUrl: 'https://github.com/cloudfoundry-community/postgresql-docker-boshrelease/issues'
+        plans:
+          - id: '1545e30e-6dc3-11e5-826a-6c4008a663f0'
+            name: 'free'
+            container:
+              backend: 'docker'
+              image: cfcommunity/postgresql-patroni
+              tag: "9.4"
+            #   persistent_volumes:
+            #     - '/data'
+            # credentials:
+            #   username:
+            #     key: 'POSTGRES_USERNAME'
+            #   password:
+            #     key: 'POSTGRES_PASSWORD'
+            #   dbname:
+            #     key: 'POSTGRES_DBNAME'
+            #   uri:
+            #     prefix: 'postgres'
+            description: 'Free Trial'

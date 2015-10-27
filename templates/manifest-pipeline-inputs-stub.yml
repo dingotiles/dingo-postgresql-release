@@ -1,0 +1,5 @@
+---
+meta:
+  stemcell:
+    name: STEMCELL
+    version: latest

@@ -1,34 +1,51 @@
 #!/bin/bash
 
+infrastructure=$1; shift
+docker_image=$1; shift
 set -e
 
 template_prefix="patroni"
 STEMCELL_OS=${STEMCELL_OS:-ubuntu}
 
-infrastructure=$1
-
-if [ "$infrastructure" != "aws-ec2" ] && \
-    [ "$infrastructure" != "warden" ] ; then
-  echo "usage: ./make_manifest <aws-ec2|warden>"
+if [[ "$(which spruce)X" == "X" ]]; then
+  echo "Please install spruce, the replacement for spiff"
+  echo "See https://github.com/geofffranks/spruce/releases"
   exit 1
 fi
 
-shift
+usage() {
+  echo "usage: ./make_manifest <aws|warden> <embedded|upstream>"
+  exit 1
+}
 
-BOSH_STATUS=$(bosh status)
-DIRECTOR_UUID=$(echo "$BOSH_STATUS" | grep UUID | awk '{print $2}')
-DIRECTOR_CPI=$(echo "$BOSH_STATUS" | grep CPI | awk '{print $2}')
-DIRECTOR_NAME=$(echo "$BOSH_STATUS" | grep Name | awk '{print $2}')
-NAME=$template_prefix-$infrastructure
+if [ "$infrastructure" != "aws" ] && \
+    [ "$infrastructure" != "warden" ] ; then
+  usage
+fi
+if [ "$docker_image" != "embedded" ] && [ "$docker_image" != "upstream" ] ; then
+  usage
+fi
 
-if [[ $DIRECTOR_NAME = "warden" ]]; then
-  if [[ $infrastructure != "warden" ]]; then
-    echo "Not targeting bosh-lite with warden CPI. Please use 'bosh target' before running this script."
+if [[ "${DEMO}X" == "X" ]]; then
+  BOSH_STATUS=$(bosh status)
+  DIRECTOR_UUID=$(echo "$BOSH_STATUS" | grep UUID | awk '{print $2}')
+  DIRECTOR_CPI=$(echo "$BOSH_STATUS" | grep CPI | awk '{print $2}')
+  DIRECTOR_NAME=$(echo "$BOSH_STATUS" | grep Name | awk '{print $2}')
+  NAME=$template_prefix-$infrastructure-$docker_image
+else
+  DIRECTOR_UUID=xxxxxxx-6076-11e5-8e69-6c4008a663f0
+  DIRECTOR_CPI=aws
+  NAME=demo
+fi
+
+if [[ $DIRECTOR_NAME = "Bosh Lite Director" ]]; then
+  if [[ $infrastructure != "garden" || $infrastructure != "warden" ]]; then
+    echo "Not targeting bosh-lite with garden/warden CPI. Please use 'bosh target' before running this script."
     exit 1
   fi
 fi
 
-if [[ $infrastructure = "aws-ec2" ]]; then
+if [[ $infrastructure = "aws" ]]; then
   if [[ $DIRECTOR_CPI != "aws" ]]; then
     echo "Not targeting an AWS BOSH. Please use 'bosh target' before running this script."
     exit 1
@@ -53,22 +70,25 @@ release=$templates/..
 tmpdir=$release/tmp
 
 mkdir -p $tmpdir
-cp $templates/stub.yml $tmpdir/stub-with-uuid.yml
+cp $templates/env-director-stub.yml $tmpdir/director.yml
+cp $templates/env-name-stub.yml $tmpdir/name.yml
+cp $templates/manifest-pipeline-inputs-stub.yml $tmpdir/pipeline-inputs.yml
 echo $DIRECTOR_NAME $DIRECTOR_CPI $DIRECTOR_UUID $STEMCELL
-perl -pi -e "s/PLACEHOLDER-DIRECTOR-UUID/$DIRECTOR_UUID/g" $tmpdir/stub-with-uuid.yml
-perl -pi -e "s/NAME/$NAME/g" $tmpdir/stub-with-uuid.yml
-perl -pi -e "s/STEMCELL/$STEMCELL/g" $tmpdir/stub-with-uuid.yml
-
-if ! [ -x "$(command -v spruce)" ]; then
-  echo 'spruce is not installed. Please download at https://github.com/geofffranks/spruce/releases' >&2
-fi
+perl -pi -e "s/PLACEHOLDER-DIRECTOR-UUID/$DIRECTOR_UUID/g" $tmpdir/director.yml
+perl -pi -e "s/NAME/$NAME/g" $tmpdir/name.yml
+perl -pi -e "s/STEMCELL/$STEMCELL/g" $tmpdir/pipeline-inputs.yml
 
 spruce merge --prune meta \
   $templates/deployment.yml \
   $templates/jobs.yml \
+  $templates/run-broker-image-${docker_image}.yml \
   $templates/infrastructure-${infrastructure}.yml \
-  $tmpdir/stub-with-uuid.yml \
+  $templates/env-${infrastructure}-networking.yml \
+  $tmpdir/director.yml \
+  $tmpdir/name.yml \
+  $tmpdir/pipeline-inputs.yml \
   $* > $tmpdir/$NAME-manifest.yml
 
 bosh deployment $tmpdir/$NAME-manifest.yml
+
 bosh status

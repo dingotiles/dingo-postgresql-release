@@ -99,13 +99,13 @@ Confirm that the PostgreSQL node is advertising itself in etcd:
 ```
 apt-get install jq
 curl -s localhost:4001/v2/keys/service/my_first_cluster/members | jq ".node.nodes[].value"
-"{\"role\":\"master\",\"state\":\"running\",\"conn_url\":\"postgres://replicator:replicator@10.244.20.6:40000/postgres\",\"api_url\":\"http://127.0.0.1:8008/patroni\",\"xlog_location\":23757944}"
+"{\"role\":\"master\",\"state\":\"running\",\"conn_url\":\"postgres://replicator:replicator@10.244.21.6:40000/postgres\",\"api_url\":\"http://127.0.0.1:8008/patroni\",\"xlog_location\":23757944}"
 ```
 
 The `conn_url` can be passed directly to `psql` to confirm we can connect to the server using credentials above:
 
 ```
-$ psql postgres://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@10.244.20.6:40000/postgres
+$ psql postgres://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@10.244.21.6:40000/postgres
 psql (9.4.5)
 Type "help" for help.
 
@@ -138,14 +138,14 @@ Confirm the additional container has added itself to the etcd list of members:
 
 ```
 $ curl -s localhost:4001/v2/keys/service/my_first_cluster/members | jq ".node.nodes[].value"
-"{\"role\":\"master\",\"state\":\"running\",\"conn_url\":\"postgres://replicator:replicator@10.244.20.6:40001/postgres\",\"api_url\":\"http://127.0.0.1:8008/patroni\",\"xlog_location\":50332008}"
-"{\"role\":\"replica\",\"state\":\"running\",\"conn_url\":\"postgres://replicator:replicator@10.244.20.6:40000/postgres\",\"api_url\":\"http://127.0.0.1:8008/patroni\",\"xlog_location\":50332008}"
+"{\"role\":\"master\",\"state\":\"running\",\"conn_url\":\"postgres://replicator:replicator@10.244.21.6:40001/postgres\",\"api_url\":\"http://127.0.0.1:8008/patroni\",\"xlog_location\":50332008}"
+"{\"role\":\"replica\",\"state\":\"running\",\"conn_url\":\"postgres://replicator:replicator@10.244.21.6:40000/postgres\",\"api_url\":\"http://127.0.0.1:8008/patroni\",\"xlog_location\":50332008}"
 ```
 
 Confirm that the master has the replica registered:
 
 ```
-$ psql postgres://replicator:replicator@10.244.20.6:40000/postgres -c 'select * from pg_stat_replication;'
+$ psql postgres://replicator:replicator@10.244.21.6:40000/postgres -c 'select * from pg_stat_replication;'
 pid | usesysid |  usename   | application_name | client_addr |...
  82 |    16384 | replicator | walreceiver      | 172.17.42.1 |...
 ```
@@ -171,7 +171,7 @@ The replica logs will show that the replication starts failing and eventually pa
 ```
 2015-10-21 22:06:49,068 INFO: no action.  i am a secondary and i am following a leader
 FATAL:  could not connect to the primary server: could not connect to server: Connection refused
-		Is the server running on host "10.244.20.6" and accepting
+		Is the server running on host "10.244.21.6" and accepting
 		TCP/IP connections on port 40000?
 ...
 ConnectionError: HTTPConnectionPool(host='127.0.0.1', port=8008): Max retries exceeded with url: /patroni (Caused by <class 'httplib.BadStatusLine'>: '')
@@ -206,7 +206,7 @@ The old master will recognize it is no longer the master and will resynchronize 
 
 ```
 Starting Patroni...
-2015-10-21 22:07:37,350 INFO: Starting new HTTP connection (1): 10.244.20.6
+2015-10-21 22:07:37,350 INFO: Starting new HTTP connection (1): 10.244.21.6
 2015-10-21 22:07:37,391 WARNING: Postgresql is not running.
 2015-10-21 22:07:37,391 INFO: Lock owner: postgresql_172_17_0_63; I am postgresql_172_17_0_64
 2015-10-21 22:07:37,425 INFO: Removed /data/postgres0/postmaster.pid
