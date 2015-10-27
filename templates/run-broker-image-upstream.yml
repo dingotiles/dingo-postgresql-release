@@ -15,7 +15,6 @@ meta:
   job_templates:
     # run docker daemon
     - {name: docker, release: patroni}
-    # do not run postgresql_images template that installs embedded docker image
     # run service broker
     - {name: cf-containers-broker, release: patroni}
 
@@ -36,7 +35,7 @@ properties:
     password: (( grab meta.cfcontainersbroker.password ))
     cookie_secret: (( grab meta.cfcontainersbroker.cookie_secret ))
     max_containers: (( grab meta.cfcontainersbroker.max_containers ))
-    fetch_images: false
+    fetch_images: true
 
     services:
       - id: '0f5c1670-6dc3-11e5-bc08-6c4008a663f0'
