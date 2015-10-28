@@ -1,0 +1,17 @@
+---
+name: rancher-metadata
+packages:
+- rancher-metadata
+templates:
+  bin/ctl: bin/ctl
+  bin/monit_debugger: bin/monit_debugger
+  data/properties.sh.erb: data/properties.sh
+  helpers/ctl_setup.sh: helpers/ctl_setup.sh
+  helpers/ctl_utils.sh: helpers/ctl_utils.sh
+properties:
+  docker.user:
+    description: "User which will own the Docker services"
+    default: "root"
+  docker.group:
+    description: "Group which will own the Docker services"
+    default: "vcap"

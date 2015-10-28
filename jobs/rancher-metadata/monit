@@ -1,0 +1,5 @@
+check process rancher-metadata
+  with pidfile /var/vcap/sys/run/rancher-metadata/rancher-metadata.pid
+  start program "/var/vcap/jobs/rancher-metadata/bin/monit_debugger rancher_metadata_ctl '/var/vcap/jobs/rancher-metadata/bin/ctl start'"
+  stop program "/var/vcap/jobs/rancher-metadata/bin/monit_debugger rancher_metadata_ctl '/var/vcap/jobs/rancher-metadata/bin/ctl stop'"
+  group vcap
