@@ -35,3 +35,7 @@ ruby/yaml-0.1.6.tar.gz:
   object_id: cf573004-2371-454c-92d9-e13d4d40c390
   sha: f3d404e11bec3c4efcddfd14c42d46f1aabe0b5d
   size: 503012
+rancher/rancher-metadata-v0.1.0.tar.gz:
+  object_id: 1df1918a-700b-4c85-bfe0-2ee3d96a22de
+  sha: b3c531f7303bef3719f540b9fa701e0152bff182
+  size: 1997045
