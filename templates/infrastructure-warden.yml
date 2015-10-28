@@ -13,6 +13,8 @@ meta:
   stemcell:
     name: bosh-warden-boshlite-ubuntu-trusty-go_agent
     version: latest
+  etcd:
+    host: 10.244.4.2
 
 update:
   canaries: 1

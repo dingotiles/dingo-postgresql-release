@@ -59,15 +59,17 @@ properties:
               backend: 'docker'
               image: cfcommunity/postgresql-patroni
               tag: "9.4"
-            #   persistent_volumes:
-            #     - '/data'
-            # credentials:
-            #   username:
-            #     key: 'POSTGRES_USERNAME'
-            #   password:
-            #     key: 'POSTGRES_PASSWORD'
-            #   dbname:
-            #     key: 'POSTGRES_DBNAME'
-            #   uri:
-            #     prefix: 'postgres'
+              persistent_volumes:
+                - '/data'
+              environment:
+                - (( concat "ETCD_CLUSTER=" meta.etcd.host ":4001" ))
+            credentials:
+              username:
+                key: 'POSTGRES_USERNAME'
+              password:
+                key: 'POSTGRES_PASSWORD'
+              dbname:
+                key: 'POSTGRES_DBNAME'
+              uri:
+                prefix: 'postgres'
             description: 'Free Trial'
