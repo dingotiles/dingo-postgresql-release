@@ -2,6 +2,8 @@
 groups:
 - name: pipeline
   jobs: [image-patroni-pg94]
+- name: base
+  jobs: [image-patroni-pg94-base]
 jobs:
 - name: image-patroni-pg94-base
   public: true
