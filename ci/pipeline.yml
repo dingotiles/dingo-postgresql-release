@@ -11,6 +11,7 @@ jobs:
   plan:
   - aggregate:
     - {get: boshrelease}
+    - {get: boshrelease-base-image, trigger: true}
   - put: docker-image-pg94-patroni-base
     params:
       build: boshrelease/images/postgresql94-patroni-base
@@ -22,7 +23,7 @@ jobs:
   - aggregate:
     - {get: patroni}
     - {get: boshrelease}
-    - {get: boshrelease-images, trigger: true}
+    - {get: boshrelease-final-image, trigger: true}
   - task: prepare-dockerfile
     file: boshrelease/ci/tasks/prepare-dockerfile.yml
     config:
@@ -40,13 +41,21 @@ resources:
     branch: {{pipeline-branch}}
     private_key: {{github-key}}
 
-- name: boshrelease-images
+- name: boshrelease-final-image
   type: git
   source:
     uri: git@github.com:cloudfoundry-community/patroni-boshrelease.git
     branch: {{pipeline-branch}}
     private_key: {{github-key}}
-    paths: [images/*]
+    paths: [images/postgresql94-patroni]
+
+- name: boshrelease-base-image
+  type: git
+  source:
+    uri: git@github.com:cloudfoundry-community/patroni-boshrelease.git
+    branch: {{pipeline-branch}}
+    private_key: {{github-key}}
+    paths: [images/postgresql94-patroni-base]
 
 - name: patroni
   type: git
