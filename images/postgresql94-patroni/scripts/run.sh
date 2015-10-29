@@ -5,8 +5,15 @@ mkdir -p $DATA_DIR
 
 DOCKER_IP=$(hostname --ip-address)
 
+PATRONI_SCOPE=${PATRONI_SCOPE:-$NAME}
+
+if [[ -z "${PATRONI_SCOPE}" ]]; then
+  echo "Requires \$PATRONI_SCOPE or \$NAME to advertise container and form cluster"
+  exit 1
+fi
+
 # determine host:port to advertise into etcd for replication
-if [[ "${HOSTPORT_5432_TCP}X" != "X" ]]; then
+if [[ ! -z "${HOSTPORT_5432_TCP}" ]]; then
   CONNECT_ADDRESS=${HOSTPORT_5432_TCP}
 fi
 CONNECT_ADDRESS=${CONNECT_ADDRESS:-${DOCKER_IP}:5432}
