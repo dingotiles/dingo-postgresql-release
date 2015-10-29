@@ -5,6 +5,9 @@ mkdir -p $DATA_DIR
 
 DOCKER_IP=$(hostname --ip-address)
 
+REGISTRATOR_PREFIX=${REGISTRATOR_PREFIX:-}
+REGISTRATOR_DOCKER_IMAGE=${REGISTRATOR_DOCKER_IMAGE:-postgresql-patroni} # used as path by registrator entries
+
 PATRONI_SCOPE=${PATRONI_SCOPE:-$NAME}
 
 if [[ -z "${PATRONI_SCOPE}" ]]; then
@@ -16,10 +19,18 @@ if [[ -z "${ETCD_HOST_PORT}" ]]; then
   exit 1
 fi
 
-# determine host:port to advertise into etcd for replication
-if [[ ! -z "${HOSTPORT_5432_TCP}" ]]; then
-  CONNECT_ADDRESS=${HOSTPORT_5432_TCP}
+# look up public host:port binding from registrar entry in etcd
+# this is then advertised via patroni for replicas to connect
+if [[ ! -z "${DOCKER_HOSTNAME}" ]]; then
+  registrator_uri="${ETCD_HOST_PORT}/v2/keys/${REGISTRATOR_DOCKER_IMAGE}/${DOCKER_HOSTNAME}:${NAME}:5432"
+  echo looking up public host:port from etc
+  echo -> ${registrator_uri}
+  CONNECT_ADDRESS=$(curl -v ${registrator_uri} | jq -r .node.value)
+  if [[ -z "${CONNECT_ADDRESS}" ]]; then
+    echo failed to look up container in etcd; failing over to local docker IP only
+  fi
 fi
+# else fail back to local docker ip advertisement (single docker engine only)
 CONNECT_ADDRESS=${CONNECT_ADDRESS:-${DOCKER_IP}:5432}
 
 POSTGRES_USERNAME=${POSTGRES_USERNAME:-pgadmin}
