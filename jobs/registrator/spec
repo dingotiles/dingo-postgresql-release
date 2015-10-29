@@ -1,7 +1,6 @@
 ---
-name: rancher-metadata
-packages:
-- rancher-metadata
+name: registrator
+packages: []
 templates:
   bin/ctl: bin/ctl
   bin/monit_debugger: bin/monit_debugger
@@ -15,3 +14,6 @@ properties:
   docker.group:
     description: "Group which will own the Docker services"
     default: "vcap"
+
+  registrator.backend_uri:
+    description: "protocol://host:port to consul/etcd/skydns2 for registrator updates"

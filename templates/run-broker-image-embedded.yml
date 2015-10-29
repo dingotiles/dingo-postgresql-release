@@ -15,8 +15,8 @@ meta:
   job_templates:
     # run docker daemon
     - {name: docker, release: patroni}
-    # run rancher-metadata daemon
-    - {name: rancher-metadata, release: patroni}
+    # run registrator daemon
+    - {name: registrator, release: patroni}
     # warm docker image cache from bosh package
     - {name: postgresql_images, release: patroni}
     # run service broker
@@ -27,6 +27,9 @@ properties:
 
   cf:
     api_url: (( grab meta.cfcontainersbroker.cc_api_uri ))
+
+  registrator:
+    backend_uri: (( grab meta.registrator.backend_uri))
 
   broker:
     name: (( grab meta.cfcontainersbroker.component_name ))

@@ -1,5 +1,0 @@
----
-name: rancher-metadata
-dependencies: []
-files:
-- rancher/rancher-metadata-v0.1.0.tar.gz
