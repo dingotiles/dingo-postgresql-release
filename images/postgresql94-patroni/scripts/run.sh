@@ -24,6 +24,14 @@ POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-$(pwgen -s -1 16)}
 WALE_ENV_DIR=${WALE_ENV_DIR:-/data/wal-e/env}
 mkdir -p $WALE_ENV_DIR
 
+if [[ ! -z "${HOSTNAME}" ]]; then
+  NODE_NAME="postgresql_${PATRONI_SCOPE}_${HOSTNAME}"
+fi
+if [[ ! -z "${HOSTIP}" ]]; then
+  NODE_NAME="postgresql_${PATRONI_SCOPE}_${HOSTIP}"
+fi
+NODE_NAME=${NODE_NAME:-postgresql_${DOCKER_IP}}
+
 # pass thru environment variables into an env dir for postgres user's archive/restore commands
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 ${DIR}/envdir.sh ${WALE_ENV_DIR}
@@ -61,7 +69,7 @@ etcd:
   ttl: *ttl
   host: ${ETCD_CLUSTER}
 postgresql:
-  name: postgresql_${DOCKER_IP//./_} ## Replication slots do not allow dots in their name
+  name: ${NODE_NAME//./_}} ## Replication slots do not allow dots in their name
   scope: *scope
   listen: 0.0.0.0:5432
   connect_address: ${CONNECT_ADDRESS}
