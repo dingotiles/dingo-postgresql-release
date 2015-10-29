@@ -26,10 +26,13 @@ PG_DATA_DIR=${PG_DATA_DIR:-${DATA_DIR}/postgres0}
 WALE_ENV_DIR=${WALE_ENV_DIR:-${DATA_DIR}/wal-e/env}
 mkdir -p $WALE_ENV_DIR
 
-if [[ "${DOCKER_HOST_IP}X" != "X" ]]; then
-  NODE_NAME=${NODE_NAME:-"postgresql_${PATRONI_SCOPE}_${DOCKER_HOST_IP}"}
+if [[ "${NODE_GUID}X" != "X" ]]; then
+  NODE_NAME=${NODE_NAME:-"pg_${PATRONI_SCOPE}_${NODE_GUID}"}
 fi
-NODE_NAME=${NODE_NAME:-postgresql_${DOCKER_IP}}
+if [[ "${BROKER_GUID}X" != "X" ]]; then
+  NODE_NAME=${NODE_NAME:-"pg_${PATRONI_SCOPE}_${BROKER_GUID}"}
+fi
+NODE_NAME=${NODE_NAME:-pg_${DOCKER_IP}}
 
 # pass thru environment variables into an env dir for postgres user's archive/restore commands
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
