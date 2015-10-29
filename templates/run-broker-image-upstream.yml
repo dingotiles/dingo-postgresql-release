@@ -18,7 +18,7 @@ meta:
     # run registrator daemon
     - {name: registrator, release: patroni}
     # create uuid for each broker/daemon
-    - {name: cf-container-broker-node-uuid, release: patroni}
+    - {name: cf-container-broker-node-guid, release: patroni}
     # run service broker
     - {name: cf-containers-broker, release: patroni}
 

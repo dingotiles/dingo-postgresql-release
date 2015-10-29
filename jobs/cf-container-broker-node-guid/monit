@@ -1,0 +1,2 @@
+check file node_uuid with path <%= p("broker.container_env_var_dir") %>/NODE_GUID
+  if not exist then exec "/var/vcap/packages/bosh-helpers/monit_debugger node_guid /var/vcap/jobs/cf-container-broker-node-guid/bin/generate_node_uuid <%= p("broker.container_env_var_dir") %>/NODE_GUID"

@@ -1,5 +1,5 @@
 ---
-name: cf-container-broker-node-uuid
+name: cf-container-broker-node-guid
 packages: []
 templates:
   bin/generate_node_uuid: bin/generate_node_uuid
