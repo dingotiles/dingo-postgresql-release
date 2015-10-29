@@ -24,11 +24,11 @@ POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-$(pwgen -s -1 16)}
 WALE_ENV_DIR=${WALE_ENV_DIR:-/data/wal-e/env}
 mkdir -p $WALE_ENV_DIR
 
-if [[ ! -z "${HOSTNAME}" ]]; then
-  NODE_NAME="postgresql_${PATRONI_SCOPE}_${HOSTNAME}"
+if [[ "${HOSTNAME}X" != "X" ]]; then
+  NODE_NAME=${NODE_NAME:-"postgresql_${PATRONI_SCOPE}_${HOSTNAME}"}
 fi
-if [[ ! -z "${HOSTIP}" ]]; then
-  NODE_NAME="postgresql_${PATRONI_SCOPE}_${HOSTIP}"
+if [[ "${HOSTIP}X" != "X" ]]; then
+  NODE_NAME=${NODE_NAME:-"postgresql_${PATRONI_SCOPE}_${HOSTIP}"}
 fi
 NODE_NAME=${NODE_NAME:-postgresql_${DOCKER_IP}}
 
