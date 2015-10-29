@@ -73,6 +73,9 @@ properties:
   broker.logrotate.size:
     description: 'Size before Docker daemon log files are rotateds'
     default: '2M'
+  broker.container_env_var_dir:
+    description: Directory of files that will become environment variables for all containers
+    default: /var/vcap/store/cf-containers-broker/envdir
 
   cf.api_url:
     description: 'URL of the CloudFoundry Cloud Controller'

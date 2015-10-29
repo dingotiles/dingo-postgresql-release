@@ -1,0 +1,10 @@
+---
+name: cf-container-broker-node-uuid
+packages: []
+templates:
+  bin/generate_node_uuid: bin/generate_node_uuid
+  bin/monit_debugger: bin/monit_debugger
+properties:
+  broker.container_env_var_dir:
+    description: Directory of files that will become environment variables for all containers
+    default: /var/vcap/store/cf-containers-broker/envdir

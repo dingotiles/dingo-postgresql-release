@@ -19,6 +19,8 @@ meta:
     - {name: registrator, release: patroni}
     # warm docker image cache from bosh package
     - {name: postgresql_images, release: patroni}
+    # create uuid for each broker/daemon
+    - {name: cf-container-broker-node-uuid, release: patroni}
     # run service broker
     - {name: cf-containers-broker, release: patroni}
 
