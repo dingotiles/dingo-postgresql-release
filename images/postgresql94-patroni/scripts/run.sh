@@ -21,7 +21,9 @@ CONNECT_ADDRESS=${CONNECT_ADDRESS:-${DOCKER_IP}:5432}
 POSTGRES_USERNAME=${POSTGRES_USERNAME:-pgadmin}
 POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-$(pwgen -s -1 16)}
 
-WALE_ENV_DIR=${WALE_ENV_DIR:-/data/wal-e/env}
+PG_DATA_DIR=${PG_DATA_DIR:-${DATA_DIR}/postgres0}
+
+WALE_ENV_DIR=${WALE_ENV_DIR:-${DATA_DIR}/wal-e/env}
 mkdir -p $WALE_ENV_DIR
 
 if [[ "${DOCKER_HOST_IP}X" != "X" ]]; then
@@ -70,7 +72,7 @@ postgresql:
   scope: *scope
   listen: 0.0.0.0:5432
   connect_address: ${CONNECT_ADDRESS}
-  data_dir: /data/postgres0
+  data_dir: ${PG_DATA_DIR}
   maximum_lag_on_failover: 1048576 # 1 megabyte in bytes
   use_slots: False
   pgpass: /tmp/pgpass
@@ -119,7 +121,8 @@ postgresql:
     wal_log_hints: "on"
 __EOF__
 
-chown postgres:postgres -R $DATA_DIR /patroni /pgpass /patroni.py
+chown postgres:postgres -R $DATA_DIR $PG_DATA_DIR /patroni /pgpass /patroni.py
+chmod 700 $PG_DATA_DIR
 cat /patroni/postgres.yml
 
 echo ----------------------
