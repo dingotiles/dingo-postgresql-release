@@ -1,8 +1,6 @@
 FROM cfcommunity/postgresql-patroni-base:9.4
 MAINTAINER Dr Nic Williams
 
-RUN pip install wal-e --upgrade
-
 ADD patroni/patroni.py /patroni.py
 ADD patroni/patroni /patroni
 
