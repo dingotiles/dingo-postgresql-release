@@ -68,6 +68,8 @@ properties:
               tag: "9.4"
               persistent_volumes:
                 - '/data'
+              environment:
+                - (( concat "ETCD_CLUSTER=" meta.etcd.host ":" meta.etcd.port ))
             credentials:
               username:
                 key: 'POSTGRES_USERNAME'
