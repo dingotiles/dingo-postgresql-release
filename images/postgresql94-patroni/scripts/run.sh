@@ -66,7 +66,7 @@ etcd:
   ttl: *ttl
   host: ${ETCD_CLUSTER}
 postgresql:
-  name: ${NODE_NAME//./_}} ## Replication slots do not allow dots in their name
+  name: ${NODE_NAME//./_} ## Replication slots do not allow dots in their name
   scope: *scope
   listen: 0.0.0.0:5432
   connect_address: ${CONNECT_ADDRESS}
