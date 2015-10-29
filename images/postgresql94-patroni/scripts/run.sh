@@ -11,6 +11,10 @@ if [[ -z "${PATRONI_SCOPE}" ]]; then
   echo "Requires \$PATRONI_SCOPE or \$NAME to advertise container and form cluster"
   exit 1
 fi
+if [[ -z "${ETCD_HOST_PORT}" ]]; then
+  echo "Requires \$ETCD_HOST_PORT (host:port) for etcd used by registrator & patroni"
+  exit 1
+fi
 
 # determine host:port to advertise into etcd for replication
 if [[ ! -z "${HOSTPORT_5432_TCP}" ]]; then
@@ -69,7 +73,7 @@ restapi:
 etcd:
   scope: *scope
   ttl: *ttl
-  host: ${ETCD_CLUSTER}
+  host: ${ETCD_HOST_PORT}
 postgresql:
   name: ${NODE_NAME//./_} ## Replication slots do not allow dots in their name
   scope: *scope
