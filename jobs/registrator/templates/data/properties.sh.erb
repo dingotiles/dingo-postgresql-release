@@ -16,3 +16,5 @@ export DOCKER_USER="<%= p('docker.user') %>"
 export DOCKER_GROUP="<%= p('docker.group') %>"
 
 export REGISTRATOR_BACKEND_URI="<%= p('registrator.backend_uri') %>"
+
+export DOCKER_HOSTNAME="<%= index %>.<%= name %>.<%= spec.networks.methods(false).grep(/[^=]$/).first.to_s %>.<%= spec.deployment %>.<%= spec.dns_domain_name %>"
