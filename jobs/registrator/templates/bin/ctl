@@ -30,7 +30,7 @@ case $1 in
           --name=${container_name} \
           --net=host \
           --volume=${docker_sock}:/tmp/docker.sock \
-          ${REGISTRATOR_IMAGE} -hostname ${DOCKER_HOSTNAME} ${REGISTRATOR_BACKEND_URI} \
+          ${REGISTRATOR_IMAGE} -hostname ${DOCKER_HOSTNAME} -ip ${DOCKER_HOSTIP} ${REGISTRATOR_BACKEND_URI} \
             >>${LOG_DIR}/${output_label}.stdout.log \
             2>>${LOG_DIR}/${output_label}.stderr.log
 

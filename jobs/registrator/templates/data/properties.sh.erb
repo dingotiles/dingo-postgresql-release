@@ -17,4 +17,23 @@ export DOCKER_GROUP="<%= p('docker.group') %>"
 
 export REGISTRATOR_BACKEND_URI="<%= p('registrator.backend_uri') %>"
 
+<%
+  require 'json'
+
+  def discover_external_ip
+    networks = spec.networks.marshal_dump
+    _, network = networks.find do |_name, network_spec|
+      network_spec.default
+    end
+    if !network
+      _, network = networks.first
+    end
+    if !network
+      raise "Could not determine IP via network spec: #{networks}"
+    end
+    network.ip
+  end
+%>
+
 export DOCKER_HOSTNAME="<%= index %>.<%= name %>.<%= spec.networks.methods(false).grep(/[^=]$/).first.to_s %>.<%= spec.deployment %>.<%= spec.dns_domain_name %>"
+export DOCKER_HOSTIP="<%= discover_external_ip %>"
