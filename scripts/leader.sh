@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# USAGE: watch -n1 "./scripts/leaders.sh | sort"
+
 set +e # fail fast
 set +x # print commands
 
