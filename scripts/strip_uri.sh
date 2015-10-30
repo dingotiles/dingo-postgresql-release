@@ -1,6 +1,7 @@
 #!/bin/bash
 
-DATABASE_URL=${DATABASE_URL:-$1}
+label=$1
+DATABASE_URL=${DATABASE_URL:-$2}
 # extract the protocol
 proto="`echo $DATABASE_URL | grep '://' | sed -e's,^\(.*://\).*,\1,g'`"
 # remove the protocol
@@ -27,4 +28,4 @@ fi
 # extract the path (if any)
 path="`echo $url | grep / | cut -d/ -f2-`"
 
-echo $proto $user $pass $host $port $path
+echo $label $proto $user $pass $host $port $path
