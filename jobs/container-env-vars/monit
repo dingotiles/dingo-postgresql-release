@@ -1,0 +1,9 @@
+check process docker_hostname with pidfile /var/vcap/sys/run/container-env-vars/DOCKER_HOSTNAME.pid
+  group vcap
+  start program "/var/vcap/packages/bosh-helpers/monit_debugger docker_hostname '/var/vcap/jobs/container-env-vars/bin/store_hostname start <%= p("broker.container_env_var_dir") %>/DOCKER_HOSTNAME'"
+  stop program "/var/vcap/packages/bosh-helpers/monit_debugger docker_hostname '/var/vcap/jobs/container-env-vars/bin/store_hostname stop DOCKER_HOSTNAME'"
+
+check file node_uuid
+  with path <%= p("broker.container_env_var_dir") %>/NODE_GUID
+  if not exist then
+    exec "/var/vcap/packages/bosh-helpers/monit_debugger node_guid /var/vcap/jobs/container-env-vars/bin/generate_node_uuid <%= p("broker.container_env_var_dir") %>/NODE_GUID"

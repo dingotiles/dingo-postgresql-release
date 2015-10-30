@@ -1,0 +1,40 @@
+#!/bin/bash
+
+set -e # exit immediately if a simple command exits with a non-zero status
+set -u # report the usage of uninitialized variables
+
+
+case $1 in
+  start)
+
+    env_var_path=$2
+    if [[ -z "$env_var_path" ]]; then
+      echo "Usage: $0 start /var/vcap/store/cf-containers-broker/direnv/DOCKER_HOSTNAME"
+      exit 1
+    fi
+    mkdir -p $(dirname $env_var_path)
+
+    PIDFILE=/var/vcap/sys/run/container-env-vars/$(basename $env_var_path).pid
+    mkdir -p $(dirname $PIDFILE)
+    echo $$ > ${PIDFILE}
+
+    while true
+    do
+      echo $(su vcap -c /bin/hostname) > ${env_var_path}
+    	sleep 10
+    done
+
+    ;;
+  stop)
+    PIDFILE=/var/vcap/sys/run/container-env-vars/$2.pid
+
+    kill_and_wait ${PIDFILE}
+    ;;
+
+  *)
+    echo "Usage: $0 {start|stop}"
+    exit 1
+    ;;
+
+esac
+exit 0

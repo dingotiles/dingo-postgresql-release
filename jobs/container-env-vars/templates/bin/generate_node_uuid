@@ -3,10 +3,10 @@
 set -e # exit immediately if a simple command exits with a non-zero status
 set -u # report the usage of uninitialized variables
 
-node_uuid_path=$1
-if [[ -z "$node_uuid_path" ]]; then
+env_var_path=$1
+if [[ -z "$env_var_path" ]]; then
   echo "USAGE: generate_node_uuid /var/vcap/store/cf-containers-broker/direnv/node_uuid"
   exit 1
 fi
-mkdir -p $(dirname $node_uuid_path)
-cat /proc/sys/kernel/random/uuid >> ${node_uuid_path}
+mkdir -p $(dirname $env_var_path)
+cat /proc/sys/kernel/random/uuid >> ${env_var_path}
