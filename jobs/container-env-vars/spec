@@ -3,7 +3,7 @@ name: container-env-vars
 packages: []
 templates:
   bin/generate_node_uuid: bin/generate_node_uuid
-  bin/store_hostname: bin/store_hostname
+  bin/store_hostname.erb: bin/store_hostname
   bin/monit_debugger: bin/monit_debugger
 properties:
   broker.container_env_var_dir:
