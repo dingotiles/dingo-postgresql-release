@@ -22,11 +22,22 @@ fi
 # look up public host:port binding from registrar entry in etcd
 # this is then advertised via patroni for replicas to connect
 if [[ ! -z "${DOCKER_HOSTNAME}" ]]; then
-  registrator_uri="${ETCD_HOST_PORT}/v2/keys/${REGISTRATOR_DOCKER_IMAGE}/${DOCKER_HOSTNAME}:${NAME}:5432"
-  echo looking up public host:port from etc
-  echo -> ${registrator_uri}
-  CONNECT_ADDRESS=$(curl -v ${registrator_uri} | jq -r .node.value)
-  if [[ -z "${CONNECT_ADDRESS}" ]]; then
+  i="0"
+  while [[  $i -lt 4 ]]
+  do
+    sleep 3
+    registrator_uri="${ETCD_HOST_PORT}/v2/keys/${REGISTRATOR_DOCKER_IMAGE}/${DOCKER_HOSTNAME}:${NAME}:5432"
+    echo looking up public host:port from etc
+    echo "-> ${registrator_uri}"
+    CONNECT_ADDRESS=$(curl -vL ${registrator_uri} | jq -r .node.value)
+    if [[ "${CONNECT_ADDRESS}" == "null" ]]; then
+      echo container not yet registered, waiting...
+    else
+      break
+    fi
+    i=$[$i+1]
+  done
+  if [[ "${CONNECT_ADDRESS}" == "null" ]]; then
     echo failed to look up container in etcd; failing over to local docker IP only
   fi
 fi
