@@ -16,7 +16,7 @@ fi
 
 leader_id=$(curl -s ${etcd_cluster}/v2/keys/service/${internal_service_id}/leader | jq -r .node.value)
 if [[ -z "${leader_id}" || "${leader_id}" == "null" ]]; then
-  echo "Cluster ${internal_id} not found or leader not available yet"
+  echo "Cluster ${internal_service_id} not found or leader not available yet"
   exit 1
 fi
 
