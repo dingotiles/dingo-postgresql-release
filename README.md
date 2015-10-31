@@ -1,12 +1,40 @@
 Patroni for Cloud Foundry
 =========================
 
-Background
+Dependencies
+------------
+
+This system requires:
+
+-	BOSH or bosh-lite, and the `bosh` CLI installed locally
+-	`spruce` CLI to merge YAML files, from http://spruce.cf/
+-	a running etcd cluster
+
+### ETCD cluster
+
+This system assumes you have an etcd cluster running.
+
+For example, try using [cloudfoundry-incubator/etcd-release](https://github.com/cloudfoundry-incubator/etcd-release).
+
+Now create a spruce stub file with your etcd cluster information, say `tmp/etcd.yml`:
+
+```yaml
+---
+meta:
+  etcd:
+    host: 10.244.4.2
+    port: "4001"
+  registrator:
+    backend_uri: (( concat "etcd://" meta.etcd.host ":" meta.etcd.port ))
+```
+
+Deployment
 ----------
 
-### registrator job
-
-This is running a fork of gliderlabs/registrator https://github.com/drnic/registrator/tree/hostname-override that allows use to set the `-hostname` used in the registration. This means we can use BOSH VM information; rather than generic IaaS hostname info. This is especially good for bosh-lite vms which share the same common `hostname`.
+```
+./templates/make_manifest warden upstream tmp/etcd.yml
+bosh deploy
+```
 
 Usage
 -----
@@ -59,3 +87,10 @@ If you restart `patroni/0` vm, the containers will restart and rejoin their clus
 ```
 bosh -n start patroni 0
 ```
+
+Background
+----------
+
+### registrator job
+
+This is running a fork of gliderlabs/registrator https://github.com/drnic/registrator/tree/hostname-override that allows use to set the `-hostname` used in the registration. This means we can use BOSH VM information; rather than generic IaaS hostname info. This is especially good for bosh-lite vms which share the same common `hostname`.
