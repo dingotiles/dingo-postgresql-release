@@ -27,9 +27,35 @@ To confirm that the first container is the leader:
 
 ```
 $ ./scripts/leaders.sh
-cf-1 postgres:// replicator replicator 10.244.22.6 32768 postgres
+cf-1 postgres:// replicator replicator 10.244.22.6 30000 postgres
 ```
 
 Note that `id=1` has become `cf-1`.
 
 Create more container clusters with different `id=123` and you'll see the first container created is the leader.
+
+Now stop/destroy the VM running the leader of your cluster:
+
+```
+bosh -n stop patroni 0
+```
+
+Initially the cluster will lose its master:
+
+```
+$ ./scripts/leaders.sh
+Cluster cf-1 not found or leader not available yet
+```
+
+And eventually the follower in the `cf-1` cluster will become the master:
+
+```
+$ ./scripts/leaders.sh
+cf-1 postgres:// replicator replicator 10.244.22.7 40000 postgres
+```
+
+If you restart `patroni/0` vm, the containers will restart and rejoin their clusters.
+
+```
+bosh -n start patroni 0
+```
