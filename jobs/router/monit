@@ -3,3 +3,9 @@ check process confd
   start program "/var/vcap/jobs/router/bin/monit_debugger router_confd_ctl '/var/vcap/jobs/router/bin/confd_ctl start'"
   stop program "/var/vcap/jobs/router/bin/monit_debugger router_confd_ctl '/var/vcap/jobs/router/bin/confd_ctl stop'"
   group vcap
+
+check process haproxy
+  with pidfile /var/vcap/sys/run/router/haproxy.pid
+  start program "/var/vcap/jobs/router/bin/haproxy_ctl start"
+  stop program "/var/vcap/jobs/router/bin/haproxy_ctl stop"
+  group vcap

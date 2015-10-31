@@ -5,12 +5,17 @@ packages:
 - confd
 templates:
   bin/confd_ctl: bin/confd_ctl
+  bin/haproxy_ctl: bin/haproxy_ctl
   bin/monit_debugger: bin/monit_debugger
   helpers/ctl_setup.sh: helpers/ctl_setup.sh
   helpers/ctl_utils.sh: helpers/ctl_utils.sh
+  config/haproxy_syslog.conf.erb: config/haproxy_syslog.conf
   confd/confd.toml: confd/confd.toml
   confd/conf.d/router.toml: confd/conf.d/router.toml
   confd/templates/haproxy.tmpl: confd/templates/haproxy.tmpl
 properties:
   router.etcd.nodes:
     description: array of host:port for etcd cluster to load router configuration
+  haproxy.log_to_file:
+    description: "Whether to send logs to a file instead of the default syslog"
+    default: false
