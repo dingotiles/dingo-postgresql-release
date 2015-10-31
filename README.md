@@ -1,6 +1,14 @@
 Patroni for Cloud Foundry
 =========================
 
+This BOSH release deploys a cluster of cells that can run high-availability clustered PostgreSQL. It includes a front-facing routing mesh to route connections the master/solo PostgreSQL node in each cluster.
+
+Many PostgreSQL servers can be run on each cell/server. The solution uses Docker images for package PostgreSQL, and Docker engine to run PostgreSQL in Linux containers.
+
+Clustering between multiple nodes each PostgreSQL cluster is automatically coordinated by https://github.com/zalando/patroni, using etcd backend as a high-availability data store.
+
+If a cell/server is lost, then replicas on other cells are promoted to be the master of each cluster, and the front facing router automatically starts directly traffic to the new master.
+
 Dependencies
 ------------
 
@@ -60,7 +68,7 @@ cf-1 postgres:// 10.244.22.6 30000 postgres
 
 Note that `id=1` has become `cf-1`.
 
-Create more container clusters with different `id=123` and you'll see the first container created is the leader.
+Create more container clusters with different `id=123` and you'll see the first container created automatically becomes the leader, thanks to patroni.
 
 Now stop/destroy the VM running the leader of your cluster:
 
