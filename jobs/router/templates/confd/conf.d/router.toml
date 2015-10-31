@@ -1,0 +1,11 @@
+[template]
+prefix = "/"
+src = "haproxy.tmpl"
+dest = "/var/vcap/sys/run/router/haproxy.cfg"
+owner = "vcap"
+mode = "0644"
+keys = [
+  "/routing",
+]
+# check_cmd = "/usr/sbin/nginx -t -c {{.src}}"
+# reload_cmd = "/var/vcap/jobs/router/bin/haproxy_ctl reload"

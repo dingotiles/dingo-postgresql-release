@@ -4,8 +4,13 @@ packages:
 - haproxy
 - confd
 templates:
-  bin/router_ctl: bin/router_ctl
+  bin/confd_ctl: bin/confd_ctl
   bin/monit_debugger: bin/monit_debugger
-  data/properties.sh.erb: data/properties.sh
   helpers/ctl_setup.sh: helpers/ctl_setup.sh
   helpers/ctl_utils.sh: helpers/ctl_utils.sh
+  confd/confd.toml: confd/confd.toml
+  confd/conf.d/router.toml: confd/conf.d/router.toml
+  confd/templates/haproxy.tmpl: confd/templates/haproxy.tmpl
+properties:
+  router.etcd.nodes:
+    description: array of host:port for etcd cluster to load router configuration

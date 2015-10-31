@@ -1,7 +1,5 @@
-<% if false %>
-check process router
-  with pidfile /var/vcap/sys/run/router/router.pid
-  start program "/var/vcap/jobs/router/bin/monit_debugger router_ctl '/var/vcap/jobs/router/bin/router_ctl start'"
-  stop program "/var/vcap/jobs/router/bin/monit_debugger router_ctl '/var/vcap/jobs/router/bin/router_ctl stop'"
+check process confd
+  with pidfile /var/vcap/sys/run/router/confd.pid
+  start program "/var/vcap/jobs/router/bin/monit_debugger router_confd_ctl '/var/vcap/jobs/router/bin/confd_ctl start'"
+  stop program "/var/vcap/jobs/router/bin/monit_debugger router_confd_ctl '/var/vcap/jobs/router/bin/confd_ctl stop'"
   group vcap
-<% end %>

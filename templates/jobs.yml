@@ -15,6 +15,11 @@ jobs:
     templates: (( grab meta.job_templates.router ))
     resource_pool: router_z1
     networks: (( param "please provide networks" ))
+    properties:
+      router:
+        etcd:
+          nodes:
+            - (( concat meta.etcd.host ":" meta.etcd.port ))
 
 resource_pools:
   - name: cell_z1

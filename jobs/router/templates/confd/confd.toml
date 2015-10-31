@@ -1,0 +1,10 @@
+backend = "etcd"
+nodes = <%= p("router.etcd.nodes") %>
+scheme = "http"
+prefix = "/"
+watch = true
+
+interval = 10
+debug = false
+verbose = true
+quiet = true

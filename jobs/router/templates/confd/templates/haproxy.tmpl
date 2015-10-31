@@ -1,0 +1,13 @@
+{{range $index, $name := ls "/routing"}}
+{{if eq $index 0}}
+# TCP services
+{{end}}
+{{range $port := ls (printf "/routing/%s" $name)}}
+listen {{$name}}_{{$port}}
+  mode tcp
+  bind *:{{$port}}
+  {{range $upstream := ls (printf "/routing/%s/%s" $name $port)}}
+  server {{$name}} {{$upstream}}
+  {{end}}
+{{end}}
+{{end}}
