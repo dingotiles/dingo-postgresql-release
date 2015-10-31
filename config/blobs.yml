@@ -35,3 +35,11 @@ ruby/yaml-0.1.6.tar.gz:
   object_id: cf573004-2371-454c-92d9-e13d4d40c390
   sha: f3d404e11bec3c4efcddfd14c42d46f1aabe0b5d
   size: 503012
+haproxy/haproxy-1.5.12.tar.gz:
+  object_id: d7e294eb-0bbf-4f0e-8023-83e9bf0199bf
+  sha: c488f7f108ddefb558bd86e7cbc1b71636ada856
+  size: 1344813
+haproxy/pcre-8.37.tar.gz:
+  object_id: 6415ba21-20ed-4056-adb3-16e6c0589d3e
+  sha: 4a24a20c61347d8da4edc86d5475aaf70ac146bb
+  size: 2041593
