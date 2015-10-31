@@ -13,6 +13,7 @@ meta:
   nats: (( params "please provide CF router's NATS info" ))
 
   job_templates:
+    patroni:
     # run docker daemon
     - {name: docker, release: patroni}
     # run registrator daemon

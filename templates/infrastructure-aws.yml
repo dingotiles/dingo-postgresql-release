@@ -7,20 +7,26 @@ meta:
 
 jobs:
   - name: patroni
-    networks:
-      - name: patroni1
+    networks: [{name: patroni1}]
     persistent_disk: (( grab meta.persistent_disk ))
+  - name: router
+    networks:
+      - name: router1
+        static_ips: (( static_ips(0,1,2,3) ))
 
 compilation:
-  cloud_properties:
-    instance_type: m1.small
+  cloud_properties: {instance_type: m1.small}
 
 resource_pools:
   - name: cell_z1
-    cloud_properties:
-      instance_type: m1.small
+    cloud_properties: {instance_type: c4.medium}
+  - name: router_z1
+    cloud_properties: {instance_type: t2.small}
 
 networks:
 - name: patroni1
   type: manual
   subnets: (( merge ))
+- name: router1
+  type: manual
+  subnets: (( grab meta.subnets ))

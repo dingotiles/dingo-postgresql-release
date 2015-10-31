@@ -1,6 +1,11 @@
+meta:
+  job_templates:
+    patroni: (( param "please provide templates for cells" ))
+    router: [{name: router, release: patroni}]
+
 update:
   canaries: 1
-  max_in_flight: 50
+  max_in_flight: 1
   canary_watch_time: 1000-30000
   update_watch_time: 1000-30000
   serial: false
@@ -8,9 +13,26 @@ update:
 jobs:
   - name: patroni
     instances: 3
-    templates: (( grab meta.job_templates ))
+    templates: (( grab meta.job_templates.patroni ))
     resource_pool: cell_z1
-    networks: (( merge ))
+    networks: (( param "please provide networks" ))
     persistent_disk: 10240
+  - name: router
+    instances: 1
+    templates: (( grab meta.job_templates.router ))
+    resource_pool: router_z1
+    networks: (( param "please provide networks" ))
 
-networks: (( param "please provide networks" ))
+resource_pools:
+  - name: cell_z1
+    stemcell: (( grab meta.stemcell ))
+    cloud_properties: (( param "please provide cloud_properties"))
+    network: patroni1
+  - name: router_z1
+    stemcell: (( grab meta.stemcell ))
+    cloud_properties: (( param "please provide cloud_properties"))
+    network: router1
+
+networks:
+- name: patroni1
+- name: router1

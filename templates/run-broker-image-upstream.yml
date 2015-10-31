@@ -13,6 +13,7 @@ meta:
   nats: (( params "please provide CF router's NATS info" ))
 
   job_templates:
+    patroni:
     # run docker daemon
     - {name: docker, release: patroni}
     # run registrator daemon
@@ -21,6 +22,11 @@ meta:
     - {name: container-env-vars, release: patroni}
     # run service broker
     - {name: cf-containers-broker, release: patroni}
+
+# longer watch times to allow download of docker images
+update:
+  canary_watch_time: 30000-300000
+  update_watch_time: 30000-300000
 
 properties:
   nats: (( grab meta.nats ))

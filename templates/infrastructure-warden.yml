@@ -24,21 +24,32 @@ update:
 
 jobs:
   - name: patroni
+    networks: [{name: patroni1}]
+  - name: router
     networks:
-      - name: patroni1
-        static_ips: ~
+      - name: router1
+        static_ips: (( static_ips(0,1,2,3) ))
 
 compilation:
-  cloud_properties:
-    name: random
+  cloud_properties: {name: random}
 
 resource_pools:
   - name: cell_z1
-    cloud_properties:
-      name: random
-    stemcell: (( grab meta.stemcell ))
+    cloud_properties: {name: random}
+  - name: router_z1
+    cloud_properties: {name: random}
 
 networks:
 - name: patroni1
   type: manual
-  subnets: (( grab meta.subnets ))
+  subnets:
+  - range: 10.244.21.0/24
+    gateway: 10.244.21.1
+    static: [10.244.21.2, 10.244.21.3, 10.244.21.4, 10.244.21.5]
+
+- name: router1
+  type: manual
+  subnets:
+  - range: 10.244.21.0/24
+    gateway: 10.244.21.1
+    static: [10.244.21.2, 10.244.21.3, 10.244.21.4, 10.244.21.5]
