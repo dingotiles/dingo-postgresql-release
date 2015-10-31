@@ -28,4 +28,4 @@ fi
 # extract the path (if any)
 path="`echo $url | grep / | cut -d/ -f2-`"
 
-echo $label $proto $user $pass $host $port $path
+echo $label $proto $host $port $path

@@ -55,7 +55,7 @@ To confirm that the first container is the leader:
 
 ```
 $ ./scripts/leaders.sh
-cf-1 postgres:// replicator replicator 10.244.22.6 30000 postgres
+cf-1 postgres:// 10.244.22.6 30000 postgres
 ```
 
 Note that `id=1` has become `cf-1`.
@@ -79,7 +79,7 @@ And eventually the follower in the `cf-1` cluster will become the master:
 
 ```
 $ ./scripts/leaders.sh
-cf-1 postgres:// replicator replicator 10.244.22.7 40000 postgres
+cf-1 postgres:// 10.244.22.7 40000 postgres
 ```
 
 If you restart `patroni/0` vm, the containers will restart and rejoin their clusters.
