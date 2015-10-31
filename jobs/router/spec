@@ -3,7 +3,9 @@ name: router
 packages:
 - haproxy
 - confd
+- jq
 templates:
+  bin/new_cluster_watcher_ctl: bin/new_cluster_watcher_ctl
   bin/confd_ctl: bin/confd_ctl
   bin/haproxy_ctl: bin/haproxy_ctl
   bin/monit_debugger: bin/monit_debugger
