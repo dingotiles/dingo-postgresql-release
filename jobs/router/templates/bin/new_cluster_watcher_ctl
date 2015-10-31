@@ -1,0 +1,34 @@
+#!/bin/bash
+
+
+export ETCD_CLUSTER=${ETCD_CLUSTER:-10.244.4.2:4001}
+event=$(curl -sL "http://${ETCD_CLUSTER}/v2/keys/service/?wait=true&recursive=true")
+
+pathRegexp="\/service\/([^\/]+)\/"
+
+function allocate_port() {
+  name=$1
+  echo "new cluster discovered by router: $name"
+
+  port=$(curl -sL "http://${ETCD_CLUSTER}/v2/keys/routing/nextport" | jq -r .node.value)
+  if [[ "${port}" == "null" ]]; then
+    port=30000
+  fi
+  nextPort=$((port+1))
+  curl -sL "http://${ETCD_CLUSTER}/v2/keys/routing/nextport" -X PUT -d value=${nextPort}
+
+  echo "assigning port $port"
+}
+
+while :
+do
+  eventIndex=$(echo $event | jq -r ".node.modifiedIndex")
+  nextEventIndex=$((eventIndex+1))
+  if [[ "$(echo $event | jq -r .action)" == "create" ]]; then
+    pathKey=$(echo $event | jq -r .node.key) # /service/cf-123/initialize
+    [[ $pathKey =~ $pathRegexp ]]
+    name="${BASH_REMATCH[1]}"
+    allocate_port $name
+  fi
+  event=$(curl -sL "http://${ETCD_CLUSTER}/v2/keys/service/?wait=true&recursive=true&waitIndex=${nextEventIndex}")
+done
