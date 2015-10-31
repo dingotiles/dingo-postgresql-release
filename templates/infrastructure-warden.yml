@@ -17,8 +17,6 @@ meta:
     host: 10.244.4.2
 
 update:
-  canaries: 1
-  max_in_flight: 50
   canary_watch_time: 1000-30000
   update_watch_time: 1000-30000
 
