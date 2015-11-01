@@ -1,8 +1,18 @@
+global
+    daemon
+    maxconn 256
+
+defaults
+    mode tcp
+    timeout connect 5000ms
+    timeout client 50000ms
+    timeout server 50000ms
+
 {{range $index, $name := ls "/routing/allocation"}}
-{{$port := (printf "/routing/allocation/%s" $name | getv)}}
+{{$leader_host := (printf "/cluster/%s/leader/host" $name | getv)}}
 {{$leader_port := (printf "/cluster/%s/leader/port" $name | getv)}}
-listen {{$name}}_{{$port}}
+listen {{$name}}
   mode tcp
-  bind *:{{$port}}
-  server {{$name}} {{(printf "/cluster/%s/leader/host" $name | getv)}}:{{$leader_port}}
+  bind *:{{(printf "/routing/allocation/%s" $name | getv)}}
+  server leader {{$leader_host}}:{{$leader_port}}
 {{end}}

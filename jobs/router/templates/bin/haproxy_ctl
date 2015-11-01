@@ -121,6 +121,7 @@ restart_haproxy() {
 
 reload_haproxy() {
     status_haproxy
+    RETVAL=0
     if [ "${RETVAL}" = 0 ]; then
         RETVAL=0
         ensure_dirs
