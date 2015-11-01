@@ -47,3 +47,7 @@ confd/confd-0.10.0-linux-amd64:
   object_id: e327f543-6fbb-4c7b-87f2-e2436d677af2
   sha: 900a528939e5291279a27d21c7e56e48cf89a60e
   size: 9632520
+jq/jq-linux64-1.5:
+  object_id: 0c840686-ab51-44a6-8b96-fc7088555f60
+  sha: d8e36831c3c94bb58be34dd544f44a6c6cb88568
+  size: 3027945
