@@ -22,6 +22,8 @@ This system requires:
 
 This system assumes you have an etcd cluster running.
 
+Why etcd? It is the common demoninator between registrator, patroni and confd. For example, to support consul we would first need to add consul support to patroni.
+
 For example, try using [cloudfoundry-incubator/etcd-release](https://github.com/cloudfoundry-incubator/etcd-release).
 
 Now create a spruce stub file with your etcd cluster information, say `tmp/etcd.yml`:

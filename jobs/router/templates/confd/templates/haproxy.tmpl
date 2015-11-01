@@ -1,13 +1,14 @@
-{{range $index, $name := ls "/routing"}}
+{{range $index, $name := ls "/routing/allocation"}}
+{{$name}}
 {{if eq $index 0}}
 # TCP services
 {{end}}
-{{range $port := ls (printf "/routing/%s" $name)}}
+{{$port := (printf "/routing/allocation/%s" $name | getv)}}
+{{$leader := (printf "/service/%s/leader" $name | getv)}}
+{{$leader_info := (printf "/service/%s/members/%s" $name $leader | getv)}}
 listen {{$name}}_{{$port}}
   mode tcp
   bind *:{{$port}}
-  {{range $upstream := ls (printf "/routing/%s/%s" $name $port)}}
-  server {{$name}} {{$upstream}}
-  {{end}}
-{{end}}
+  {{$leader}}
+  {{$leader_info}}
 {{end}}

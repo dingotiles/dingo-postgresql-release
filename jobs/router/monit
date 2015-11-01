@@ -1,7 +1,7 @@
-check process new_cluster_watcher
+check process service_changes_ctl
   with pidfile /var/vcap/sys/run/router/confd.pid
-  start program "/var/vcap/jobs/router/bin/monit_debugger router_new_cluster_watcher_ctl '/var/vcap/jobs/router/bin/new_cluster_watcher_ctl start'"
-  stop program "/var/vcap/jobs/router/bin/monit_debugger router_new_cluster_watcher_ctl '/var/vcap/jobs/router/bin/new_cluster_watcher_ctl stop'"
+  start program "/var/vcap/jobs/router/bin/monit_debugger service_changes_ctl '/var/vcap/jobs/router/bin/service_changes_ctl start'"
+  stop program "/var/vcap/jobs/router/bin/monit_debugger service_changes_ctl '/var/vcap/jobs/router/bin/service_changes_ctl stop'"
   group vcap
 
 check process confd
