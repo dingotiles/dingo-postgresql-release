@@ -1,12 +1,12 @@
 global
-    daemon
-    maxconn 256
+  daemon
+  maxconn 256
 
 defaults
-    mode tcp
-    timeout connect 5000ms
-    timeout client 50000ms
-    timeout server 50000ms
+  mode tcp
+  timeout connect 5000ms
+  timeout client 50000ms
+  timeout server 50000ms
 
 {{range $index, $name := ls "/routing/allocation"}}
 {{$leader_host := (printf "/cluster/%s/leader/host" $name | getv)}}
