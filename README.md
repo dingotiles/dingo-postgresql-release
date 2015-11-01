@@ -22,7 +22,7 @@ This system requires:
 
 This system assumes you have an etcd cluster running.
 
-Why etcd? It is the common demoninator between registrator, patroni and confd. For example, to support consul we would first need to add consul support to patroni.
+Why etcd? It is the common demoninator between registrator, patroni and confd. For example, to support consul we would first need to add consul support to patroni. There are also shell scripts now that assume etcd; so they'd need updating or replacing with executable that support different backends.
 
 For example, try using [cloudfoundry-incubator/etcd-release](https://github.com/cloudfoundry-incubator/etcd-release).
 
@@ -52,20 +52,20 @@ Usage
 To directly target a Patroni/Docker node's broker and create a container:
 
 ```
-id=1; broker=10.244.22.6; curl -v -X PUT http://containers:containers@${broker}/v2/service_instances/${id} -d '{"service_id": "0f5c1670-6dc3-11e5-bc08-6c4008a663f0", "plan_id": "1545e30e-6dc3-11e5-826a-6c4008a663f0", "organization_guid": "x", "space_guid": "x"}' -H "Content-Type: application/json"
+id=1; broker=10.244.21.6; curl -v -X PUT http://containers:containers@${broker}/v2/service_instances/${id} -d '{"service_id": "0f5c1670-6dc3-11e5-bc08-6c4008a663f0", "plan_id": "1545e30e-6dc3-11e5-826a-6c4008a663f0", "organization_guid": "x", "space_guid": "x"}' -H "Content-Type: application/json"
 ```
 
-To create replica container on another vm `10.244.22.7`:
+To create replica container on another vm `10.244.21.7`:
 
 ```
-id=1; broker=10.244.22.7; curl -v -X PUT http://containers:containers@${broker}/v2/service_instances/${id} -d '{"service_id": "0f5c1670-6dc3-11e5-bc08-6c4008a663f0", "plan_id": "1545e30e-6dc3-11e5-826a-6c4008a663f0", "organization_guid": "x", "space_guid": "x"}' -H "Content-Type: application/json"
+id=1; broker=10.244.21.7; curl -v -X PUT http://containers:containers@${broker}/v2/service_instances/${id} -d '{"service_id": "0f5c1670-6dc3-11e5-bc08-6c4008a663f0", "plan_id": "1545e30e-6dc3-11e5-826a-6c4008a663f0", "organization_guid": "x", "space_guid": "x"}' -H "Content-Type: application/json"
 ```
 
 To confirm that the first container is the leader:
 
 ```
 $ ./scripts/leaders.sh
-cf-1 postgres:// 10.244.22.6 30000 postgres
+cf-1 postgres:// 10.244.21.6 30000 postgres
 ```
 
 Note that `id=1` has become `cf-1`.
@@ -89,7 +89,7 @@ And eventually the follower in the `cf-1` cluster will become the master:
 
 ```
 $ ./scripts/leaders.sh
-cf-1 postgres:// 10.244.22.7 40000 postgres
+cf-1 postgres:// 10.244.21.7 40000 postgres
 ```
 
 If you restart `patroni/0` vm, the containers will restart and rejoin their clusters.
