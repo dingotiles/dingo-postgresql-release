@@ -60,10 +60,8 @@ resources:
 - name: patroni
   type: git
   source:
-    # uri: https://github.com/zalando/patroni.git
-    # branch: master
-    uri: https://github.com/drnic/patroni.git
-    branch: connect_address
+    uri: https://github.com/zalando/patroni.git
+    branch: master
     private_key: {{github-key}}
 
 - name: docker-image-pg94-patroni-base
