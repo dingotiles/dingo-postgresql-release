@@ -1,5 +1,5 @@
 check process service_changes_ctl
-  with pidfile /var/vcap/sys/run/router/confd.pid
+  with pidfile /var/vcap/sys/run/router/service_changes.pid
   start program "/var/vcap/jobs/router/bin/monit_debugger service_changes_ctl '/var/vcap/jobs/router/bin/service_changes_ctl start'"
   stop program "/var/vcap/jobs/router/bin/monit_debugger service_changes_ctl '/var/vcap/jobs/router/bin/service_changes_ctl stop'"
   group vcap

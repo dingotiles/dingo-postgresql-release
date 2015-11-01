@@ -1,0 +1,114 @@
+#!/bin/bash
+
+set -e # exit immediately if a simple command exits with a non-zero status
+set -u # report the usage of uninitialized variables
+
+source /var/vcap/jobs/router/helpers/ctl_setup.sh 'router' 'service_changes'
+DEBUG=${DEBUG:-}
+
+case $1 in
+
+  start)
+    pid_guard $PIDFILE 'service_changes'
+
+    # store pid in $PIDFILE
+    echo $$ > $PIDFILE
+
+    export ETCD_CLUSTER=${ETCD_CLUSTER:-10.244.4.2:4001}
+    event=$(curl -sL "${ETCD_CLUSTER}/v2/keys/service/?wait=true&recursive=true")
+
+    # if /service/$name/leader changes or /service/$name/members/$leader changes
+    # then update /cluster/$name/leader
+    function test_cluster_for_changes() {
+      # /service/cf-4/members/pg_cf-4_67e68713-a73d-45c6-857a-2f877efdd856
+      # string - {"conn_url":"postgres://replicator:replicator@10.244.21.6:32780/postgres","api_url":"http://127.0.0.1:8008/patroni","conn_address":"10.244.21.6:32780","state":"running","role":"master","xlog_location":33554528}
+      # can detect master via .role == "master"
+      membersRegexp="\/service\/([^\/]+)\/members\/([^\/]+)"
+      notification=$1 # https://coreos.com/etcd/docs/latest/api.html#waiting-for-a-change
+      if [[ "$(echo $notification | jq -r .node.key)" =~ $membersRegexp ]]; then
+        cluster="${BASH_REMATCH[1]}"
+        member="${BASH_REMATCH[2]}"
+        event=$(echo $notification | jq -r .node.value)
+        if [[ ! -z $DEBUG ]]; then
+          echo "cluster $cluster changed - action '$(echo $notification | jq -r .action)' - member $member"
+          echo "changed path $(echo $notification | jq -r .node.key)"
+          echo "current event $event"
+        fi
+        connectionUrl=$(echo $event | jq -r .conn_url)
+        # matching for "postgres://replicator:replicator@10.244.21.6:32780/postgres"
+        connectionUrlRegexp="postgres:\/\/([^:]+):([^@]+)@([^:]+):([^\/]+)/([^\/]+)"
+        if [[ "${connectionUrl}" =~ $connectionUrlRegexp ]]; then
+          backendHost="${BASH_REMATCH[3]}"
+          backendPort="${BASH_REMATCH[4]}"
+
+          if [[ "$(echo $event | jq -r .role)" == "master" ]]; then
+            currentLeader=$(curl -s ${ETCD_CLUSTER}/v2/keys/cluster/${cluster}/leader)
+            if [[ "${currentLeader}" != "null" ]]; then
+              leaderMember=$(curl -s ${ETCD_CLUSTER}/v2/keys/cluster/${cluster}/leader/member | jq -r .node.value)
+              leaderHost=$(curl -s ${ETCD_CLUSTER}/v2/keys/cluster/${cluster}/leader/host | jq -r .node.value)
+              leaderPort=$(curl -s ${ETCD_CLUSTER}/v2/keys/cluster/${cluster}/leader/port | jq -r .node.value)
+              if [[ "$leaderMember" != "$member" || "$leaderHost" != "$backendHost" || "$leaderPort" != "$backendPort" ]]; then
+                echo "cluster ${cluster} leader change ${backendHost}:${backendPort}"
+                echo "prev leader $leaderMember $leaderHost:$leaderPort"
+                echo "next leader $member $backendHost:$backendPort"
+                curl -s -XPUT ${ETCD_CLUSTER}/v2/keys/cluster/${cluster}/leader/member -d value=$member
+                curl -s -XPUT ${ETCD_CLUSTER}/v2/keys/cluster/${cluster}/leader/host -d value=$backendHost
+                curl -s -XPUT ${ETCD_CLUSTER}/v2/keys/cluster/${cluster}/leader/port -d value=$backendPort
+              fi
+            fi
+          fi
+        else
+          echo ".conn_url did not match regexp, skipping: $connectionUrl"
+        fi
+      fi
+    }
+
+    # if new cluster discovered, allocate it an available public port
+    # stored at /routing/allocation/$name
+    function allocate_port() {
+      name=$1
+      echo "new cluster discovered by router: $name"
+
+      port=$(curl -sL "${ETCD_CLUSTER}/v2/keys/routing/nextport" | jq -r .node.value)
+      if [[ "${port}" == "null" ]]; then
+        port=30000
+      fi
+      echo "assigning port $port"
+      curl -sL "${ETCD_CLUSTER}/v2/keys/routing/allocation/${name}" -X PUT -d value=${port}
+
+      nextPort=$((port+1))
+      curl -sL "${ETCD_CLUSTER}/v2/keys/routing/nextport" -X PUT -d value=${nextPort}
+    }
+
+    pathRegexp="\/service\/([^\/]+)\/"
+    while :
+    do
+      eventIndex=$(echo $event | jq -r ".node.modifiedIndex")
+      nextEventIndex=$((eventIndex+1))
+
+      test_cluster_for_changes $event
+
+      if [[ "$(echo $event | jq -r .action)" == "create" ]]; then
+        pathKey=$(echo $event | jq -r .node.key) # typically key /service/cf-123/initialize
+        [[ $pathKey =~ $pathRegexp ]]
+        name="${BASH_REMATCH[1]}"
+        if [[ ! -z "${name}" ]]; then
+          allocate_port $name
+        fi
+      fi
+      event=$(curl -sL "http://${ETCD_CLUSTER}/v2/keys/service/?wait=true&recursive=true&waitIndex=${nextEventIndex}")
+    done
+    ;;
+
+  stop)
+    kill_and_wait $PIDFILE
+
+    ;;
+
+  *)
+    echo "Usage: service_changes_ctl {start|stop}"
+
+    ;;
+
+esac
+exit 0
