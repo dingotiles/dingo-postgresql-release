@@ -19,9 +19,8 @@ case $1 in
 
     # etcdctl mkdir /routing/allocation/
     # etcdctl mkdir /cluster/
-
-    curl -L <%= p("router.etcd.nodes")[0] %>/v2/keys/routing/allocation -XPUT -d dir=true
-    curl -L <%= p("router.etcd.nodes")[0] %>/v2/keys/cluster -XPUT -d dir=true
+    curl -L <%= p("router.etcd.nodes").first %>/v2/keys/routing/allocation -XPUT -d dir=true
+    curl -L <%= p("router.etcd.nodes").first %>/v2/keys/cluster -XPUT -d dir=true
 
     exec chpst -u vcap:vcap confd \
       -config-file $JOB_DIR/confd/confd.toml -confdir $JOB_DIR/confd \
