@@ -67,17 +67,21 @@ case $1 in
     # stored at /routing/allocation/$name
     function allocate_port() {
       name=$1
-      echo "new cluster discovered by router: $name"
+      echo "checking if cluster already has port assigned for: $name"
+      allocated_port=$(curl -sL "${ETCD_CLUSTER}/v2/keys/routing/allocation/${name}" | jq -r .node.value)
+      if [[ "${allocated_port}" == "null" ]]; then
+        echo "new cluster discovered by router: $name"
 
-      port=$(curl -sL "${ETCD_CLUSTER}/v2/keys/routing/nextport" | jq -r .node.value)
-      if [[ "${port}" == "null" ]]; then
-        port=30000
+        port=$(curl -sL "${ETCD_CLUSTER}/v2/keys/routing/nextport" | jq -r .node.value)
+        if [[ "${port}" == "null" ]]; then
+          port=33000
+        fi
+        echo "assigning port $port"
+        curl -sL "${ETCD_CLUSTER}/v2/keys/routing/allocation/${name}" -X PUT -d value=${port}
+
+        nextPort=$((port+1))
+        curl -sL "${ETCD_CLUSTER}/v2/keys/routing/nextport" -X PUT -d value=${nextPort}
       fi
-      echo "assigning port $port"
-      curl -sL "${ETCD_CLUSTER}/v2/keys/routing/allocation/${name}" -X PUT -d value=${port}
-
-      nextPort=$((port+1))
-      curl -sL "${ETCD_CLUSTER}/v2/keys/routing/nextport" -X PUT -d value=${nextPort}
     }
 
     pathRegexp="\/service\/([^\/]+)\/"
