@@ -98,6 +98,12 @@ If you restart `patroni/0` vm, the containers will restart and rejoin their clus
 bosh -n start patroni 0
 ```
 
+You can also watch the status of all nodes in all clusters:
+
+```
+watch -n2 ./scripts/service_states.sh
+```
+
 Background
 ----------
 
