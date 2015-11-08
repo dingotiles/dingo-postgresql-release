@@ -6,9 +6,9 @@ set +x # print commands
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 cd $DIR/..
 
-etcd_cluster=${etcd_cluster:-10.244.4.2:4001}
+ETCD_CLUSTER=${ETCD_CLUSTER:-10.244.4.2:4001}
 
-services=$(curl -s 10.244.4.2:4001/v2/keys/service | jq -r ".node.nodes[].key")
+services=$(curl -s $ETCD_CLUSTER/v2/keys/service | jq -r ".node.nodes[].key")
 
 for service in ${services[@]}; do
   internal_id=$(basename $service)
