@@ -10,19 +10,18 @@ defaults
 	timeout server 30m
 	timeout check 5s
 
-
 {{range $index, $name := ls "/routing/allocation"}}
-	{{if exists (printf "/cluster/%s/leader/host" $name)}}
-		{{$leader_host := (printf "/cluster/%s/leader/host" $name | getv)}}
-		{{$leader_port := (printf "/cluster/%s/leader/port" $name | getv)}}
+	{{range $member := getvs (printf "/service/%s/members/*" $name)}}
+		{{$data := json $member}}
+		{{if eq $data.role "master"}}
 listen {{$name}}
   mode tcp
   bind *:{{(printf "/routing/allocation/%s" $name | getv)}}
-  server leader {{$leader_host}}:{{$leader_port}}
+  server leader {{$data.conn_address}}
+		{{end}}
 	{{end}}
-{{else}}
+{{end}}
 listen dummy
   mode tcp
   bind *:60000
   server leader 127.0.0.1:60000
-{{end}}
