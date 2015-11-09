@@ -19,6 +19,7 @@ for servicekey in ${services[@]}; do
   else
     members=$(echo $membersRaw | jq -r ".[].value")
     for member in ${members}; do
+      # printf "[$member] "
       conn_url=$(echo $member | jq -r .conn_url)
       # matching for "postgres://replicator:replicator@10.244.21.6:32780/postgres"
       regexp="postgres:\/\/([^:]+):([^@]+)@([^:]+):([^\/]+)/([^\/]+)"
