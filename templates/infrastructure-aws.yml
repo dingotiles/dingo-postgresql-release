@@ -9,10 +9,14 @@ jobs:
   - name: patroni
     networks: [{name: patroni1}]
     persistent_disk: (( grab meta.persistent_disk ))
+  - name: broker
+    networks:
+      - name: router1
+        static_ips: (( static_ips(2,3) ))
   - name: router
     networks:
       - name: router1
-        static_ips: (( static_ips(0,1,2,3) ))
+        static_ips: (( static_ips(0,1) ))
 
 compilation:
   cloud_properties: {instance_type: m1.small}
@@ -20,6 +24,8 @@ compilation:
 resource_pools:
   - name: cell_z1
     cloud_properties: {instance_type: c4.medium}
+  - name: broker_z1
+    cloud_properties: {instance_type: t2.small}
   - name: router_z1
     cloud_properties: {instance_type: t2.small}
 

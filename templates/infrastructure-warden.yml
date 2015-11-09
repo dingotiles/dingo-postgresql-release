@@ -34,9 +34,9 @@ compilation:
 resource_pools:
   - name: cell_z1
     cloud_properties: {name: random}
-  - name: router_z1
-    cloud_properties: {name: random}
   - name: broker_z1
+    cloud_properties: {name: random}
+  - name: router_z1
     cloud_properties: {name: random}
 
 networks:
