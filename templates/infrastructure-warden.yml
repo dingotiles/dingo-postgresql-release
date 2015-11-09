@@ -16,10 +16,6 @@ meta:
   etcd:
     host: 10.244.4.2
 
-update:
-  canary_watch_time: 1000-30000
-  update_watch_time: 1000-30000
-
 jobs:
   - name: patroni
     networks: [{name: patroni1}]
