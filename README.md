@@ -54,6 +54,38 @@ To deploy a simple one-node etcd cluster for demonstration purposes:
 bosh deploy
 ```
 
+For AWS you need to create an additional YAML file containing networking information. For example, `tmp/aws.yml` might be:
+
+```yaml
+---
+meta:
+  subnets:
+  - range: 10.10.5.0/24
+    gateway: 10.10.5.1
+    dns: [10.10.0.2]
+    reserved: [10.10.5.2-10.10.5.5]
+    static: [10.10.5.6-10.10.5.20]
+    name: default_unused
+    cloud_properties:
+      subnet: subnet-xyzxyz
+      security_groups: [cf]
+
+networks:
+- name: patroni1
+  type: manual
+  subnets: (( grab meta.subnets ))
+- name: router1
+  type: manual
+  subnets: (( grab meta.subnets ))
+```
+
+You then include `tmp/aws.yml` (whatever the path is) to the `make_manifest` commands above; such as:
+
+```
+./templates/make_manifest warden upstream templates/jobs-etcd.yml tmp/aws.yml
+bosh deploy
+```
+
 Usage
 -----
 

@@ -32,7 +32,7 @@ resource_pools:
 networks:
 - name: patroni1
   type: manual
-  subnets: (( merge ))
+  subnets: (( param "please provide subnets for patroni cells" ))
 - name: router1
   type: manual
-  subnets: (( grab meta.subnets ))
+  subnets: (( param "please provide subnets for router/brokers" ))
