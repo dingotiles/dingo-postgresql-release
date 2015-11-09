@@ -1,0 +1,4 @@
+---
+name: patroni-broker
+dependencies: [golang-1.5]
+files: [patroni-broker/**/*]

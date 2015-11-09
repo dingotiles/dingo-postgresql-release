@@ -17,12 +17,16 @@ meta:
     host: 10.244.4.2
 
 jobs:
-  - name: patroni
+  - name: cell_z1
     networks: [{name: patroni1}]
+  - name: broker
+    networks:
+      - name: router1
+        static_ips: (( static_ips(2,3) ))
   - name: router
     networks:
       - name: router1
-        static_ips: (( static_ips(0,1,2,3) ))
+        static_ips: (( static_ips(0,1) ))
 
 compilation:
   cloud_properties: {name: random}
@@ -31,6 +35,8 @@ resource_pools:
   - name: cell_z1
     cloud_properties: {name: random}
   - name: router_z1
+    cloud_properties: {name: random}
+  - name: broker_z1
     cloud_properties: {name: random}
 
 networks:

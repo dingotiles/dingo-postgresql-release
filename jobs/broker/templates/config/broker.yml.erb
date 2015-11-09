@@ -1,0 +1,29 @@
+---
+broker:
+  username: starkandwayne
+  password: starkandwayne
+  port: 8888
+
+kvstore:
+  type: etcd
+  machines:
+  - http://54.145.50.109:14001
+  username: ""
+  password: ""
+
+backends:
+- guid: "10.244.21.6"
+  availability_zone: "z1"
+  uri: "http://54.145.50.109:10006"
+  username: "containers"
+  password: "containers"
+- guid: "10.244.21.7"
+  availability_zone: "z1"
+  uri: "http://54.145.50.109:10007"
+  username: "containers"
+  password: "containers"
+- guid: "10.244.21.8"
+  availability_zone: "z2"
+  uri: "http://54.145.50.109:10008"
+  username: "containers"
+  password: "containers"

@@ -2,14 +2,17 @@ meta:
   job_templates:
     patroni: (( param "please provide templates for cells" ))
     router: [{name: router, release: patroni}]
+    broker: [{name: broker, release: patroni}]
 
 jobs:
-  - name: patroni
-    instances: 3
+  - name: cell_z1
+    instances: 1
     templates: (( grab meta.job_templates.patroni ))
     resource_pool: cell_z1
     networks: (( param "please provide networks" ))
     persistent_disk: 10240
+    properties:
+      zone: z1
   - name: router
     instances: 1
     templates: (( grab meta.job_templates.router ))
@@ -20,6 +23,19 @@ jobs:
         etcd:
           nodes:
             - (( concat meta.etcd.host ":" meta.etcd.port ))
+  - name: broker
+    instances: 1
+    templates: (( grab meta.job_templates.broker ))
+    resource_pool: broker_z1
+    networks: (( param "please provide networks" ))
+    properties:
+      router:
+        etcd:
+          nodes:
+            - (( concat meta.etcd.host ":" meta.etcd.port ))
+    update:
+      canary_watch_time: 10000-30000
+      update_watch_time: 10000-30000
 
 resource_pools:
   - name: cell_z1
@@ -27,6 +43,10 @@ resource_pools:
     cloud_properties: (( param "please provide cloud_properties"))
     network: patroni1
   - name: router_z1
+    stemcell: (( grab meta.stemcell ))
+    cloud_properties: (( param "please provide cloud_properties"))
+    network: router1
+  - name: broker_z1
     stemcell: (( grab meta.stemcell ))
     cloud_properties: (( param "please provide cloud_properties"))
     network: router1
