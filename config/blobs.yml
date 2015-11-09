@@ -51,3 +51,7 @@ jq/jq-linux64-1.5:
   object_id: 0c840686-ab51-44a6-8b96-fc7088555f60
   sha: d8e36831c3c94bb58be34dd544f44a6c6cb88568
   size: 3027945
+golang/go1.5.1.linux-amd64.tar.gz:
+  object_id: 09f0ca65-2690-4e22-92f4-7bc56f247e06
+  sha: 46eecd290d8803887dec718c691cc243f2175fe0
+  size: 77875767
