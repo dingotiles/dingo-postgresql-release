@@ -9,7 +9,7 @@ jobs:
     instances: 1
     templates: (( grab meta.job_templates.patroni ))
     resource_pool: cell_z1
-    networks: (( param "please provide networks" ))
+    networks: [{name: patroni1}]
     persistent_disk: 10240
     properties:
       zone: z1
@@ -17,22 +17,22 @@ jobs:
     instances: 1
     templates: (( grab meta.job_templates.router ))
     resource_pool: router_z1
-    networks: (( param "please provide networks" ))
+    networks: [{name: router1}]
     properties:
       router:
         etcd:
           nodes:
-            - (( concat meta.etcd.host ":" meta.etcd.port ))
+            - (( concat meta.etcd.host ":4001" ))
   - name: broker
     instances: 1
     templates: (( grab meta.job_templates.broker ))
     resource_pool: broker_z1
-    networks: (( param "please provide networks" ))
+    networks: [{name: router1}]
     properties:
       router:
         etcd:
           nodes:
-            - (( concat meta.etcd.host ":" meta.etcd.port ))
+            - (( concat meta.etcd.host ":4001" ))
     update:
       canary_watch_time: 10000-30000
       update_watch_time: 10000-30000

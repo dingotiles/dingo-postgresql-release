@@ -72,7 +72,7 @@ properties:
               persistent_volumes:
                 - '/data'
               environment:
-                - (( concat "ETCD_HOST_PORT=" meta.etcd.host ":" meta.etcd.port ))
+                - (( concat "ETCD_HOST_PORT=" meta.etcd.host ":4001" ))
             credentials:
               username:
                 key: 'POSTGRES_USERNAME'

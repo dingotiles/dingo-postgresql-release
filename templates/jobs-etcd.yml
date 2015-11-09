@@ -1,0 +1,25 @@
+---
+meta:
+  etcd:
+    host: (( grab jobs.etcd.networks.router1.static_ips.[0] ))
+  registrator:
+    backend_uri: (( concat "etcd://" meta.etcd.host ":4001" ))
+
+releases:
+  - name: etcd
+    version: latest
+
+jobs:
+  - name: etcd
+    instances: 1
+    templates: [{name: etcd, release: etcd}]
+    resource_pool: broker_z1
+    networks:
+      - name: router1
+        static_ips: (( static_ips(4) ))
+    persistent_disk: 20240
+    properties:
+      etcd:
+        machines: (( grab jobs.etcd.networks.router1.static_ips ))
+        peer_require_ssl: false
+        require_ssl: false

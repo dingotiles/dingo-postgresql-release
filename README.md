@@ -24,25 +24,33 @@ This system assumes you have an etcd cluster running.
 
 Why etcd? It is the common demoninator between registrator, patroni and confd. For example, to support consul we would first need to add consul support to patroni. There are also shell scripts now that assume etcd; so they'd need updating or replacing with executable that support different backends.
 
-For example, try using [cloudfoundry-incubator/etcd-release](https://github.com/cloudfoundry-incubator/etcd-release).
+The templates include an easy way to run an etcd node, if you don't already have an etcd cluster, using [cloudfoundry-incubator/etcd-release](https://github.com/cloudfoundry-incubator/etcd-release). See "Deployment" section for instructions.
 
-Now create a spruce stub file with your etcd cluster information, say `tmp/etcd.yml`:
+If you do already have an etcd cluster then create a spruce stub file with your etcd cluster information, say `tmp/etcd.yml`:
 
 ```yaml
 ---
 meta:
   etcd:
     host: 10.244.4.2
-    port: "4001"
   registrator:
-    backend_uri: (( concat "etcd://" meta.etcd.host ":" meta.etcd.port ))
+    backend_uri: (( concat "etcd://" meta.etcd.host ":4001" ))
 ```
 
 Deployment
 ----------
 
+To use your own etcd cluster:
+
 ```
 ./templates/make_manifest warden upstream tmp/etcd.yml
+bosh deploy
+```
+
+To deploy a simple one-node etcd cluster for demonstration purposes:
+
+```
+./templates/make_manifest warden upstream templates/jobs-etcd.yml
 bosh deploy
 ```
 
