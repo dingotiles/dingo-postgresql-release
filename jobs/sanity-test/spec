@@ -1,0 +1,20 @@
+---
+name: sanity-test
+packages: [jq]
+templates:
+  bin/run: bin/run
+  helpers/ctl_setup.sh: helpers/ctl_setup.sh
+  helpers/ctl_utils.sh: helpers/ctl_utils.sh
+properties:
+  servicebroker.machines:
+    description: hostnames for service broker servers
+  servicebroker.port:
+    description: port for service brokers to connect to
+  servicebroker.username:
+    description: username for service brokers to connect to
+  servicebroker.password:
+    description: password for service brokers to connect to
+  servicebroker.router.hostname:
+    description: "Hostname to advertise in binding credentials for routers"
+  etcd.machines:
+    description: hostnames for etcd servers

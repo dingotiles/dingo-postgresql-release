@@ -12,14 +12,14 @@ properties:
   etcd.machines:
     description: hostnames for etcd servers
 
-  broker.router.hostname:
+  servicebroker.router.hostname:
     description: "Hostname to advertise in binding credentials for routers"
 
-  broker.backends.machines:
+  servicebroker.backends.machines:
     description: "Array of backend broker hostnames:port (NOTE: also becomes permanent GUID at the moment)"
-  broker.backends.username:
+  servicebroker.backends.username:
     description: basic auth username to access each HTTP cf-container-broker backend
     default: containers
-  broker.backends.password:
+  servicebroker.backends.password:
     description: basic auth password to access each HTTP cf-container-broker backend
     default: containers

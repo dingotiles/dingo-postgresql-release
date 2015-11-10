@@ -5,7 +5,7 @@ broker:
   port: 8888
 
 router:
-  hostname: <%= p("broker.router.hostname") %>
+  hostname: <%= p("servicebroker.router.hostname") %>
 
 kvstore:
   type: etcd
@@ -14,10 +14,10 @@ kvstore:
   password: ""
 
 backends:
-<% p("broker.backends.machines").each do |machine| %>
+<% p("servicebroker.backends.machines").each do |machine| %>
 - guid: <%= machine %>
   availability_zone: z1
   uri: <%= machine %>
-  username: "<%= p('broker.backends.username') %>"
-  password: "<%= p('broker.backends.password') %>"
+  username: "<%= p('servicebroker.backends.username') %>"
+  password: "<%= p('servicebroker.backends.password') %>"
 <% end %>

@@ -1,8 +1,6 @@
 meta:
   job_templates:
     patroni: (( param "please provide templates for cells" ))
-    router: [{name: router, release: patroni}]
-    broker: [{name: broker, release: patroni}]
 
 jobs:
   - name: cell_z1
@@ -15,24 +13,29 @@ jobs:
       zone: z1
   - name: router
     instances: 1
-    templates: (( grab meta.job_templates.router ))
+    templates: [{name: router, release: patroni}]
     resource_pool: router_z1
     networks: [{name: router1}]
   - name: broker
     instances: 1
-    templates: (( grab meta.job_templates.broker ))
+    templates: [{name: broker, release: patroni}]
     resource_pool: broker_z1
     networks: [{name: router1}]
     properties:
-      broker:
+      servicebroker:
         router:
           hostname: (( param "please provide public hostname for routers" ))
         backends:
           machines: (( param "please provide array of backend broker hostname" ))
-
     update:
       canary_watch_time: 10000-30000
       update_watch_time: 10000-30000
+  - name: sanity-test
+    instances: 1
+    lifecycle: errand
+    templates: [{name: sanity-test, release: patroni}]
+    resource_pool: router_z1
+    networks: [{name: router1}]
 
 resource_pools:
   - name: cell_z1
@@ -53,5 +56,9 @@ networks:
 - name: router1
 
 properties:
+  servicebroker:
+    port: 8888
+    username: starkandwayne
+    password: starkandwayne
   etcd:
     machines: (( param "please provide array of etcd hostnames" ))

@@ -16,7 +16,7 @@ jobs:
       - name: router1
         static_ips: (( static_ips(2,3) ))
     properties:
-      broker:
+      servicebroker:
         router:
           hostname: (( grab jobs.router.networks.router1.static_ips.[0] ))
         backends:
@@ -25,6 +25,10 @@ jobs:
     networks:
       - name: router1
         static_ips: (( static_ips(0,1) ))
+  - name: sanity-test
+    properties:
+      servicebroker:
+        machines: (( grab jobs.broker.networks.router1.static_ips ))
 
 compilation:
   cloud_properties: {instance_type: c3.large}
