@@ -1,7 +1,6 @@
 ---
 name: broker
-packages:
-- patroni-broker
+packages: [patroni-broker]
 templates:
   bin/ctl: bin/ctl
   bin/monit_debugger: bin/monit_debugger
@@ -9,3 +8,15 @@ templates:
   data/properties.sh.erb: data/properties.sh
   helpers/ctl_setup.sh: helpers/ctl_setup.sh
   helpers/ctl_utils.sh: helpers/ctl_utils.sh
+properties:
+  etcd.machines:
+    description: hostnames for etcd servers
+
+  broker.backends.machines:
+    description: "Array of backend broker hostnames:port (NOTE: also becomes permanent GUID at the moment)"
+  broker.backends.username:
+    description: basic auth username to access each HTTP cf-container-broker backend
+    default: containers
+  broker.backends.password:
+    description: basic auth password to access each HTTP cf-container-broker backend
+    default: containers

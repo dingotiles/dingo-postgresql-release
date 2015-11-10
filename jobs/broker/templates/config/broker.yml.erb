@@ -6,24 +6,15 @@ broker:
 
 kvstore:
   type: etcd
-  machines:
-  - http://54.145.50.109:14001
+  machines: <%= p("etcd.machines") %>
   username: ""
   password: ""
 
 backends:
-- guid: "10.244.21.6"
-  availability_zone: "z1"
-  uri: "http://54.145.50.109:10006"
-  username: "containers"
-  password: "containers"
-- guid: "10.244.21.7"
-  availability_zone: "z1"
-  uri: "http://54.145.50.109:10007"
-  username: "containers"
-  password: "containers"
-- guid: "10.244.21.8"
-  availability_zone: "z2"
-  uri: "http://54.145.50.109:10008"
-  username: "containers"
-  password: "containers"
+<% p("broker.backends.machines").each do |machine| %>
+- guid: <%= machine %>
+  availability_zone: z1
+  uri: <%= machine %>
+  username: "<%= p('broker.backends.username') %>"
+  password: "<%= p('broker.backends.password') %>"
+<% end %>

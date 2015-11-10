@@ -29,10 +29,12 @@ jobs:
     resource_pool: broker_z1
     networks: [{name: router1}]
     properties:
-      router:
-        etcd:
-          nodes:
-            - (( concat meta.etcd.host ":4001" ))
+      etcd:
+        machines: (( param "please provide etcd machines" ))
+      broker:
+        backends:
+          machines: (( param "please provide array of backend broker hostname" ))
+
     update:
       canary_watch_time: 10000-30000
       update_watch_time: 10000-30000
