@@ -6,7 +6,7 @@ broker:
 
 kvstore:
   type: etcd
-  machines: <%= p("etcd.machines") %>
+  machines: <%= p("etcd.machines").map {|h| "http://#{h}:4001"} %>
   username: ""
   password: ""
 
