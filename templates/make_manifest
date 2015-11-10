@@ -50,6 +50,7 @@ if [[ $infrastructure = "aws" ]]; then
     echo "Not targeting an AWS BOSH. Please use 'bosh target' before running this script."
     exit 1
   fi
+  STEMCELL_OS=bosh-aws-xen-hvm-ubuntu-trusty-go_agent
 fi
 
 function latest_uploaded_stemcell {
