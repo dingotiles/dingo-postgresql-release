@@ -6,7 +6,7 @@ meta:
 
 jobs:
   - name: cell_z1
-    instances: 1
+    instances: 3
     templates: (( grab meta.job_templates.patroni ))
     resource_pool: cell_z1
     networks: [{name: patroni1}]
