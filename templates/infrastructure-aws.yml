@@ -19,7 +19,7 @@ jobs:
         static_ips: (( static_ips(0,1) ))
 
 compilation:
-  cloud_properties: {instance_type: m1.small}
+  cloud_properties: {instance_type: c4.medium}
 
 resource_pools:
   - name: cell_z1
