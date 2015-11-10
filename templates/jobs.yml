@@ -25,6 +25,8 @@ jobs:
     networks: [{name: router1}]
     properties:
       broker:
+        router:
+          hostname: (( param "please provide public hostname for routers" ))
         backends:
           machines: (( param "please provide array of backend broker hostname" ))
 

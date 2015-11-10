@@ -12,6 +12,9 @@ properties:
   etcd.machines:
     description: hostnames for etcd servers
 
+  broker.router.hostname:
+    description: "Hostname to advertise in binding credentials for routers"
+
   broker.backends.machines:
     description: "Array of backend broker hostnames:port (NOTE: also becomes permanent GUID at the moment)"
   broker.backends.username:

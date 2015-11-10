@@ -4,6 +4,9 @@ broker:
   password: starkandwayne
   port: 8888
 
+router:
+  hostname: <%= p("broker.router.hostname") %>
+
 kvstore:
   type: etcd
   machines: <%= p("etcd.machines").map {|h| "http://#{h}:4001"} %>

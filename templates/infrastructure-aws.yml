@@ -17,6 +17,8 @@ jobs:
         static_ips: (( static_ips(2,3) ))
     properties:
       broker:
+        router:
+          hostname: (( grab jobs.router.networks.router1.static_ips.[0] ))
         backends:
           machines: (( grab jobs.cell_z1.networks.patroni1.static_ips ))
   - name: router
