@@ -84,6 +84,7 @@ spruce merge --prune meta \
   $templates/jobs.yml \
   $templates/run-broker-image-${docker_image}.yml \
   $templates/infrastructure-${infrastructure}.yml \
+  $templates/noop.yml \
   $tmpdir/director.yml \
   $tmpdir/name.yml \
   $tmpdir/pipeline-inputs.yml \

@@ -1,0 +1,12 @@
+---
+# values that are needed for cf-containers-broker but we don't care what they are
+meta:
+  cfcontainersbroker:
+    cc_api_uri: "https://api.10.244.0.34.xip.io"
+    external_host: "cf-containers-broker.10.244.0.34.xip.io"
+  nats:
+    user: nats
+    password: nats
+    port: 4222
+    machines:
+      - 10.244.0.6
