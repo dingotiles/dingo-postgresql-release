@@ -6,7 +6,7 @@ meta:
     version: latest
 
 jobs:
-  - name: patroni
+  - name: cell_z1
     networks: [{name: patroni1}]
     persistent_disk: (( grab meta.persistent_disk ))
   - name: broker
