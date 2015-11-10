@@ -17,11 +17,13 @@ case $1 in
     # store pid in $PIDFILE
     echo $$ > $PIDFILE
 
+    export ETCD_CLUSTER=${ETCD_CLUSTER:-<%= p("etcd.machines").first %>:4001}
+
     # Ensure keys looked up by confd are always available; else confd gets upset
     # etcdctl mkdir /routing/allocation/
     # etcdctl mkdir /service/
-    curl -L <%= p("router.etcd.nodes").first %>/v2/keys/routing/allocation -XPUT -d dir=true
-    curl -L <%= p("router.etcd.nodes").first %>/v2/keys/service -XPUT -d dir=true
+    curl -L ${ETCD_CLUSTER}/v2/keys/routing/allocation -XPUT -d dir=true
+    curl -L ${ETCD_CLUSTER}/v2/keys/service -XPUT -d dir=true
 
     exec chpst -u vcap:vcap confd \
       -config-file $JOB_DIR/confd/confd.toml -confdir $JOB_DIR/confd \

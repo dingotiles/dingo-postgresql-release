@@ -14,16 +14,15 @@ jobs:
     instances: 1
     templates: [{name: etcd, release: etcd}]
     resource_pool: broker_z1
+    persistent_disk: 20240
     networks:
       - name: router1
         static_ips: (( static_ips(4) ))
-    persistent_disk: 20240
     properties:
       etcd:
-        machines: (( grab jobs.etcd.networks.router1.static_ips ))
         peer_require_ssl: false
         require_ssl: false
-  - name: broker
-    properties:
-      etcd:
-        machines: (( grab jobs.etcd.networks.router1.static_ips ))
+
+properties:
+  etcd:
+    machines: (( grab jobs.etcd.networks.router1.static_ips ))

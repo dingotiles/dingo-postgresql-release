@@ -14,7 +14,8 @@ case $1 in
     # store pid in $PIDFILE
     echo $$ > $PIDFILE
 
-    export ETCD_CLUSTER=${ETCD_CLUSTER:-10.244.4.2:4001}
+    export ETCD_CLUSTER=${ETCD_CLUSTER:-<%= p("etcd.machines").first %>:4001}
+
     event=$(curl -sL "${ETCD_CLUSTER}/v2/keys/service/?wait=true&recursive=true")
 
     # if new cluster discovered, allocate it an available public port

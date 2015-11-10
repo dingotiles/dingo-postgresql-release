@@ -18,19 +18,12 @@ jobs:
     templates: (( grab meta.job_templates.router ))
     resource_pool: router_z1
     networks: [{name: router1}]
-    properties:
-      router:
-        etcd:
-          nodes:
-            - (( concat meta.etcd.host ":4001" ))
   - name: broker
     instances: 1
     templates: (( grab meta.job_templates.broker ))
     resource_pool: broker_z1
     networks: [{name: router1}]
     properties:
-      etcd:
-        machines: (( param "please provide etcd machines" ))
       broker:
         backends:
           machines: (( param "please provide array of backend broker hostname" ))
@@ -56,3 +49,7 @@ resource_pools:
 networks:
 - name: patroni1
 - name: router1
+
+properties:
+  etcd:
+    machines: (( param "please provide array of etcd hostnames" ))
