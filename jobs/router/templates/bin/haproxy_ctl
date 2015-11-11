@@ -15,7 +15,17 @@ USER=vcap
 
 TIMESTAMP=$(which date)
 
-test -x "${DAEMON}"
+
+set +e
+error_code=x
+while [[ $i -lt 20 && "${error_code}" != "0" ]]; do
+  i=$[$i+1]
+  sleep 1
+  echo "waiting for $CONFIG $i/20"
+  test -x "${DAEMON}"
+  error_code=$?
+done
+
 test -f "${CONFIG}"
 
 RETVAL=0
