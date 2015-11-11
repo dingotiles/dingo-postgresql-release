@@ -18,6 +18,13 @@ templates:
 properties:
   etcd.machines:
     description: hostnames for etcd servers
+
+  servicebroker.machines:
+    description: hostnames for broker servers
+  servicebroker.port:
+    description: port for broker process
+    default: 8888
+
   haproxy.log_to_file:
     description: "Whether to send logs to a file instead of the default syslog"
     default: false

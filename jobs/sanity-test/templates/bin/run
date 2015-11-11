@@ -18,8 +18,9 @@ echo service_id $service_id
 plan_ids=$(curl -sf ${BROKER_URI}/v2/catalog | jq -r ".services[0].plans[].id")
 echo plan_ids $plan_ids
 
-instance_id=TESTID
-binding_id=BINDINGID
+instance_id=TESTID-$(date +"%s")
+binding_id=BINDINGID-$(date +"%s")
+echo instance_id ${instance_id}
 
 for plan_id in ${plan_ids[@]}; do
   echo creating service instance

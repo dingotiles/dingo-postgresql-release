@@ -25,6 +25,9 @@ jobs:
     networks:
       - name: router1
         static_ips: (( static_ips(0,1) ))
+    properties:
+      servicebroker:
+        machines: (( grab jobs.broker.networks.router1.static_ips ))
   - name: sanity-test
     properties:
       servicebroker:
