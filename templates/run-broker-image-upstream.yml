@@ -50,10 +50,10 @@ properties:
     max_containers: (( grab meta.cfcontainersbroker.max_containers ))
     fetch_images: true
 
-    services:
+    services: &services
       - id: '0f5c1670-6dc3-11e5-bc08-6c4008a663f0'
         name: 'postgresql94'
-        description: 'postgresql 9.4 service for application development and testing'
+        description: 'PostgreSQL 9.4 service for application development and testing'
         bindable: true
         tags:
           - 'postgresql94'
@@ -61,13 +61,16 @@ properties:
           - 'syslog'
         metadata:
           displayName: 'postgresql 9.4'
-          longDescription: 'A postgresql 9.4 service for development and testing running inside a Docker container'
+          longDescription: 'High-availablity cluster of PostgreSQL 9.4 running across multiple servers/availability zones'
           providerDisplayName: 'Stark & Wayne LLC'
-          documentationUrl: 'https://github.com/cloudfoundry-community/postgresql-docker-boshrelease'
-          supportUrl: 'https://github.com/cloudfoundry-community/postgresql-docker-boshrelease/issues'
+          documentationUrl: 'https://github.com/cloudfoundry-community/patroni-boshrelease'
+          supportUrl: 'https://github.com/cloudfoundry-community/patroni-boshrelease/issues'
         plans:
           - id: '1545e30e-6dc3-11e5-826a-6c4008a663f0'
-            name: 'free'
+            name: 'cluster'
+            description: 'High-availablity cluster of PostgreSQL'
+            metadata:
+              displayName: 'Clustered'
             container:
               backend: 'docker'
               image: cfcommunity/postgresql-patroni
@@ -76,13 +79,5 @@ properties:
                 - '/data'
               environment:
                 - (( concat "ETCD_HOST_PORT=" meta.etcd.host ":4001" ))
-            credentials:
-              username:
-                key: 'POSTGRES_USERNAME'
-              password:
-                key: 'POSTGRES_PASSWORD'
-              dbname:
-                key: 'POSTGRES_DBNAME'
-              uri:
-                prefix: 'postgres'
-            description: 'Free Trial'
+  servicebroker:
+    services: *services

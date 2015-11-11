@@ -10,7 +10,13 @@ EXITSTATUS=0
 
 BROKER_URI=http://<%= p("servicebroker.username") %>:<%= p("servicebroker.password") %>@<%= p("servicebroker.machines").first %>:<%= p("servicebroker.port") %>
 
-curl -f ${BROKER_URI}/v2/catalog
+echo Catalog
+curl -sf ${BROKER_URI}/v2/catalog | jq .
+
+service_id=$(curl -sf ${BROKER_URI}/v2/catalog | jq -r ".services[0].id")
+echo service_id $service_id
+plan_ids=$(curl -sf ${BROKER_URI}/v2/catalog | jq -r ".services[0].plans[].id")
+echo plan_ids $plan_ids
 
 echo "Errand sanity-test is complete; exit status $EXITSTATUS"
 exit $EXITSTATUS

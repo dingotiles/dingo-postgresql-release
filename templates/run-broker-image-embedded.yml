@@ -47,7 +47,7 @@ properties:
     max_containers: (( grab meta.cfcontainersbroker.max_containers ))
     fetch_images: false
 
-    services:
+    services: &services
       - id: '0f5c1670-6dc3-11e5-bc08-6c4008a663f0'
         name: 'postgresql94'
         description: 'postgresql 9.4 service for application development and testing'
@@ -83,3 +83,5 @@ properties:
               uri:
                 prefix: 'postgres'
             description: 'Free Trial'
+  servicebroker:
+    services: *services

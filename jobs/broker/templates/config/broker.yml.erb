@@ -21,3 +21,6 @@ backends:
   username: "<%= p('servicebroker.backends.username') %>"
   password: "<%= p('servicebroker.backends.password') %>"
 <% end %>
+
+catalog:
+  services: <%= JSON.pretty_generate(p('servicebroker.services')) %>

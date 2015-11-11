@@ -23,3 +23,6 @@ properties:
   servicebroker.backends.password:
     description: basic auth password to access each HTTP cf-container-broker backend
     default: containers
+
+  servicebroker.services:
+    description: The CF service broker catalog of services/plans
