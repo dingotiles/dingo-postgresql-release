@@ -32,11 +32,11 @@ for plan_id in ${plan_ids[@]}; do
   uri=$(echo $credentials | jq -r ".credentials.uri")
   echo uri $uri
 
-  # couple seconds to allow confd/haproxy restart to kick in
+  # 60 seconds to allow confd/haproxy restart to kick in
   set +e
   error_code=x
   i="0"
-  while [[ $i -lt 20 && "${error_code}" != "0" ]]; do
+  while [[ $i -lt 60 && "${error_code}" != "0" ]]; do
     i=$[$i+1]
     sleep 1
     echo attempt $i
