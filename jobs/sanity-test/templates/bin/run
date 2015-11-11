@@ -32,7 +32,19 @@ for plan_id in ${plan_ids[@]}; do
   uri=$(echo $credentials | jq -r ".credentials.uri")
   echo uri $uri
 
-  pgbench -i $uri
+  # couple seconds to allow confd/haproxy restart to kick in
+  i="0"
+
+  set +e
+  error_code=x
+  while [[ $i -lt 20 && "${error_code}" != "0" ]]; do
+    i=$[$i+1]
+    sleep 1
+    echo attempt $i
+    pgbench -i $uri
+    error_code=$?
+  done
+  set -e # exit immediately if a simple command exits with a non-zero status
   pgbench $uri
 
   echo deleting service binding
