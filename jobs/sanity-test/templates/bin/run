@@ -18,5 +18,22 @@ echo service_id $service_id
 plan_ids=$(curl -sf ${BROKER_URI}/v2/catalog | jq -r ".services[0].plans[].id")
 echo plan_ids $plan_ids
 
+instance_id=TESTID
+binding_id=BINDINGID
+
+for plan_id in ${plan_ids[@]}; do
+  echo creating service instance
+  curl -s ${BROKER_URI}/v2/service_instances/${instance_id} -XPUT -d "{\"service_id\": \"${service_id}\", \"plan_id\": \"${plan_id}\"}"
+
+  echo creating service binding
+  curl -s ${BROKER_URI}/v2/service_instances/${instance_id}/service_bindings/${binding_id} -XPUT -d "{\"service_id\": \"${service_id}\", \"plan_id\": \"${plan_id}\"}"
+
+  echo deleting service binding
+  curl -s ${BROKER_URI}/v2/service_instances/${instance_id}/service_bindings/${binding_id}\?plan_id=${plan_id}\&service_id=${service_id} -XDELETE
+
+  echo deleting service instance
+  curl -s ${BROKER_URI}/v2/service_instances/${instance_id}\?plan_id=${plan_id}\&service_id=${service_id} -XDELETE
+done
+
 echo "Errand sanity-test is complete; exit status $EXITSTATUS"
 exit $EXITSTATUS
