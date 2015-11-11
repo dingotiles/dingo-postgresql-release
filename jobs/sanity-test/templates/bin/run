@@ -27,7 +27,13 @@ for plan_id in ${plan_ids[@]}; do
   curl -s ${BROKER_URI}/v2/service_instances/${instance_id} -XPUT -d "{\"service_id\": \"${service_id}\", \"plan_id\": \"${plan_id}\"}"
 
   echo creating service binding
-  curl -s ${BROKER_URI}/v2/service_instances/${instance_id}/service_bindings/${binding_id} -XPUT -d "{\"service_id\": \"${service_id}\", \"plan_id\": \"${plan_id}\"}"
+  credentials=$(curl -s ${BROKER_URI}/v2/service_instances/${instance_id}/service_bindings/${binding_id} -XPUT -d "{\"service_id\": \"${service_id}\", \"plan_id\": \"${plan_id}\"}")
+  echo credentials $credentials
+  uri=$(echo $credentials | jq -r ".credentials.uri")
+  echo uri $uri
+
+  pgbench -i $uri
+  pgbench $uri
 
   echo deleting service binding
   curl -s ${BROKER_URI}/v2/service_instances/${instance_id}/service_bindings/${binding_id}\?plan_id=${plan_id}\&service_id=${service_id} -XDELETE

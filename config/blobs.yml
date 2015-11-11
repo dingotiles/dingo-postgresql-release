@@ -55,3 +55,7 @@ golang/go1.5.1.linux-amd64.tar.gz:
   object_id: 09f0ca65-2690-4e22-92f4-7bc56f247e06
   sha: 46eecd290d8803887dec718c691cc243f2175fe0
   size: 77875767
+postgresql/postgresql-9.4.5.tar.gz:
+  object_id: 9053fd48-6bd0-4d23-ae34-5301b53e6862
+  sha: 5278d04093f3cb2e00796fae15b2e33406844d01
+  size: 23211720

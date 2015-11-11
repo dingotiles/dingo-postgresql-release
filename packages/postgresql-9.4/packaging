@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -e
+
+package="postgresql"
+version="9.4.5"
+file="${package}-${version}.tar.gz"
+
+tar zxvf ${package}/${file}
+cd ${file//.tar*}
+./configure --prefix=${BOSH_INSTALL_TARGET} --with-uuid=e2fs
+make install
+make -C contrib install
