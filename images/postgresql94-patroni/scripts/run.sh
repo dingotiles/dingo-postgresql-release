@@ -118,9 +118,9 @@ postgresql:
   admin: # user will be created during initialization. It would have CREATEDB and CREATEROLE privileges
     username: ${POSTGRES_USERNAME}
     password: ${POSTGRES_PASSWORD}
-  restore: /patroni/scripts/restore.py
-  recovery_conf:
-    restore_command: "${restore_command}"
+  # restore: /patroni/scripts/restore.py
+  # recovery_conf:
+  #  restore_command: "${restore_command}"
 
   # parameters are converted into --<name> <value> flags on the server command line
   parameters:
@@ -135,9 +135,9 @@ postgresql:
     # http://www.postgresql.org/docs/9.4/static/runtime-config-wal.html
     wal_level: hot_standby
     wal_log_hints: "on"
-    archive_mode: "on"
-    archive_command: "${archive_command}"
-    archive_timeout: 60s
+    #archive_mode: "on"
+    #archive_command: "${archive_command}"
+    #archive_timeout: 60s
 
     # http://www.postgresql.org/docs/9.4/static/runtime-config-replication.html
     # - sending servers config
