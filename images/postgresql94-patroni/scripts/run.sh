@@ -137,7 +137,7 @@ postgresql:
     wal_log_hints: "on"
     #archive_mode: "on"
     #archive_command: "${archive_command}"
-    #archive_timeout: 60s
+    #archive_timeout: 10m
 
     # http://www.postgresql.org/docs/9.4/static/runtime-config-replication.html
     # - sending servers config
