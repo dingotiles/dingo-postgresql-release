@@ -12,6 +12,10 @@ properties:
   etcd.machines:
     description: hostnames for etcd servers
 
+  servicebroker.port:
+    description: Bind port for inbound API requests
+    default: 8888
+
   servicebroker.router.hostname:
     description: "Hostname to advertise in binding credentials for routers"
 

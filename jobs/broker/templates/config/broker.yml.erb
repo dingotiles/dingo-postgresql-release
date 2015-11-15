@@ -2,7 +2,7 @@
 broker:
   username: starkandwayne
   password: starkandwayne
-  port: 8888
+  port: <%= p("servicebroker.port") %>
 
 router:
   hostname: <%= p("servicebroker.router.hostname") %>
