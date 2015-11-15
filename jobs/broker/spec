@@ -20,7 +20,7 @@ properties:
     description: "Hostname to advertise in binding credentials for routers"
 
   servicebroker.backends.machines:
-    description: "Array of backend broker hostnames:port (NOTE: also becomes permanent GUID at the moment)"
+    description: "Hash of {z1: backend broker hostnames:port (NOTE: also becomes permanent GUID at the moment)}"
   servicebroker.backends.username:
     description: basic auth username to access each HTTP cf-container-broker backend
     default: containers

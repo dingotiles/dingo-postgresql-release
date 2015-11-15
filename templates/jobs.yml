@@ -11,14 +11,19 @@ jobs:
     persistent_disk: 10240
     properties:
       zone: z1
+  - name: cell_z2
+    instances: 3
+    templates: (( grab meta.job_templates.patroni ))
+    resource_pool: cell_z2
+    networks: [{name: patroni2}]
+    persistent_disk: 10240
+    properties:
+      zone: z2
   - name: router
     instances: 1
     templates: [{name: router, release: patroni}]
     resource_pool: router_z1
     networks: [{name: router1}]
-    properties:
-      servicebroker:
-        machines: (( param "please provide array of service broker hostnames/ips" ))
   - name: broker
     instances: 1
     templates: [{name: broker, release: patroni}]
@@ -29,7 +34,9 @@ jobs:
         router:
           hostname: (( param "please provide public hostname for routers" ))
         backends:
-          machines: (( param "please provide array of backend broker hostname" ))
+          machines:
+            z1: (( param "please provide array of z1 service broker hostnames/ips" ))
+            z2: (( param "please provide array of z2 service broker hostnames/ips" ))
     update:
       canary_watch_time: 10000-30000
       update_watch_time: 10000-30000
@@ -45,6 +52,10 @@ resource_pools:
     stemcell: (( grab meta.stemcell ))
     cloud_properties: (( param "please provide cloud_properties"))
     network: patroni1
+  - name: cell_z2
+    stemcell: (( grab meta.stemcell ))
+    cloud_properties: (( param "please provide cloud_properties"))
+    network: patroni2
   - name: router_z1
     stemcell: (( grab meta.stemcell ))
     cloud_properties: (( param "please provide cloud_properties"))
@@ -56,6 +67,7 @@ resource_pools:
 
 networks:
 - name: patroni1
+- name: patroni2
 - name: router1
 
 properties:

@@ -14,12 +14,14 @@ kvstore:
   password: ""
 
 backends:
-<% p("servicebroker.backends.machines").each do |machine| %>
+<% p("servicebroker.backends.machines").each do |az, machines| %>
+  <% machines.each do |machine| %>
 - guid: <%= machine %>
-  availability_zone: z1
+  availability_zone: <%= az %>
   uri: <%= machine %>
   username: "<%= p('servicebroker.backends.username') %>"
   password: "<%= p('servicebroker.backends.password') %>"
+  <% end %>
 <% end %>
 
 catalog:

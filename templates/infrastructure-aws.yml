@@ -20,7 +20,8 @@ jobs:
         router:
           hostname: (( grab jobs.router.networks.router1.static_ips.[0] ))
         backends:
-          machines: (( grab jobs.cell_z1.networks.patroni1.static_ips ))
+            z1: (( grab jobs.cell_z1.networks.patroni1.static_ips ))
+            z2: []
   - name: router
     networks:
       - name: router1
