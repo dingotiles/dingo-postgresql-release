@@ -71,6 +71,18 @@ networks:
     cloud_properties:
       subnet: subnet-xyzxyz
       security_groups: [cf]
+- name: patroni2
+  type: manual
+  subnets:
+  - range: 10.10.6.0/24
+    gateway: 10.10.6.1
+    dns: [10.10.0.2]
+    reserved: [10.10.6.2-10.10.6.5]
+    static: [10.10.6.6-10.10.6.20]
+    name: default_unused
+    cloud_properties:
+      subnet: subnet-abcabc
+      security_groups: [cf]
 - name: router1
   type: manual
   subnets:

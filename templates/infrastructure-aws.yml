@@ -15,7 +15,7 @@ jobs:
   - name: cell_z2
     instances: 1
     networks:
-      - name: patroni1
+      - name: patroni2
         static_ips: (( static_ips(0,1,2,3,4,5,6) ))
     persistent_disk: (( grab meta.persistent_disk ))
   - name: broker
