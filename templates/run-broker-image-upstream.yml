@@ -53,7 +53,7 @@ properties:
     services: &services
       - id: '0f5c1670-6dc3-11e5-bc08-6c4008a663f0'
         name: 'postgresql94'
-        description: 'PostgreSQL 9.4 service for application development and testing'
+        description: 'High-availability PostgreSQL 9.4 service cluster'
         bindable: true
         tags:
           - 'postgresql94'
