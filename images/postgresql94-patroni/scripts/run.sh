@@ -118,7 +118,7 @@ postgresql:
   admin: # user will be created during initialization. It would have CREATEDB and CREATEROLE privileges
     username: ${POSTGRES_USERNAME}
     password: ${POSTGRES_PASSWORD}
-  # restore: /patroni/scripts/restore.py
+  restore: /patroni/scripts/restore.py
   # recovery_conf:
   #  restore_command: "${restore_command}"
 
