@@ -7,9 +7,16 @@ meta:
 
 jobs:
   - name: cell_z1
+    instances: 1
     networks:
       - name: patroni1
-        static_ips: (( static_ips(5,6,7,8) ))
+        static_ips: (( static_ips(5,6,7,8,9,10,11) ))
+    persistent_disk: (( grab meta.persistent_disk ))
+  - name: cell_z2
+    instances: 1
+    networks:
+      - name: patroni1
+        static_ips: (( static_ips(0,1,2,3,4,5,6) ))
     persistent_disk: (( grab meta.persistent_disk ))
   - name: broker
     networks:
@@ -21,7 +28,7 @@ jobs:
           hostname: (( grab jobs.router.networks.router1.static_ips.[0] ))
         backends:
             z1: (( grab jobs.cell_z1.networks.patroni1.static_ips ))
-            z2: []
+            z2: (( grab jobs.cell_z2.networks.patroni2.static_ips ))
   - name: router
     networks:
       - name: router1
@@ -40,6 +47,8 @@ compilation:
 resource_pools:
   - name: cell_z1
     cloud_properties: {instance_type: c3.large}
+  - name: cell_z2
+    cloud_properties: {instance_type: c3.large}
   - name: broker_z1
     cloud_properties: {instance_type: t2.small}
   - name: router_z1
@@ -47,6 +56,9 @@ resource_pools:
 
 networks:
 - name: patroni1
+  type: manual
+  subnets: (( param "please provide subnets for patroni cells" ))
+- name: patroni2
   type: manual
   subnets: (( param "please provide subnets for patroni cells" ))
 - name: router1
