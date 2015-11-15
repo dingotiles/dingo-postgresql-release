@@ -58,6 +58,38 @@ For AWS you need to create an additional YAML file containing networking informa
 
 ```yaml
 ---
+  jobs:
+    - name: cell_z1
+      networks:
+        - name: patroni1
+          static_ips: (( static_ips(5,6,7,8) ))
+    - name: cell_z2
+      networks:
+        - name: patroni2
+          static_ips: (( static_ips(0,1,2,3) ))
+    - name: broker
+      networks:
+        - name: router1
+          static_ips: (( static_ips(2,3) ))
+      properties:
+        servicebroker:
+          router:
+            hostname: (( grab jobs.router.networks.router1.static_ips.[0] ))
+          backends:
+            machines:
+              z1: (( grab jobs.cell_z1.networks.patroni1.static_ips ))
+              z2: (( grab jobs.cell_z2.networks.patroni2.static_ips ))
+    - name: router
+      networks:
+        - name: router1
+          static_ips: (( static_ips(0,1) ))
+      properties:
+        servicebroker:
+          machines: (( grab jobs.broker.networks.router1.static_ips ))
+    - name: sanity-test
+      properties:
+        servicebroker:
+          machines: (( grab jobs.broker.networks.router1.static_ips ))
 networks:
 - name: patroni1
   type: manual
