@@ -24,7 +24,7 @@ echo instance_id ${instance_id}
 
 for plan_id in ${plan_ids[@]}; do
   echo creating service instance
-  curl -sf ${BROKER_URI}/v2/service_instances/${instance_id} -XPUT -d "{\"service_id\": \"${service_id}\", \"plan_id\": \"${plan_id}\"}"
+  curl -f ${BROKER_URI}/v2/service_instances/${instance_id} -XPUT -d "{\"service_id\": \"${service_id}\", \"plan_id\": \"${plan_id}\"}"
 
   echo creating service binding
   credentials=$(curl -sf ${BROKER_URI}/v2/service_instances/${instance_id}/service_bindings/${binding_id} -XPUT -d "{\"service_id\": \"${service_id}\", \"plan_id\": \"${plan_id}\"}")
@@ -48,13 +48,13 @@ for plan_id in ${plan_ids[@]}; do
 
   nodes=3
   echo updating service instance to $nodes nodes
-  curl -sf ${BROKER_URI}/v2/service_instances/${instance_id} -XPATCH -d "{\"service_id\": \"${service_id}\", \"plan_id\": \"${plan_id}\", \"parameters\": {\"node-count\": $nodes}}"
+  curl -f ${BROKER_URI}/v2/service_instances/${instance_id} -XPATCH -d "{\"service_id\": \"${service_id}\", \"plan_id\": \"${plan_id}\", \"parameters\": {\"node-count\": $nodes}}"
 
   echo deleting service binding
-  curl -sf ${BROKER_URI}/v2/service_instances/${instance_id}/service_bindings/${binding_id}\?plan_id=${plan_id}\&service_id=${service_id} -XDELETE
+  curl -f ${BROKER_URI}/v2/service_instances/${instance_id}/service_bindings/${binding_id}\?plan_id=${plan_id}\&service_id=${service_id} -XDELETE
 
   echo deleting service instance
-  curl -sf ${BROKER_URI}/v2/service_instances/${instance_id}\?plan_id=${plan_id}\&service_id=${service_id} -XDELETE
+  curl -f ${BROKER_URI}/v2/service_instances/${instance_id}\?plan_id=${plan_id}\&service_id=${service_id} -XDELETE
 done
 
 echo "Errand sanity-test is complete; exit status $EXITSTATUS"
