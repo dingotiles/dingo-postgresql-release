@@ -22,6 +22,10 @@ instance_id=TESTID-$(date +"%s")
 binding_id=BINDINGID-$(date +"%s")
 echo instance_id ${instance_id}
 
+
+echo "***********************"
+echo "*** Synchronous API ***"
+echo "***********************"
 for plan_id in ${plan_ids[@]}; do
   echo creating service instance
   curl -f ${BROKER_URI}/v2/service_instances/${instance_id} -XPUT -d "{\"service_id\": \"${service_id}\", \"plan_id\": \"${plan_id}\"}"
@@ -56,6 +60,63 @@ for plan_id in ${plan_ids[@]}; do
   echo deleting service instance
   curl -f ${BROKER_URI}/v2/service_instances/${instance_id}\?plan_id=${plan_id}\&service_id=${service_id} -XDELETE
 done
+
+echo "************************"
+echo "*** Asynchronous API ***"
+echo "************************"
+echo TODO
+# for plan_id in ${plan_ids[@]}; do
+#   echo creating service instance
+#   curl -f ${BROKER_URI}/v2/service_instances/${instance_id} -XPUT -d "{\"accepts_incomplete\": true, \"service_id\": \"${service_id}\", \"plan_id\": \"${plan_id}\"}"
+#
+#   echo polling for completion status
+#   while [[ $i -lt 10 ]]; do
+#     i=$[$i+1]
+#     sleep 1
+#     curl -sf ${BROKER_URI}/v2/service_instances/${instance_id}/last_operation
+#   done
+#
+#   echo creating service binding
+#   credentials=$(curl -sf ${BROKER_URI}/v2/service_instances/${instance_id}/service_bindings/${binding_id} -XPUT -d "{\"service_id\": \"${service_id}\", \"plan_id\": \"${plan_id}\"}")
+#   echo credentials $credentials
+#   uri=$(echo $credentials | jq -r ".credentials.uri")
+#   echo uri $uri
+#
+#   # 60 seconds to allow confd/haproxy restart to kick in
+#   set +e
+#   error_code=x
+#   i="0"
+#   while [[ $i -lt 60 && "${error_code}" != "0" ]]; do
+#     i=$[$i+1]
+#     sleep 1
+#     echo attempt $i
+#     pgbench -i $uri
+#     error_code=$?
+#   done
+#   set -e # exit immediately if a simple command exits with a non-zero status
+#   pgbench $uri
+#
+#   nodes=3
+#   echo updating service instance to $nodes nodes
+#   curl -f ${BROKER_URI}/v2/service_instances/${instance_id} -XPATCH -d "{\"service_id\": \"${service_id}\", \"plan_id\": \"${plan_id}\", \"parameters\": {\"node-count\": $nodes}}"
+#
+#   echo deleting service binding
+#   curl -f ${BROKER_URI}/v2/service_instances/${instance_id}/service_bindings/${binding_id}\?plan_id=${plan_id}\&service_id=${service_id} -XDELETE
+#
+#   echo deleting service instance
+#   curl -f ${BROKER_URI}/v2/service_instances/${instance_id}\?accepts_incomplete=true&plan_id=${plan_id}\&service_id=${service_id} -XDELETE
+#
+#   echo polling for completion status
+#   i="0"
+#   while [[ $i -lt 10 ]]; do
+#     i=$[$i+1]
+#     sleep 1
+#     curl -f ${BROKER_URI}/v2/service_instances/${instance_id}/last_operation
+#   done
+#
+# done
+
+
 
 echo "Errand sanity-test is complete; exit status $EXITSTATUS"
 exit $EXITSTATUS
