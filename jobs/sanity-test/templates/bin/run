@@ -24,10 +24,10 @@ echo instance_id ${instance_id}
 
 for plan_id in ${plan_ids[@]}; do
   echo creating service instance
-  curl -s ${BROKER_URI}/v2/service_instances/${instance_id} -XPUT -d "{\"service_id\": \"${service_id}\", \"plan_id\": \"${plan_id}\"}"
+  curl -sf ${BROKER_URI}/v2/service_instances/${instance_id} -XPUT -d "{\"service_id\": \"${service_id}\", \"plan_id\": \"${plan_id}\"}"
 
   echo creating service binding
-  credentials=$(curl -s ${BROKER_URI}/v2/service_instances/${instance_id}/service_bindings/${binding_id} -XPUT -d "{\"service_id\": \"${service_id}\", \"plan_id\": \"${plan_id}\"}")
+  credentials=$(curl -sf ${BROKER_URI}/v2/service_instances/${instance_id}/service_bindings/${binding_id} -XPUT -d "{\"service_id\": \"${service_id}\", \"plan_id\": \"${plan_id}\"}")
   echo credentials $credentials
   uri=$(echo $credentials | jq -r ".credentials.uri")
   echo uri $uri
@@ -46,11 +46,15 @@ for plan_id in ${plan_ids[@]}; do
   set -e # exit immediately if a simple command exits with a non-zero status
   pgbench $uri
 
+  nodes=3
+  echo updating service instance to $nodes nodes
+  curl -sf ${BROKER_URI}/v2/service_instances/${instance_id} -XPATCH -d "{\"service_id\": \"${service_id}\", \"plan_id\": \"${plan_id}\", \"parameters\": {\"node-count\": $nodes}}"
+
   echo deleting service binding
-  curl -s ${BROKER_URI}/v2/service_instances/${instance_id}/service_bindings/${binding_id}\?plan_id=${plan_id}\&service_id=${service_id} -XDELETE
+  curl -sf ${BROKER_URI}/v2/service_instances/${instance_id}/service_bindings/${binding_id}\?plan_id=${plan_id}\&service_id=${service_id} -XDELETE
 
   echo deleting service instance
-  curl -s ${BROKER_URI}/v2/service_instances/${instance_id}\?plan_id=${plan_id}\&service_id=${service_id} -XDELETE
+  curl -sf ${BROKER_URI}/v2/service_instances/${instance_id}\?plan_id=${plan_id}\&service_id=${service_id} -XDELETE
 done
 
 echo "Errand sanity-test is complete; exit status $EXITSTATUS"
