@@ -28,15 +28,15 @@ jobs:
   - name: router
     instances: 1
     templates:
-      - {name: logsearch-shipper, release: logsearch-shipper}
       - {name: router, release: patroni}
+      - {name: logsearch-shipper, release: logsearch-shipper}
     resource_pool: router_z1
     networks: [{name: router1}]
   - name: broker
     instances: 1
     templates:
-      - {name: logsearch-shipper, release: logsearch-shipper}
       - {name: broker, release: patroni}
+      - {name: logsearch-shipper, release: logsearch-shipper}
     resource_pool: broker_z1
     networks: [{name: router1}]
     properties:
