@@ -12,7 +12,9 @@ releases:
 jobs:
   - name: etcd
     instances: 1
-    templates: [{name: etcd, release: etcd}]
+    templates:
+      - {name: nxlog, release: nxlog}
+      - {name: etcd, release: etcd}
     resource_pool: broker_z1
     persistent_disk: 20240
     networks:

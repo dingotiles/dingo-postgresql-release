@@ -5,10 +5,6 @@ name: (( grab meta.name ))
 
 director_uuid: (( param "please provide director_uuid" ))
 
-releases:
-- name: patroni
-  version: latest
-
 networks: (( param "please provide networks" ))
 
 jobs: (( param "please provide jobs" ))

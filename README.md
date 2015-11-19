@@ -40,6 +40,13 @@ meta:
 Deployment
 ----------
 
+Upload some dependent BOSH releases to your BOSH:
+
+```
+bosh upload release https://github.com/hybris/nxlog-boshrelease/releases/download/v0.1.0/nxlog-0.1.0.tgz
+bosh upload release https://bosh.io/d/github.com/cloudfoundry-incubator/etcd-release
+```
+
 To use your own etcd cluster:
 
 ```
