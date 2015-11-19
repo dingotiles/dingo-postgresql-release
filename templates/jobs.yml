@@ -91,3 +91,5 @@ properties:
     logs:
       enabled: false
       server: "dummy:514"
+    metrics:
+      enabled: false
