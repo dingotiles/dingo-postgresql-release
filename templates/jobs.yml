@@ -5,7 +5,7 @@ meta:
 releases:
 - name: patroni
   version: latest
-- name: logsearch-shipper
+- name: simple-remote-syslog
   version: latest
 
 jobs:
@@ -29,14 +29,14 @@ jobs:
     instances: 1
     templates:
       - {name: router, release: patroni}
-      - {name: logsearch-shipper, release: logsearch-shipper}
+      - {name: remote-syslog, release: simple-remote-syslog}
     resource_pool: router_z1
     networks: [{name: router1}]
   - name: broker
     instances: 1
     templates:
       - {name: broker, release: patroni}
-      - {name: logsearch-shipper, release: logsearch-shipper}
+      - {name: remote-syslog, release: simple-remote-syslog}
     resource_pool: broker_z1
     networks: [{name: router1}]
     properties:

@@ -14,7 +14,7 @@ jobs:
     instances: 1
     templates:
       - {name: etcd, release: etcd}
-      - {name: logsearch-shipper, release: logsearch-shipper}
+      - {name: remote-syslog, release: simple-remote-syslog}
     resource_pool: broker_z1
     persistent_disk: 20240
     networks:
