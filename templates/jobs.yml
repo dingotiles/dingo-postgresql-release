@@ -87,3 +87,5 @@ properties:
     password: starkandwayne
   etcd:
     machines: (( param "please provide array of etcd hostnames" ))
+  nxlog:
+    input_files: /var/vcap/data/sys/log/*/*.log
