@@ -43,8 +43,8 @@ Deployment
 Upload some dependent BOSH releases to your BOSH:
 
 ```
-bosh upload release https://github.com/hybris/nxlog-boshrelease/releases/download/v0.1.0/nxlog-0.1.0.tgz
 bosh upload release https://bosh.io/d/github.com/cloudfoundry-incubator/etcd-release
+bosh upload release https://bosh.io/d/github.com/logsearch/logsearch-shipper-boshrelease
 ```
 
 To use your own etcd cluster:
@@ -153,10 +153,10 @@ properties:
   remote_syslog:
     address: logs.papertrailapp.com
     port: 54321
-  nxlog:
-    tcpoutput:
-      host: logs.papertrailapp.com
-      port: 54321
+  logsearch:
+    logs:
+      enabled: true
+      server: logs.papertrailapp.com:54321
 ```
 
 Then include the file in your `make_manifest` command to build your BOSH deployment manifest.

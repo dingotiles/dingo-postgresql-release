@@ -5,7 +5,7 @@ meta:
 releases:
 - name: patroni
   version: latest
-- name: nxlog
+- name: logsearch-shipper
   version: latest
 
 jobs:
@@ -28,14 +28,14 @@ jobs:
   - name: router
     instances: 1
     templates:
-      - {name: nxlog, release: nxlog}
+      - {name: logsearch-shipper, release: logsearch-shipper}
       - {name: router, release: patroni}
     resource_pool: router_z1
     networks: [{name: router1}]
   - name: broker
     instances: 1
     templates:
-      - {name: nxlog, release: nxlog}
+      - {name: logsearch-shipper, release: logsearch-shipper}
       - {name: broker, release: patroni}
     resource_pool: broker_z1
     networks: [{name: router1}]
@@ -87,5 +87,7 @@ properties:
     password: starkandwayne
   etcd:
     machines: (( param "please provide array of etcd hostnames" ))
-  nxlog:
-    input_files: /var/vcap/data/sys/log/*/*.log
+  logsearch:
+    logs:
+      enabled: false
+      server: "dummy:514"
