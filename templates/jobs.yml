@@ -87,9 +87,3 @@ properties:
     password: starkandwayne
   etcd:
     machines: (( param "please provide array of etcd hostnames" ))
-  logsearch:
-    logs:
-      enabled: false
-      server: "dummy:514"
-    metrics:
-      enabled: false
