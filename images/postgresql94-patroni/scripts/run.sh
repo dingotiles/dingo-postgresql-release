@@ -105,6 +105,9 @@ postgresql:
   maximum_lag_on_failover: 1048576 # 1 megabyte in bytes
   use_slots: False
   pgpass: /tmp/pgpass
+  # pg_rewind:
+  #   username: replicator
+  #   password: replicator
   pg_hba:
   - host all all 0.0.0.0/0 md5
   - hostssl all all 0.0.0.0/0 md5
