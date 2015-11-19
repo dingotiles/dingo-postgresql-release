@@ -143,6 +143,24 @@ You then include `tmp/aws.yml` (whatever the path is) to the `make_manifest` com
 bosh deploy
 ```
 
+### Remote syslog
+
+To ship logs to a remote syslog endpoint, create a YAML file like below:
+
+```yaml
+---
+properties:
+  remote_syslog:
+    address: logs.papertrailapp.com
+    port: 54321
+  nxlog:
+    tcpoutput:
+      host: logs.papertrailapp.com
+      port: 54321
+```
+
+Then include the file in your `make_manifest` command to build your BOSH deployment manifest.
+
 Usage
 -----
 
