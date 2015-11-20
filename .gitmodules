@@ -1,3 +1,7 @@
 [submodule "src/patroni-broker"]
 	path = src/patroni-broker
 	url = git@github.com:drnic/patroni-broker.git
+[submodule "src/cf-containers-broker"]
+	path = src/cf-containers-broker
+	url = https://github.com/drnic/cf-containers-broker
+	branch = patroni-test
