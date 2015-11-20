@@ -154,10 +154,12 @@ properties:
   remote_syslog:
     address: logs.papertrailapp.com
     port: 54321
+    short_hostname: true
   docker:
     log_driver: syslog
     log_options:
     - (( concat "syslog-address=udp://" properties.remote_syslog.address ":" properties.remote_syslog.port ))
+    - tag="{{.Name}}"
 ```
 
 Then include the file in your `make_manifest` command to build your BOSH deployment manifest.

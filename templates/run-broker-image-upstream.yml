@@ -13,6 +13,8 @@ meta:
 
   job_templates:
     patroni:
+    # ship all the logs
+    - {name: remote-syslog, release: simple-remote-syslog}
     # run docker daemon
     - {name: docker, release: patroni}
     # run registrator daemon
@@ -23,8 +25,6 @@ meta:
     - {name: container-env-vars, release: patroni}
     # run service broker
     - {name: cf-containers-broker, release: patroni}
-    # ship all the logs
-    - {name: remote-syslog, release: simple-remote-syslog}
 
 # longer watch times to allow download of docker images
 update:
