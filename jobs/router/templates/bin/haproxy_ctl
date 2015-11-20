@@ -23,7 +23,7 @@ while [[ $i -lt 20 && "${error_code}" != "0" ]]; do
   i=$[$i+1]
   sleep 1
   echo "waiting for $CONFIG $i/20"
-  test -x "${CONFIG}"
+  test -f "${CONFIG}"
   error_code=$?
 done
 set -e # exit immediately if a simple command exits with a non-zero status
