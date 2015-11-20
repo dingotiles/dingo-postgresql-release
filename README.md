@@ -157,7 +157,7 @@ properties:
   docker:
     log_driver: syslog
     log_options:
-    - "syslog-address=tcp://logs.papertrailapp.com:54321"
+    - "syslog-address=udp://logs.papertrailapp.com:54321"
 ```
 
 Then include the file in your `make_manifest` command to build your BOSH deployment manifest.
