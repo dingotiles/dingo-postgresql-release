@@ -44,7 +44,8 @@ Upload some dependent BOSH releases to your BOSH:
 
 ```
 bosh upload release https://bosh.io/d/github.com/cloudfoundry-incubator/etcd-release
-bosh upload release https://bosh.io/d/github.com/logsearch/logsearch-shipper-boshrelease
+bosh upload release https://bosh.io/d/github.com/cloudfoundry-community/route-registrar-boshrelease
+bosh upload release https://bosh.io/d/github.com/cloudfoundry-community/simple-remote-syslog-boshrelease
 ```
 
 To use your own etcd cluster:

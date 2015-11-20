@@ -19,12 +19,7 @@ export CF_CONTAINERS_BROKER_STORE_DIR=$STORE_DIR
 # Directory to store the CF-Containers-Broker temp files
 export CF_CONTAINERS_BROKER_TMP_DIR=$TMP_DIR
 
-# User which will own the CF-Containers-Broker services
-export CF_CONTAINERS_BROKER_USER="<%= p('broker.user') %>"
-
-# Group which will own the CF-Containers-Broker services
-export CF_CONTAINERS_BROKER_GROUP="<%= p('broker.group') %>"
-
+# Fetch new/updated container images on restart
 export CF_CONTAINERS_FETCH_IMAGES=<%= p('broker.fetch_images') ? 'true' : '' %>
 
 # CF-Containers-Broker Gemfile
@@ -40,34 +35,34 @@ export SETTINGS_PATH=$CF_CONTAINERS_BROKER_CONF_DIR/settings.yml
 export DOCKER_URL="<%= p('broker.docker_url') %>"
 
 #
-# Remote Syslog properties
+# Route Registrar properties
 #
 
-# Directory to store the Remote Syslog configuration files
-export REMOTE_SYSLOG_CONF_DIR=${JOB_DIR}/config
+# Directory to store the Route Registrar configuration files
+export ROUTE_REGISTRAR_CONF_DIR=${JOB_DIR}/config
 
-# Directory to store the Remote Syslog logs
-export REMOTE_SYSLOG_LOG_DIR=${LOG_DIR}
+# Directory to store the Route Registrar log files
+export ROUTE_REGISTRAR_LOG_DIR=${LOG_DIR}
 
-# Directory to store the Remote Syslog process IDs
-export REMOTE_SYSLOG_PID_DIR=${RUN_DIR}
+# Directory to store the Route Registrar process IDs
+export ROUTE_REGISTRAR_PID_DIR=${RUN_DIR}
 
-# Directory to store the Remote Syslog data files
-export REMOTE_SYSLOG_STORE_DIR=${STORE_DIR}
+# Directory to store the Route Registrar data files
+export ROUTE_REGISTRAR_STORE_DIR=${STORE_DIR}
 
-# Directory to store the Remote Syslog temp files
-export REMOTE_SYSLOG_TMP_DIR=${TMP_DIR}
+# Directory to store the Route Registrar temp files
+export ROUTE_REGISTRAR_TMP_DIR=${TMP_DIR}
 
-# User which will own the Remote Syslog services
-export REMOTE_SYSLOG_USER="<%= p('remote_syslog.user') %>"
-
-# Group which will own the Remote Syslog services
-export REMOTE_SYSLOG_GROUP="<%= p('remote_syslog.group') %>"
-
-# How often to check for new files
-export REMOTE_SYSLOG_NEW_FILE_CHECK_INTERVAL="<%= p('remote_syslog.new_file_check_interval') %>"
-
-<% if p('remote_syslog.debug') %>
-# Write a debug file
-export REMOTE_SYSLOG_DEBUG="--debug-log-cfg=${REMOTE_SYSLOG_LOG_DIR}/remote_syslog_debug.log"
+# Proxy configuration
+<% if_p('env.http_proxy') do |http_proxy| %>
+export HTTP_PROXY="<%= http_proxy %>"
+export http_proxy="<%= http_proxy %>"
+<% end %>
+<% if_p('env.https_proxy') do |https_proxy| %>
+export HTTPS_PROXY="<%= https_proxy %>"
+export https_proxy="<%= https_proxy %>"
+<% end %>
+<% if_p('env.no_proxy') do |no_proxy| %>
+export NO_PROXY="<%= no_proxy %>"
+export no_proxy="<%= no_proxy %>"
 <% end %>

@@ -19,18 +19,6 @@ remote_syslog/remote_syslog-0.14_linux_amd64.tar.gz:
   object_id: 5a50b832-b7aa-4d96-a39f-9e90eedf2d9e
   sha: c0562f6d13e5eafece5c030c835f21fcf12fccdb
   size: 1849384
-ruby/bundler-1.10.5.gem:
-  object_id: 47bb2b65-a480-4be0-849a-39231cefaa78
-  sha: d8a934e1fcc000eb89c87697e8b73f8812bd498c
-  size: 251392
-ruby/ruby-2.1.5.tar.gz:
-  object_id: 448632a1-8533-453a-afb5-a8801681c6fb
-  sha: 9c0a238bd7839a4b51871641945a3da90997b8c2
-  size: 15127433
-ruby/rubygems-2.4.8.tgz:
-  object_id: 4c1f70d8-c1cc-405e-9e40-77f27c0d80d5
-  sha: 0db6b2f1cdd2267fe19f1f875057c2f2ce9f5696
-  size: 447712
 ruby/yaml-0.1.6.tar.gz:
   object_id: cf573004-2371-454c-92d9-e13d4d40c390
   sha: f3d404e11bec3c4efcddfd14c42d46f1aabe0b5d
@@ -59,3 +47,15 @@ postgresql/postgresql-9.4.5.tar.gz:
   object_id: 9053fd48-6bd0-4d23-ae34-5301b53e6862
   sha: 5278d04093f3cb2e00796fae15b2e33406844d01
   size: 23211720
+ruby/bundler-1.10.6.gem:
+  object_id: 0638bf3c-9923-49c4-8adf-7ed4ee7fbcb3
+  sha: 55a37fccd1c0cb5542d468e35d3be46dd0667f73
+  size: 251392
+ruby/ruby-2.2.3.tar.gz:
+  object_id: 2fbedcac-d374-42b1-9360-da51a8c022fa
+  sha: 0d9e158534cb31e72740138b8f697b57b448e5c3
+  size: 16626772
+ruby/rubygems-2.5.0.tgz:
+  object_id: 8a40b429-988a-4ae8-a4c5-593fdffd4469
+  sha: 03613d7013b61ecabef2424221438a692e53bbfc
+  size: 467978
