@@ -153,10 +153,10 @@ properties:
   remote_syslog:
     address: logs.papertrailapp.com
     port: 54321
-  logsearch:
-    logs:
-      enabled: true
-      server: logs.papertrailapp.com:54321
+  docker:
+    log_driver: syslog
+    log_options:
+    - "syslog-address=tcp://logs.papertrailapp.com:54321"
 ```
 
 Then include the file in your `make_manifest` command to build your BOSH deployment manifest.
