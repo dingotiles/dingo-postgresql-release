@@ -1,8 +1,8 @@
 ---
 meta:
   cfcontainersbroker:
-    cc_api_uri: (( params "please provide CF api url" ))
-    external_host: (( params "please provide the hostname to advertise for the broker" ))
+    cc_api_uri: (( param "please provide CF api url" ))
+    external_host: (( param "please provide the hostname to advertise for the broker" ))
     username: containers
     password: containers
     cookie_secret: 'e7247dae-a252-4393-afa3-2219c1c02efd'
@@ -10,7 +10,6 @@ meta:
     ssl_enabled: true
     component_name: postgresql-docker-broker
     max_containers: 20
-  nats: (( params "please provide CF router's NATS info" ))
 
   job_templates:
     patroni:
@@ -28,8 +27,6 @@ meta:
     - {name: remote-syslog, release: simple-remote-syslog}
 
 properties:
-  nats: (( grab meta.nats ))
-
   cf:
     api_url: (( grab meta.cfcontainersbroker.cc_api_uri ))
 
