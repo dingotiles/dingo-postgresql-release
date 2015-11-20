@@ -14,19 +14,11 @@ case $1 in
     # Install aufs-tools
     dpkg -i /var/vcap/packages/docker/aufs-tools_20120411-3_amd64.deb
 
-    # Create Docker user & group
-    create_group ${DOCKER_GROUP}
-    create_user ${DOCKER_USER} ${DOCKER_GROUP}
-
     # Create docker data store
     if [ ! -d ${DOCKER_STORE_DIR}/docker ]; then
       mkdir -p ${DOCKER_STORE_DIR}/docker
-      chown ${DOCKER_USER}:${DOCKER_GROUP} ${DOCKER_STORE_DIR}/docker
       chmod 770 ${DOCKER_STORE_DIR}/docker
     fi
-
-    # Enable logrotate crontab
-    (crontab -l | sed /docker.*logrotate/d; cat ${DOCKER_CONF_DIR}/docker_logrotate.cron) | sed /^$/d | crontab
 
     # Set ulimits
     ulimit -n ${DOCKER_ULIMIT_NOFILE}
@@ -46,58 +38,59 @@ case $1 in
     fi
 
     # Start Docker daemon
-    exec chpst -u ${DOCKER_USER}:${DOCKER_GROUP} docker daemon \
-        ${DOCKER_API_CORS_HEADER:-} \
+    exec /var/vcap/packages/docker/bin/docker daemon \
+        ${DOCKER_API_CORS_HEADER} \
         ${DOCKER_BRIDGE:-} \
-        ${DOCKER_DEBUG:-} \
+        ${DOCKER_DEBUG} \
         ${DOCKER_DEFAULT_GATEWAY:-} \
         ${DOCKER_DEFAULT_GATEWAY_V6:-} \
         ${DOCKER_DEFAULT_ULIMITS:-} \
-        ${DOCKER_DNS_DOMAINS:-} \
+        ${DOCKER_DISABLE_LEGACY_REGISTRY} \
         ${DOCKER_DNS_SERVERS:-} \
-        ${DOCKER_EXEC_DRIVER:-} \
+        ${DOCKER_DNS_OPTIONS:-} \
+        ${DOCKER_DNS_SEARCH:-} \
         ${DOCKER_EXEC_OPTIONS:-} \
-        --group ${DOCKER_GROUP} \
+        --group vcap \
         --graph ${DOCKER_STORE_DIR}/docker \
         --host unix://${DOCKER_PID_DIR}/docker.sock \
-        ${DOCKER_ICC:-} \
+        ${DOCKER_ICC} \
         ${DOCKER_INSECURE_REGISTRIES:-} \
-        ${DOCKER_IPFORWARD:-} \
-        ${DOCKER_IPMASQ:-} \
-        ${DOCKER_IPTABLES:-} \
-        ${DOCKER_IPV6:-} \
-        ${DOCKER_LOG_LEVEL:-} \
+        ${DOCKER_IP:-} \
+        ${DOCKER_IPFORWARD} \
+        ${DOCKER_IPMASQ} \
+        ${DOCKER_IPTABLES} \
+        ${DOCKER_IPV6} \
         ${DOCKER_LABELS:-} \
+        ${DOCKER_LOG_LEVEL} \
+        ${DOCKER_LOG_DRIVER:-} \
+        ${DOCKER_LOG_OPTIONS:-} \
         ${DOCKER_MTU:-} \
         --pidfile ${DOCKER_PID_FILE} \
         ${DOCKER_REGISTRY_MIRRORS:-} \
+        ${DOCKER_SELINUX_ENABLED} \
         ${DOCKER_STORAGE_DRIVER:-} \
         ${DOCKER_STORAGE_OPTIONS:-} \
-        ${DOCKER_SELINUX_ENABLED:-} \
         ${DOCKER_TCP:-} \
-        ${DOCKER_TLS:-} \
+        ${DOCKER_TLS} \
         ${DOCKER_TLS_CACERT:-} \
         ${DOCKER_TLS_CERT:-} \
         ${DOCKER_TLS_KEY:-} \
         ${DOCKER_TLS_VERIFY_OPTION:-} \
-        ${DOCKER_USERLAND_PROXY:-} \
+        ${DOCKER_USERLAND_PROXY} \
         >>${DOCKER_LOG_DIR}/${OUTPUT_LABEL}.stdout.log \
         2>>${DOCKER_LOG_DIR}/${OUTPUT_LABEL}.stderr.log
     ;;
 
   stop)
     # Stop Docker containers
-    echo -n "Stopping docker containers: "
-    containers="$(chpst -u ${DOCKER_USER}:${DOCKER_GROUP} docker --host unix://${DOCKER_PID_DIR}/docker.sock ps -q)"
+    echo "Stopping docker containers..."
+    containers="$(/var/vcap/packages/docker/bin/docker --host unix://${DOCKER_PID_DIR}/docker.sock ps -q)"
     if [[ ! -z $containers ]]; then
-      echo ${containers}
       for container in $containers
       do
-        echo -n "Stopping docker container... "
-        chpst -u ${DOCKER_USER}:${DOCKER_GROUP} docker --host unix://${DOCKER_PID_DIR}/docker.sock stop ${container}
+        echo "Stopping docker container ${container}"
+        /var/vcap/packages/docker/bin/docker --host unix://${DOCKER_PID_DIR}/docker.sock stop ${container}
       done
-    else
-      echo "Nothing to do."
     fi
 
     # Stop Docker daemon

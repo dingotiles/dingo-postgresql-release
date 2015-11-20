@@ -4,27 +4,16 @@ name: docker
 packages:
   - bosh-helpers
   - docker
-  - remote_syslog
 
 templates:
   bin/cgroupfs-mount: bin/cgroupfs-mount
   bin/docker_ctl: bin/docker_ctl
   bin/job_properties.sh.erb: bin/job_properties.sh
-  bin/remote_syslog_ctl: bin/remote_syslog_ctl
   config/docker.cacert.erb: config/docker.cacert
   config/docker.cert.erb: config/docker.cert
   config/docker.key.erb: config/docker.key
-  config/docker_logrotate.cron.erb: config/docker_logrotate.cron
-  config/logrotate.conf.erb: config/logrotate.conf
-  config/remote_syslog.yml.erb: config/remote_syslog.yml
 
 properties:
-  docker.user:
-    description: "User which will own the Docker services"
-    default: "root"
-  docker.group:
-    description: "Group which will own the Docker services"
-    default: "vcap"
   docker.tcp_address:
     description: "TCP address where Docker daemon will listen to (if not set, TCP will not be available)"
     default: "127.0.0.1"
@@ -47,12 +36,15 @@ properties:
     description: "Container default gateway IPv6 address"
   docker.default_ulimits:
     description: "Array of default ulimits for containers"
+  docker.disable_legacy_registry:
+    description: "Do not contact legacy registries"
+    default: false
   docker.dns_servers:
-    description: "Array of DNS servers to be used by Docker"
-  docker.dns_domains:
-    description: "Array of DNS search domains to be used by Docker"
-  docker.exec_driver:
-    description: "Use a specific exec driver"
+    description: "Array of DNS servers to be used"
+  docker.dns_options:
+    description: "Array of DNS options to be used"
+  docker.dns_search:
+    description: "Array of DNS search domains to be used"
   docker.exec_options:
     description: "Array of exec driver options"
   docker.icc:
@@ -60,11 +52,13 @@ properties:
     default: true
   docker.insecure_registries:
     description: "Array of insecure registries (no certificate verification for HTTPS and enable HTTP fallback)"
+  docker.ip:
+    description: "Default IP when binding container ports"
   docker.ip_forward:
     description: "Enable net.ipv4.ip_forward and IPv6 forwarding"
     default: true
   docker.ip_masq:
-    description: "Enable IP masquerading for bridge's IP range"
+    description: "Enable IP masquerading"
     default: true
   docker.iptables:
     description: "Enable Docker's addition of iptables rules"
@@ -72,11 +66,15 @@ properties:
   docker.ipv6:
     description: "Enable IPv6 networking"
     default: false
+  docker.labels:
+    description: "Array of key=value labels for the daemon"
   docker.log_level:
     description: "Set the logging level (debug, info, warn, error, fatal)"
     default: "info"
-  docker.labels:
-    description: "Array of key=value labels for the daemon"
+  docker.log_driver:
+    description: "Default driver for container logs"
+  docker.log_options:
+    description: "Array of log driver options"
   docker.mtu:
     description: "Set the containers network MTU (if no value is provided: default to the default route MTU or 1500 if no default route is available)"
   docker.registry_mirrors:
@@ -106,37 +104,6 @@ properties:
   docker.ulimit.nofile:
     description: "Maximum number of open files"
     default: 8192
-
-  docker.daemon.logrotate.frequency:
-    description: "Frequency to run logrotate for Docker daemon log files (crontab five time and date fields)"
-    default: "0 * * * *"
-  docker.daemon.logrotate.rotate:
-    description: "Number of times Docker daemon log files are rotated before being removed"
-    default: "7"
-  docker.daemon.logrotate.size:
-    description: "Size before Docker daemon log files are rotated"
-    default: "10M"
-
-  remote_syslog.user:
-    description: "User which will own the Remote Syslog services"
-    default: "root"
-  remote_syslog.group:
-    description: "Group which will own the Remote Syslog services"
-    default: "vcap"
-  remote_syslog.address:
-    description: "IP address for Remote Syslog"
-  remote_syslog.port:
-    description: "TCP port of Remote Syslog"
-    default: "514"
-  remote_syslog.protocol:
-    description: "Protocol to be used when forwarding logs to a Remote Syslog (tcp|udp|tls)"
-    default: "udp"
-  remote_syslog.new_file_check_interval:
-    description: "How often to check for new files"
-    default: "10s"
-  remote_syslog.debug:
-    description: "Write a debug file"
-    default: false
 
   env.http_proxy:
     description: "HTTP proxy that Docker should use"

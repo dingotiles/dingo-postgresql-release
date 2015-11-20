@@ -24,6 +24,8 @@ meta:
     - {name: container-env-vars, release: patroni}
     # run service broker
     - {name: cf-containers-broker, release: patroni}
+    # ship all the logs
+    - {name: remote-syslog, release: simple-remote-syslog}
 
 properties:
   nats: (( grab meta.nats ))
