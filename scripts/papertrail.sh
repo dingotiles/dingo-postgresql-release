@@ -27,10 +27,8 @@ fi
 
 function fetch_org_space {
   export space_name=$(cf curl "/v2/spaces/${space_guid}" | jq -r ".entity.name")
-  echo $space_name
   export organization_guid=$(cf curl "/v2/spaces/${space_guid}" | jq -r ".entity.organization_guid")
   export org_name=$(cf curl "/v2/organizations/${organization_guid}" | jq -r ".entity.name")
-  echo $org_name
 }
 
 service_guid=$(cf curl "/v2/spaces/${space_guid}/service_instances?q=name:${service_name}" | jq -r ".resources[0].metadata.guid")
