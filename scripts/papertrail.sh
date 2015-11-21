@@ -10,18 +10,18 @@ ETCD_CLUSTER=${ETCD_CLUSTER:-10.244.4.2:4001}
 
 service_name=$1
 if [[ -z $service_name ]]; then
-  echo "USAGE: papertrail.sh <service-name>"
+  >&2 echo "USAGE: papertrail.sh <service-name>"
   exit 1
 fi
 
 if [[ ! -f ~/.cf/config.json ]]; then
-  echo "Login to target Cloud Foundry first"
+  >&2 echo "Login to target Cloud Foundry first"
   exit 1
 fi
 
 space_guid=$(cat ~/.cf/config.json | jq -r .SpaceFields.Guid)
 if [[ -z $space_guid ]]; then
-  echo "Target org/space first"
+  >&2 echo "Target org/space first"
   exit 1
 fi
 
@@ -34,14 +34,20 @@ function fetch_org_space {
 service_guid=$(cf curl "/v2/spaces/${space_guid}/service_instances?q=name:${service_name}" | jq -r ".resources[0].metadata.guid")
 if [[ "${service_guid}" == "null" ]]; then
   fetch_org_space
-  echo "Service ${service_name} not available in org ${org_name} / space ${space_name}"
+  >&2 echo "Service ${service_name} not available in org ${org_name} / space ${space_name}"
   exit 1
 fi
 
 any_guids=${service_guid}
-backend_instance_guids=$(curl -s ${ETCD_CLUSTER}/v2/keys/serviceinstances/${service_guid}/nodes | jq -r ".node.nodes[].key")
-for backend_guid in ${backend_instance_guids[@]}; do
-  any_guids="${any_guids}+OR+${backend_guid}"
+backend_instance_paths=$(curl -s ${ETCD_CLUSTER}/v2/keys/serviceinstances/${service_guid}/nodes | jq -r ".node.nodes[].key")
+for backend_instance_path in ${backend_instance_paths[@]}; do
+  regexp="nodes\/(.*)"
+  if [[ $backend_instance_path =~ $regexp ]]; then
+    backend_guid="${BASH_REMATCH[1]}"
+    any_guids="${any_guids}+OR+${backend_guid}"
+  else
+    >&2 echo "no match for ${backend_instance_path}"
+  fi
 done
 
 echo "${BASE_PAPERTRAIL}/events?q=(${any_guids})"
