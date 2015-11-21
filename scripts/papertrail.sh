@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e # fail fast
+
 # Displays all the logs for a specific CF service instance
 # https://papertrailapp.com/groups/688143/events?q=(a65aebfc-3e73-419b-b50c-bdc0110136a1+OR+8e8f0540-8719-4d2a-9f2a-ffc02cb892dd)&r=604849041863630862-604849149376266257
 
@@ -23,7 +25,20 @@ if [[ -z $space_guid ]]; then
   exit 1
 fi
 
+function fetch_org_space {
+  export space_name=$(cf curl "/v2/spaces/${space_guid}" | jq -r ".entity.name")
+  echo $space_name
+  export organization_guid=$(cf curl "/v2/spaces/${space_guid}" | jq -r ".entity.organization_guid")
+  export org_name=$(cf curl "/v2/organizations/${organization_guid}" | jq -r ".entity.name")
+  echo $org_name
+}
+
 service_guid=$(cf curl "/v2/spaces/${space_guid}/service_instances?q=name:${service_name}" | jq -r ".resources[0].metadata.guid")
+if [[ "${service_guid}" == "null" ]]; then
+  fetch_org_space
+  echo "Service ${service_name} not available in org ${org_name} / space ${space_name}"
+  exit 1
+fi
 
 any_guids=${service_guid}
 backend_instance_guids=$(curl -s ${ETCD_CLUSTER}/v2/keys/serviceinstances/${service_guid}/nodes | jq -r ".node.nodes[].key")
