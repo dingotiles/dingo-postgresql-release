@@ -11,7 +11,7 @@ jobs:
   plan:
   - aggregate:
     - {get: boshrelease}
-    - {get: boshrelease-base-image, trigger: true}
+    - {get: boshrelease-base-image, trigger: true, params: {submodules: none}}
   - put: docker-image-pg94-patroni-base
     params:
       build: boshrelease/images/postgresql94-patroni-base
@@ -23,7 +23,7 @@ jobs:
   - aggregate:
     - {get: patroni}
     - {get: boshrelease}
-    - {get: boshrelease-final-image, trigger: true}
+    - {get: boshrelease-final-image, trigger: true, params: {submodules: none}}
   - task: prepare-dockerfile
     file: boshrelease/ci/tasks/prepare-dockerfile.yml
     config:
