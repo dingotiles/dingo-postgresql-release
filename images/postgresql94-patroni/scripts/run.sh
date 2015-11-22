@@ -29,7 +29,7 @@ if [[ ! -z "${DOCKER_HOSTNAME}" ]]; then
     registrator_uri="${ETCD_HOST_PORT}/v2/keys/${REGISTRATOR_DOCKER_IMAGE}/${DOCKER_HOSTNAME}:${NAME}:5432"
     echo looking up public host:port from etc
     echo "-> ${registrator_uri}"
-    CONNECT_ADDRESS=$(curl -vL ${registrator_uri} | jq -r .node.value)
+    CONNECT_ADDRESS=$(curl -sL ${registrator_uri} | jq -r .node.value)
     if [[ "${CONNECT_ADDRESS}" == "null" ]]; then
       echo container not yet registered, waiting...
     else
