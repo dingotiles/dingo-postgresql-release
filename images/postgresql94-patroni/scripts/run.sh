@@ -151,6 +151,13 @@ postgresql:
     # - standby servers config
     hot_standby: "on"
     wal_log_hints: "on"
+
+    # When using synchronous replication, use at least three Postgres data nodes
+    # to ensure write availability if one host fails.
+    # To enable a simple synchronous replication test:
+    # synchronous_commit: "on"
+    # synchronous_standby_names: "*"
+
 __EOF__
 
 chown postgres:postgres -R $DATA_DIR $PG_DATA_DIR /patroni /pgpass /patroni.py
