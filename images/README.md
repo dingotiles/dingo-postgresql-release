@@ -438,12 +438,45 @@ _docker run -d --name john -p 40000:5432 \
 _docker logs -f john
 ```
 
+After PostgreSQL creates the initial database, the first backup and first wal segement will be taken and uploaded to your S3 bucket:
+
+```
+wal_e.worker.base INFO     MSG: Not deleting any data.
+        DETAIL: No existing base backups.
+        STRUCTURED: time=2015-11-23T22:19:03.033284-00 pid=150
+producing a new backup at Mon Nov 23 22:19:03 UTC 2015
+wal_e.main   INFO     MSG: starting WAL-E
+        DETAIL: The subcommand is "backup-push".
+        STRUCTURED: time=2015-11-23T22:19:03.144693-00 pid=157
+wal_e.main   INFO     MSG: starting WAL-E
+        DETAIL: The subcommand is "wal-push".
+        STRUCTURED: time=2015-11-23T22:19:03.333521-00 pid=167
+wal_e.worker.upload INFO     MSG: begin archiving a file
+        DETAIL: Uploading "pg_xlog/000000010000000000000001" to "s3://patroni-demo/backups/my_first_cluster/wal/wal_005/000000010000000000000001.lzo".
+        STRUCTURED: time=2015-11-23T22:19:03.422584-00 pid=167 action=push-wal key=s3://patroni-demo/backups/my_first_cluster/wal/wal_005/000000010000000000000001.lzo prefix=backups/my_first_cluster/wal/ seg=000000010000000000000001 state=begin
+wal_e.operator.backup INFO     MSG: start upload postgres version metadata
+        DETAIL: Uploading to s3://patroni-demo/backups/my_first_cluster/wal/basebackups_005/base_000000010000000000000002_00000040/extended_version.txt.
+        STRUCTURED: time=2015-11-23T22:19:03.650981-00 pid=157
+```
+
 To add some data to trigger the initial WAL pushes:
 
 ```
 pgbench -i postgres://replicator:replicator@192.168.99.100:40000/postgres
-pgbench postgres://replicator:replicator@192.168.99.100:40000/postgres
+pgbench postgres://replicator:replicator@192.168.99.100:40000/postgres -T 60
 _docker logs -f john
+```
+
+The logs will show that a new wal segment is uploaded:
+
+```
+wal_e.main   INFO     MSG: starting WAL-E
+        DETAIL: The subcommand is "wal-push".
+        STRUCTURED: time=2015-11-23T22:23:33.266677-00 pid=541
+wal_e.worker.upload INFO     MSG: begin archiving a file
+        DETAIL: Uploading "pg_xlog/000000010000000000000003" to "s3://patroni-demo/backups/my_first_cluster/wal/wal_005/000000010000000000000003.lzo".
+        STRUCTURED: time=2015-11-23T22:23:33.340118-00 pid=541 action=push-wal key=s3://patroni-demo/backups/my_first_cluster/wal/wal_005/000000010000000000000003.lzo prefix=backups/my_first_cluster/wal/ seg=000000010000000000000003 state=begin
+LOG:  unexpected EOF on client connection with an open transaction
 ```
 
 Now run secondary `paul`:
