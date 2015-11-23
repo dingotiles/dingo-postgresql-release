@@ -8,41 +8,43 @@ DOCKER_IP=$(hostname --ip-address)
 REGISTRATOR_PREFIX=${REGISTRATOR_PREFIX:-}
 REGISTRATOR_DOCKER_IMAGE=${REGISTRATOR_DOCKER_IMAGE:-postgresql-patroni} # used as path by registrator entries
 
-PATRONI_SCOPE=${PATRONI_SCOPE:-$NAME}
-
+if [[ -z "${NAME}" ]]; then
+  echo "Requires \$NAME to look up container in registrator"
+  exit 1
+fi
 if [[ -z "${PATRONI_SCOPE}" ]]; then
-  echo "Requires \$PATRONI_SCOPE or \$NAME to advertise container and form cluster"
+  echo "Requires \$PATRONI_SCOPE to advertise container and form cluster"
   exit 1
 fi
 if [[ -z "${ETCD_HOST_PORT}" ]]; then
   echo "Requires \$ETCD_HOST_PORT (host:port) for etcd used by registrator & patroni"
   exit 1
 fi
+if [[ -z "${DOCKER_HOSTNAME}" ]]; then
+  echo "Requires \$DOCKER_HOSTNAME to discover public host:port from registrator"
+  exit 1
+fi
 
 # look up public host:port binding from registrar entry in etcd
 # this is then advertised via patroni for replicas to connect
-if [[ ! -z "${DOCKER_HOSTNAME}" ]]; then
-  i="0"
-  while [[  $i -lt 4 ]]
-  do
-    sleep 3
-    registrator_uri="${ETCD_HOST_PORT}/v2/keys/${REGISTRATOR_DOCKER_IMAGE}/${DOCKER_HOSTNAME}:${NAME}:5432"
-    echo looking up public host:port from etc
-    echo "-> ${registrator_uri}"
-    CONNECT_ADDRESS=$(curl -sL ${registrator_uri} | jq -r .node.value)
-    if [[ "${CONNECT_ADDRESS}" == "null" ]]; then
-      echo container not yet registered, waiting...
-    else
-      break
-    fi
-    i=$[$i+1]
-  done
+i="0"
+while [[  $i -lt 4 ]]
+do
+  sleep 3
+  registrator_uri="${ETCD_HOST_PORT}/v2/keys/${REGISTRATOR_DOCKER_IMAGE}/${DOCKER_HOSTNAME}:${NAME}:5432"
+  echo looking up public host:port from etc
+  echo "-> ${registrator_uri}"
+  CONNECT_ADDRESS=$(curl -sL ${registrator_uri} | jq -r .node.value)
   if [[ "${CONNECT_ADDRESS}" == "null" ]]; then
-    echo failed to look up container in etcd; failing over to local docker IP only
+    echo container not yet registered, waiting...
+  else
+    break
   fi
+  i=$[$i+1]
+done
+if [[ "${CONNECT_ADDRESS}" == "null" ]]; then
+  echo failed to look up container in etcd; failing over to local docker IP only
 fi
-# else fail back to local docker ip advertisement (single docker engine only)
-CONNECT_ADDRESS=${CONNECT_ADDRESS:-${DOCKER_IP}:5432}
 
 POSTGRES_USERNAME=${POSTGRES_USERNAME:-pgadmin}
 POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-$(pwgen -s -1 16)}

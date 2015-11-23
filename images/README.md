@@ -3,8 +3,38 @@ Patroni-enabled PostgreSQL Dockerfile
 
 A Dockerfile that produces a Docker image for [PostgreSQL](http://www.postgresql.org/) that includes clustering support via [Patroni](https://github.com/zalando/patroni)
 
-Docker image
-------------
+Tutorial to learn and play
+--------------------------
+
+### Dependencies
+
+Linux:
+
+```
+apt-get install jq
+```
+
+Mac:
+
+```
+brew install jq
+```
+
+### Docker command
+
+If you are running this tutorial on a Docker VM managed by docker-boshrelease:
+
+```
+docker_sock=/var/vcap/sys/run/docker/docker.sock
+alias _docker="docker --host unix://${docker_sock}"
+```
+
+If standard `docker --host`, say via docker-machine, then:
+
+```
+docker_sock=/var/run/docker.sock
+alias _docker="docker"
+```
 
 ### PostgreSQL version
 
@@ -15,8 +45,7 @@ The [postgresql-docker-boshrelease](https://github.com/cloudfoundry-community/po
 ### Pull the image
 
 ```
-docker --host unix:///var/vcap/sys/run/docker/docker.sock \
-  pull cfcommunity/postgresql-patroni:9.4
+_docker pull cfcommunity/postgresql-patroni:9.4
 ```
 
 ### Build the image
@@ -24,7 +53,8 @@ docker --host unix:///var/vcap/sys/run/docker/docker.sock \
 To create the image `cfcommunity/postgresql-patroni`, execute the following command in the `postgresql94-patroni` folder:
 
 ```
-$ docker build -t cfcommunity/postgresql-patroni:9.4 .
+git clone https://github.com/drnic/patroni -b connect_address postgresql94-patroni/patroni
+docker build -t cfcommunity/postgresql-patroni:9.4 postgresql94-patroni
 ```
 
 Running a cluster
@@ -40,20 +70,26 @@ On Linux:
 HostIP=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | tail -n1)
 ```
 
+On `docker-machine`:
+
+```
+HostIP=$(docker-machine ip default)
+```
+
 ### Running etcd
 
 There are many production ways to run etcd. In this section we don't follow them at all. Just run it in a container and move on to the next section:
 
 ```
-docker --host unix:///var/vcap/sys/run/docker/docker.sock \
-  run -d -p 4001:4001 -p 2380:2380 -p 2379:2379 --name etcd quay.io/coreos/etcd:v2.0.3 \
+_docker rm -f etcd
+_docker run -d -p 4001:4001 -p 2380:2380 -p 2379:2379 --name etcd quay.io/coreos/etcd:v2.0.3 \
     -name etcd0 \
-    -advertise-client-urls http://${HostIP}:2379,http://${HostIP}:4001 \
+    -advertise-client-urls "http://${HostIP}:2379,http://${HostIP}:4001" \
     -listen-client-urls http://0.0.0.0:2379,http://0.0.0.0:4001 \
-    -initial-advertise-peer-urls http://${HostIP}:2380 \
+    -initial-advertise-peer-urls "http://${HostIP}:2380" \
     -listen-peer-urls http://0.0.0.0:2380 \
     -initial-cluster-token etcd-cluster-1 \
-    -initial-cluster etcd0=http://${HostIP}:2380 \
+    -initial-cluster "etcd0=http://${HostIP}:2380" \
     -initial-cluster-state new
 ```
 
@@ -66,9 +102,34 @@ ETCD_CLUSTER=${HostIP}:4001
 Confirm that etcd is running:
 
 ```
-curl -s localhost:4001/version
+curl -s ${ETCD_CLUSTER}/version
 {"releaseVersion":"2.0.3","internalVersion":"2"}
 ```
+
+### Running registrator
+
+Containers do not know their own public host:port information. In our solution we use [registrator](https://github.com/gliderlabs/registrator) (currently a forked version with [PR #280](https://github.com/gliderlabs/registrator/pull/280)\).
+
+```
+_docker rm -f registrator
+_docker run -d --name registrator \
+    --net host \
+    --volume ${docker_sock}:/tmp/docker.sock \
+  cfcommunity/registrator:latest /bin/registrator \
+    -hostname ${HostIP} -ip ${HostIP} \
+  etcd://${ETCD_CLUSTER}
+_docker logs registrator
+```
+
+The logs from registrator will show that the `etcd` container is advertising 3 ports:
+
+```
+2015/11/23 16:02:05 added: 3f84b7858bed 192.168.99.100:etcd:2380
+2015/11/23 16:02:05 added: 3f84b7858bed 192.168.99.100:etcd:4001
+2015/11/23 16:02:05 added: 3f84b7858bed 192.168.99.100:etcd:2379
+```
+
+Later, registrator will advertise the ports of all the PostgreSQL/Patroni containers, allowing them each to self-discover their public host:port information.
 
 ### Configure your cluster
 
@@ -78,39 +139,98 @@ POSTGRES_USERNAME=pgadmin
 POSTGRES_PASSWORD=$(pwgen -s -1 16)
 ```
 
+On Mac OS X:
+
+```
+brew install pwgen
+POSTGRES_USERNAME=pgadmin
+POSTGRES_PASSWORD=$(pwgen -s -1 16)
+```
+
 ### Run your first cluster
 
 To run a container, binding to host port 40000:
 
 ```
-docker --host unix:///var/vcap/sys/run/docker/docker.sock run -d \
+_docker rm -f john
+_docker run -d \
     --name john -p 40000:5432 \
+    -e NAME=john \
     -e PATRONI_SCOPE=my_first_cluster \
-    -e ETCD_CLUSTER=${ETCD_CLUSTER} \
-    -e PORT_5432_TCP=40000 -e HOSTPORT_5432_TCP=${HostIP}:40000 \
-    -e POSTGRES_USERNAME=${POSTGRES_USERNAME} \
-    -e POSTGRES_PASSWORD=${POSTGRES_PASSWORD} \
+    -e "ETCD_HOST_PORT=${ETCD_CLUSTER}" \
+    -e "DOCKER_HOSTNAME=${HostIP}" \
+    -e "POSTGRES_USERNAME=${POSTGRES_USERNAME}" \
+    -e "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}" \
     cfcommunity/postgresql-patroni:9.4
 ```
 
 To view the start up logs for the container:
 
 ```
-docker --host unix:///var/vcap/sys/run/docker/docker.sock \
-  logs -f john
+_docker logs -f john
+...
+2015-11-23 16:24:13,464 INFO: established a new patroni connection to the postgres cluster
+2015-11-23 16:24:13,481 INFO: initialized a new cluster
+```
+
+Cancel `docker logs -f` with Ctrl-C.
+
+To confirm that registrator is advertising the container's 5432 port:
+
+```
+_docker logs registrator
+...
+2015/11/23 16:04:45 added: 47d12377ffe2 192.168.99.100:john:5432
+```
+
+Also confirm registrator is advertising into etcd:
+
+```
+curl -s ${ETCD_CLUSTER}/v2/keys/postgresql-patroni\?recursive=true | jq .
+{
+  "action": "get",
+  "node": {
+    "key": "/postgresql-patroni",
+    "dir": true,
+    "nodes": [
+      {
+        "key": "/postgresql-patroni/192.168.99.100:john:5432",
+        "value": "192.168.99.100:40000",
+        "modifiedIndex": 47,
+        "createdIndex": 47
+      }
+    ],
+    "modifiedIndex": 9,
+    "createdIndex": 9
+  }
+}
 ```
 
 Confirm that the PostgreSQL node is advertising itself in etcd:
 
 ```
-apt-get install jq
-curl -s localhost:4001/v2/keys/service/my_first_cluster/members | jq ".node.nodes[].value"
-"{\"role\":\"master\",\"state\":\"running\",\"conn_url\":\"postgres://replicator:replicator@10.244.21.6:40000/postgres\",\"api_url\":\"http://127.0.0.1:8008/patroni\",\"xlog_location\":23757944}"
+curl -s ${ETCD_CLUSTER}/v2/keys/service/my_first_cluster/members | jq -r ".node.nodes[].value" | jq .
+{
+  "conn_url": "postgres://replicator:replicator@10.244.21.6:40000/postgres",
+  "api_url": "http://127.0.0.1:8008/patroni",
+  "tags": {},
+  "conn_address": "192.168.99.100:40000",
+  "state": "running",
+  "role": "master",
+  "xlog_location": 23758288
+}
 ```
 
-The `conn_url` can be passed directly to `psql` to confirm we can connect to the server using credentials above:
+The `conn_address` field is from unmerged patroni [PR #91](https://github.com/zalando/patroni/pull/91); and is used by the routing tier to easily get the `host:port` information (it cannot easily parse the `conn_url` field).
+
+The `conn_url` can be passed directly to `psql` or using the admin username password we can confirm we can connect to the server using credentials above:
 
 ```
+$ psql postgres://replicator:replicator@10.244.21.6:40000/postgres
+psql (9.4.5)
+Type "help" for help.
+
+postgres=>
 $ psql postgres://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@10.244.21.6:40000/postgres
 psql (9.4.5)
 Type "help" for help.
@@ -123,11 +243,12 @@ postgres=>
 To run a second container that joins to the same cluster, binding to host port 40001:
 
 ```
-docker --host unix:///var/vcap/sys/run/docker/docker.sock \
-  run -d --name paul -p 40001:5432 \
+_docker rm -f paul
+_docker run -d --name paul -p 40001:5432 \
+    -e NAME=paul \
     -e PATRONI_SCOPE=my_first_cluster \
-    -e ETCD_CLUSTER=${ETCD_CLUSTER} \
-    -e PORT_5432_TCP=40001 -e HOSTPORT_5432_TCP=${HostIP}:40001 \
+    -e "ETCD_HOST_PORT=${ETCD_CLUSTER}" \
+    -e "DOCKER_HOSTNAME=${HostIP}" \
     -e POSTGRES_USERNAME=${POSTGRES_USERNAME} \
     -e POSTGRES_USERNAME=${POSTGRES_PASSWORD} \
     cfcommunity/postgresql-patroni:9.4
@@ -136,16 +257,37 @@ docker --host unix:///var/vcap/sys/run/docker/docker.sock \
 To view the start up logs for the container:
 
 ```
-docker --host unix:///var/vcap/sys/run/docker/docker.sock \
-  logs -f paul
+_docker logs -f paul
+...
+2015-11-23 16:27:56,708 INFO: bootstrapped from leader
+2015-11-23 16:28:01,072 INFO: established a new patroni connection to the postgres cluster
+2015-11-23 16:28:01,090 INFO: Lock owner: pg_172_17_0_17; I am pg_172_17_0_18
+2015-11-23 16:28:01,090 INFO: does not have lock
+2015-11-23 16:28:01,091 INFO: no action.  i am a secondary and i am following a leader
 ```
 
 Confirm the additional container has added itself to the etcd list of members:
 
 ```
-$ curl -s localhost:4001/v2/keys/service/my_first_cluster/members | jq ".node.nodes[].value"
-"{\"role\":\"master\",\"state\":\"running\",\"conn_url\":\"postgres://replicator:replicator@10.244.21.6:40001/postgres\",\"api_url\":\"http://127.0.0.1:8008/patroni\",\"xlog_location\":50332008}"
-"{\"role\":\"replica\",\"state\":\"running\",\"conn_url\":\"postgres://replicator:replicator@10.244.21.6:40000/postgres\",\"api_url\":\"http://127.0.0.1:8008/patroni\",\"xlog_location\":50332008}"
+curl -s ${ETCD_CLUSTER}/v2/keys/service/my_first_cluster/members | jq -r ".node.nodes[].value" | jq .
+{
+  "conn_url": "postgres://replicator:replicator@10.244.21.6:40000/postgres",
+  "api_url": "http://127.0.0.1:8008/patroni",
+  "tags": {},
+  "conn_address": "10.244.21.6:40000",
+  "state": "running",
+  "role": "master",
+  "xlog_location": 50331744
+}
+{
+  "conn_url": "postgres://replicator:replicator@10.244.21.6:40001/postgres",
+  "api_url": "http://127.0.0.1:8008/patroni",
+  "tags": {},
+  "conn_address": "10.244.21.6:40001",
+  "state": "running",
+  "role": "replica",
+  "xlog_location": 50331744
+}
 ```
 
 Confirm that the master has the replica registered:
@@ -161,15 +303,13 @@ pid | usesysid |  usename   | application_name | client_addr |...
 In one terminal, tail the replica `paul` logs:
 
 ```
-docker --host unix:///var/vcap/sys/run/docker/docker.sock \
-  logs -f paul
+_docker logs -f paul
 ```
 
 In another terminal, stop the current master node:
 
 ```
-docker --host unix:///var/vcap/sys/run/docker/docker.sock \
-  stop john
+_docker stop john
 ```
 
 The replica logs will show that the replication starts failing and eventually patroni automatically promotes the replica to be the master:
@@ -202,10 +342,8 @@ LOG:  database system is ready to accept connections
 The old master can be restarted (representing the healing of a network partition or return of the node during some downtime):
 
 ```
-docker --host unix:///var/vcap/sys/run/docker/docker.sock \
-  start john
-docker --host unix:///var/vcap/sys/run/docker/docker.sock \
-  logs -f john
+_docker start john
+_docker logs -f john
 ```
 
 The old master will recognize it is no longer the master and will resynchronize itself as a follower:
@@ -239,15 +377,15 @@ Delete cluster
 --------------
 
 ```
-docker --host unix:///var/vcap/sys/run/docker/docker.sock rm -f john
-docker --host unix:///var/vcap/sys/run/docker/docker.sock rm -f paul
+_docker rm -f john
+_docker rm -f paul
 curl -v "${ETCD_CLUSTER}/v2/keys/service?dir=true&recursive=true" -X DELETE
 ```
 
 To delete the etcd node:
 
 ```
-docker --host unix:///var/vcap/sys/run/docker/docker.sock rm -f etcd
+_docker rm -f etcd
 ```
 
 Backup/restore from AWS
@@ -280,33 +418,31 @@ WALE_BACKUP_THRESHOLD_MEGABYTES=10240
 Now, when invoking `docker run` above, include this `/tmp/wal-e.env` file:
 
 ```
-docker --host unix:///var/vcap/sys/run/docker/docker.sock \
-  run -d --name john -p 40000:5432 \
+_docker run -d --name john -p 40000:5432 \
     --env-file=/tmp/wal-e.env \
+    -e NAME=john \
     -e PATRONI_SCOPE=my_first_cluster \
-    -e ETCD_CLUSTER=${HostIP}:4001 \
-    -e PORT_5432_TCP=40000 -e HOSTPORT_5432_TCP=${HostIP}:40000 \
-    -e POSTGRES_USERNAME=${POSTGRES_USERNAME} \
-    -e POSTGRES_PASSWORD=${POSTGRES_PASSWORD} \
+    -e "ETCD_HOST_PORT=${ETCD_CLUSTER}" \
+    -e "DOCKER_HOSTNAME=${HostIP}" \
+    -e "POSTGRES_USERNAME=${POSTGRES_USERNAME}" \
+    -e "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}" \
     cfcommunity/postgresql-patroni:9.4
-docker --host unix:///var/vcap/sys/run/docker/docker.sock \
-  logs -f john
+_docker logs -f john
 ```
 
 Now run secondary `paul`:
 
 ```
-docker --host unix:///var/vcap/sys/run/docker/docker.sock \
-  run -d --name paul -p 40001:5432 \
+_docker run -d --name paul -p 40001:5432 \
     --env-file=/tmp/wal-e.env \
+    -e NAME=paul \
     -e PATRONI_SCOPE=my_first_cluster \
-    -e ETCD_CLUSTER=${HostIP}:4001 \
-    -e PORT_5432_TCP=40001 -e HOSTPORT_5432_TCP=${HostIP}:40001 \
-    -e POSTGRES_USERNAME=${POSTGRES_USERNAME} \
-    -e POSTGRES_USERNAME=${POSTGRES_PASSWORD} \
+    -e "ETCD_HOST_PORT=${ETCD_CLUSTER}" \
+    -e "DOCKER_HOSTNAME=${HostIP}" \
+    -e "POSTGRES_USERNAME=${POSTGRES_USERNAME}" \
+    -e "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}" \
     cfcommunity/postgresql-patroni:9.4
-docker --host unix:///var/vcap/sys/run/docker/docker.sock \
-  logs -f paul
+_docker logs -f paul
 ```
 
 Copyright
