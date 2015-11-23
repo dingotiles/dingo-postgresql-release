@@ -382,10 +382,11 @@ _docker rm -f paul
 curl -v "${ETCD_CLUSTER}/v2/keys/service?dir=true&recursive=true" -X DELETE
 ```
 
-To delete the etcd node:
+To delete the helper processes:
 
 ```
 _docker rm -f etcd
+_docker rm -f registrator
 ```
 
 Backup/restore from AWS
