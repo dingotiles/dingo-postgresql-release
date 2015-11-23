@@ -312,4 +312,4 @@ docker --host unix:///var/vcap/sys/run/docker/docker.sock \
 Copyright
 ---------
 
-Copyright (c) 2015 Stark & Wayne LLC. See [LICENSE](https://github.com/cloudfoundry-community/patroni-boshrelease/blob/master/LICENSE.md) for details.
+Copyright (c) 2015 Dr Nic Williams. See [LICENSE](https://github.com/cloudfoundry-community/patroni-boshrelease/blob/master/LICENSE.md) for details.
