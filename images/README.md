@@ -91,6 +91,7 @@ _docker run -d -p 4001:4001 -p 2380:2380 -p 2379:2379 --name etcd quay.io/coreos
     -initial-cluster-token etcd-cluster-1 \
     -initial-cluster "etcd0=http://${HostIP}:2380" \
     -initial-cluster-state new
+_docker logs etcd
 ```
 
 Set an env var to document where one of the etcd nodes is located:
@@ -419,8 +420,9 @@ WALE_BACKUP_THRESHOLD_MEGABYTES=10240
 Now, when invoking `docker run` above, include this `/tmp/wal-e.env` file:
 
 ```
+_docker rm -f john
 _docker run -d --name john -p 40000:5432 \
-    --env-file=/tmp/wal-e.env \
+    --env-file=tmp/wal-e.env \
     -e NAME=john \
     -e PATRONI_SCOPE=my_first_cluster \
     -e "ETCD_HOST_PORT=${ETCD_CLUSTER}" \
@@ -434,8 +436,9 @@ _docker logs -f john
 Now run secondary `paul`:
 
 ```
+_docker rm -f paul
 _docker run -d --name paul -p 40001:5432 \
-    --env-file=/tmp/wal-e.env \
+    --env-file=tmp/wal-e.env \
     -e NAME=paul \
     -e PATRONI_SCOPE=my_first_cluster \
     -e "ETCD_HOST_PORT=${ETCD_CLUSTER}" \

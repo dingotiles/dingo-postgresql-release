@@ -68,18 +68,16 @@ ${DIR}/envdir.sh ${WALE_ENV_DIR}
 
 if [[ "${WAL_S3_BUCKET}X" != "X" ]]; then
   if [[ "${AWS_INSTANCE_PROFILE}X" != "X" ]]; then
-    archive_command="wal-e --aws-instance-profile wal-push '%p' -p 1"
-    restore_command="wal-e --aws-instance-profile wal-fetch '%f' '%p' -p 1"
+    archive_command="envdir ${WALE_ENV_DIR} wal-e --aws-instance-profile wal-push '%p' -p 1"
+    restore_command="envdir ${WALE_ENV_DIR} wal-e --aws-instance-profile wal-fetch '%f' '%p' -p 1"
   else
     # see wal-e readme for env variables to configure for S3, Swift, etc
-    archive_command="wal-e wal-push '%p' -p 1"
-    restore_command="wal-e wal-fetch '%f' '%p' -p 1"
+    archive_command="envdir ${WALE_ENV_DIR} wal-e wal-push '%p' -p 1"
+    restore_command="envdir ${WALE_ENV_DIR} wal-e wal-fetch '%f' '%p' -p 1"
   fi
-  # postgres user needs to load its env variables for each wal-e command
-  archive_command="envdir ${WALE_ENV_DIR} ${archive_command}"
-  restore_command="envdir ${WALE_ENV_DIR} ${restore_command}"
+  archive_mode="on"
 else
-  archive_command="mkdir -p ../wal_archive && cp %p ../wal_archive/%f"
+  archive_mode="off"
 fi
 
 
@@ -108,8 +106,8 @@ postgresql:
   use_slots: False
   pgpass: /tmp/pgpass
   # pg_rewind:
-  #   username: replicator
-  #   password: replicator
+  #   username: postgres
+  #   password: starkandwayne
   pg_hba:
   - host all all 0.0.0.0/0 md5
   - hostssl all all 0.0.0.0/0 md5
@@ -124,8 +122,8 @@ postgresql:
     username: ${POSTGRES_USERNAME}
     password: ${POSTGRES_PASSWORD}
   restore: /patroni/scripts/restore.py
-  # recovery_conf:
-  #  restore_command: "${restore_command}"
+  recovery_conf:
+   restore_command: "${restore_command}"
 
   # parameters are converted into --<name> <value> flags on the server command line
   parameters:
@@ -140,9 +138,9 @@ postgresql:
     # http://www.postgresql.org/docs/9.4/static/runtime-config-wal.html
     wal_level: hot_standby
     wal_log_hints: "on"
-    #archive_mode: "on"
-    #archive_command: "${archive_command}"
-    #archive_timeout: 10m
+    archive_mode: "${archive_mode}"
+    archive_command: "${archive_command}"
+    archive_timeout: 10min
 
     # http://www.postgresql.org/docs/9.4/static/runtime-config-replication.html
     # - sending servers config
