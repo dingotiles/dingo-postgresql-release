@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e #fail fast
+
 DATA_DIR=/data
 mkdir -p $DATA_DIR
 
@@ -43,16 +45,21 @@ do
   i=$[$i+1]
 done
 if [[ "${CONNECT_ADDRESS}" == "null" ]]; then
-  echo failed to look up container in etcd; failing over to local docker IP only
+  echo failed to look up container in etcd
+  exit 1
+else
+  echo public address ${CONNECT_ADDRESS}
 fi
 
 POSTGRES_USERNAME=${POSTGRES_USERNAME:-pgadmin}
 POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-$(pwgen -s -1 16)}
 
-PG_DATA_DIR=${PG_DATA_DIR:-${DATA_DIR}/postgres0}
-
 WALE_ENV_DIR=${WALE_ENV_DIR:-${DATA_DIR}/wal-e/env}
 mkdir -p $WALE_ENV_DIR
+
+# pass thru environment variables into an env dir for postgres user's archive/restore commands
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+${DIR}/create_envdir.sh ${WALE_ENV_DIR}
 
 if [[ "${NODE_GUID}X" != "X" ]]; then
   NODE_NAME=${NODE_NAME:-"pg_${PATRONI_SCOPE}_${NODE_GUID}"}
@@ -62,23 +69,23 @@ if [[ "${BROKER_GUID}X" != "X" ]]; then
 fi
 NODE_NAME=${NODE_NAME:-pg_${DOCKER_IP}}
 
-# pass thru environment variables into an env dir for postgres user's archive/restore commands
-DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-${DIR}/envdir.sh ${WALE_ENV_DIR}
+PG_DATA_DIR=${PG_DATA_DIR:-${DATA_DIR}/postgres0}
+echo $PG_DATA_DIR > ${WALE_ENV_DIR}/PG_DATA_DIR
 
 if [[ "${WAL_S3_BUCKET}X" != "X" ]]; then
   if [[ "${AWS_INSTANCE_PROFILE}X" != "X" ]]; then
-    archive_command="envdir ${WALE_ENV_DIR} wal-e --aws-instance-profile wal-push '%p' -p 1"
-    restore_command="envdir ${WALE_ENV_DIR} wal-e --aws-instance-profile wal-fetch '%f' '%p' -p 1"
+    export WALE_CMD="envdir ${WALE_ENV_DIR} wal-e --aws-instance-profile"
   else
     # see wal-e readme for env variables to configure for S3, Swift, etc
-    archive_command="envdir ${WALE_ENV_DIR} wal-e wal-push '%p' -p 1"
-    restore_command="envdir ${WALE_ENV_DIR} wal-e wal-fetch '%f' '%p' -p 1"
+    export WALE_CMD="envdir ${WALE_ENV_DIR} wal-e"
   fi
+  archive_command="$WALE_CMD wal-push '%p' -p 1"
+  restore_command="$WALE_CMD wal-fetch '%f' '%p' -p 1"
   archive_mode="on"
 
   export WALE_S3_PREFIX="s3://${WAL_S3_BUCKET}/backups/${PATRONI_SCOPE}/wal/"
   echo $WALE_S3_PREFIX > ${WALE_ENV_DIR}/WALE_S3_PREFIX
+  echo $WALE_CMD > ${WALE_ENV_DIR}/WALE_CMD
 else
   archive_mode="off"
 fi
@@ -163,9 +170,16 @@ postgresql:
 
 __EOF__
 
-chown postgres:postgres -R $DATA_DIR $PG_DATA_DIR /patroni /pgpass /patroni.py
-chmod 700 $PG_DATA_DIR
+chown postgres:postgres -R $DATA_DIR /patroni /patroni.py ${DIR}/postgres
+
+if [[ -d ${PG_DATA_DIR} ]]; then
+  chown postgres:postgres -R ${PG_DATA_DIR}
+  chmod 700 $PG_DATA_DIR
+fi
+
 cat /patroni/postgres.yml
+
+ls ${WALE_ENV_DIR}/*
 
 echo ----------------------
 echo Admin user credentials
@@ -173,4 +187,4 @@ echo Username ${POSTGRES_USERNAME}
 echo Password ${POSTGRES_PASSWORD}
 echo ----------------------
 
-sudo -u postgres /scripts/start_pg.sh
+sudo -u postgres /scripts/postgres/start_pg.sh
