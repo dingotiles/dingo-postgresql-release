@@ -76,6 +76,9 @@ if [[ "${WAL_S3_BUCKET}X" != "X" ]]; then
     restore_command="envdir ${WALE_ENV_DIR} wal-e wal-fetch '%f' '%p' -p 1"
   fi
   archive_mode="on"
+
+  export WALE_S3_PREFIX="s3://${WAL_S3_BUCKET}/backups/${PATRONI_SCOPE}/wal/"
+  echo $WALE_S3_PREFIX > ${WALE_ENV_DIR}/WALE_S3_PREFIX
 else
   archive_mode="off"
 fi

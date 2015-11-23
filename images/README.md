@@ -411,8 +411,7 @@ AWS_ACCESS_KEY_ID=XXX
 AWS_SECRET_ACCESS_KEY=YYY
 
 WAL_S3_BUCKET=ZZZ
-WALE_S3_PREFIX=s3://${WAL_S3_BUCKET}/my_first_cluster/wal/
-#WALE_S3_ENDPOINT=https+path://s3-us-east-1.amazonaws.com:443
+WALE_S3_ENDPOINT=https+path://s3-us-east-1.amazonaws.com:443
 WALE_BACKUP_THRESHOLD_PERCENTAGE=30
 WALE_BACKUP_THRESHOLD_MEGABYTES=10240
 ```
@@ -421,6 +420,9 @@ Now, when invoking `docker run` above, include this `/tmp/wal-e.env` file:
 
 ```
 _docker rm -f john
+_docker rm -f paul
+curl -v "${ETCD_CLUSTER}/v2/keys/service?dir=true&recursive=true" -X DELETE
+
 _docker run -d --name john -p 40000:5432 \
     --env-file=tmp/wal-e.env \
     -e NAME=john \
@@ -430,6 +432,14 @@ _docker run -d --name john -p 40000:5432 \
     -e "POSTGRES_USERNAME=${POSTGRES_USERNAME}" \
     -e "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}" \
     cfcommunity/postgresql-patroni:9.4
+_docker logs -f john
+```
+
+To add some data to trigger the initial WAL pushes:
+
+```
+pgbench -i postgres://replicator:replicator@192.168.99.100:40000/postgres
+pgbench postgres://replicator:replicator@192.168.99.100:40000/postgres
 _docker logs -f john
 ```
 
