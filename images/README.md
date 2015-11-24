@@ -294,7 +294,7 @@ curl -s ${ETCD_CLUSTER}/v2/keys/service/my_first_cluster/members | jq -r ".node.
 Confirm that the master has the replica registered:
 
 ```
-$ psql postgres://replicator:replicator@10.244.21.6:40000/postgres -c 'select * from pg_stat_replication;'
+$ psql postgres://replicator:replicator@${HostIP}:40000/postgres -c 'select * from pg_stat_replication;'
 pid | usesysid |  usename   | application_name | client_addr |...
  82 |    16384 | replicator | walreceiver      | 172.17.42.1 |...
 ```

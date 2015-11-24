@@ -79,8 +79,6 @@ if [[ "${WAL_S3_BUCKET}X" != "X" ]]; then
     # see wal-e readme for env variables to configure for S3, Swift, etc
     export WALE_CMD="envdir ${WALE_ENV_DIR} wal-e"
   fi
-  archive_command="$WALE_CMD wal-push '%p' -p 1"
-  restore_command="$WALE_CMD wal-fetch '%f' '%p' -p 1"
   archive_mode="on"
 
   export WALE_S3_PREFIX="s3://${WAL_S3_BUCKET}/backups/${PATRONI_SCOPE}/wal/"
@@ -133,7 +131,7 @@ postgresql:
     password: ${POSTGRES_PASSWORD}
   restore: /patroni/scripts/restore.py
   recovery_conf:
-   restore_command: "${restore_command}"
+   restore_command: "$WALE_CMD wal-fetch \"%f\" \"%p\" -p 1"
 
   # parameters are converted into --<name> <value> flags on the server command line
   parameters:
@@ -149,7 +147,7 @@ postgresql:
     wal_level: hot_standby
     wal_log_hints: "on"
     archive_mode: "${archive_mode}"
-    archive_command: "${archive_command}"
+    archive_command: "$WALE_CMD wal-push \"%p\" -p 1"
     archive_timeout: 10min
 
     # http://www.postgresql.org/docs/9.4/static/runtime-config-replication.html

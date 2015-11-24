@@ -1,8 +1,5 @@
 #!/bin/bash
 
-ls .
-env
-
 if [[ -z $WALE_CMD ]]; then
   echo "Requires \$WALE_CMD; e.g. envdir \${WALE_ENV_DIR} wal-e --aws-instance-profile"
   exit 1
