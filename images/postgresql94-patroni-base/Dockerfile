@@ -1,4 +1,4 @@
-FROM cfcommunity/postgresql-base:9.5
+FROM cfcommunity/postgresql-base:9.4
 MAINTAINER Dr Nic Williams
 
 RUN DEBIAN_FRONTEND=noninteractive \
