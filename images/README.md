@@ -45,7 +45,7 @@ The [postgresql-docker-boshrelease](https://github.com/cloudfoundry-community/po
 ### Pull the image
 
 ```
-_docker pull cfcommunity/postgresql-patroni:9.4
+_docker pull cfcommunity/postgresql-patroni:9.5
 ```
 
 ### Build the image
@@ -53,8 +53,8 @@ _docker pull cfcommunity/postgresql-patroni:9.4
 To create the image `cfcommunity/postgresql-patroni`, execute the following command in the `postgresql94-patroni` folder:
 
 ```
-git clone https://github.com/drnic/patroni -b connect_address postgresql94-patroni/patroni
-docker build -t cfcommunity/postgresql-patroni:9.4 postgresql94-patroni
+git clone https://github.com/drnic/patroni -b connect_address postgresql95-patroni/patroni
+docker build -t cfcommunity/postgresql-patroni:9.5 postgresql94-patroni
 ```
 
 Running a cluster
@@ -162,7 +162,7 @@ _docker run -d \
     -e "DOCKER_HOSTNAME=${HostIP}" \
     -e "POSTGRES_USERNAME=${POSTGRES_USERNAME}" \
     -e "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}" \
-    cfcommunity/postgresql-patroni:9.4
+    cfcommunity/postgresql-patroni:9.5
 ```
 
 To view the start up logs for the container:
@@ -252,7 +252,7 @@ _docker run -d --name paul -p 40001:5432 \
     -e "DOCKER_HOSTNAME=${HostIP}" \
     -e POSTGRES_USERNAME=${POSTGRES_USERNAME} \
     -e POSTGRES_USERNAME=${POSTGRES_PASSWORD} \
-    cfcommunity/postgresql-patroni:9.4
+    cfcommunity/postgresql-patroni:9.5
 ```
 
 To view the start up logs for the container:
@@ -434,7 +434,7 @@ _docker run -d --name john -p 40000:5432 \
     -e "DOCKER_HOSTNAME=${HostIP}" \
     -e "POSTGRES_USERNAME=${POSTGRES_USERNAME}" \
     -e "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}" \
-    cfcommunity/postgresql-patroni:9.4
+    cfcommunity/postgresql-patroni:9.5
 _docker logs -f john
 ```
 
@@ -491,7 +491,7 @@ _docker run -d --name paul -p 40001:5432 \
     -e "DOCKER_HOSTNAME=${HostIP}" \
     -e "POSTGRES_USERNAME=${POSTGRES_USERNAME}" \
     -e "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}" \
-    cfcommunity/postgresql-patroni:9.4
+    cfcommunity/postgresql-patroni:9.5
 _docker logs -f paul
 ```
 
