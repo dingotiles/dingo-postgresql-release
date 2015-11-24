@@ -14,7 +14,7 @@ case $1 in
     # store pid in $PIDFILE
     echo $$ > $PIDFILE
 
-    export ETCD_CLUSTER=${ETCD_CLUSTER:-<%= p("etcd.machines").first %>:4001}
+    export ETCD_CLUSTER=${ETCD_CLUSTER:-<%= p("etcd.machines").first %>:2379}
 
     event=$(curl -sL "${ETCD_CLUSTER}/v2/keys/service/?wait=true&recursive=true")
 

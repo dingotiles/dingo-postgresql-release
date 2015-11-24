@@ -34,7 +34,7 @@ meta:
   etcd:
     host: 10.244.4.2
   registrator:
-    backend_uri: (( concat "etcd://" meta.etcd.host ":4001" ))
+    backend_uri: (( concat "etcd://" meta.etcd.host ":2379" ))
 ```
 
 Deployment
@@ -229,7 +229,7 @@ During development I've been sending logs to [Papertrail](https://papertrailapp.
 To quickly view all the logs associated with a Cloud Foundry service instance, there is a helper script:
 
 ```
-export ETCD_CLUSTER=10.10.5.10:4001
+export ETCD_CLUSTER=10.10.5.10:2379
 export BASE_PAPERTRAIL=https://papertrailapp.com/groups/688143
 
 cf t -o ORG -s SPACE

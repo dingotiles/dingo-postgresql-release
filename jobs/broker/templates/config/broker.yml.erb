@@ -9,7 +9,7 @@ router:
 
 kvstore:
   type: etcd
-  machines: <%= p("etcd.machines").map {|h| "http://#{h}:4001"} %>
+  machines: <%= p("etcd.machines").map {|h| "http://#{h}:2379"} %>
   username: ""
   password: ""
 

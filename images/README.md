@@ -97,7 +97,7 @@ _docker logs etcd
 Set an env var to document where one of the etcd nodes is located:
 
 ```
-ETCD_CLUSTER=${HostIP}:4001
+ETCD_CLUSTER=${HostIP}:2379
 ```
 
 Confirm that etcd is running:

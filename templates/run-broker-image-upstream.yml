@@ -79,6 +79,6 @@ properties:
               persistent_volumes:
                 - '/data'
               environment:
-                - (( concat "ETCD_HOST_PORT=" meta.etcd.host ":4001" ))
+                - (( concat "ETCD_HOST_PORT=" meta.etcd.host ":2379" ))
   servicebroker:
     services: *services

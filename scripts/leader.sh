@@ -9,7 +9,7 @@ DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 cd $DIR/..
 
 internal_service_id=$1
-ETCD_CLUSTER=${ETCD_CLUSTER:-10.244.4.2:4001}
+ETCD_CLUSTER=${ETCD_CLUSTER:-10.244.4.2:2379}
 
 if [[ -z "${internal_service_id}" ]]; then
   echo "USAGE: ./scripts/leader.sh <cf-UUID>"

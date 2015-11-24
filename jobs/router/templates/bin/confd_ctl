@@ -17,7 +17,7 @@ case $1 in
     # store pid in $PIDFILE
     echo $$ > $PIDFILE
 
-    export ETCD_CLUSTER=${ETCD_CLUSTER:-<%= p("etcd.machines").first %>:4001}
+    export ETCD_CLUSTER=${ETCD_CLUSTER:-<%= p("etcd.machines").first %>:2379}
 
     # Ensure keys looked up by confd are always available; else confd gets upset
     # etcdctl mkdir /routing/allocation/

@@ -1,5 +1,5 @@
 backend = "etcd"
-nodes = <%= p("etcd.machines").map {|h| "#{h}:4001"} %>
+nodes = <%= p("etcd.machines").map {|h| "#{h}:2379"} %>
 scheme = "http"
 prefix = "/"
 watch = true
