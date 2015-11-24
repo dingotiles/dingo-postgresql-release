@@ -1,11 +1,10 @@
 ---
 groups:
 - name: pipeline
-  jobs: [image-patroni-pg94]
-  jobs: [image-patroni-pg95]
+  jobs: [image-patroni-pg94, image-patroni-pg95]
 - name: base
-  jobs: [image-patroni-pg94-base]
-  jobs: [image-patroni-pg95-base]
+  jobs: [image-patroni-pg94-base, image-patroni-pg95-base]
+
 jobs:
 - name: image-patroni-pg94-base
   public: true
