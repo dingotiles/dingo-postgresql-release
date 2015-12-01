@@ -22,7 +22,7 @@ jobs:
   serial: true
   plan:
   - aggregate:
-    - {get: patroni, resource: patched-patroni}
+    - {get: patroni, resource: patched-patroni, trigger: true}
     - {get: boshrelease}
     - {get: boshrelease-final-image, trigger: true, params: {submodules: none}}
   - task: prepare-dockerfile
@@ -50,7 +50,7 @@ jobs:
   serial: true
   plan:
   - aggregate:
-    - {get: patroni, resource: patched-patroni}
+    - {get: patroni, resource: patched-patroni, trigger: true}
     - {get: boshrelease}
     - {get: boshrelease-final-image, trigger: true, params: {submodules: none}}
   - task: prepare-dockerfile
