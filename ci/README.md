@@ -4,6 +4,8 @@ Pipeline to build images
 Update pipeline
 ---------------
 
+From root of project:
+
 ```
-fly -t snw c postgresql-docker-images -c ci/pipeline.yml --vf ci/credentials.yml
+fly -t snw set-pipeline -p patroni-boshrelease -c ci/pipeline.yml -l ci/credentials.yml
 ```
