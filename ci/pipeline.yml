@@ -1,39 +1,11 @@
 ---
 groups:
 - name: pipeline
-  jobs: [image-patroni-pg94, image-patroni-pg95]
+  jobs: [image-patroni-pg95]
 - name: base
-  jobs: [image-patroni-pg94-base, image-patroni-pg95-base]
+  jobs: [image-patroni-pg95-base]
 
 jobs:
-- name: image-patroni-pg94-base
-  public: true
-  serial: true
-  plan:
-  - aggregate:
-    - {get: boshrelease}
-    - {get: boshrelease-base-image, trigger: true, params: {submodules: none}}
-  - put: docker-image-pg94-patroni-base
-    params:
-      build: boshrelease/images/postgresql94-patroni-base
-
-- name: image-patroni-pg94
-  public: true
-  serial: true
-  plan:
-  - aggregate:
-    - {get: patroni, resource: patched-patroni, trigger: true}
-    - {get: boshrelease}
-    - {get: boshrelease-final-image, trigger: true, params: {submodules: none}}
-  - task: prepare-dockerfile
-    file: boshrelease/ci/tasks/prepare-dockerfile.yml
-    config:
-      params:
-        dockerfile_root: boshrelease/images/postgresql94-patroni
-  - put: docker-image-pg94-patroni
-    params:
-      build: prepare-dockerfile/boshrelease/images/postgresql94-patroni
-
 - name: image-patroni-pg95-base
   public: true
   serial: true
@@ -68,23 +40,23 @@ resources:
   source:
     uri: git@github.com:cloudfoundry-community/patroni-boshrelease.git
     branch: {{pipeline-branch}}
-    private_key: {{github-key}}
+    private_key: {{github-private-key}}
 
 - name: boshrelease-final-image
   type: git
   source:
     uri: git@github.com:cloudfoundry-community/patroni-boshrelease.git
     branch: {{pipeline-branch}}
-    private_key: {{github-key}}
-    paths: [images/postgresql94-patroni]
+    private_key: {{github-private-key}}
+    paths: [images/postgresql95-patroni]
 
 - name: boshrelease-base-image
   type: git
   source:
     uri: git@github.com:cloudfoundry-community/patroni-boshrelease.git
     branch: {{pipeline-branch}}
-    private_key: {{github-key}}
-    paths: [images/postgresql94-patroni-base]
+    private_key: {{github-private-key}}
+    paths: [images/postgresql95-patroni-base]
 
 - name: patched-patroni
   type: git
@@ -93,25 +65,7 @@ resources:
     branch: connect_address
     # uri: https://github.com/zalando/patroni.git
     # branch: master
-    private_key: {{github-key}}
-
-- name: docker-image-pg94-patroni-base
-  type: docker-image
-  source:
-    email: {{docker-hub-email}}
-    username: {{docker-hub-username}}
-    password: {{docker-hub-password}}
-    repository: cfcommunity/postgresql-patroni-base
-    tag: "9.4"
-
-- name: docker-image-pg94-patroni
-  type: docker-image
-  source:
-    email: {{docker-hub-email}}
-    username: {{docker-hub-username}}
-    password: {{docker-hub-password}}
-    repository: cfcommunity/postgresql-patroni
-    tag: "9.4"
+    private_key: {{github-private-key}}
 
 - name: docker-image-pg95-patroni-base
   type: docker-image
