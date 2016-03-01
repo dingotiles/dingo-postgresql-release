@@ -1,9 +1,9 @@
 ---
 groups:
 - name: pipeline
-  jobs: [image-patroni-pg95]
+  jobs: [image-patroni-pg95, testflight]
 - name: base
-  jobs: [image-patroni-pg95-base]
+  jobs: [image-patroni-pg95-base, build-task-image]
 
 jobs:
 - name: image-patroni-pg95-base
@@ -34,6 +34,22 @@ jobs:
     params:
       build: dockerfile
 
+- name: testflight
+  public: true
+  serial: true
+  plan:
+  - aggregate:
+    - {get: boshrelease}
+    - {get: docker-image-pg95-patroni, passed: [image-patroni-pg95], trigger: true}
+
+- name: build-task-image
+  serial: true
+  plan:
+  - {get: boshrelease-ci-task, trigger: true}
+  - put: docker-image-ci
+    params:
+      build: boshrelease-ci-task/ci/ci_image
+
 resources:
 - name: boshrelease
   type: git
@@ -41,6 +57,14 @@ resources:
     uri: git@github.com:cloudfoundry-community/patroni-boshrelease.git
     branch: {{pipeline-branch}}
     private_key: {{github-private-key}}
+
+- name: boshrelease-ci-task
+  type: git
+  source:
+    uri: git@github.com:cloudfoundry-community/patroni-boshrelease.git
+    branch: {{pipeline-branch}}
+    private_key: {{github-private-key}}
+    paths: [ci/ci_image/*]
 
 - name: boshrelease-final-image
   type: git
@@ -84,3 +108,11 @@ resources:
     password: {{docker-hub-password}}
     repository: cfcommunity/postgresql-patroni
     tag: "9.5"
+
+- name: docker-image-ci
+  type: docker-image
+  source:
+    email: {{docker-hub-email}}
+    username: {{docker-hub-username}}
+    password: {{docker-hub-password}}
+    repository: dingotiles/patroni-docker-boshrelease-pipeline

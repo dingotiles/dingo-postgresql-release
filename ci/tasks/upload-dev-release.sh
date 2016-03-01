@@ -22,8 +22,8 @@ EOF
 cd boshrelease
 bosh target ${bosh_target}
 
-bosh create release --name postgresql-docker
+bosh create release --name patroni-docker
 bosh -n upload release --rebase
 
-./templates/make_manifest garden broker embedded
+./templates/make_manifest warden broker embedded
 bosh -n deploy

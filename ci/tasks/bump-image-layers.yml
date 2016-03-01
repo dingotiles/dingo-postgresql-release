@@ -1,6 +1,6 @@
 ---
 platform: linux
-image: docker:///concourse/concourse-ci
+image: docker:///dingotiles/patroni-docker-boshrelease-pipeline
 
 inputs:
 - name: boshrelease
