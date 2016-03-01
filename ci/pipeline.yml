@@ -32,7 +32,7 @@ jobs:
         dockerfile_root: boshrelease/images/postgresql95-patroni
   - put: docker-image-pg95-patroni
     params:
-      build: dockerfile/postgresql95-patroni
+      build: dockerfile
 
 resources:
 - name: boshrelease
