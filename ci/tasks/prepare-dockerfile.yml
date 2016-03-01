@@ -6,6 +6,9 @@ inputs:
 - {name: boshrelease}
 - {name: patroni}
 
+outputs:
+- {name: dockerfile}
+
 params:
   dockerfile_root:
 

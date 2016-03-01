@@ -1,8 +1,6 @@
 #!/bin/bash
 
-if [[ "${dockerfile_root}X" == "X" ]]; then
-  echo "USAGE dockerfile_root=boshrelease/images/postgresql94-patroni ./boshrelease/ci/tasks/prepare-dockerfile.sh"
-  exit 1
-fi
+set -e
 
-cp -r patroni ${dockerfile_root}/
+cp -r ${dockerfile_root}/ dockerfile/
+cp -r patroni dockerfile/
