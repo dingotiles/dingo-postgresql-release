@@ -5,7 +5,7 @@ set -e
 version=$(cat version/number)
 release_name=${release_name:-"patroni-docker"}
 
-git clone boshrelease final-release --recurse-submodules
+git clone boshrelease final-release
 cd final-release
 
 cat > config/private.yml << EOF

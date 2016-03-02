@@ -1,9 +1,11 @@
 ---
 groups:
 - name: pipeline
-  jobs: [image-patroni-pg95, testflight, shipit]
-- name: base
-  jobs: [image-patroni-pg95-base, build-task-image]
+  jobs: [testflight, shipit, rc]
+- name: versions
+  jobs: [minor, major, patch]
+- name: images
+  jobs: [image-patroni-pg95, image-patroni-pg95-base, build-task-image]
 
 jobs:
 - name: image-patroni-pg95-base
@@ -40,7 +42,8 @@ jobs:
   serial: true
   plan:
   - aggregate:
-    - {get: boshrelease}
+    - {get: boshrelease, passed: [rc]}
+    - {get: version, passed: [rc]}
     - {get: boshrelease-ci}
     - {get: docker-image-pg95-patroni, passed: [image-patroni-pg95], trigger: true}
   - task: upload-dev-release
@@ -70,6 +73,45 @@ jobs:
     params:
       repository: final-release/boshrelease
       rebase: true
+
+- name: major
+  public: true
+  serial_groups: [version]
+  plan:
+  - get: version
+    params: {bump: major, pre: rc}
+  - put: version
+    params: {file: version/number}
+
+- name: minor
+  public: true
+  serial_groups: [version]
+  plan:
+  - get: version
+    params: {bump: minor, pre: rc}
+  - put: version
+    params: {file: version/number}
+
+- name: patch
+  public: true
+  serial_groups: [version]
+  plan:
+  - get: version
+    passed: [shipit]
+    params: {bump: patch, pre: rc}
+    trigger: true
+  - put: version
+    params: {file: version/number}
+
+- name: rc
+  public: true
+  serial_groups: [version]
+  plan:
+  - {get: boshrelease, trigger: true}
+  - get: version
+    params: {pre: rc}
+  - put: version
+    params: {file: version/number}
 
 - name: build-task-image
   serial: true
