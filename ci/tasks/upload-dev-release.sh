@@ -25,5 +25,8 @@ bosh target ${bosh_target}
 bosh create release --name patroni-docker
 bosh -n upload release --rebase
 
+bosh -n upload release https://bosh.io/d/github.com/cloudfoundry-community/simple-remote-syslog-boshrelease
+bosh -n upload release https://bosh.io/d/github.com/cloudfoundry-incubator/etcd-release
+
 ./templates/make_manifest warden upstream templates/jobs-etcd.yml
 bosh -n deploy
