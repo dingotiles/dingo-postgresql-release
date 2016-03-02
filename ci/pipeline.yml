@@ -88,6 +88,7 @@ jobs:
   - aggregate:
     - {get: boshrelease, passed: [testflight]}
     - {get: boshrelease-ci}
+    - {get: candidate-release, passed: [testflight]}
     - {get: version, passed: [testflight], params: {bump: final}}
   - task: create-final-release
     file: boshrelease-ci/ci/tasks/finalize-release.yml

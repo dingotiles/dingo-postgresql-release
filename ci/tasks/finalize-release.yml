@@ -5,6 +5,7 @@ image: docker:///dingotiles/patroni-docker-boshrelease-pipeline
 inputs:
 - name: boshrelease
 - name: boshrelease-ci
+- name: candidate-release
 - name: version
 
 outputs:
