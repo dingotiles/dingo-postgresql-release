@@ -3,7 +3,7 @@ meta:
     patroni: (( param "please provide templates for cells" ))
 
 releases:
-- name: patroni
+- name: patroni-docker
   version: latest
 - name: simple-remote-syslog
   version: latest
