@@ -98,7 +98,7 @@ jobs:
         aws_secret_access_key: {{cfcommunity-aws-secret}}
   - put: boshrelease
     params:
-      repository: final-release/boshrelease
+      repository: final-release-repo
       rebase: true
 
 - name: major
