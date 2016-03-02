@@ -193,6 +193,7 @@ resources:
     regexp: patroni-docker-(.*).tgz
     access_key_id: {{dingotiles-aws-access}}
     secret_access_key: {{dingotiles-aws-secret}}
+    region_name: {{dingotiles-aws-region}}
 
 - name: candidate-release
   type: s3
@@ -201,6 +202,7 @@ resources:
     regexp: patroni-docker-(.*).tgz
     access_key_id: {{dingotiles-aws-access}}
     secret_access_key: {{dingotiles-aws-secret}}
+    region_name: {{dingotiles-aws-region}}
 
 - name: patched-patroni
   type: git
