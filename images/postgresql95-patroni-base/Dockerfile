@@ -1,4 +1,4 @@
-FROM cfcommunity/postgresql-base:9.5
+FROM frodenas/ubuntu
 MAINTAINER Dr Nic Williams
 
 ENV PG_VERSION=9.5
