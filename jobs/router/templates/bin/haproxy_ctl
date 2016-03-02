@@ -47,7 +47,6 @@ ensure_dirs() {
 
 remove_pid() {
     rm -f "${PID_FILE}"
-    rmdir "$(dirname "${PID_FILE}")" || :
 }
 
 configure_syslog() {
