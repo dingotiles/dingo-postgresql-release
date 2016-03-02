@@ -29,14 +29,14 @@ jobs:
     instances: 1
     templates:
       - {name: remote-syslog, release: simple-remote-syslog}
-      - {name: router, release: patroni}
+      - {name: router, release: patroni-docker}
     resource_pool: router_z1
     networks: [{name: router1}]
   - name: broker
     instances: 1
     templates:
       - {name: remote-syslog, release: simple-remote-syslog}
-      - {name: broker, release: patroni}
+      - {name: broker, release: patroni-docker}
     resource_pool: broker_z1
     networks: [{name: router1}]
     properties:
@@ -53,7 +53,7 @@ jobs:
   - name: sanity-test
     instances: 1
     lifecycle: errand
-    templates: [{name: sanity-test, release: patroni}]
+    templates: [{name: sanity-test, release: patroni-docker}]
     resource_pool: router_z1
     networks: [{name: router1}]
 
