@@ -48,16 +48,16 @@ properties:
 
     services: &services
       - id: '0f5c1670-6dc3-11e5-bc08-6c4008a663f0'
-        name: 'postgresql94'
-        description: 'postgresql 9.4 service for application development and testing'
+        name: 'postgresql95'
+        description: 'postgresql 9.5 service for application development and testing'
         bindable: true
         tags:
-          - 'postgresql94'
+          - 'postgresql95'
           - 'postgresql'
           - 'syslog'
         metadata:
-          displayName: 'postgresql 9.4'
-          longDescription: 'A postgresql 9.4 service for development and testing running inside a Docker container'
+          displayName: 'postgresql 9.5'
+          longDescription: 'A postgresql 9.5 service for development and testing running inside a Docker container'
           providerDisplayName: 'Stark & Wayne LLC'
           documentationUrl: 'https://github.com/cloudfoundry-community/postgresql-docker-boshrelease'
           supportUrl: 'https://github.com/cloudfoundry-community/postgresql-docker-boshrelease/issues'
@@ -67,7 +67,7 @@ properties:
             container:
               backend: 'docker'
               image: cfcommunity/postgresql-patroni
-              tag: "9.4"
+              tag: "9.5"
               persistent_volumes:
                 - '/data'
               environment:

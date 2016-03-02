@@ -53,16 +53,16 @@ properties:
 
     services: &services
       - id: '0f5c1670-6dc3-11e5-bc08-6c4008a663f0'
-        name: 'postgresql94'
-        description: 'High-availability PostgreSQL 9.4 service cluster'
+        name: 'postgresql95'
+        description: 'High-availability PostgreSQL 9.5 service cluster'
         bindable: true
         tags:
-          - 'postgresql94'
+          - 'postgresql95'
           - 'postgresql'
           - 'syslog'
         metadata:
-          displayName: 'postgresql 9.4'
-          longDescription: 'High-availablity cluster of PostgreSQL 9.4 running across multiple servers/availability zones'
+          displayName: 'postgresql 9.5'
+          longDescription: 'High-availablity cluster of PostgreSQL 9.5 running across multiple servers/availability zones'
           providerDisplayName: 'Stark & Wayne LLC'
           documentationUrl: 'https://github.com/drnic/patroni-docker-boshrelease'
           supportUrl: 'https://github.com/drnic/patroni-docker-boshrelease/issues'
@@ -75,7 +75,7 @@ properties:
             container:
               backend: 'docker'
               image: cfcommunity/postgresql-patroni
-              tag: "9.4"
+              tag: "9.5"
               persistent_volumes:
                 - '/data'
               environment:
