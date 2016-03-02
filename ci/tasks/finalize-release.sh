@@ -21,8 +21,6 @@ blobstore:
     secret_access_key: ${aws_secret_access_key}
 EOF
 
-bosh -n create release --final -v ${version}
-
 if [[ -z "$(git config --global user.name)" ]]
 then
   git config --global user.name "Concourse Bot"
