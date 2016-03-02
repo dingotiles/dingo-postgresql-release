@@ -4,6 +4,7 @@ image: docker:///dingotiles/patroni-docker-boshrelease-pipeline
 
 inputs:
 - name: boshrelease
+- name: boshrelease-ci
 
 params:
   bosh_target:
@@ -14,4 +15,4 @@ params:
 
 
 run:
-  path: boshrelease/ci/tasks/upload-dev-release.sh
+  path: boshrelease-ci/ci/tasks/upload-dev-release.sh

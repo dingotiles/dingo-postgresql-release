@@ -1,7 +1,7 @@
 ---
 groups:
 - name: pipeline
-  jobs: [image-patroni-pg95, testflight]
+  jobs: [image-patroni-pg95, testflight, shipit]
 - name: base
   jobs: [image-patroni-pg95-base, build-task-image]
 
@@ -41,9 +41,10 @@ jobs:
   plan:
   - aggregate:
     - {get: boshrelease}
+    - {get: boshrelease-ci}
     - {get: docker-image-pg95-patroni, passed: [image-patroni-pg95], trigger: true}
   - task: upload-dev-release
-    file: boshrelease/ci/tasks/upload-dev-release.yml
+    file: boshrelease-ci/ci/tasks/upload-dev-release.yml
     config:
       params:
         bosh_target: {{bosh-lite-target}}
@@ -51,6 +52,13 @@ jobs:
         bosh_password: {{bosh-lite-password}}
         bosh_syslog_host: {{bosh-lite-syslog-host}}
         bosh_syslog_port: {{bosh-lite-syslog-port}}
+
+- name: shipit
+  public: true
+  plan:
+    - {get: boshrelease, passed: [testflight]}
+    - {get: boshrelease-ci}
+    - {get: version}
 
 - name: build-task-image
   serial: true
@@ -62,6 +70,13 @@ jobs:
 
 resources:
 - name: boshrelease
+  type: git
+  source:
+    uri: git@github.com:drnic/patroni-docker-boshrelease.git
+    branch: {{pipeline-branch}}
+    private_key: {{github-private-key}}
+
+- name: boshrelease-ci
   type: git
   source:
     uri: git@github.com:drnic/patroni-docker-boshrelease.git
@@ -91,6 +106,16 @@ resources:
     branch: {{pipeline-branch}}
     private_key: {{github-private-key}}
     paths: [images/postgresql95-patroni-base]
+
+- name: version
+  type: semver
+  source:
+    driver: git
+    initial_version: 0.0.1
+    uri: git@github.com:drnic/patroni-docker-boshrelease.git
+    branch: version
+    file: version
+    private_key: {{github-private-key}}
 
 - name: patched-patroni
   type: git
