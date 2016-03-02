@@ -61,14 +61,14 @@ resources:
 - name: boshrelease
   type: git
   source:
-    uri: git@github.com:cloudfoundry-community/patroni-boshrelease.git
+    uri: git@github.com:drnic/patroni-docker-boshrelease.git
     branch: {{pipeline-branch}}
     private_key: {{github-private-key}}
 
 - name: boshrelease-ci-task
   type: git
   source:
-    uri: git@github.com:cloudfoundry-community/patroni-boshrelease.git
+    uri: git@github.com:drnic/patroni-docker-boshrelease.git
     branch: {{pipeline-branch}}
     private_key: {{github-private-key}}
     paths: [ci/ci_image/*]
@@ -76,7 +76,7 @@ resources:
 - name: boshrelease-final-image
   type: git
   source:
-    uri: git@github.com:cloudfoundry-community/patroni-boshrelease.git
+    uri: git@github.com:drnic/patroni-docker-boshrelease.git
     branch: {{pipeline-branch}}
     private_key: {{github-private-key}}
     paths: [images/postgresql95-patroni]
@@ -84,7 +84,7 @@ resources:
 - name: boshrelease-base-image
   type: git
   source:
-    uri: git@github.com:cloudfoundry-community/patroni-boshrelease.git
+    uri: git@github.com:drnic/patroni-docker-boshrelease.git
     branch: {{pipeline-branch}}
     private_key: {{github-private-key}}
     paths: [images/postgresql95-patroni-base]

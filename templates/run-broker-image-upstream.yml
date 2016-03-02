@@ -64,8 +64,8 @@ properties:
           displayName: 'postgresql 9.4'
           longDescription: 'High-availablity cluster of PostgreSQL 9.4 running across multiple servers/availability zones'
           providerDisplayName: 'Stark & Wayne LLC'
-          documentationUrl: 'https://github.com/cloudfoundry-community/patroni-boshrelease'
-          supportUrl: 'https://github.com/cloudfoundry-community/patroni-boshrelease/issues'
+          documentationUrl: 'https://github.com/drnic/patroni-docker-boshrelease'
+          supportUrl: 'https://github.com/drnic/patroni-docker-boshrelease/issues'
         plans:
           - id: '1545e30e-6dc3-11e5-826a-6c4008a663f0'
             name: 'cluster'

@@ -498,4 +498,4 @@ _docker logs -f paul
 Copyright
 ---------
 
-Copyright (c) 2015 Dr Nic Williams. See [LICENSE](https://github.com/cloudfoundry-community/patroni-boshrelease/blob/master/LICENSE.md) for details.
+Copyright (c) 2015 Dr Nic Williams. See [LICENSE](https://github.com/drnic/patroni-docker-boshrelease/blob/master/LICENSE.md) for details.
