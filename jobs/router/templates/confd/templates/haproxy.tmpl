@@ -12,7 +12,7 @@ defaults
 
 listen servicebroker
   mode tcp
-  bind *:<%= p("servicebroker.port") %>
+  bind :<%= p("servicebroker.port") %>
 	<% p("servicebroker.machines").each_with_index do |broker, i| %>
   server leader_<%= i %> <%= broker %>:<%= p("servicebroker.port") %>
 	<% end %>
