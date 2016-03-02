@@ -38,14 +38,14 @@ alias _docker="docker"
 
 ### PostgreSQL version
 
-Each subfolder, such as `postgresql94-patroni`, builds the image from a different major PostgreSQL version, such as PG 9.4.
+Each subfolder, such as `postgresql94-patroni`, builds the image from a different major PostgreSQL version, such as PG 9.5.
 
-The [postgresql-docker-boshrelease](https://github.com/cloudfoundry-community/postgresql-docker-boshrelease) project currently owns and builds the upstream `cfcommunity/postgresql-base:9.4` images that are used.
+The [postgresql-docker-boshrelease](https://github.com/cloudfoundry-community/postgresql-docker-boshrelease) project currently owns and builds the upstream `cfcommunity/postgresql-base:9.5` images that are used.
 
 ### Pull the image
 
 ```
-_docker pull cfcommunity/postgresql-patroni:9.4
+_docker pull cfcommunity/postgresql-patroni:9.5
 ```
 
 ### Build the image
@@ -54,7 +54,7 @@ To create the image `cfcommunity/postgresql-patroni`, execute the following comm
 
 ```
 git clone https://github.com/drnic/patroni -b connect_address postgresql94-patroni/patroni
-docker build -t cfcommunity/postgresql-patroni:9.4 postgresql94-patroni
+docker build -t cfcommunity/postgresql-patroni:9.5 postgresql94-patroni
 ```
 
 Running a cluster
@@ -162,7 +162,7 @@ _docker run -d \
     -e "DOCKER_HOSTNAME=${HostIP}" \
     -e "POSTGRES_USERNAME=${POSTGRES_USERNAME}" \
     -e "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}" \
-    cfcommunity/postgresql-patroni:9.4
+    cfcommunity/postgresql-patroni:9.5
 ```
 
 To view the start up logs for the container:
@@ -228,12 +228,12 @@ The `conn_url` can be passed directly to `psql` or using the admin username pass
 
 ```
 $ psql postgres://replicator:replicator@10.244.21.6:40000/postgres
-psql (9.4.5)
+psql (9.5.1)
 Type "help" for help.
 
 postgres=>
 $ psql postgres://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@10.244.21.6:40000/postgres
-psql (9.4.5)
+psql (9.5.1)
 Type "help" for help.
 
 postgres=>
@@ -252,7 +252,7 @@ _docker run -d --name paul -p 40001:5432 \
     -e "DOCKER_HOSTNAME=${HostIP}" \
     -e POSTGRES_USERNAME=${POSTGRES_USERNAME} \
     -e POSTGRES_USERNAME=${POSTGRES_PASSWORD} \
-    cfcommunity/postgresql-patroni:9.4
+    cfcommunity/postgresql-patroni:9.5
 ```
 
 To view the start up logs for the container:
@@ -434,7 +434,7 @@ _docker run -d --name john -p 40000:5432 \
     -e "DOCKER_HOSTNAME=${HostIP}" \
     -e "POSTGRES_USERNAME=${POSTGRES_USERNAME}" \
     -e "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}" \
-    cfcommunity/postgresql-patroni:9.4
+    cfcommunity/postgresql-patroni:9.5
 _docker logs -f john
 ```
 
@@ -491,7 +491,7 @@ _docker run -d --name paul -p 40001:5432 \
     -e "DOCKER_HOSTNAME=${HostIP}" \
     -e "POSTGRES_USERNAME=${POSTGRES_USERNAME}" \
     -e "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}" \
-    cfcommunity/postgresql-patroni:9.4
+    cfcommunity/postgresql-patroni:9.5
 _docker logs -f paul
 ```
 

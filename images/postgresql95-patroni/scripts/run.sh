@@ -135,7 +135,7 @@ postgresql:
 
   # parameters are converted into --<name> <value> flags on the server command line
   parameters:
-    # http://www.postgresql.org/docs/9.4/static/runtime-config-connection.html
+    # http://www.postgresql.org/docs/9.5/static/runtime-config-connection.html
     listen_addresses: 0.0.0.0
     port: 5432
     max_connections: 100
@@ -143,14 +143,14 @@ postgresql:
     # ssl_cert_file: "$SSL_CERTIFICATE"
     # ssl_key_file: "$SSL_PRIVATE_KEY"
 
-    # http://www.postgresql.org/docs/9.4/static/runtime-config-wal.html
+    # http://www.postgresql.org/docs/9.5/static/runtime-config-wal.html
     wal_level: hot_standby
     wal_log_hints: "on"
     archive_mode: "${archive_mode}"
     archive_command: "$WALE_CMD wal-push \"%p\" -p 1"
     archive_timeout: 10min
 
-    # http://www.postgresql.org/docs/9.4/static/runtime-config-replication.html
+    # http://www.postgresql.org/docs/9.5/static/runtime-config-replication.html
     # - sending servers config
     max_wal_senders: 5
     max_replication_slots: 5

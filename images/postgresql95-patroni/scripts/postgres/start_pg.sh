@@ -2,7 +2,7 @@
 
 set -e #fail fast
 
-export PG_VERSION=9.4
+export PG_VERSION=9.5
 
 export PATH=/usr/lib/postgresql/${PG_VERSION}/bin:$PATH
 DATA_DIR=/data
