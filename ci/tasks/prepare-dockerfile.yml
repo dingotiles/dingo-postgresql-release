@@ -3,6 +3,7 @@ platform: linux
 image: docker:///dingotiles/patroni-docker-boshrelease-pipeline
 
 inputs:
+- {name: boshrelease-ci}
 - {name: boshrelease}
 - {name: patroni}
 
@@ -13,4 +14,4 @@ params:
   dockerfile_root:
 
 run:
-  path: ./boshrelease/ci/tasks/prepare-dockerfile.sh
+  path: ./boshrelease-ci/ci/tasks/prepare-dockerfile.sh
