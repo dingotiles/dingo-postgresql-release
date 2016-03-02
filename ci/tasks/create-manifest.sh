@@ -17,7 +17,7 @@ auth:
     password: ${bosh_password}
 EOF
 
-cd boshrelease
+cd boshrelease-ci
 mkdir -p tmp
 
 cat > tmp/syslog.yml <<EOF
