@@ -34,11 +34,6 @@ if [ -e ${RELEASE_YML} ]; then
   echo "release already created; making tarball..."
   bosh -n create release --with-tarball ${RELEASE_YML}
 else
-  echo "exploring release"
-  mkdir -p /tmp/explore
-  cd /tmp/explore
-  tar xfz ${CANDIDATE_DIR}/${RELEASE_NAME}-*.tgz
-  ls -alR
   echo "finalizing release"
   bosh -n finalize release --version "$VERSION" ${CANDIDATE_DIR}/${RELEASE_NAME}-*.tgz
   git add -A
