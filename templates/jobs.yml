@@ -10,7 +10,7 @@ releases:
 
 jobs:
   - name: cell_z1
-    instances: 3
+    instances: 1
     templates: (( grab meta.job_templates.patroni ))
     resource_pool: cell_z1
     networks: [{name: patroni1}]
@@ -18,7 +18,7 @@ jobs:
     properties:
       zone: z1
   - name: cell_z2
-    instances: 3
+    instances: 1
     templates: (( grab meta.job_templates.patroni ))
     resource_pool: cell_z2
     networks: [{name: patroni2}]
