@@ -2,7 +2,7 @@
 
 set -e
 
-version=$(cat version/number)
+VERSION=$(cat version/number)
 RELEASE_NAME=${RELEASE_NAME:-"patroni-docker"}
 
 FINAL_RELEASE_TARBALL=$PWD/final-release-tarball
