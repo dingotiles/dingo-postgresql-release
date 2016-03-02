@@ -4,7 +4,7 @@ infrastructure=$1; shift
 docker_image=$1; shift
 set -e
 
-template_prefix="patroni"
+template_prefix="patroni-docker"
 STEMCELL_OS=${STEMCELL_OS:-ubuntu}
 
 if [[ "$(which spruce)X" == "X" ]]; then
