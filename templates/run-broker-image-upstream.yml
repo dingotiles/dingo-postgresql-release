@@ -16,15 +16,15 @@ meta:
     # ship all the logs
     - {name: remote-syslog, release: simple-remote-syslog}
     # run docker daemon
-    - {name: docker, release: patroni}
+    - {name: docker, release: patroni-docker}
     # run registrator daemon
-    - {name: registrator, release: patroni}
+    - {name: registrator, release: patroni-docker}
     # docker images will be pulled down
     #   upon first request if missing
     # create uuid for each broker/daemon
-    - {name: container-env-vars, release: patroni}
+    - {name: container-env-vars, release: patroni-docker}
     # run service broker
-    - {name: cf-containers-broker, release: patroni}
+    - {name: cf-containers-broker, release: patroni-docker}
 
 # longer watch times to allow download of docker images
 update:

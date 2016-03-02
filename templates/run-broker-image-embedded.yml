@@ -16,15 +16,15 @@ meta:
     # ship all the logs
     - {name: remote-syslog, release: simple-remote-syslog}
     # run docker daemon
-    - {name: docker, release: patroni}
+    - {name: docker, release: patroni-docker}
     # run registrator daemon
-    - {name: registrator, release: patroni}
+    - {name: registrator, release: patroni-docker}
     # warm docker image cache from bosh package
-    - {name: postgresql_images, release: patroni}
+    - {name: postgresql_images, release: patroni-docker}
     # create uuid for each broker/daemon
-    - {name: container-env-vars, release: patroni}
+    - {name: container-env-vars, release: patroni-docker}
     # run service broker
-    - {name: cf-containers-broker, release: patroni}
+    - {name: cf-containers-broker, release: patroni-docker}
 
 properties:
   cf:
