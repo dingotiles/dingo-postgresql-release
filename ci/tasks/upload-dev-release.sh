@@ -20,6 +20,7 @@ auth:
 EOF
 
 cd boshrelease
+mkdir -p tmp
 
 cat > tmp/syslog.yml <<EOF
 properties:
