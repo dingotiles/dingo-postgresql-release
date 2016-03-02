@@ -12,7 +12,7 @@ jobs:
   plan:
   - aggregate:
     - {get: boshrelease}
-    - {get: boshrelease-base-image, trigger: true, params: {submodules: none}}
+    - {get: boshrelease-pg95-base-image, trigger: true, params: {submodules: none}}
   - put: docker-image-pg95-patroni-base
     params:
       build: boshrelease/images/postgresql95-patroni-base
@@ -24,7 +24,7 @@ jobs:
   - aggregate:
     - {get: patroni, resource: patched-patroni, trigger: true}
     - {get: boshrelease}
-    - {get: boshrelease-final-image, trigger: true, params: {submodules: none}}
+    - {get: boshrelease-pg95-image, trigger: true, params: {submodules: none}}
   - task: prepare-dockerfile
     file: boshrelease/ci/tasks/prepare-dockerfile.yml
     config:
@@ -75,7 +75,7 @@ resources:
     private_key: {{github-private-key}}
     paths: [ci/ci_image/*]
 
-- name: boshrelease-final-image
+- name: boshrelease-pg95-image
   type: git
   source:
     uri: git@github.com:drnic/patroni-docker-boshrelease.git
@@ -83,7 +83,7 @@ resources:
     private_key: {{github-private-key}}
     paths: [images/postgresql95-patroni]
 
-- name: boshrelease-base-image
+- name: boshrelease-pg95-base-image
   type: git
   source:
     uri: git@github.com:drnic/patroni-docker-boshrelease.git
