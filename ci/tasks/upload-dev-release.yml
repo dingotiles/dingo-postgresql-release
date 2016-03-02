@@ -9,6 +9,9 @@ params:
   bosh_target:
   bosh_username: admin
   bosh_password: admin
+  bosh_syslog_host:
+  bosh_syslog_port:
+
 
 run:
   path: boshrelease/ci/tasks/upload-dev-release.sh

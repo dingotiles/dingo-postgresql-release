@@ -48,6 +48,8 @@ jobs:
         bosh_target: {{bosh-lite-target}}
         bosh_username: {{bosh-lite-username}}
         bosh_password: {{bosh-lite-password}}
+        bosh_syslog_host: {{bosh-lite-syslog-host}}
+        bosh_syslog_port: {{bosh-lite-syslog-port}}
 
 - name: build-task-image
   serial: true

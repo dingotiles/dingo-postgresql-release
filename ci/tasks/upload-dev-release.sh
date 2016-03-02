@@ -8,7 +8,7 @@ if [[ "${bosh_target}X" == "X" ]]; then
   exit 1
 fi
 
-cat > ~/.bosh_config << EOF
+cat > ~/.bosh_config <<EOF
 ---
 aliases:
   target:
@@ -20,6 +20,14 @@ auth:
 EOF
 
 cd boshrelease
+
+cat > tmp/syslog.yml <<EOF
+properties:
+  remote_syslog:
+    address: ${bosh_syslog_host}
+    port: ${bosh_syslog_port}
+EOF
+
 bosh target ${bosh_target}
 
 bosh create release --name patroni-docker
@@ -28,5 +36,5 @@ bosh -n upload release --rebase
 bosh -n upload release https://bosh.io/d/github.com/cloudfoundry-community/simple-remote-syslog-boshrelease
 bosh -n upload release https://bosh.io/d/github.com/cloudfoundry-incubator/etcd-release
 
-./templates/make_manifest warden upstream templates/jobs-etcd.yml
+./templates/make_manifest warden upstream templates/jobs-etcd.yml tmp/syslog.yml
 bosh -n deploy
