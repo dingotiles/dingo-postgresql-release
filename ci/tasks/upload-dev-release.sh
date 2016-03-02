@@ -25,5 +25,5 @@ bosh target ${bosh_target}
 bosh create release --name patroni-docker
 bosh -n upload release --rebase
 
-./templates/make_manifest warden broker embedded
+./templates/make_manifest warden upstream
 bosh -n deploy
