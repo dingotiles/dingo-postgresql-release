@@ -14,7 +14,7 @@ RUN DEBIAN_FRONTEND=noninteractive \
     daemontools \
     postgresql-${PG_VERSION} \
     postgresql-${PG_VERSION}-postgis-${POSTGIS_VERSION} \
-    postgresql-${PG_VERSION}-pgrouting && \
+    postgresql-${PG_VERSION}-pgrouting \
     jq -y && \
     service postgresql stop && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
