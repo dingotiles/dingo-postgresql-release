@@ -3,10 +3,7 @@
 set -e
 set -x
 
-if [[ "${bosh_target}X" == "X" ]]; then
-  echo 'Require $bosh_target, $bosh_username, $bosh_password'
-  exit 1
-fi
+release_name=${release_name:-"patroni-docker"}
 
 cat > ~/.bosh_config <<EOF
 ---
@@ -37,7 +34,7 @@ EOF
 
 bosh target ${bosh_target}
 
-bosh create release --name patroni-docker
+bosh create release --name ${release_name}
 bosh -n upload release --rebase
 
 bosh -n upload release https://bosh.io/d/github.com/cloudfoundry-community/simple-remote-syslog-boshrelease
