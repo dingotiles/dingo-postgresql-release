@@ -27,6 +27,12 @@ properties:
   remote_syslog:
     address: ${bosh_syslog_host}
     port: ${bosh_syslog_port}
+    short_hostname: true
+  docker:
+    log_driver: syslog
+    log_options:
+    - (( concat "syslog-address=udp://" properties.remote_syslog.address ":" properties.remote_syslog.port ))
+    - tag="{{.Name}}"
 EOF
 
 bosh target ${bosh_target}
