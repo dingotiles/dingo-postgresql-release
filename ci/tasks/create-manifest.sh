@@ -35,6 +35,7 @@ EOF
 
 bosh target ${bosh_target}
 
+export DEPLOYMENT_NAME=${deployment_name}
 ./templates/make_manifest warden upstream templates/jobs-etcd.yml tmp/syslog.yml
 
-cp tmp/${release_name}*upstream*.yml ${manifest_dir}/
+cp tmp/${release_name}*upstream*.yml ${manifest_dir}/manifest.yml

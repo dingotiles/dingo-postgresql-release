@@ -31,11 +31,11 @@ if [[ "${DEMO}X" == "X" ]]; then
   DIRECTOR_UUID=$(echo "$BOSH_STATUS" | grep UUID | awk '{print $2}')
   DIRECTOR_CPI=$(echo "$BOSH_STATUS" | grep CPI | awk '{print $2}')
   DIRECTOR_NAME=$(echo "$BOSH_STATUS" | grep Name | awk '{print $2}')
-  NAME=$template_prefix-$infrastructure-$docker_image
+  DEPLOYMENT_NAME=${DEPLOYMENT_NAME:-$template_prefix-$infrastructure-$docker_image}
 else
   DIRECTOR_UUID=xxxxxxx-6076-11e5-8e69-6c4008a663f0
   DIRECTOR_CPI=aws
-  NAME=demo
+  DEPLOYMENT_NAME=${DEPLOYMENT_NAME:-demo}
 fi
 
 if [[ $DIRECTOR_NAME = "Bosh Lite Director" ]]; then
@@ -76,7 +76,7 @@ cp $templates/env-name-stub.yml $tmpdir/name.yml
 cp $templates/manifest-pipeline-inputs-stub.yml $tmpdir/pipeline-inputs.yml
 echo $DIRECTOR_NAME $DIRECTOR_CPI $DIRECTOR_UUID $STEMCELL
 perl -pi -e "s/PLACEHOLDER-DIRECTOR-UUID/$DIRECTOR_UUID/g" $tmpdir/director.yml
-perl -pi -e "s/NAME/$NAME/g" $tmpdir/name.yml
+perl -pi -e "s/NAME/$DEPLOYMENT_NAME/g" $tmpdir/name.yml
 perl -pi -e "s/STEMCELL/$STEMCELL/g" $tmpdir/pipeline-inputs.yml
 
 spruce merge --prune meta \

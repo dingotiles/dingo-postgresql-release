@@ -62,18 +62,26 @@ jobs:
     - {get: version, passed: [bosh-rc]}
     - {get: candidate-release, passed: [bosh-rc]}
     - {get: boshrelease-ci}
+    - {get: etcd}
+    - {get: remote-syslog}
   - task: create-lite-manifest
     file: boshrelease-ci/ci/tasks/create-manifest.yml
     config:
       params:
+        deployment_name: patroni-docker-testflight
         bosh_target: {{bosh-lite-target}}
         bosh_username: {{bosh-lite-username}}
         bosh_password: {{bosh-lite-password}}
         bosh_syslog_host: {{bosh-lite-syslog-host}}
         bosh_syslog_port: {{bosh-lite-syslog-port}}
-
-# bosh -n upload release https://bosh.io/d/github.com/cloudfoundry-community/simple-remote-syslog-boshrelease
-# bosh -n upload release https://bosh.io/d/github.com/cloudfoundry-incubator/etcd-release
+  - put: lite-deployment
+    params:
+      manifest: manifest/manifest.yml
+      target: {{bosh-lite-target}}
+      stemcells: []
+      releases:
+        - etcd/*.tgz
+        - remote-syslog/*.tgz
 
 - name: shipit
   public: true
@@ -241,3 +249,20 @@ resources:
     username: {{docker-hub-username}}
     password: {{docker-hub-password}}
     repository: dingotiles/patroni-docker-boshrelease-pipeline
+
+- name: lite-deployment
+  type: bosh-deployment
+  source: &lite-defaults
+    username: admin
+    password: admin
+    deployment: patroni-docker-testflight
+
+- name: etcd
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry-incubator/etcd-release
+
+- name: remote-syslog
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry-community/simple-remote-syslog-boshrelease
