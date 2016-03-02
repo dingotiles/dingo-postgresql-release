@@ -88,8 +88,8 @@ spruce merge --prune meta \
   $tmpdir/director.yml \
   $tmpdir/name.yml \
   $tmpdir/pipeline-inputs.yml \
-  $* > $tmpdir/$NAME-manifest.yml
+  $* > $tmpdir/$DEPLOYMENT_NAME-manifest.yml
 
-bosh deployment $tmpdir/$NAME-manifest.yml
+bosh deployment $tmpdir/$DEPLOYMENT_NAME-manifest.yml
 
 bosh status
