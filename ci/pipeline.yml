@@ -77,7 +77,6 @@ jobs:
   - put: lite-deployment
     params:
       manifest: manifest/manifest.yml
-      target: {{bosh-lite-target}}
       stemcells: []
       releases:
         - etcd/*.tgz
@@ -89,7 +88,7 @@ jobs:
   - aggregate:
     - {get: boshrelease, passed: [testflight]}
     - {get: boshrelease-ci}
-    - {get: version}
+    - {get: version, passed: [testflight]}
   - task: create-final-release
     file: boshrelease-ci/ci/tasks/create-final-release.yml
     config:
@@ -253,6 +252,7 @@ resources:
 - name: lite-deployment
   type: bosh-deployment
   source: &lite-defaults
+    target: {{bosh-lite-target}}
     username: admin
     password: admin
     deployment: patroni-docker-testflight
