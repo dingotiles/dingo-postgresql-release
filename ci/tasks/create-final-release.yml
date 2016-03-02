@@ -1,0 +1,18 @@
+---
+platform: linux
+image: docker:///dingotiles/patroni-docker-boshrelease-pipeline
+
+inputs:
+- {name: boshrelease}
+- {name: boshrelease-ci}
+- {name: version}
+
+outputs:
+- {name: final-release}
+
+params:
+  aws_access_key_id:
+  aws_secret_access_key:
+
+run:
+  path: ./boshrelease-ci/ci/tasks/create-final-release.sh

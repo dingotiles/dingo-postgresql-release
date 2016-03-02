@@ -56,9 +56,20 @@ jobs:
 - name: shipit
   public: true
   plan:
+  - aggregate:
     - {get: boshrelease, passed: [testflight]}
     - {get: boshrelease-ci}
     - {get: version}
+  - task: create-final-release
+    file: boshrelease-ci/ci/tasks/create-final-release.yml
+    config:
+      params:
+        aws_access_key_id: {{cfcommunity-aws-access}}
+        aws_secret_access_key: {{cfcommunity-aws-secret}}
+  - put: boshrelease
+    params:
+      repository: final-release/boshrelease
+      rebase: true
 
 - name: build-task-image
   serial: true
