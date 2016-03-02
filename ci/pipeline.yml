@@ -62,8 +62,8 @@ jobs:
     - {get: version, passed: [bosh-rc]}
     - {get: candidate-release, passed: [bosh-rc]}
     - {get: boshrelease-ci}
-  - task: upload-dev-release
-    file: boshrelease-ci/ci/tasks/upload-dev-release.yml
+  - task: create-lite-manifest
+    file: boshrelease-ci/ci/tasks/create-manifest.yml
     config:
       params:
         bosh_target: {{bosh-lite-target}}
@@ -71,6 +71,9 @@ jobs:
         bosh_password: {{bosh-lite-password}}
         bosh_syslog_host: {{bosh-lite-syslog-host}}
         bosh_syslog_port: {{bosh-lite-syslog-port}}
+
+# bosh -n upload release https://bosh.io/d/github.com/cloudfoundry-community/simple-remote-syslog-boshrelease
+# bosh -n upload release https://bosh.io/d/github.com/cloudfoundry-incubator/etcd-release
 
 - name: shipit
   public: true

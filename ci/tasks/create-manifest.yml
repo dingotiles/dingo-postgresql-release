@@ -6,6 +6,9 @@ inputs:
 - name: boshrelease
 - name: boshrelease-ci
 
+outputs:
+- name: manifest
+
 params:
   bosh_target:
   bosh_username: admin
@@ -15,4 +18,4 @@ params:
 
 
 run:
-  path: boshrelease-ci/ci/tasks/upload-dev-release.sh
+  path: boshrelease-ci/ci/tasks/create-manifest.sh

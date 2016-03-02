@@ -4,6 +4,7 @@ set -e
 set -x
 
 release_name=${release_name:-"patroni-docker"}
+manifest_dir=$PWD/manifest
 
 cat > ~/.bosh_config <<EOF
 ---
@@ -34,11 +35,6 @@ EOF
 
 bosh target ${bosh_target}
 
-bosh create release --name ${release_name}
-bosh -n upload release --rebase
-
-bosh -n upload release https://bosh.io/d/github.com/cloudfoundry-community/simple-remote-syslog-boshrelease
-bosh -n upload release https://bosh.io/d/github.com/cloudfoundry-incubator/etcd-release
-
 ./templates/make_manifest warden upstream templates/jobs-etcd.yml tmp/syslog.yml
-bosh -n deploy
+
+cp tmp/${release_name}*upstream*.yml ${manifest_dir}/
