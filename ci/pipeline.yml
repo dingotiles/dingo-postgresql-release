@@ -281,4 +281,4 @@ resource_types:
 - name: bosh-errand
   type: docker-image
   source:
-    repository: clutteredraisins/bosh-errand-resource
+    repository: starkandwayne/bosh-errand-resource
