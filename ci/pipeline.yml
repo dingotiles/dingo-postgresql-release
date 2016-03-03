@@ -118,6 +118,8 @@ jobs:
     params:
       repository: final-release-repo
       rebase: true
+  - put: version
+    params: {file: version/number}
 
 - name: major
   public: true
