@@ -16,5 +16,11 @@ for prefix in ${wal_env_var_prefixes[@]}; do
   done
 done
 
-echo env director files:
-ls $dir/*
+wal_env_var_count=$(ls $dir/* | wc -l | awk '{print $1}')
+
+# test for empty dir comes from http://stackoverflow.com/a/91639
+if find $dir/ -maxdepth 0 -empty | read v; then
+  echo "No wal-e env vars"
+else
+  ls $dir/*
+fi
