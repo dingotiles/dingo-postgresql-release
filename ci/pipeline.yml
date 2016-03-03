@@ -44,7 +44,8 @@ jobs:
     - {get: boshrelease-ci}
     - {get: boshrelease, passed: [rc], trigger: true}
     - {get: version, passed: [rc], trigger: true}
-    - {get: docker-image-pg95-patroni, trigger: true}
+    # currently image is not being bundled into release; skip to testflight
+    # - {get: docker-image-pg95-patroni, trigger: true}
   - task: create-candidate-release
     file: boshrelease-ci/ci/tasks/create-candidate-release.yml
     config:
@@ -65,6 +66,8 @@ jobs:
     - {get: boshrelease-ci}
     - {get: etcd}
     - {get: remote-syslog}
+    # if image changes, trigger upstream testflight
+    - {get: docker-image-pg95-patroni, trigger: true}
   - task: create-lite-manifest
     file: boshrelease-ci/ci/tasks/create-manifest.yml
     config:
