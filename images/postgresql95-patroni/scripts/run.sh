@@ -73,6 +73,7 @@ PG_DATA_DIR=${PG_DATA_DIR:-${DATA_DIR}/postgres0}
 echo $PG_DATA_DIR > ${WALE_ENV_DIR}/PG_DATA_DIR
 
 if [[ "${WAL_S3_BUCKET}X" != "X" ]]; then
+  echo "Enabling wal-e archives to S3 bucket '${WAL_S3_BUCKET}'"
   if [[ "${AWS_INSTANCE_PROFILE}X" != "X" ]]; then
     export WALE_CMD="envdir ${WALE_ENV_DIR} wal-e --aws-instance-profile"
   else
@@ -85,6 +86,7 @@ if [[ "${WAL_S3_BUCKET}X" != "X" ]]; then
   echo $WALE_S3_PREFIX > ${WALE_ENV_DIR}/WALE_S3_PREFIX
   echo $WALE_CMD > ${WALE_ENV_DIR}/WALE_CMD
 else
+  echo "Disabling wal-e archives"
   archive_mode="off"
 fi
 
