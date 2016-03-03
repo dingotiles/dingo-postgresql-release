@@ -2,6 +2,7 @@
 
 set -e # exit immediately if a simple command exits with a non-zero status
 set -u # report the usage of uninitialized variables
+set -x # print commands
 
 # Setup env vars and folders for the webapp_ctl script
 source /var/vcap/jobs/sanity-test/helpers/ctl_setup.sh 'sanity-test'
@@ -17,14 +18,9 @@ echo Catalog
 curl -sf ${BROKER_URI}/v2/catalog | jq .
 
 service_id=$(curl -sf ${BROKER_URI}/v2/catalog | jq -r ".services[0].id")
-echo service_id $service_id
 plan_ids=$(curl -sf ${BROKER_URI}/v2/catalog | jq -r ".services[0].plans[].id")
-echo plan_ids $plan_ids
-
 instance_id=TESTID-$(date +"%s")
 binding_id=BINDINGID-$(date +"%s")
-echo instance_id ${instance_id}
-
 
 for plan_id in ${plan_ids[@]}; do
   echo creating service instance ${instance_id} for plan ${plan_id}
@@ -32,9 +28,7 @@ for plan_id in ${plan_ids[@]}; do
 
   echo creating service binding
   credentials=$(curl -sf ${BROKER_URI}/v2/service_instances/${instance_id}/service_bindings/${binding_id} -XPUT -d "{\"service_id\": \"${service_id}\", \"plan_id\": \"${plan_id}\"}")
-  echo credentials $credentials
   uri=$(echo $credentials | jq -r ".credentials.uri")
-  echo uri $uri
 
   # 60 seconds to allow confd/haproxy restart to kick in
   set +e
