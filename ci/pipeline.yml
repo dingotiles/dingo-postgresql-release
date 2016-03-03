@@ -44,6 +44,7 @@ jobs:
     - {get: boshrelease-ci}
     - {get: boshrelease, passed: [rc], trigger: true}
     - {get: version, passed: [rc], trigger: true}
+    - {get: docker-image-pg95-patroni, trigger: true}
   - task: create-candidate-release
     file: boshrelease-ci/ci/tasks/create-candidate-release.yml
     config:
