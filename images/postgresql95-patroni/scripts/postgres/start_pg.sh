@@ -14,6 +14,7 @@ cd $DIR
 
 # test for empty dir comes from http://stackoverflow.com/a/91639
 if find $WALE_ENV_DIR/ -maxdepth 0 -empty | read v; then
+  echo "Not starting backup script."
 else
   echo "Starting backups..."
   envdir ${WALE_ENV_DIR} ${DIR}/regular_backup.sh
