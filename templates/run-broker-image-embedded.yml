@@ -20,7 +20,7 @@ meta:
     # run registrator daemon
     - {name: registrator, release: patroni-docker}
     # warm docker image cache from bosh package
-    - {name: postgresql_images, release: patroni-docker}
+    - {name: embedded-images, release: patroni-docker}
     # create uuid for each broker/daemon
     - {name: container-env-vars, release: patroni-docker}
     # run service broker

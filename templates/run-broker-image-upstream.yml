@@ -20,7 +20,7 @@ meta:
     # run registrator daemon
     - {name: registrator, release: patroni-docker}
     # docker images will be pulled down
-    #   upon first request if missing
+    - {name: upstream-images, release: patroni-docker}
     # create uuid for each broker/daemon
     - {name: container-env-vars, release: patroni-docker}
     # run service broker

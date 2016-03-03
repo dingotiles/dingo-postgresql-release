@@ -1,0 +1,12 @@
+---
+name: upstream-images
+packages: []
+templates:
+  bin/ctl: bin/ctl
+  bin/monit_debugger: bin/monit_debugger
+  data/properties.sh.erb: data/properties.sh
+  helpers/ctl_setup.sh: helpers/ctl_setup.sh
+  helpers/ctl_utils.sh: helpers/ctl_utils.sh
+properties:
+  broker.services:
+    description: "Services and plans offered by the broker, including dockerimages:tags required"

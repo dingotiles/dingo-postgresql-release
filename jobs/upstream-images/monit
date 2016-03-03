@@ -1,0 +1,5 @@
+check process upstream-images
+  with pidfile /var/vcap/sys/run/upstream-images/upstream-images.pid
+  start program "/var/vcap/jobs/upstream-images/bin/monit_debugger upstream-images_ctl '/var/vcap/jobs/upstream-images/bin/ctl start'"
+  stop program "/var/vcap/jobs/upstream-images/bin/monit_debugger upstream-images_ctl '/var/vcap/jobs/upstream-images/bin/ctl stop'"
+  group vcap
