@@ -2,11 +2,11 @@
 
 if [[ -z $WALE_CMD ]]; then
   echo "Requires \$WALE_CMD; e.g. envdir \${WALE_ENV_DIR} wal-e --aws-instance-profile"
-  exit 1
+  exit 0
 fi
 if [[ -z ${PG_DATA_DIR} ]]; then
   echo "Requires \${PG_DATA_DIR}"
-  exit 1
+  exit 0
 fi
 
 # $BACKUP_HOUR can be an hour in the day, or * to run backup each hour

@@ -1,0 +1,16 @@
+---
+platform: linux
+image: docker:///dingotiles/patroni-docker-boshrelease-pipeline
+
+inputs:
+- name: boshrelease-ci
+
+params:
+  bosh_target:
+  bosh_username: admin
+  bosh_password: admin
+  deployment_name:
+
+
+run:
+  path: boshrelease-ci/ci/tasks/delete-testflight.sh
