@@ -81,6 +81,11 @@ jobs:
       releases:
         - etcd/*.tgz
         - remote-syslog/*.tgz
+  - put: lite-errand
+    params:
+      manifest: manifest/manifest.yml
+      errand: sanity-test
+
 
 - name: shipit
   public: true
@@ -258,6 +263,10 @@ resources:
     password: admin
     deployment: patroni-docker-testflight
 
+- name: lite-errand
+  type: bosh-errand
+  source: *lite-defaults
+
 - name: etcd
   type: bosh-io-release
   source:
@@ -267,3 +276,9 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry-community/simple-remote-syslog-boshrelease
+
+resource_types:
+- name: bosh-errand
+  type: docker-image
+  source:
+    repository: clutteredraisins/bosh-errand-resource
