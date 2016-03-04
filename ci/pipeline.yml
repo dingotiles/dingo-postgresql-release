@@ -37,6 +37,17 @@ jobs:
     params:
       build: dockerfile
 
+- name: rc
+  public: true
+  serial_groups: [version]
+  plan:
+  - {get: boshrelease}
+  - {get: boshrelease-trigger, trigger: true}
+  - get: version
+    params: {pre: rc}
+  - put: version
+    params: {file: version/number}
+
 - name: bosh-rc
   public: true
   plan:
@@ -174,16 +185,6 @@ jobs:
   - put: version
     params: {file: version/number}
 
-- name: rc
-  public: true
-  serial_groups: [version]
-  plan:
-  - {get: boshrelease, trigger: true}
-  - get: version
-    params: {pre: rc}
-  - put: version
-    params: {file: version/number}
-
 - name: build-task-image
   serial: true
   plan:
@@ -199,6 +200,14 @@ resources:
     uri: git@github.com:dingotiles/patroni-docker-boshrelease.git
     branch: {{pipeline-branch}}
     private_key: {{github-private-key}}
+
+- name: boshrelease-trigger
+  type: git
+  source:
+    uri: git@github.com:dingotiles/patroni-docker-boshrelease.git
+    branch: {{pipeline-branch}}
+    private_key: {{github-private-key}}
+    paths: [jobs/*, packages/*]
 
 - name: boshrelease-ci
   type: git
