@@ -155,6 +155,25 @@ jobs:
     file: boshrelease-ci/ci/tasks/create-release-notes.yml
   - put: version
     params: {file: version/number}
+  - task: generate-commitish
+    config:
+      platform: linux
+      image: docker:///dingotiles/patroni-docker-boshrelease-pipeline
+      inputs: [{name: boshrelease}]
+      outputs: [{name: generated-commitish}]
+      run:
+        path: sh
+        args:
+        - -c
+        - |
+          git -C boshrelease rev-parse HEAD > generated-commitish/commitish
+  - put: github-release
+    params:
+      name: release-notes/release-name
+      tag: release-notes/release-name
+      body: release-notes/notes.md
+      commitish: generated-commitish/commitish
+      globs: [final-release-tarball/*.tgz]
 
 - name: major
   public: true
@@ -200,6 +219,13 @@ resources:
     uri: git@github.com:dingotiles/patroni-docker-boshrelease.git
     branch: {{pipeline-branch}}
     private_key: {{github-private-key}}
+
+- name: github-release
+  type: github-release
+  source:
+    access_token: {{github-release-access-token}}
+    user: dingotiles
+    repository: patroni-docker-boshrelease
 
 - name: boshrelease-trigger
   type: git
