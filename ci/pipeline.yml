@@ -119,7 +119,7 @@ jobs:
         - remote-syslog/*.tgz
   - put: vsphere-errand
     params:
-      manifest: manifest/manifest.yml
+      manifest: boshrelease-ci/ci/manifests/vsphere.yml
       errand: sanity-test
 
 - name: shipit
