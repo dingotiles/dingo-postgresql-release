@@ -9,6 +9,7 @@ Clustering between multiple nodes each PostgreSQL cluster is automatically coord
 
 If a cell/server is lost, then replicas on other cells are promoted to be the master of each cluster, and the front facing router automatically starts directly traffic to the new master.
 
+Refer to the [Gettig Started](./GETTING_STARTED.md) guide for more information patroni.
 Dependencies
 ------------
 
