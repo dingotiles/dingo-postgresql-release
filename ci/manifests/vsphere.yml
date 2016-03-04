@@ -1,5 +1,5 @@
 ---
-name: patroni-docker-testflight
+name: pg-vsphere
 director_uuid: f635b1ba-5000-48e1-92c8-19471d20e0e4
 releases:
 - name: patroni-docker
@@ -135,6 +135,15 @@ networks:
     cloud_properties:
       name: net-10-58-111-0
 properties:
+  remote_syslog:
+    address: logs.papertrailapp.com
+    port: 25374
+    short_hostname: true
+  docker:
+    log_driver: syslog
+    log_options:
+    - syslog-address=udp://logs.papertrailapp.com:25374
+    - tag="{{.Name}}"
   broker:
     component_name: postgresql-docker-broker
     cookie_secret: e7247dae-a252-4393-afa3-2219c1c02efd
