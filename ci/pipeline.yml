@@ -1,7 +1,7 @@
 ---
 groups:
 - name: pipeline
-  jobs: [bosh-rc, testflight, shipit, rc]
+  jobs: [bosh-rc, testflight, deploy, shipit, rc]
 - name: versions
   jobs: [minor, major, patch]
 - name: images
@@ -99,15 +99,37 @@ jobs:
       manifest: manifest/manifest.yml
       errand: sanity-test
 
+- name: deploy
+  serial: true
+  plan:
+  - aggregate:
+    - {get: boshrelease-ci}
+    - {get: boshrelease, passed: [testflight]}
+    - {get: version, passed: [testflight]}
+    - {get: candidate-release, passed: [testflight], trigger: true}
+    - {get: etcd}
+    - {get: remote-syslog}
+  - put: vsphere-deployment
+    params:
+      manifest: boshrelease-ci/ci/manifests/vsphere.yml
+      stemcells: []
+      releases:
+        - candidate-release/*.tgz
+        - etcd/*.tgz
+        - remote-syslog/*.tgz
+  - put: vsphere-errand
+    params:
+      manifest: manifest/manifest.yml
+      errand: sanity-test
 
 - name: shipit
   public: true
   plan:
   - aggregate:
-    - {get: boshrelease, passed: [testflight]}
     - {get: boshrelease-ci}
-    - {get: candidate-release, passed: [testflight]}
-    - {get: version, passed: [testflight], params: {bump: final}}
+    - {get: boshrelease, passed: [deploy]}
+    - {get: candidate-release, passed: [deploy]}
+    - {get: version, passed: [deploy], params: {bump: final}}
   - task: create-final-release
     file: boshrelease-ci/ci/tasks/finalize-release.yml
     config:
@@ -289,6 +311,18 @@ resources:
 - name: lite-errand
   type: bosh-errand
   source: *lite-defaults
+
+- name: vsphere-deployment
+  type: bosh-deployment
+  source: &vsphere-defaults
+    target: {{bosh-vsphere-target}}
+    username: {{bosh-vsphere-username}}
+    password: {{bosh-vsphere-password}}
+    deployment: patroni-docker-testflight
+
+- name: vsphere-errand
+  type: bosh-errand
+  source: *vsphere-defaults
 
 - name: etcd
   type: bosh-io-release

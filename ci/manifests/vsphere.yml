@@ -1,0 +1,253 @@
+---
+name: patroni-docker-testflight
+director_uuid: ca5d72bc-0c50-43a0-8ac2-734d0680df95
+releases:
+- name: patroni-docker
+  version: latest
+- name: simple-remote-syslog
+  version: latest
+- name: etcd
+  version: latest
+compilation:
+  reuse_compilation_vms: true
+  workers: 1
+  network: default
+  cloud_properties:
+    ram: 4096
+    disk: 20480
+    cpu: 4
+  workers: 3
+# 10.58.111.65 - 10.58.111.170
+jobs:
+- name: cell_z1
+  instances: 1
+  networks: [{name: patroni1, static_ips: [10.58.111.65]}]
+  persistent_disk: 10240
+  properties: {zone: z1}
+  resource_pool: cell_z1
+  templates:
+  - name: remote-syslog
+    release: simple-remote-syslog
+  - name: docker
+    release: patroni-docker
+  - name: registrator
+    release: patroni-docker
+  - name: upstream-images
+    release: patroni-docker
+  - name: container-env-vars
+    release: patroni-docker
+  - name: cf-containers-broker
+    release: patroni-docker
+- name: cell_z2
+  instances: 1
+  networks: [{name: patroni1, static_ips: [10.58.111.66]}]
+  persistent_disk: 10240
+  properties: {zone: z2}
+  resource_pool: cell_z2
+  templates:
+  - name: remote-syslog
+    release: simple-remote-syslog
+  - name: docker
+    release: patroni-docker
+  - name: registrator
+    release: patroni-docker
+  - name: upstream-images
+    release: patroni-docker
+  - name: container-env-vars
+    release: patroni-docker
+  - name: cf-containers-broker
+    release: patroni-docker
+- name: router
+  instances: 1
+  networks: [{name: patroni1, static_ips: [10.58.111.67]}]
+  properties:
+    servicebroker:
+      machines: [10.58.111.68]
+  resource_pool: router_z1
+  templates:
+  - name: remote-syslog
+    release: simple-remote-syslog
+  - name: router
+    release: patroni-docker
+- name: broker
+  instances: 1
+  networks: [{name: patroni1, static_ips: [10.58.111.68]}]
+  properties:
+    servicebroker:
+      backends:
+        machines:
+          z1: [10.58.111.65]
+          z2: [10.58.111.66]
+      router: {hostname: 10.58.111.67}
+  resource_pool: broker_z1
+  templates:
+  - name: remote-syslog
+    release: simple-remote-syslog
+  - name: broker
+    release: patroni-docker
+  update:
+    canary_watch_time: 10000-30000
+    update_watch_time: 10000-30000
+- name: sanity-test
+  instances: 1
+  lifecycle: errand
+  networks: [{name: patroni1}]
+  properties:
+    servicebroker:
+      machines: [10.58.111.68]
+  resource_pool: router_z1
+  templates:
+  - name: sanity-test
+    release: patroni-docker
+- name: etcd
+  instances: 1
+  networks: [{name: patroni1, static_ips: [10.58.111.69]}]
+  persistent_disk: 10240
+  properties:
+    etcd:
+      peer_require_ssl: false
+      require_ssl: false
+  resource_pool: broker_z1
+  templates:
+  - name: remote-syslog
+    release: simple-remote-syslog
+  - name: etcd
+    release: etcd
+networks:
+- name: patroni1
+  type: manual
+  subnets:
+  - range: 10.58.111.0/24
+    gateway: 10.58.111.1
+    dns:
+    - 10.58.20.2
+    - 10.57.20.2
+    static:
+    - 10.58.111.65
+    - 10.58.111.66
+    - 10.58.111.67
+    - 10.58.111.68
+    - 10.58.111.69
+    - 10.58.111.70
+    - 10.58.111.71
+    reserved:
+    - 10.58.111.2-10.58.111.64
+    - 10.58.111.65-10.58.111.254
+    cloud_properties:
+      name: net-10-58-111-0
+properties:
+  broker:
+    component_name: postgresql-docker-broker
+    cookie_secret: e7247dae-a252-4393-afa3-2219c1c02efd
+    fetch_images: true
+    host: cf-containers-broker.10.244.0.34.xip.io
+    max_containers: 20
+    name: postgresql-docker-broker
+    password: containers
+    port: 80
+    protocol: https
+    services:
+    - bindable: true
+      description: Solo instance of PostgreSQL 9.5
+      id: beb5973c-e1b2-11e5-a736-c7c0b526363d
+      metadata:
+        displayName: postgresql 9.5
+        documentationUrl: https://pg.dingotiles.com
+        longDescription: Solo instance of PostgreSQL 9.5
+        providerDisplayName: Dingo Tiles
+        supportUrl: https://slack.dingotiles.com
+      name: postgresql95
+      plans:
+      - container:
+          backend: docker
+          environment:
+          - ETCD_HOST_PORT=10.58.111.69:4001
+          image: cfcommunity/postgresql-patroni
+          persistent_volumes:
+          - /data
+          tag: "9.5"
+        description: Solo instance of PostgreSQL
+        id: 1545e30e-6dc3-11e5-826a-6c4008a663f0
+        metadata:
+          displayName: Solo
+        name: solo
+      tags:
+      - postgresql95
+      - postgresql
+      - syslog
+    ssl_enabled: true
+    username: containers
+  cf:
+    api_url: https://api.10.244.0.34.xip.io
+  etcd:
+    machines: [10.58.111.69]
+  registrator:
+    backend_uri: etcd://10.58.111.69:4001
+  servicebroker:
+    password: starkandwayne
+    port: 8888
+    services:
+    - bindable: true
+      description: Solo instance of PostgreSQL 9.5
+      id: beb5973c-e1b2-11e5-a736-c7c0b526363d
+      metadata:
+        displayName: postgresql 9.5
+        documentationUrl: https://pg.dingotiles.com
+        longDescription: Solo instance of PostgreSQL 9.5
+        providerDisplayName: Dingo Tiles
+        supportUrl: https://slack.dingotiles.com
+      name: postgresql95
+      plans:
+      - container:
+          backend: docker
+          environment:
+          - ETCD_HOST_PORT=10.58.111.69:4001
+          image: cfcommunity/postgresql-patroni
+          persistent_volumes:
+          - /data
+          tag: "9.5"
+        description: Solo instance of PostgreSQL
+        id: 1545e30e-6dc3-11e5-826a-6c4008a663f0
+        metadata:
+          displayName: Solo
+        name: solo
+      tags:
+      - postgresql95
+      - postgresql
+      - syslog
+    username: starkandwayne
+resource_pools:
+- cloud_properties:
+    name: random
+  name: cell_z1
+  network: patroni1
+  stemcell:
+    name: bosh-vsphere-esxi-ubuntu-trusty-go_agent
+    version: latest
+- cloud_properties:
+    name: random
+  name: cell_z2
+  network: patroni2
+  stemcell:
+    name: bosh-vsphere-esxi-ubuntu-trusty-go_agent
+    version: latest
+- cloud_properties:
+    name: random
+  name: router_z1
+  network: router1
+  stemcell:
+    name: bosh-vsphere-esxi-ubuntu-trusty-go_agent
+    version: latest
+- cloud_properties:
+    name: random
+  name: broker_z1
+  network: router1
+  stemcell:
+    name: bosh-vsphere-esxi-ubuntu-trusty-go_agent
+    version: latest
+update:
+  canaries: 1
+  canary_watch_time: 30000-300000
+  max_in_flight: 1
+  serial: false
+  update_watch_time: 30000-300000
