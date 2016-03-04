@@ -66,8 +66,8 @@ jobs:
     - {get: boshrelease-ci}
     - {get: etcd}
     - {get: remote-syslog}
-    # if image changes, trigger upstream testflight
-    - {get: docker-image-pg95-patroni, trigger: true}
+    # if image changes, trigger "upstream" testflight deployment
+    - {get: docker-image-pg95-patroni, trigger: true, save: false, skip_download: true}
   - task: create-lite-manifest
     file: boshrelease-ci/ci/tasks/create-manifest.yml
     config:
