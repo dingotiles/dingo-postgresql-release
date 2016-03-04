@@ -17,17 +17,17 @@ BROKER_URI=http://<%= p("servicebroker.username") %>:<%= p("servicebroker.passwo
 echo Catalog
 curl -sf ${BROKER_URI}/v2/catalog | jq .
 
-service_id=$(curl -sf ${BROKER_URI}/v2/catalog | jq -r ".services[0].id")
+single_node_service_id=$(curl -sf ${BROKER_URI}/v2/catalog | jq -r ".services[0].id")
 plan_ids=$(curl -sf ${BROKER_URI}/v2/catalog | jq -r ".services[0].plans[].id")
 instance_id=TESTID-$(date +"%s")
 binding_id=BINDINGID-$(date +"%s")
 
 for plan_id in ${plan_ids[@]}; do
   echo creating service instance ${instance_id} for plan ${plan_id}
-  curl -f ${BROKER_URI}/v2/service_instances/${instance_id} -XPUT -d "{\"service_id\": \"${service_id}\", \"plan_id\": \"${plan_id}\"}"
+  curl -f ${BROKER_URI}/v2/service_instances/${instance_id} -XPUT -d "{\"service_id\": \"${single_node_service_id}\", \"plan_id\": \"${plan_id}\"}"
 
   echo creating service binding
-  credentials=$(curl -sf ${BROKER_URI}/v2/service_instances/${instance_id}/service_bindings/${binding_id} -XPUT -d "{\"service_id\": \"${service_id}\", \"plan_id\": \"${plan_id}\"}")
+  credentials=$(curl -sf ${BROKER_URI}/v2/service_instances/${instance_id}/service_bindings/${binding_id} -XPUT -d "{\"service_id\": \"${single_node_service_id}\", \"plan_id\": \"${plan_id}\"}")
   uri=$(echo $credentials | jq -r ".credentials.uri")
 
   # 60 seconds to allow confd/haproxy restart to kick in
@@ -46,13 +46,13 @@ for plan_id in ${plan_ids[@]}; do
 
   nodes=3
   echo updating service instance to $nodes nodes
-  curl -f ${BROKER_URI}/v2/service_instances/${instance_id} -XPATCH -d "{\"service_id\": \"${service_id}\", \"plan_id\": \"${plan_id}\", \"parameters\": {\"node-count\": $nodes}}"
+  curl -f ${BROKER_URI}/v2/service_instances/${instance_id} -XPATCH -d "{\"service_id\": \"${single_node_service_id}\", \"plan_id\": \"${plan_id}\", \"parameters\": {\"node-count\": $nodes}}"
 
   echo deleting service binding
-  curl -f ${BROKER_URI}/v2/service_instances/${instance_id}/service_bindings/${binding_id}\?plan_id=${plan_id}\&service_id=${service_id} -XDELETE
+  curl -f ${BROKER_URI}/v2/service_instances/${instance_id}/service_bindings/${binding_id}\?plan_id=${plan_id}\&service_id=${single_node_service_id} -XDELETE
 
   echo deleting service instance
-  curl -f ${BROKER_URI}/v2/service_instances/${instance_id}\?plan_id=${plan_id}\&service_id=${service_id} -XDELETE
+  curl -f ${BROKER_URI}/v2/service_instances/${instance_id}\?plan_id=${plan_id}\&service_id=${single_node_service_id} -XDELETE
 done
 
 echo "Errand sanity-test is complete; exit status $EXITSTATUS"

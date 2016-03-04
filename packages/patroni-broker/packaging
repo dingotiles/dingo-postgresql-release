@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e -x
 
-REPO_NAME=github.com/cloudfoundry-community/patroni-broker
+REPO_NAME=github.com/dingotiles/patroni-broker
 
 REPO_DIR=${BOSH_INSTALL_TARGET}/src/${REPO_NAME}
 
