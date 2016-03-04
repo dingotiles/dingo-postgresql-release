@@ -1,6 +1,6 @@
 ---
 name: patroni-docker-testflight
-director_uuid: ca5d72bc-0c50-43a0-8ac2-734d0680df95
+director_uuid: f635b1ba-5000-48e1-92c8-19471d20e0e4
 releases:
 - name: patroni-docker
   version: latest
@@ -10,18 +10,17 @@ releases:
   version: latest
 compilation:
   reuse_compilation_vms: true
-  workers: 1
-  network: default
+  network: patroni1
   cloud_properties:
     ram: 4096
     disk: 20480
     cpu: 4
-  workers: 3
-# 10.58.111.65 - 10.58.111.170
+  workers: 2
+# 10.58.111.54 - 10.58.111.54
 jobs:
 - name: cell_z1
   instances: 1
-  networks: [{name: patroni1, static_ips: [10.58.111.65]}]
+  networks: [{name: patroni1, static_ips: [10.58.111.55]}]
   persistent_disk: 10240
   properties: {zone: z1}
   resource_pool: cell_z1
@@ -40,7 +39,7 @@ jobs:
     release: patroni-docker
 - name: cell_z2
   instances: 1
-  networks: [{name: patroni1, static_ips: [10.58.111.66]}]
+  networks: [{name: patroni1, static_ips: [10.58.111.56]}]
   persistent_disk: 10240
   properties: {zone: z2}
   resource_pool: cell_z2
@@ -59,10 +58,10 @@ jobs:
     release: patroni-docker
 - name: router
   instances: 1
-  networks: [{name: patroni1, static_ips: [10.58.111.67]}]
+  networks: [{name: patroni1, static_ips: [10.58.111.57]}]
   properties:
     servicebroker:
-      machines: [10.58.111.68]
+      machines: [10.58.111.58]
   resource_pool: router_z1
   templates:
   - name: remote-syslog
@@ -71,14 +70,14 @@ jobs:
     release: patroni-docker
 - name: broker
   instances: 1
-  networks: [{name: patroni1, static_ips: [10.58.111.68]}]
+  networks: [{name: patroni1, static_ips: [10.58.111.58]}]
   properties:
     servicebroker:
       backends:
         machines:
-          z1: [10.58.111.65]
-          z2: [10.58.111.66]
-      router: {hostname: 10.58.111.67}
+          z1: [10.58.111.55]
+          z2: [10.58.111.56]
+      router: {hostname: 10.58.111.57}
   resource_pool: broker_z1
   templates:
   - name: remote-syslog
@@ -94,14 +93,14 @@ jobs:
   networks: [{name: patroni1}]
   properties:
     servicebroker:
-      machines: [10.58.111.68]
+      machines: [10.58.111.58]
   resource_pool: router_z1
   templates:
   - name: sanity-test
     release: patroni-docker
 - name: etcd
   instances: 1
-  networks: [{name: patroni1, static_ips: [10.58.111.69]}]
+  networks: [{name: patroni1, static_ips: [10.58.111.59]}]
   persistent_disk: 10240
   properties:
     etcd:
@@ -123,15 +122,15 @@ networks:
     - 10.58.20.2
     - 10.57.20.2
     static:
-    - 10.58.111.65
-    - 10.58.111.66
-    - 10.58.111.67
-    - 10.58.111.68
-    - 10.58.111.69
-    - 10.58.111.70
-    - 10.58.111.71
+    - 10.58.111.54
+    - 10.58.111.55
+    - 10.58.111.56
+    - 10.58.111.57
+    - 10.58.111.58
+    - 10.58.111.59
+    - 10.58.111.60
     reserved:
-    - 10.58.111.2-10.58.111.64
+    - 10.58.111.2-10.58.111.53
     - 10.58.111.65-10.58.111.254
     cloud_properties:
       name: net-10-58-111-0
@@ -161,7 +160,7 @@ properties:
       - container:
           backend: docker
           environment:
-          - ETCD_HOST_PORT=10.58.111.69:4001
+          - ETCD_HOST_PORT=10.58.111.59:4001
           image: cfcommunity/postgresql-patroni
           persistent_volumes:
           - /data
@@ -180,9 +179,9 @@ properties:
   cf:
     api_url: https://api.10.244.0.34.xip.io
   etcd:
-    machines: [10.58.111.69]
+    machines: [10.58.111.59]
   registrator:
-    backend_uri: etcd://10.58.111.69:4001
+    backend_uri: etcd://10.58.111.59:4001
   servicebroker:
     password: starkandwayne
     port: 8888
@@ -201,7 +200,7 @@ properties:
       - container:
           backend: docker
           environment:
-          - ETCD_HOST_PORT=10.58.111.69:4001
+          - ETCD_HOST_PORT=10.58.111.59:4001
           image: cfcommunity/postgresql-patroni
           persistent_volumes:
           - /data
@@ -218,30 +217,38 @@ properties:
     username: starkandwayne
 resource_pools:
 - cloud_properties:
-    name: random
+    ram: 4096
+    disk: 20480
+    cpu: 2
   name: cell_z1
   network: patroni1
   stemcell:
     name: bosh-vsphere-esxi-ubuntu-trusty-go_agent
     version: latest
-- cloud_properties:
-    name: random
-  name: cell_z2
-  network: patroni2
+- name: cell_z2
+  cloud_properties:
+    ram: 4096
+    disk: 20480
+    cpu: 2
+  network: patroni1
   stemcell:
     name: bosh-vsphere-esxi-ubuntu-trusty-go_agent
     version: latest
-- cloud_properties:
-    name: random
-  name: router_z1
-  network: router1
+- name: router_z1
+  cloud_properties:
+    ram: 4096
+    disk: 20480
+    cpu: 1
+  network: patroni1
   stemcell:
     name: bosh-vsphere-esxi-ubuntu-trusty-go_agent
     version: latest
-- cloud_properties:
-    name: random
-  name: broker_z1
-  network: router1
+- name: broker_z1
+  cloud_properties:
+    ram: 4096
+    disk: 20480
+    cpu: 1
+  network: patroni1
   stemcell:
     name: bosh-vsphere-esxi-ubuntu-trusty-go_agent
     version: latest
