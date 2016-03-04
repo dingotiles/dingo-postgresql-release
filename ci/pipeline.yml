@@ -306,7 +306,7 @@ resources:
     target: {{bosh-lite-target}}
     username: admin
     password: admin
-    deployment: pg-vsphere
+    deployment: patroni-docker-testflight
 
 - name: lite-errand
   type: bosh-errand
@@ -318,7 +318,7 @@ resources:
     target: {{bosh-vsphere-target}}
     username: {{bosh-vsphere-username}}
     password: {{bosh-vsphere-password}}
-    deployment: patroni-docker-testflight
+    deployment: pg-vsphere
 
 - name: vsphere-errand
   type: bosh-errand
