@@ -1,0 +1,13 @@
+---
+platform: linux
+image: docker:///dingotiles/patroni-docker-boshrelease-pipeline
+
+inputs:
+- name: boshrelease-ci
+- name: version
+
+outputs:
+- name: release-notes
+
+run:
+  path: ./boshrelease-ci/ci/tasks/create-release-notes.sh

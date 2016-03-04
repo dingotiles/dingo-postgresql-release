@@ -140,6 +140,8 @@ jobs:
     params:
       repository: final-release-repo
       rebase: true
+  - task: create-release-notes
+    file: boshrelease-ci/ci/tasks/create-release-notes.yml
   - put: version
     params: {file: version/number}
 
