@@ -57,36 +57,24 @@ jobs:
   - name: cf-containers-broker
     release: patroni-docker
 - name: router
-  instances: 1
-  networks: [{name: patroni1, static_ips: [10.58.111.57]}]
-  properties:
-    servicebroker:
-      machines: [10.58.111.58]
-  resource_pool: router_z1
-  templates:
-  - name: remote-syslog
-    release: simple-remote-syslog
-  - name: router
-    release: patroni-docker
-- name: broker
-  instances: 1
-  networks: [{name: patroni1, static_ips: [10.58.111.58]}]
-  properties:
-    servicebroker:
-      backends:
-        machines:
-          z1: [10.58.111.55]
-          z2: [10.58.111.56]
-      router: {hostname: 10.58.111.57}
-  resource_pool: broker_z1
   templates:
   - name: remote-syslog
     release: simple-remote-syslog
   - name: broker
     release: patroni-docker
-  update:
-    canary_watch_time: 10000-30000
-    update_watch_time: 10000-30000
+  - name: router
+    release: patroni-docker
+  properties:
+    servicebroker:
+      machines: [127.0.0.1]
+      backends:
+        machines:
+          z1: [10.58.111.55]
+          z2: [10.58.111.56]
+      router: {hostname: 10.58.111.57}
+  resource_pool: router_z1
+  instances: 1
+  networks: [{name: patroni1, static_ips: [10.58.111.57]}]
 - name: sanity-test
   instances: 1
   lifecycle: errand
