@@ -14,29 +14,23 @@ jobs:
     networks:
       - name: patroni2
         static_ips: (( static_ips(0,1,2,3) ))
-  - name: broker
+  - name: router
     networks:
       - name: router1
-        static_ips: (( static_ips(2,3) ))
+        static_ips: (( static_ips(0,1,2,3) ))
     properties:
       servicebroker:
+        machines: (( grab jobs.router.networks.router1.static_ips ))
         router:
           hostname: (( grab jobs.router.networks.router1.static_ips.[0] ))
         backends:
           machines:
             z1: (( grab jobs.cell_z1.networks.patroni1.static_ips ))
             z2: (( grab jobs.cell_z2.networks.patroni2.static_ips ))
-  - name: router
-    networks:
-      - name: router1
-        static_ips: (( static_ips(0,1) ))
-    properties:
-      servicebroker:
-        machines: (( grab jobs.broker.networks.router1.static_ips ))
   - name: sanity-test
     properties:
       servicebroker:
-        machines: (( grab jobs.broker.networks.router1.static_ips ))
+        machines: (( grab jobs.router.networks.router1.static_ips ))
 
 compilation:
   cloud_properties: {name: random}

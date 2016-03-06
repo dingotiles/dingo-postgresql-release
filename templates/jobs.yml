@@ -30,14 +30,8 @@ jobs:
     templates:
       - {name: remote-syslog, release: simple-remote-syslog}
       - {name: router, release: patroni-docker}
-    resource_pool: router_z1
-    networks: [{name: router1}]
-  - name: broker
-    instances: 1
-    templates:
-      - {name: remote-syslog, release: simple-remote-syslog}
       - {name: broker, release: patroni-docker}
-    resource_pool: broker_z1
+    resource_pool: router_z1
     networks: [{name: router1}]
     properties:
       servicebroker:
@@ -67,10 +61,6 @@ resource_pools:
     cloud_properties: (( param "please provide cloud_properties"))
     network: patroni2
   - name: router_z1
-    stemcell: (( grab meta.stemcell ))
-    cloud_properties: (( param "please provide cloud_properties"))
-    network: router1
-  - name: broker_z1
     stemcell: (( grab meta.stemcell ))
     cloud_properties: (( param "please provide cloud_properties"))
     network: router1

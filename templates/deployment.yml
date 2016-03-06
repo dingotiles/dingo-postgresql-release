@@ -29,3 +29,7 @@ resource_pools:
     network: patroni1
     stemcell: (( grab meta.stemcell ))
     cloud_properties: (( param "please provide cloud_properties" ))
+  - name: router_z1
+    network: router1
+    stemcell: (( grab meta.stemcell ))
+    cloud_properties: (( param "please provide cloud_properties" ))
