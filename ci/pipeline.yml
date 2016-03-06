@@ -234,7 +234,7 @@ resources:
     uri: git@github.com:dingotiles/patroni-docker-boshrelease.git
     branch: {{pipeline-branch}}
     private_key: {{github-private-key}}
-    paths: [jobs/*, packages/*]
+    paths: [jobs/*, packages/*, templates/*]
 
 - name: boshrelease-ci
   type: git
