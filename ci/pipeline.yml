@@ -41,10 +41,11 @@ jobs:
   public: true
   serial_groups: [version]
   plan:
-  - {get: boshrelease}
-  - {get: boshrelease-trigger, trigger: true}
-  - get: version
-    params: {pre: rc}
+  - aggregate:
+    - {get: boshrelease}
+    - {get: boshrelease-trigger, trigger: true}
+    - get: version
+      params: {pre: rc}
   - put: version
     params: {file: version/number}
 
