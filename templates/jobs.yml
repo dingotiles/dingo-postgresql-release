@@ -29,12 +29,13 @@ jobs:
     instances: 1
     templates:
       - {name: remote-syslog, release: simple-remote-syslog}
-      - {name: router, release: patroni-docker}
       - {name: broker, release: patroni-docker}
+      - {name: router, release: patroni-docker}
     resource_pool: router_z1
     networks: [{name: router1}]
     properties:
       servicebroker:
+        machines: [127.0.0.1]
         router:
           hostname: (( param "please provide public hostname for routers" ))
         backends:

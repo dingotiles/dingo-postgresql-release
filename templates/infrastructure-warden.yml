@@ -20,7 +20,6 @@ jobs:
         static_ips: (( static_ips(0,1,2,3) ))
     properties:
       servicebroker:
-        machines: (( grab jobs.router.networks.router1.static_ips ))
         router:
           hostname: (( grab jobs.router.networks.router1.static_ips.[0] ))
         backends:
