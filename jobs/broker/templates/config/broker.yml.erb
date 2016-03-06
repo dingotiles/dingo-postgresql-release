@@ -1,7 +1,7 @@
 ---
 broker:
-  username: starkandwayne
-  password: starkandwayne
+  username: <%= p("servicebroker.username") %>
+  password: <%= p("servicebroker.password") %>
   port: <%= p("servicebroker.port") %>
 
 router:

@@ -12,6 +12,13 @@ properties:
   etcd.machines:
     description: hostnames for etcd servers
 
+  servicebroker.username:
+    description: Basic auth username for broker
+    default: starkandwayne
+  servicebroker.password:
+    description: Basic auth password for broker
+    default: starkandwayne
+
   servicebroker.port:
     description: Bind port for inbound API requests
     default: 8888
