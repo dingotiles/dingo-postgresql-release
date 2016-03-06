@@ -15,7 +15,7 @@ jobs:
     templates:
       - {name: remote-syslog, release: simple-remote-syslog}
       - {name: etcd, release: etcd}
-    resource_pool: broker_z1
+    resource_pool: router_z1
     persistent_disk: 20240
     networks:
       - name: router1

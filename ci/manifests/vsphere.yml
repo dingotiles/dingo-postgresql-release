@@ -94,7 +94,7 @@ jobs:
     etcd:
       peer_require_ssl: false
       require_ssl: false
-  resource_pool: broker_z1
+  resource_pool: router_z1
   templates:
   - name: remote-syslog
     release: simple-remote-syslog
@@ -232,15 +232,6 @@ resource_pools:
     name: bosh-vsphere-esxi-ubuntu-trusty-go_agent
     version: latest
 - name: router_z1
-  cloud_properties:
-    ram: 4096
-    disk: 20480
-    cpu: 1
-  network: patroni1
-  stemcell:
-    name: bosh-vsphere-esxi-ubuntu-trusty-go_agent
-    version: latest
-- name: broker_z1
   cloud_properties:
     ram: 4096
     disk: 20480

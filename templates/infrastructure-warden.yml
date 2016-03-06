@@ -39,8 +39,6 @@ resource_pools:
     cloud_properties: {name: random}
   - name: cell_z2
     cloud_properties: {name: random}
-  - name: broker_z1
-    cloud_properties: {name: random}
   - name: router_z1
     cloud_properties: {name: random}
 
