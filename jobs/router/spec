@@ -21,9 +21,12 @@ properties:
 
   servicebroker.machines:
     description: hostnames for broker servers
-  servicebroker.port:
-    description: port for broker process
+  servicebroker.public_port:
+    description: port to expose broker to router users
     default: 8888
+  servicebroker.port:
+    description: broker process runs on this port
+    default: 8889
 
   haproxy.log_to_file:
     description: "Whether to send logs to a file instead of the default syslog"

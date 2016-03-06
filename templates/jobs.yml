@@ -36,6 +36,7 @@ jobs:
     properties:
       servicebroker:
         machines: [127.0.0.1]
+        port: 8889 # exposed on router at 8888
         router:
           hostname: (( param "please provide public hostname for routers" ))
         backends:
