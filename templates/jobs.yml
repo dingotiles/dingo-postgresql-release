@@ -43,9 +43,6 @@ jobs:
           machines:
             z1: (( param "please provide array of z1 service broker hostnames/ips" ))
             z2: (( param "please provide array of z2 service broker hostnames/ips" ))
-    update:
-      canary_watch_time: 10000-30000
-      update_watch_time: 10000-30000
   - name: sanity-test
     instances: 1
     lifecycle: errand
