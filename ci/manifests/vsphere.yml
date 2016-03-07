@@ -80,29 +80,29 @@ jobs:
 - name: sanity-test
   instances: 1
   lifecycle: errand
+  templates:
+  - name: sanity-test
+    release: patroni-docker
   networks: [{name: patroni1}]
+  resource_pool: router_z1
   properties:
     servicebroker:
       machines: [10.58.111.57]
       port: 8889
-  resource_pool: router_z1
-  templates:
-  - name: sanity-test
-    release: patroni-docker
 - name: etcd
   instances: 1
+  templates:
+  - name: remote-syslog
+    release: simple-remote-syslog
+  - name: etcd
+    release: etcd
+  resource_pool: router_z1
   networks: [{name: patroni1, static_ips: [10.58.111.59]}]
   persistent_disk: 10240
   properties:
     etcd:
       peer_require_ssl: false
       require_ssl: false
-  resource_pool: router_z1
-  templates:
-  - name: remote-syslog
-    release: simple-remote-syslog
-  - name: etcd
-    release: etcd
 networks:
 - name: patroni1
   type: manual
