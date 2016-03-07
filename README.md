@@ -31,14 +31,14 @@ bosh upload release https://bosh.io/d/github.com/cloudfoundry-community/simple-r
 To use your own etcd cluster:
 
 ```
-./templates/make_manifest warden upstream tmp/etcd.yml
+./templates/make_manifest warden upstream templates/services-solo.yml tmp/etcd.yml
 bosh deploy
 ```
 
 To deploy a simple one-node etcd cluster for demonstration purposes:
 
 ```
-./templates/make_manifest warden upstream templates/jobs-etcd.yml
+./templates/make_manifest warden upstream templates/services-solo.yml templates/jobs-etcd.yml
 bosh deploy
 ```
 
@@ -80,6 +80,12 @@ properties:
 ```
 
 Then include the file in your `make_manifest` command to build your BOSH deployment manifest.
+
+```
+./templates/make_manifest warden upstream templates/services-solo.yml templates/jobs-etcd.yml \
+  tmp/syslog.yml
+bosh deploy
+```
 
 Usage
 -----

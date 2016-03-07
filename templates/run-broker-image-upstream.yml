@@ -47,63 +47,6 @@ properties:
     cookie_secret: (( grab meta.cfcontainersbroker.cookie_secret ))
     max_containers: (( grab meta.cfcontainersbroker.max_containers ))
     fetch_images: true
-
-    services: &services
-      - id: 'beb5973c-e1b2-11e5-a736-c7c0b526363d'
-        name: 'postgresql95'
-        description: 'Solo instance of PostgreSQL 9.5'
-        bindable: true
-        tags:
-          - 'postgresql95'
-          - 'postgresql'
-          - 'syslog'
-        metadata:
-          displayName: 'postgresql 9.5'
-          longDescription: 'Solo instance of PostgreSQL 9.5'
-          providerDisplayName: 'Dingo Tiles'
-          documentationUrl: 'https://pg.dingotiles.com'
-          supportUrl: 'https://slack.dingotiles.com'
-        plans:
-          - id: '1545e30e-6dc3-11e5-826a-6c4008a663f0'
-            name: 'solo'
-            description: 'Solo instance of PostgreSQL'
-            metadata:
-              displayName: 'Solo'
-            container:
-              backend: 'docker'
-              image: cfcommunity/postgresql-patroni
-              tag: "9.5"
-              persistent_volumes:
-                - '/data'
-              environment:
-                - (( concat "ETCD_HOST_PORT=" meta.etcd.host ":4001" ))
-      # - id: '0f5c1670-6dc3-11e5-bc08-6c4008a663f0'
-      #   name: 'postgresql95'
-      #   description: 'High-availability PostgreSQL 9.5 service cluster'
-      #   bindable: true
-      #   tags:
-      #     - 'postgresql95'
-      #     - 'postgresql'
-      #     - 'syslog'
-      #   metadata:
-      #     displayName: 'postgresql 9.5'
-      #     longDescription: 'High-availablity cluster of PostgreSQL 9.5 running across multiple servers/availability zones'
-      #     providerDisplayName: 'Dingo Tiles'
-      #     documentationUrl: 'https://pg.dingotiles.com'
-      #     supportUrl: 'https://slack.dingotiles.com'
-      #   plans:
-      #     - id: '1545e30e-6dc3-11e5-826a-6c4008a663f0'
-      #       name: 'cluster'
-      #       description: 'High-availablity cluster of PostgreSQL'
-      #       metadata:
-      #         displayName: 'Clustered'
-      #       container:
-      #         backend: 'docker'
-      #         image: cfcommunity/postgresql-patroni
-      #         tag: "9.5"
-      #         persistent_volumes:
-      #           - '/data'
-      #         environment:
-      #           - (( concat "ETCD_HOST_PORT=" meta.etcd.host ":4001" ))
+    services: (( grab meta.broker.services))
   servicebroker:
-    services: *services
+    services: (( grab meta.broker.services))
