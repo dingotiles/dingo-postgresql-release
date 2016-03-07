@@ -1,0 +1,2 @@
+- image: cfcommunity/postgresql-patroni
+  tag: "9.5"

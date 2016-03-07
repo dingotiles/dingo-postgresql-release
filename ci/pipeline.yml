@@ -4,8 +4,10 @@ groups:
   jobs: [bosh-rc, testflight, deploy, shipit, rc]
 - name: versions
   jobs: [minor, major, patch]
-- name: images
-  jobs: [image-patroni-pg95, image-patroni-pg95-base, build-task-image]
+- name: patroni-images
+  jobs: [image-patroni-pg95-base, image-patroni-pg95, bump-image-layers]
+- name: ci-image
+  jobs: [build-task-image]
 
 jobs:
 - name: image-patroni-pg95-base
@@ -37,6 +39,23 @@ jobs:
     params:
       build: dockerfile
 
+- name: bump-image-layers
+  public: true
+  serial: true
+  plan:
+  - aggregate:
+    - {get: boshrelease-ci}
+    - {get: boshrelease}
+    - {get: docker-image-pg95-patroni, passed: [image-patroni-pg95], trigger: true, params: {save: true}}
+  - task: bump-image-blob
+    file: boshrelease-ci/ci/tasks/bump-image-layers.yml
+    config:
+      params:
+        aws_access_key_id: {{cfcommunity-aws-access}}
+        aws_secret_access_key: {{cfcommunity-aws-secret}}
+  - put: boshrelease
+    params: {repository: boshrelease-images-updated, rebase: true}
+
 - name: rc
   public: true
   serial_groups: [version]
@@ -56,8 +75,6 @@ jobs:
     - {get: boshrelease-ci}
     - {get: boshrelease, passed: [rc], trigger: true}
     - {get: version, passed: [rc], trigger: true}
-    # currently image is not being bundled into release; skip to testflight
-    # - {get: docker-image-pg95-patroni, trigger: true}
   - task: create-candidate-release
     file: boshrelease-ci/ci/tasks/create-candidate-release.yml
     config:
@@ -72,14 +89,12 @@ jobs:
   serial: true
   plan:
   - aggregate:
+    - {get: boshrelease-ci}
     - {get: boshrelease, passed: [bosh-rc]}
     - {get: version, passed: [bosh-rc]}
     - {get: candidate-release, passed: [bosh-rc], trigger: true}
-    - {get: boshrelease-ci}
     - {get: etcd}
     - {get: remote-syslog}
-    # if image changes, trigger "upstream" testflight deployment
-    - {get: docker-image-pg95-patroni, trigger: true, save: false, skip_download: true}
   - task: create-lite-manifest
     file: boshrelease-ci/ci/tasks/create-manifest.yml
     config:

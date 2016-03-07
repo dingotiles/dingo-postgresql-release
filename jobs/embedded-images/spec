@@ -1,0 +1,10 @@
+---
+name: embedded-images
+packages:
+- cfcommunity_postgresql_patroni_9_5_image
+templates:
+  bin/monit_debugger: bin/monit_debugger
+  bin/install_ctl: bin/install_ctl
+  helpers/ctl_setup.sh: helpers/ctl_setup.sh
+  helpers/ctl_utils.sh: helpers/ctl_utils.sh
+properties: {}

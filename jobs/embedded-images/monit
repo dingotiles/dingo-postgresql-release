@@ -1,0 +1,5 @@
+check process embedded-images
+  with pidfile /var/vcap/sys/run/embedded-images/embedded-images.pid
+  start program "/var/vcap/jobs/embedded-images/bin/monit_debugger install_ctl '/var/vcap/jobs/embedded-images/bin/install_ctl start'"
+  stop program "/var/vcap/jobs/embedded-images/bin/monit_debugger install_ctl '/var/vcap/jobs/embedded-images/bin/install_ctl stop'"
+  group vcap

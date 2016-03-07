@@ -31,7 +31,7 @@ jobs:
     release: patroni-docker
   - name: registrator
     release: patroni-docker
-  - name: upstream-images
+  - name: embedded-images
     release: patroni-docker
   - name: container-env-vars
     release: patroni-docker
@@ -50,7 +50,7 @@ jobs:
     release: patroni-docker
   - name: registrator
     release: patroni-docker
-  - name: upstream-images
+  - name: embedded-images
     release: patroni-docker
   - name: container-env-vars
     release: patroni-docker
