@@ -66,11 +66,13 @@ jobs:
     release: patroni-docker
   properties:
     servicebroker:
-      machines: [127.0.0.1]
       backends:
         machines:
           z1: [10.58.111.55]
           z2: [10.58.111.56]
+      machines: [127.0.0.1]
+      public_port: 8888
+      port: 8889
       router: {hostname: 10.58.111.57}
   resource_pool: router_z1
   instances: 1
