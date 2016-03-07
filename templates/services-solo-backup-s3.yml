@@ -17,11 +17,11 @@ meta:
           documentationUrl: 'https://pg.dingotiles.com'
           supportUrl: 'https://slack.dingotiles.com'
         plans:
-          - id: '1545e30e-6dc3-11e5-826a-6c4008a663f0'
-            name: 'solo-dev'
-            description: 'Solo instance of PostgreSQL'
+          - id: 'b96d0936-e423-11e5-accb-93d374e93368'
+            name: 'solo'
+            description: 'Solo instance of PostgreSQL with continuous backups'
             metadata:
-              displayName: 'Solo (dev only)'
+              displayName: 'Solo'
             container:
               backend: 'docker'
               image: cfcommunity/postgresql-patroni
@@ -30,3 +30,10 @@ meta:
                 - '/data'
               environment:
                 - (( concat "ETCD_HOST_PORT=" meta.etcd.host ":4001" ))
+                - (( concat "AWS_ACCESS_KEY_ID=" meta.backups.aws_access_key ))
+                - (( concat "AWS_SECRET_ACCESS_KEY=" meta.backups.aws_secret_key ))
+                - (( concat "WAL_S3_BUCKET=" meta.backups.s3_bucket ))
+                - (( concat "WALE_S3_ENDPOINT=https+path://" meta.backups.s3_endpoint ))
+                - "WALE_ENV_DIR=/data/wal-e/env"
+                - "WALE_BACKUP_THRESHOLD_PERCENTAGE=30"
+                - "WALE_BACKUP_THRESHOLD_MEGABYTES=10240"
