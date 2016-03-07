@@ -14,7 +14,5 @@ properties:
     description: username for service brokers to connect to
   servicebroker.password:
     description: password for service brokers to connect to
-  servicebroker.router.hostname:
-    description: "Hostname to advertise in binding credentials for routers"
   etcd.machines:
     description: hostnames for etcd servers
