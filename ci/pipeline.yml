@@ -322,7 +322,7 @@ resources:
   type: git
   source:
     uri: https://github.com/drnic/patroni.git
-    branch: connect_address
+    branch: connect_address_oct2015
     # uri: https://github.com/zalando/patroni.git
     # branch: master
     private_key: {{github-private-key}}
