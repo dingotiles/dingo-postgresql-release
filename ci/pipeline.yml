@@ -342,8 +342,8 @@ resources:
   type: bosh-deployment
   source: &lite-defaults
     target: {{bosh-lite-target}}
-    username: admin
-    password: admin
+    username: {{bosh-lite-username}}
+    password: {{bosh-lite-password}}
     deployment: patroni-docker-testflight
 
 - name: lite-errand
