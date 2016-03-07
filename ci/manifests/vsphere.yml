@@ -144,10 +144,12 @@ properties:
   broker:
     cookie_secret: e7247dae-a252-4393-afa3-2219c1c02efd
     fetch_images: true
-    host: cf-containers-broker.10.244.0.34.xip.io
     max_containers: 20
+    username: containers
     password: containers
+    host: cf-containers-broker.10.244.0.34.xip.io
     port: 80
+    ssl_enabled: true
     protocol: https
     services: &services
     - bindable: true
@@ -177,8 +179,6 @@ properties:
       tags:
       - postgresql95
       - postgresql
-    ssl_enabled: true
-    username: containers
   servicebroker:
     password: starkandwayne
     port: 8888
