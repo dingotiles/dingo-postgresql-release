@@ -5,7 +5,7 @@ This is a guide to help you getting started with postgres replication with patro
 [Ten Minutes To Replication](https://www.youtube.com/watch?v=BD7i9QImqic) is a good introduction to streaming replication with PG.
 
 ## Patroni
-Apparently there is no conference talk about it online but you can watch the [Grouce Visualization](https://www.youtube.com/watch?v=psgN8zo5L_4) for fun (Dr Nic comes flying in at 19 seconds).
+[Here is  talk](https://www.youtube.com/watch?v=OH9WSEiMsAw) that gives an introduction to patroni.
 
 ### Setup
 
@@ -17,7 +17,9 @@ which patroni
 ```
 
 Running tests:
-`python setup.py test`
+```
+python setup.py test
+```
 or:
 ```
 pip install pytest
