@@ -89,10 +89,10 @@ jobs:
   serial: true
   plan:
   - aggregate:
+    - {get: boshrelease-ci}
     - {get: boshrelease, passed: [bosh-rc]}
     - {get: version, passed: [bosh-rc]}
     - {get: candidate-release, passed: [bosh-rc], trigger: true}
-    - {get: boshrelease-ci}
     - {get: etcd}
     - {get: remote-syslog}
   - task: create-lite-manifest
