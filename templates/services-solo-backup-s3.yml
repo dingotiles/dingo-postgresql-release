@@ -20,6 +20,7 @@ meta:
           - id: 'b96d0936-e423-11e5-accb-93d374e93368'
             name: 'solo'
             description: 'Solo instance of PostgreSQL with continuous backups'
+            free: true
             metadata:
               displayName: 'Solo'
             container:

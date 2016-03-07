@@ -19,6 +19,7 @@ meta:
         plans:
           - id: '1545e30e-6dc3-11e5-826a-6c4008a663f0'
             name: 'solo-dev'
+            free: true
             description: 'Solo instance of PostgreSQL'
             metadata:
               displayName: 'Solo (dev only)'

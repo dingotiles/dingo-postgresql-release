@@ -173,6 +173,7 @@ properties:
           tag: "9.5"
         description: Solo instance of PostgreSQL
         id: 1545e30e-6dc3-11e5-826a-6c4008a663f0
+        free: true
         metadata:
           displayName: Solo
         name: solo
