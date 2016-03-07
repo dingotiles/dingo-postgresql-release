@@ -1,9 +1,8 @@
-Patroni for Cloud Foundry
-=========================
+# High-Availability PostgreSQL for Cloud Foundry
 
 This BOSH release deploys a cluster of cells that can run high-availability clustered PostgreSQL. It includes a front-facing routing mesh to route connections the master/solo PostgreSQL node in each cluster.
 
-Many PostgreSQL servers can be run on each cell/server. The solution uses Docker images for package PostgreSQL, and Docker engine to run PostgreSQL in Linux containers.
+Many PostgreSQL servers can be run on each cell/server. The solution uses Docker images for package PostgreSQL, and Docker engine to run PostgreSQL in isolated Linux containers.
 
 Clustering between multiple nodes each PostgreSQL cluster is automatically coordinated by https://github.com/zalando/patroni, using etcd backend as a high-availability data store.
 
@@ -17,25 +16,6 @@ This system requires:
 -	BOSH or bosh-lite, and the `bosh` CLI installed locally
 -	`spruce` CLI to merge YAML files, from http://spruce.cf/
 -	a running etcd cluster
-
-### ETCD cluster
-
-This system assumes you have an etcd cluster running.
-
-Why etcd? It is the common denominator between registrator, patroni and confd. For example, to support consul we would first need to add consul support to patroni. There are also shell scripts now that assume etcd; so they'd need updating or replacing with executable that support different backends.
-
-The templates include an easy way to run an etcd node, if you don't already have an etcd cluster, using [cloudfoundry-incubator/etcd-release](https://github.com/cloudfoundry-incubator/etcd-release). See "Deployment" section for instructions.
-
-If you do already have an etcd cluster then create a spruce stub file with your etcd cluster information, say `tmp/etcd.yml`:
-
-```yaml
----
-meta:
-  etcd:
-    host: 10.244.4.2
-  registrator:
-    backend_uri: (( concat "etcd://" meta.etcd.host ":4001" ))
-```
 
 Deployment
 ----------
@@ -60,6 +40,25 @@ To deploy a simple one-node etcd cluster for demonstration purposes:
 ```
 ./templates/make_manifest warden upstream templates/jobs-etcd.yml
 bosh deploy
+```
+
+### ETCD cluster
+
+This system assumes you have an etcd cluster running.
+
+Why etcd? It is the common denominator between registrator, patroni and confd. For example, to support consul we would first need to add consul support to patroni. There are also shell scripts now that assume etcd; so they'd need updating or replacing with executable that support different backends.
+
+The templates include an easy way to run an etcd node, if you don't already have an etcd cluster, using [cloudfoundry-incubator/etcd-release](https://github.com/cloudfoundry-incubator/etcd-release). See "Deployment" section for instructions.
+
+If you do already have an etcd cluster then create a spruce stub file with your etcd cluster information, say `tmp/etcd.yml`:
+
+```yaml
+---
+meta:
+  etcd:
+    host: 10.244.4.2
+  registrator:
+    backend_uri: (( concat "etcd://" meta.etcd.host ":4001" ))
 ```
 
 ### Remote syslog
