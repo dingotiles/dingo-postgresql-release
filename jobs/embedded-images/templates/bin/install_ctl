@@ -1,0 +1,51 @@
+#!/bin/bash
+
+set -e # exit immediately if a simple command exits with a non-zero status
+set -u # report the usage of uninitialized variables
+
+# Setup env vars and folders for the webapp_ctl script
+source /var/vcap/jobs/embedded-images/helpers/ctl_setup.sh 'embedded-images'
+
+export PORT=${PORT:-5000}
+export LANG=en_US.UTF-8
+
+case $1 in
+
+  start)
+    pid_guard $PIDFILE $JOB_NAME
+
+    # store pid in $PIDFILE
+    echo $$ > $PIDFILE
+
+    docker_host=unix:///var/vcap/sys/run/docker/docker.sock
+
+    set -x # print commands
+    for image in /var/vcap/packages/*_image/*.tgz; do
+      img_dir=`dirname $image`
+      docker_tag=`cat $img_dir/docker_meta.txt`
+      echo "Loading docker image $image with tag $docker_tag" >>$LOG_DIR/$JOB_NAME.stdout.log
+      docker --host $docker_host images -q > orig.txt
+      docker --host $docker_host \
+           load -i $image \
+             >>$LOG_DIR/$JOB_NAME.stdout.log \
+             2>>$LOG_DIR/$JOB_NAME.stderr.log
+      docker --host $docker_host images -q > updated.txt
+      new_img=`comm -23 <(sort updated.txt) <(sort orig.txt)`
+      docker --host $docker_host tag $new_img $docker_tag
+    done
+
+    # do nothing forever
+    exec tail -f /dev/null
+    ;;
+
+  stop)
+    kill_and_wait $PIDFILE
+
+    ;;
+  *)
+    echo "Usage: install_ctl {start|stop}"
+
+    ;;
+
+esac
+exit 0
