@@ -87,6 +87,16 @@ Then include the file in your `make_manifest` command to build your BOSH deploym
 bosh deploy
 ```
 
+### Streaming backups to AWS S3
+
+Each PostgreSQL master container can continuously stream its write-ahead logs (WAL) to AWS S3. These can later be used to restore master nodes and to create replica nodes.
+
+To enable it requires only passing in some environment variables to the Docker containers, and Patroni will use them to enable continuous archiving via [wal-e](https://github.com/wal-e/wal-e).
+
+See [templates/services-solo-backup-s3.yml](https://github.com/dingotiles/patroni-docker-boshrelease/blob/master/templates/services-solo-backup-s3.yml#L33-L39) for an example of the environment variables required.
+
+To explore how this is implemented within the Docker image, see [image tutorial](https://github.com/dingotiles/patroni-docker-boshrelease/tree/master/images#backuprestore-from-aws).
+
 Usage
 -----
 
