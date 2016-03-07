@@ -81,7 +81,8 @@ jobs:
   networks: [{name: patroni1}]
   properties:
     servicebroker:
-      machines: [10.58.111.58]
+      machines: [10.58.111.57]
+      port: 8889
   resource_pool: router_z1
   templates:
   - name: sanity-test
