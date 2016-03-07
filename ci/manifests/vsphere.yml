@@ -135,57 +135,21 @@ properties:
     log_options:
     - syslog-address=udp://logs.papertrailapp.com:25374
     - tag="{{.Name}}"
-  broker:
-    component_name: postgresql-docker-broker
-    cookie_secret: e7247dae-a252-4393-afa3-2219c1c02efd
-    fetch_images: true
-    host: cf-containers-broker.10.244.0.34.xip.io
-    max_containers: 20
-    name: postgresql-docker-broker
-    password: containers
-    port: 80
-    protocol: https
-    services:
-    - bindable: true
-      description: Solo instance of PostgreSQL 9.5
-      id: beb5973c-e1b2-11e5-a736-c7c0b526363d
-      metadata:
-        displayName: postgresql 9.5
-        documentationUrl: https://pg.dingotiles.com
-        longDescription: Solo instance of PostgreSQL 9.5
-        providerDisplayName: Dingo Tiles
-        supportUrl: https://slack.dingotiles.com
-      name: postgresql95
-      plans:
-      - container:
-          backend: docker
-          environment:
-          - ETCD_HOST_PORT=10.58.111.59:4001
-          image: cfcommunity/postgresql-patroni
-          persistent_volumes:
-          - /data
-          tag: "9.5"
-        description: Solo instance of PostgreSQL
-        id: 1545e30e-6dc3-11e5-826a-6c4008a663f0
-        metadata:
-          displayName: Solo
-        name: solo
-      tags:
-      - postgresql95
-      - postgresql
-      - syslog
-    ssl_enabled: true
-    username: containers
   cf:
     api_url: https://api.10.244.0.34.xip.io
   etcd:
     machines: [10.58.111.59]
   registrator:
     backend_uri: etcd://10.58.111.59:4001
-  servicebroker:
-    password: starkandwayne
-    port: 8888
-    services:
+  broker:
+    cookie_secret: e7247dae-a252-4393-afa3-2219c1c02efd
+    fetch_images: true
+    host: cf-containers-broker.10.244.0.34.xip.io
+    max_containers: 20
+    password: containers
+    port: 80
+    protocol: https
+    services: &services
     - bindable: true
       description: Solo instance of PostgreSQL 9.5
       id: beb5973c-e1b2-11e5-a736-c7c0b526363d
@@ -213,7 +177,12 @@ properties:
       tags:
       - postgresql95
       - postgresql
-      - syslog
+    ssl_enabled: true
+    username: containers
+  servicebroker:
+    password: starkandwayne
+    port: 8888
+    services: *services
     username: starkandwayne
 resource_pools:
 - cloud_properties:

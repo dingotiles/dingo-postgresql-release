@@ -8,7 +8,6 @@ meta:
     cookie_secret: 'e7247dae-a252-4393-afa3-2219c1c02efd'
     protocol: https
     ssl_enabled: true
-    component_name: postgresql-docker-broker
     max_containers: 20
 
   job_templates:
@@ -39,8 +38,6 @@ properties:
     backend_uri: (( grab meta.registrator.backend_uri))
 
   broker:
-    name: (( grab meta.cfcontainersbroker.component_name ))
-    component_name: (( grab meta.cfcontainersbroker.component_name ))
     protocol: (( grab meta.cfcontainersbroker.protocol ))
     ssl_enabled: (( grab meta.cfcontainersbroker.ssl_enabled ))
     host: (( grab meta.cfcontainersbroker.external_host ))
