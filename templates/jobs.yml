@@ -49,6 +49,9 @@ jobs:
     templates: [{name: sanity-test, release: patroni-docker}]
     resource_pool: router_z1
     networks: [{name: router1}]
+    properties:
+      servicebroker:
+        port: 8889 # FIXME: since haproxy isn't always running
 
 resource_pools:
   - name: cell_z1
