@@ -10,4 +10,5 @@ RUN chmod 775 /usr/bin/jq
 ADD https://github.com/geofffranks/spruce/releases/download/v1.1.2/spruce-linux-amd64 /tmp/
 RUN mv /tmp/spruce-linux-amd64 /usr/bin/spruce && chmod 755 /usr/bin/spruce
 
-RUN gem install rake --no-ri --no-rdoc
+RUN gem install rake --no-ri --no-rdoc && \
+    apt-get update && apt-get install tree -y && apt-get clean
