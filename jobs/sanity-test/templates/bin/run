@@ -14,8 +14,8 @@ EXITSTATUS=0
 
 BROKER_URI=http://<%= p("servicebroker.username") %>:<%= p("servicebroker.password") %>@<%= p("servicebroker.machines").first %>:<%= p("servicebroker.port") %>
 
-echo Catalog
-curl -sf ${BROKER_URI}/v2/catalog | jq .
+echo Confirm broker access
+curl -v ${BROKER_URI}/v2/catalog
 
 single_node_service_id=$(curl -sf ${BROKER_URI}/v2/catalog | jq -r ".services[0].id")
 plan_ids=$(curl -sf ${BROKER_URI}/v2/catalog | jq -r ".services[0].plans[].id")
