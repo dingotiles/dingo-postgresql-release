@@ -28,7 +28,7 @@ jobs:
   - aggregate:
     - {get: boshrelease-ci}
     - {get: boshrelease, resource: boshrelease-pg95-image, trigger: true, params: {submodules: none}}
-    - {get: patroni, resource: patched-patroni, trigger: true}
+    - {get: patroni, resource: patched-patroni-october, trigger: true}
     - {get: docker-image-pg95-patroni-base, trigger: true}
   - task: prepare-dockerfile
     file: boshrelease-ci/ci/tasks/prepare-dockerfile.yml
@@ -318,7 +318,7 @@ resources:
     secret_access_key: {{dingotiles-aws-secret}}
     region_name: {{dingotiles-aws-region}}
 
-- name: patched-patroni
+- name: patched-patroni-october
   type: git
   source:
     uri: https://github.com/drnic/patroni.git
