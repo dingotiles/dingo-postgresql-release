@@ -38,7 +38,7 @@ alias _docker="docker"
 
 ### PostgreSQL version
 
-Each subfolder, such as `postgresql94-patroni`, builds the image from a different major PostgreSQL version, such as PG 9.5.
+Each subfolder, such as `postgresql95-patroni`, builds the image from a different major PostgreSQL version, such as PG 9.5.
 
 The [postgresql-docker-boshrelease](https://github.com/cloudfoundry-community/postgresql-docker-boshrelease) project currently owns and builds the upstream `cfcommunity/postgresql-base:9.5` images that are used.
 
@@ -50,11 +50,11 @@ _docker pull cfcommunity/postgresql-patroni:9.5
 
 ### Build the image
 
-To create the image `cfcommunity/postgresql-patroni`, execute the following command in the `postgresql94-patroni` folder:
+To create the image `cfcommunity/postgresql-patroni`, execute the following command in the `postgresql95-patroni` folder:
 
 ```
-git clone https://github.com/drnic/patroni -b connect_address postgresql94-patroni/patroni
-docker build -t cfcommunity/postgresql-patroni:9.5 postgresql94-patroni
+git clone https://github.com/drnic/patroni -b connect_address postgresql95-patroni/patroni
+docker build -t cfcommunity/postgresql-patroni:9.5 postgresql95-patroni
 ```
 
 Running a cluster
