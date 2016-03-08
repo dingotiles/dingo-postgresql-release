@@ -105,6 +105,10 @@ jobs:
         bosh_password: {{bosh-lite-password}}
         bosh_syslog_host: {{bosh-lite-syslog-host}}
         bosh_syslog_port: {{bosh-lite-syslog-port}}
+        aws_access_key: {{dingotiles-aws-access}}
+        aws_secret_key: {{dingotiles-aws-secret}}
+        s3_bucket: {{backups-testflight-s3-bucket}}
+        s3_endpoint: {{backups-testflight-s3-endpoint}}
         # docker_image_image: "cfcommunity/postgresql-patroni"
         # docker_image_tag: "9.5"
         # docker_image_source: upstream

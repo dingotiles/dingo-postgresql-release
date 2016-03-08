@@ -40,11 +40,23 @@ meta:
     tag: "${docker_image_tag}"
 EOF
 
+cat > tmp/backups.yml <<EOF
+---
+meta:
+  backups:
+    aws_access_key: "${aws_access_key}"
+    aws_secret_key: "${aws_secret_key}"
+    s3_bucket: "${s3_bucket}"
+    s3_endpoint: "${s3_endpoint}"
+EOF
+services_template=templates/services-solo-backup-s3.yml
+# services_template=templates/services-solo.yml
+
 bosh target ${bosh_target}
 
 export DEPLOYMENT_NAME=${deployment_name}
-./templates/make_manifest warden ${docker_image_source} templates/services-solo.yml \
-  templates/jobs-etcd.yml tmp/syslog.yml tmp/docker_image.yml
+./templates/make_manifest warden ${docker_image_source} ${services_template} \
+  templates/jobs-etcd.yml tmp/syslog.yml tmp/docker_image.yml tmp/backups.yml
 
 cp tmp/${DEPLOYMENT_NAME}*.yml ${manifest_dir}/manifest.yml
 

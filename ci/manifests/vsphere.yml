@@ -152,34 +152,31 @@ properties:
     ssl_enabled: true
     protocol: https
     services: &services
-    - bindable: true
+    - name: postgresql95
       description: Solo instance of PostgreSQL 9.5
       id: beb5973c-e1b2-11e5-a736-c7c0b526363d
+      bindable: true
       metadata:
         displayName: postgresql 9.5
         documentationUrl: https://pg.dingotiles.com
         longDescription: Solo instance of PostgreSQL 9.5
         providerDisplayName: Dingo Tiles
         supportUrl: https://slack.dingotiles.com
-      name: postgresql95
+      tags: [postgresql95, postgresql]
       plans:
-      - container:
-          backend: docker
-          environment:
-          - ETCD_HOST_PORT=10.58.111.59:4001
-          image: cfcommunity/postgresql-patroni
-          persistent_volumes:
-          - /data
-          tag: "9.5"
-        description: Solo instance of PostgreSQL
+      - name: solo
         id: 1545e30e-6dc3-11e5-826a-6c4008a663f0
+        description: Solo instance of PostgreSQL
         free: true
         metadata:
           displayName: Solo
-        name: solo
-      tags:
-      - postgresql95
-      - postgresql
+        container:
+          backend: docker
+          image: cfcommunity/postgresql-patroni
+          tag: "9.5"
+          persistent_volumes: [/data]
+          environment:
+          - ETCD_HOST_PORT=10.58.111.59:4001
   servicebroker:
     password: starkandwayne
     port: 8888
