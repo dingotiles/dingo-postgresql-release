@@ -5,7 +5,7 @@ groups:
 - name: versions
   jobs: [minor, major, patch]
 - name: patroni-images
-  jobs: [image-patroni-pg95-base, image-patroni-pg95, bump-image-layers]
+  jobs: [image-patroni-pg95-base, image-patroni-pg95, bump-image-layers, image-patroni-pg95-patroni-master]
 - name: ci-image
   jobs: [build-task-image]
 
@@ -36,6 +36,24 @@ jobs:
       params:
         dockerfile_root: boshrelease/images/postgresql95-patroni
   - put: docker-image-pg95-patroni
+    params:
+      build: dockerfile
+
+- name: image-patroni-pg95-patroni-master
+  public: true
+  serial: true
+  plan:
+  - aggregate:
+    - {get: boshrelease-ci}
+    - {get: boshrelease, resource: boshrelease-pg95-image-patroni-master, trigger: true, params: {submodules: none}}
+    - {get: patroni, resource: patched-patroni-master, trigger: true}
+    - {get: docker-image-pg95-patroni-base, trigger: true}
+  - task: prepare-dockerfile
+    file: boshrelease-ci/ci/tasks/prepare-dockerfile.yml
+    config:
+      params:
+        dockerfile_root: boshrelease/images/postgresql95-patroni
+  - put: docker-image-pg95-patroni-master
     params:
       build: dockerfile
 
@@ -274,6 +292,14 @@ resources:
     private_key: {{github-private-key}}
     paths: [images/postgresql95-patroni]
 
+- name: boshrelease-pg95-image-patroni-master
+  type: git
+  source:
+    uri: git@github.com:dingotiles/patroni-docker-boshrelease.git
+    branch: {{pipeline-branch-patched-master}}
+    private_key: {{github-private-key}}
+    paths: [images/postgresql95-patroni]
+
 - name: boshrelease-pg95-base-image
   type: git
   source:
@@ -327,6 +353,13 @@ resources:
     # branch: master
     private_key: {{github-private-key}}
 
+- name: patched-patroni-master
+  type: git
+  source:
+    uri: https://github.com/drnic/patroni.git
+    branch: connect_address_20150308
+    private_key: {{github-private-key}}
+
 - name: docker-image-pg95-patroni-base
   type: docker-image
   source:
@@ -344,6 +377,15 @@ resources:
     password: {{docker-hub-password}}
     repository: cfcommunity/postgresql-patroni
     tag: "9.5"
+
+- name: docker-image-pg95-patroni-master
+  type: docker-image
+  source:
+    email: {{docker-hub-email}}
+    username: {{docker-hub-username}}
+    password: {{docker-hub-password}}
+    repository: cfcommunity/postgresql-patroni
+    tag: "9.5-patroni-master"
 
 - name: docker-image-ci
   type: docker-image
