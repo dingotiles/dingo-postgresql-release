@@ -127,15 +127,15 @@ docker_layers/04905049e40e8499398b5d186d2e7d0a27e88ca413a94555553525627a7fbc87.t
   object_id: ca9eddfb-c8f5-4e7a-8385-70a0c3712cf1
   sha: 259d0d8d727e347cf985bbff860ae8e84c98d3a5
   size: 597
-docker_images/2832aab4dce6b2753b1b2dd4e3b62627ce3590edc30260613b2b6e25a6a16e66.json.tgz:
-  object_id: 1143687b-6df5-437e-a99c-8d2b7efc5fcc
-  sha: c71604c41559e1294574dc6e76f98e168ee6dcfd
-  size: 3046
-docker_images/cfcommunity_postgresql_patroni_9_5_image.tgz:
-  object_id: 4620c8cf-fd1f-4723-af51-63e8c042a0aa
-  sha: 7005a55976d28e31937c3c4a7eea1cf7d97b5d67
-  size: 935
 docker/docker-1.10.2:
   object_id: bad79415-0c1b-489f-81f6-9ac98f8f4f69
   sha: 7cd5c77dffa05a9d6b57d0fd9da6f40f6c9044bf
   size: 34892323
+docker_images/2832aab4dce6b2753b1b2dd4e3b62627ce3590edc30260613b2b6e25a6a16e66.json.tgz:
+  object_id: a151de4b-9592-49fa-9ae2-9ff19fcb027c
+  sha: 48b12e2c9abb6e695404d5900c74b2ad837f16ef
+  size: 3046
+docker_images/cfcommunity_postgresql_patroni_9_5_image.tgz:
+  object_id: 8d26cb94-29d0-4102-8d56-098ae243c3ec
+  sha: 2ebe63cae52920186af367dce6384fbf5989e21b
+  size: 970
