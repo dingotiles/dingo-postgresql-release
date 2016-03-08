@@ -133,18 +133,19 @@ postgresql:
     username: ${POSTGRES_USERNAME}
     password: ${POSTGRES_PASSWORD}
   create_replica_method:
+    - wal_e
     - basebackup
-  #  - wal_e
-  #wal_e:
-    #command: /patroni/scripts/wale_restore.py
-    #env_dir: /home/postgres/etc/wal-e.d/env
-    #threshold_megabytes: 10240
-    #threshold_backup_size_percentage: 30
-    #retries: 2
-    #use_iam: 1
+  wal_e:
+    command: patroni_wale_restore
+    env_dir: ${WALE_ENV_DIR}
+    threshold_megabytes: 10240
+    threshold_backup_size_percentage: 30
+    retries: 2
+    use_iam: 1
+    no_master: true
   restore: /patroni/scripts/restore.py
   recovery_conf:
-   restore_command: "$WALE_CMD wal-fetch \"%f\" \"%p\" -p 1"
+    restore_command: "$WALE_CMD wal-fetch \"%f\" \"%p\" -p 1"
 
   # parameters are converted into --<name> <value> flags on the server command line
   parameters:
