@@ -259,19 +259,17 @@ The `conn_address` field is from unmerged patroni [PR #91](https://github.com/za
 The `conn_url` represents how replicas can connect to the current master. It can be passed directly to `psql` or using the admin username password we can confirm we can connect to the server using credentials above:
 
 ```
-$ psql postgres://replicator:replicator@10.244.21.6:40000/postgres
+$ psql postgres://replicator:replicator@${HostIP}:40000/postgres
 psql (9.5.1)
 Type "help" for help.
 
 postgres=>
-$ psql postgres://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@10.244.21.6:40000/postgres
+$ psql postgres://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@${HostIP}:40000/postgres
 psql (9.5.1)
 Type "help" for help.
 
 postgres=>
 ```
-
-NOTE: change `10.244.21.6:40000` to the `host:port` shown in the `curl -s ${ETCD_CLUSTER}/v2/keys/service/my_first_cluster/members` output.
 
 ### Expand the cluster
 
@@ -330,7 +328,7 @@ curl -s ${ETCD_CLUSTER}/v2/keys/service/my_first_cluster/members | jq -r ".node.
 Confirm that the master has the replica registered:
 
 ```
-$ psql postgres://replicator:replicator@${HostIP}:40000/postgres -c 'select * from pg_stat_replication;'
+$ psql postgres://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@${HostIP}:40000/postgres -c 'select * from pg_stat_replication;'
 pid | usesysid |  usename   | application_name | client_addr |...
  82 |    16384 | replicator | walreceiver      | 172.17.42.1 |...
 ```
@@ -433,12 +431,11 @@ Patroni supports [wal-e](https://github.com/wal-e/wal-e) for continuous archivin
 
 To setup wal-e we need to pass in some environment variables to the Docker containers.
 
--	`WALE_ENV_DIR` - directory where WAL-E environment is kept
--	`WAL_S3_BUCKET` - a name of the S3 bucket for WAL-E
--	`WALE_BACKUP_THRESHOLD_MEGABYTES` - if WAL amount is above that - use pg_basebackup
--	`WALE_BACKUP_THRESHOLD_PERCENTAGE` - if WAL size exceeds a certain percentage of the latest backup size
 -	`AWS_ACCESS_KEY_ID` - AWS access key
 -	`AWS_SECRET_ACCESS_KEY` - AWS secret key
+-	`WAL_S3_BUCKET` - a name of the S3 bucket for WAL-E
+-	`WALE_BACKUP_THRESHOLD_MEGABYTES` - if WAL amount is above that - use fresh `pg_basebackup` from master, rather that fetch old base backup from S3
+-	`WALE_BACKUP_THRESHOLD_PERCENTAGE` - if WAL size exceeds a certain percentage of the latest backup size
 
 For example, create a local file `tmp/wal-e.env` which will be passed into `docker run`:
 
@@ -446,11 +443,10 @@ For example, create a local file `tmp/wal-e.env` which will be passed into `dock
 AWS_ACCESS_KEY_ID=XXX
 AWS_SECRET_ACCESS_KEY=YYY
 
-WAL_S3_BUCKET=ZZZ
+WAL_S3_BUCKET=ZZZ-backups
 WALE_S3_ENDPOINT=https+path://s3.amazonaws.com:443
 #WALE_S3_ENDPOINT=https+path://s3-us-west-2.amazonaws.com:443
 
-WALE_ENV_DIR=/data/wal-e/env
 WALE_BACKUP_THRESHOLD_PERCENTAGE=30
 WALE_BACKUP_THRESHOLD_MEGABYTES=10240
 ```
@@ -477,6 +473,8 @@ _docker logs -f john
 After PostgreSQL creates the initial database, the first backup and first wal segement will be taken and uploaded to your S3 bucket:
 
 ```
+Enabling wal-e archives to S3 bucket 'ZZZ-backups'
+...
 wal_e.worker.base INFO     MSG: Not deleting any data.
         DETAIL: No existing base backups.
         STRUCTURED: time=2015-11-23T22:19:03.033284-00 pid=150
@@ -498,8 +496,8 @@ wal_e.operator.backup INFO     MSG: start upload postgres version metadata
 To add some data to trigger the initial WAL pushes:
 
 ```
-pgbench -i postgres://replicator:replicator@192.168.99.100:40000/postgres
-pgbench postgres://replicator:replicator@192.168.99.100:40000/postgres -T 60
+pgbench -i postgres://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@${HostIP}:40000/postgres
+pgbench postgres://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@${HostIP}:40000/postgres -T 60
 _docker logs -f john
 ```
 
