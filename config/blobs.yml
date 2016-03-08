@@ -55,10 +55,6 @@ ruby/rubygems-2.5.0.tgz:
   object_id: 8a40b429-988a-4ae8-a4c5-593fdffd4469
   sha: 03613d7013b61ecabef2424221438a692e53bbfc
   size: 467978
-docker/docker-1.9.1:
-  object_id: d2b05b82-bf6d-47ac-bcea-05d2f6030a5a
-  sha: 424920b09c24d7c7876cc35d8aabd2aa52b8e39e
-  size: 30222575
 docker_layers/3ba2dbefb25c9e563575be0840267f8fff2f168b24645836e970f9f2ef9ed6c3.tgz:
   object_id: 685a9af4-435a-4a2c-99a8-6f351c3a8bcd
   sha: 42379225fe14b4d737fa8913cec413d0f7c6c377
@@ -139,3 +135,7 @@ docker_images/cfcommunity_postgresql_patroni_9_5_image.tgz:
   object_id: 4620c8cf-fd1f-4723-af51-63e8c042a0aa
   sha: 7005a55976d28e31937c3c4a7eea1cf7d97b5d67
   size: 935
+docker/docker-1.10.2:
+  object_id: bad79415-0c1b-489f-81f6-9ac98f8f4f69
+  sha: 7cd5c77dffa05a9d6b57d0fd9da6f40f6c9044bf
+  size: 34892323
