@@ -30,7 +30,7 @@ meta:
             container:
               backend: 'docker'
               image: (( grab meta.docker_image.image ))
-              tag: (( grab meta.docker_image.tag ))
+              tag: "(( grab meta.docker_image.tag ))"
               persistent_volumes:
                 - '/data'
               environment:
