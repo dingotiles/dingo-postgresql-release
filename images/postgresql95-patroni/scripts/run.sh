@@ -132,6 +132,16 @@ postgresql:
   admin: # user will be created during initialization. It would have CREATEDB and CREATEROLE privileges
     username: ${POSTGRES_USERNAME}
     password: ${POSTGRES_PASSWORD}
+  create_replica_method:
+    - basebackup
+  #  - wal_e
+  #wal_e:
+    #command: /patroni/scripts/wale_restore.py
+    #env_dir: /home/postgres/etc/wal-e.d/env
+    #threshold_megabytes: 10240
+    #threshold_backup_size_percentage: 30
+    #retries: 2
+    #use_iam: 1
   restore: /patroni/scripts/restore.py
   recovery_conf:
    restore_command: "$WALE_CMD wal-fetch \"%f\" \"%p\" -p 1"
