@@ -127,6 +127,7 @@ postgresql:
     password: replicator
     network:  127.0.0.1/32
   superuser:
+    username: postgres
     password: starkandwayne # password for postgres user. It would be set during initialization
   admin: # user will be created during initialization. It would have CREATEDB and CREATEROLE privileges
     username: ${POSTGRES_USERNAME}
