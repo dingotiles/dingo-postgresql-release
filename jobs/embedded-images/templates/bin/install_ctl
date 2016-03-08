@@ -24,14 +24,10 @@ case $1 in
       img_dir=`dirname $image`
       docker_tag=`cat $img_dir/docker_meta.txt`
       echo "Loading docker image $image with tag $docker_tag" >>$LOG_DIR/$JOB_NAME.stdout.log
-      docker --host $docker_host images -q > orig.txt
       docker --host $docker_host \
            load -i $image \
              >>$LOG_DIR/$JOB_NAME.stdout.log \
              2>>$LOG_DIR/$JOB_NAME.stderr.log
-      docker --host $docker_host images -q > updated.txt
-      new_img=`comm -23 <(sort updated.txt) <(sort orig.txt)`
-      docker --host $docker_host tag $new_img $docker_tag
     done
 
     # do nothing forever

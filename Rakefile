@@ -1,4 +1,5 @@
 require 'yaml'
+require 'json'
 require 'fileutils'
 require 'tmpdir'
 
@@ -38,7 +39,7 @@ namespace :images do
     required_layers = []
     images.each do |image|
       Dir.mktmpdir do |dir|
-        required_blobs = repackage_image_blobs(source_image_dir(image.tar), dir)
+        required_blobs = repackage_image_blobs(source_image_dir(image.tar), dir, image.name)
 
         required_blobs.each do |b|
           unless existing_layers.include?(b.target)
@@ -164,10 +165,15 @@ module DockerImagePackaging
     end
   end
 
-  def repackage_image_blobs(image_tar, tmp_layers_dir)
+  def repackage_image_blobs(image_tar, tmp_layers_dir, image_name)
     Dir.chdir(tmp_layers_dir) do
       sh "tar -xf #{image_tar}"
       sh "tree"
+
+      # Set repo name so that correct tag will be applied on import
+      manifest = JSON.parse(File.read("manifest.json"))
+      manifest[0]["RepoTags"] = [image_name]
+      File.write("manifest.json", JSON.dump(manifest))
 
       # Blob.new(source, target_name, prefix)
       blobs = Dir.glob("*/").map! do |d|
