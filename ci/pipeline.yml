@@ -105,8 +105,8 @@ jobs:
         bosh_password: {{bosh-lite-password}}
         bosh_syslog_host: {{bosh-lite-syslog-host}}
         bosh_syslog_port: {{bosh-lite-syslog-port}}
-        # docker_image_image: cfcommunity/postgresql-patroni
-        # docker_image_tag: 9.5-patroni-master
+        # docker_image_image: "cfcommunity/postgresql-patroni"
+        # docker_image_tag: "9.5"
         # docker_image_source: upstream
   - task: delete-testflight
     file: boshrelease-ci/ci/tasks/delete-testflight.yml

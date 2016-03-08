@@ -1,8 +1,8 @@
 ---
 meta:
   docker_image:
-    image: cfcommunity/postgresql-patroni
-    tag: 9.5
+    image: "cfcommunity/postgresql-patroni"
+    tag: "9.5"
 
   broker:
     services:
