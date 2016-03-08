@@ -142,7 +142,7 @@ postgresql:
     threshold_megabytes: 10240
     threshold_backup_size_percentage: 30
     retries: 2
-    use_iam: 1
+    use_iam: 0
     no_master: 1
   restore: /patroni/scripts/restore.py
   recovery_conf:
