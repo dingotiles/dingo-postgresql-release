@@ -75,12 +75,14 @@ On Linux:
 
 ```
 HostIP=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | tail -n1)
+echo $HostIP
 ```
 
 On `docker-machine`:
 
 ```
 HostIP=$(docker-machine ip default)
+echo $HostIP
 ```
 
 ### Running etcd
@@ -89,7 +91,7 @@ There are many production ways to run etcd. In this section we don't follow them
 
 ```
 _docker rm -f etcd
-_docker run -d -p 4001:4001 -p 2380:2380 -p 2379:2379 --name etcd quay.io/coreos/etcd:v2.0.3 \
+_docker run -d -p 4001:4001 -p 2380:2380 -p 2379:2379 --name etcd quay.io/coreos/etcd:v2.2.5 \
     -name etcd0 \
     -advertise-client-urls "http://${HostIP}:2379,http://${HostIP}:4001" \
     -listen-client-urls http://0.0.0.0:2379,http://0.0.0.0:4001 \
@@ -100,6 +102,8 @@ _docker run -d -p 4001:4001 -p 2380:2380 -p 2379:2379 --name etcd quay.io/coreos
     -initial-cluster-state new
 _docker logs etcd
 ```
+
+NOTE: see https://quay.io/repository/coreos/etcd?tab=tags for latest etcd image version
 
 Set an env var to document where one of the etcd nodes is located:
 
