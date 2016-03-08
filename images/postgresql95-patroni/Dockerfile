@@ -13,7 +13,8 @@ VOLUME ["/data"]
 
 ADD patroni/patroni.py /patroni.py
 ADD patroni/patroni /patroni
-RUN pip install -r /patroni/requirements-py2.txt
+ADD patroni/requirements-py2.txt /requirements-py2.txt
+RUN pip install -r /requirements-py2.txt
 
 
 # Add scripts
