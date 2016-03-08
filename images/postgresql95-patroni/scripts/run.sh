@@ -157,6 +157,8 @@ postgresql:
     # - sending servers config
     max_wal_senders: 5
     max_replication_slots: 5
+    max_wal_size: 1GB
+    min_wal_size: 128MB
     wal_keep_segments: 8
     wal_sender_timeout: 60
     # - standby servers config
