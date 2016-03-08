@@ -271,6 +271,14 @@ Type "help" for help.
 postgres=>
 ```
 
+### Debugging Docker containers
+
+To get an interactive bash session into a running container:
+
+```
+_docker exec -it john bash
+```
+
 ### Expand the cluster
 
 One feature of Patroni is that it makes adding replicas very easy. We just need to start another Patroni container that connects to the same etcd with the same `$PATRONI_SCOPE`.
