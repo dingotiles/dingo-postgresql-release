@@ -1,5 +1,9 @@
 ---
 meta:
+  docker_image:
+    image: cfcommunity/postgresql-patroni
+    tag: 9.5
+
   broker:
     services:
       - id: 'beb5973c-e1b2-11e5-a736-c7c0b526363d'
@@ -25,8 +29,8 @@ meta:
               displayName: 'Solo (dev only)'
             container:
               backend: 'docker'
-              image: cfcommunity/postgresql-patroni
-              tag: "9.5"
+              image: (( grab meta.docker_image.image ))
+              tag: (( grab meta.docker_image.tag ))
               persistent_volumes:
                 - '/data'
               environment:

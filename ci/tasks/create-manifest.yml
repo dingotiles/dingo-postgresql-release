@@ -15,6 +15,9 @@ params:
   bosh_syslog_host:
   bosh_syslog_port:
   deployment_name:
+  docker_image_source: embedded
+  docker_image_image: cfcommunity/postgresql-patroni
+  docker_image_tag: 9.5
 
 
 run:
