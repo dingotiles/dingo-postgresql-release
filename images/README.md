@@ -25,6 +25,7 @@ brew install jq
 If you are running this tutorial on a Docker VM managed by docker-boshrelease:
 
 ```
+export PATH=/var/vcap/packages/docker/bin:$PATH
 docker_sock=/var/vcap/sys/run/docker/docker.sock
 alias _docker="docker --host unix://${docker_sock}"
 ```
@@ -42,10 +43,16 @@ Each subfolder, such as `postgresql95-patroni`, builds the image from a differen
 
 The [postgresql-docker-boshrelease](https://github.com/cloudfoundry-community/postgresql-docker-boshrelease) project currently owns and builds the upstream `cfcommunity/postgresql-base:9.5` images that are used.
 
+Setup the environment variable used in the rest of the tutorial:
+
+```
+postgresql_image=cfcommunity/postgresql-patroni:9.5
+```
+
 ### Pull the image
 
 ```
-_docker pull cfcommunity/postgresql-patroni:9.5
+_docker pull ${postgresql_image}
 ```
 
 ### Build the image
@@ -54,7 +61,7 @@ To create the image `cfcommunity/postgresql-patroni`, execute the following comm
 
 ```
 git clone https://github.com/drnic/patroni -b connect_address postgresql95-patroni/patroni
-docker build -t cfcommunity/postgresql-patroni:9.5 postgresql95-patroni
+docker build -t ${postgresql_image} postgresql95-patroni
 ```
 
 Running a cluster
@@ -162,7 +169,7 @@ _docker run -d \
     -e "DOCKER_HOSTNAME=${HostIP}" \
     -e "POSTGRES_USERNAME=${POSTGRES_USERNAME}" \
     -e "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}" \
-    cfcommunity/postgresql-patroni:9.5
+    ${postgresql_image}
 ```
 
 To view the start up logs for the container:
@@ -252,7 +259,7 @@ _docker run -d --name paul -p 40001:5432 \
     -e "DOCKER_HOSTNAME=${HostIP}" \
     -e POSTGRES_USERNAME=${POSTGRES_USERNAME} \
     -e POSTGRES_USERNAME=${POSTGRES_PASSWORD} \
-    cfcommunity/postgresql-patroni:9.5
+    ${postgresql_image}
 ```
 
 To view the start up logs for the container:
@@ -434,7 +441,7 @@ _docker run -d --name john -p 40000:5432 \
     -e "DOCKER_HOSTNAME=${HostIP}" \
     -e "POSTGRES_USERNAME=${POSTGRES_USERNAME}" \
     -e "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}" \
-    cfcommunity/postgresql-patroni:9.5
+    ${postgresql_image}
 _docker logs -f john
 ```
 
@@ -491,7 +498,7 @@ _docker run -d --name paul -p 40001:5432 \
     -e "DOCKER_HOSTNAME=${HostIP}" \
     -e "POSTGRES_USERNAME=${POSTGRES_USERNAME}" \
     -e "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}" \
-    cfcommunity/postgresql-patroni:9.5
+    ${postgresql_image}
 _docker logs -f paul
 ```
 
