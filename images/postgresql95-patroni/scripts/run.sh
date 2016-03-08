@@ -137,7 +137,7 @@ postgresql:
     - basebackup
   wal_e:
     command: /patroni/scripts/wale_restore.py
-    env_dir: ${WALE_ENV_DIR}
+    envdir: ${WALE_ENV_DIR}
     threshold_megabytes: 10240
     threshold_backup_size_percentage: 30
     retries: 2
