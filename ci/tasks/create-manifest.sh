@@ -37,7 +37,7 @@ cat > tmp/docker_image.yml <<EOF
 meta:
   docker_image:
     image: ${docker_image_image}
-    tag: ${docker_image_tag}
+    tag: "${docker_image_tag}"
 EOF
 
 bosh target ${bosh_target}
@@ -47,3 +47,5 @@ export DEPLOYMENT_NAME=${deployment_name}
   templates/jobs-etcd.yml tmp/syslog.yml tmp/docker_image.yml
 
 cp tmp/${DEPLOYMENT_NAME}*.yml ${manifest_dir}/manifest.yml
+
+cat ${manifest_dir}/manifest.yml
