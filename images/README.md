@@ -60,7 +60,7 @@ _docker pull ${postgresql_image}
 To create the image `cfcommunity/postgresql-patroni`, execute the following command in the `postgresql95-patroni` folder:
 
 ```
-git clone https://github.com/drnic/patroni -b connect_address postgresql95-patroni/patroni
+git clone https://github.com/drnic/patroni -b connect_address_20150308 postgresql95-patroni/patroni
 docker build -t ${postgresql_image} postgresql95-patroni
 ```
 
