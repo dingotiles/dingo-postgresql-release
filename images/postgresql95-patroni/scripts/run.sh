@@ -142,7 +142,7 @@ postgresql:
     threshold_backup_size_percentage: 30
     retries: 2
     use_iam: 1
-    no_master: true
+    no_master: True
   restore: /patroni/scripts/restore.py
   recovery_conf:
     restore_command: "$WALE_CMD wal-fetch \"%f\" \"%p\" -p 1"
