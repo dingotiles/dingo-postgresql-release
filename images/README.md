@@ -30,12 +30,14 @@ docker_sock=/var/vcap/sys/run/docker/docker.sock
 alias _docker="docker --host unix://${docker_sock}"
 ```
 
-If standard `docker --host`, say via docker-machine, then:
+If default `docker` or configured via environment variables, say via [docker-toolbox](https://www.docker.com/products/docker-toolbox) (using `docker-machine`), then:
 
 ```
 docker_sock=/var/run/docker.sock
 alias _docker="docker"
 ```
+
+NOTE: `$docker_sock` is the path inside the VM running docker; it does not represent how you will be talking to `docker` yourself. It is used by the `registrator` to self-inspect.
 
 ### PostgreSQL version
 
@@ -115,7 +117,12 @@ Confirm that etcd is running:
 
 ```
 curl -s ${ETCD_CLUSTER}/version
-{"releaseVersion":"2.0.3","internalVersion":"2"}
+```
+
+The output will look like:
+
+```
+{"etcdserver":"2.2.5","etcdcluster":"2.2.0"}
 ```
 
 ### Running registrator
@@ -183,6 +190,10 @@ _docker logs -f john
 ...
 2015-11-23 16:24:13,464 INFO: established a new patroni connection to the postgres cluster
 2015-11-23 16:24:13,481 INFO: initialized a new cluster
+...
+2016-03-08 22:15:38,543 INFO: initialized a new cluster
+2016-03-08 22:15:46,016 INFO: Lock owner: pg_172_17_0_3; I am pg_172_17_0_3
+2016-03-08 22:15:46,020 INFO: no action.  i am the leader with the lock
 ```
 
 Cancel `docker logs -f` with Ctrl-C.
@@ -199,6 +210,11 @@ Also confirm registrator is advertising into etcd:
 
 ```
 curl -s ${ETCD_CLUSTER}/v2/keys/postgresql-patroni\?recursive=true | jq .
+```
+
+Output may look like:
+
+```
 {
   "action": "get",
   "node": {
@@ -222,6 +238,11 @@ Confirm that the PostgreSQL node is advertising itself in etcd:
 
 ```
 curl -s ${ETCD_CLUSTER}/v2/keys/service/my_first_cluster/members | jq -r ".node.nodes[].value" | jq .
+```
+
+The output may look like:
+
+```
 {
   "conn_url": "postgres://replicator:replicator@10.244.21.6:40000/postgres",
   "api_url": "http://127.0.0.1:8008/patroni",
@@ -233,9 +254,9 @@ curl -s ${ETCD_CLUSTER}/v2/keys/service/my_first_cluster/members | jq -r ".node.
 }
 ```
 
-The `conn_address` field is from unmerged patroni [PR #91](https://github.com/zalando/patroni/pull/91); and is used by the routing tier to easily get the `host:port` information (it cannot easily parse the `conn_url` field).
+The `conn_address` field is from unmerged patroni [PR #91](https://github.com/zalando/patroni/pull/91); and is used by the routing tier to easily get the `host:port` information (it cannot easily parse the `conn_url` field). I've subsequently learned that I could do load balancing via communication with the patroni API; so `conn_address` may disappear in future.
 
-The `conn_url` can be passed directly to `psql` or using the admin username password we can confirm we can connect to the server using credentials above:
+The `conn_url` represents how replicas can connect to the current master. It can be passed directly to `psql` or using the admin username password we can confirm we can connect to the server using credentials above:
 
 ```
 $ psql postgres://replicator:replicator@10.244.21.6:40000/postgres
@@ -250,9 +271,13 @@ Type "help" for help.
 postgres=>
 ```
 
+NOTE: change `10.244.21.6:40000` to the `host:port` shown in the `curl -s ${ETCD_CLUSTER}/v2/keys/service/my_first_cluster/members` output.
+
 ### Expand the cluster
 
-To run a second container that joins to the same cluster, binding to host port 40001:
+One feature of Patroni is that it makes adding replicas very easy. We just need to start another Patroni container that connects to the same etcd with the same `$PATRONI_SCOPE`.
+
+To run a second container that joins to the same cluster, binding to host port 40001 (just a different port from above given that currently the container is on the same host machine):
 
 ```
 _docker rm -f paul
