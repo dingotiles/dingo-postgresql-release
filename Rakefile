@@ -170,7 +170,7 @@ module DockerImagePackaging
       sh "tar -xf #{image_tar}"
       sh "tree"
 
-      # Set repo name so that correct tag will be applied on import
+      # Add tagging data so the correct tag will be applied on import
       manifest = JSON.parse(File.read("manifest.json"))
       manifest[0]["RepoTags"] = [image_name]
       File.write("manifest.json", JSON.dump(manifest))
