@@ -28,6 +28,7 @@ if [[ "${POSTGRESQL_IMAGE}X" == "X" ]]; then
 fi
 
 DOCKER_OPTS=${DOCKER_OPTS:-}
+NODE_GUID=${NODE_GUID:-}
 PATRONI_SCOPE=${PATRONI_SCOPE:-my_first_cluster}
 
 beatle=${beatle:-john}
@@ -45,6 +46,7 @@ docker run -d ${DOCKER_OPTS} \
     --name ${beatle} -p ${public_port}:5432 \
     --env-file=${env_file} \
     -e NAME=${beatle} \
+    -e NODE_GUID=${NODE_GUID} \
     -e PATRONI_SCOPE=${PATRONI_SCOPE} \
     -e "ETCD_HOST_PORT=${ETCD_CLUSTER}" \
     -e "DOCKER_HOSTNAME=${HOST_IP}" \
