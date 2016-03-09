@@ -1,2 +1,4 @@
 - image: cfcommunity/postgresql-patroni
   tag: "9.5"
+- image: cfcommunity/registrator
+  tag: "latest"
