@@ -346,7 +346,7 @@ curl -X POST 127.0.0.1:8008/reinitialize
 A replica container can request to failover:
 
 ```
-curl -X POST 127.0.0.1:8008/failover
+curl -X POST 127.0.0.1:8008/failover -d '{"leader": "pg_172_17_0_3"}'
 ```
 
 You can also run the above commands from the host machine/outside the container. For example, to restart PostgreSQL:
