@@ -1,4 +1,6 @@
 - image: cfcommunity/postgresql-patroni
   tag: "9.5"
+  job: embedded-images
 - image: cfcommunity/registrator
   tag: "latest"
+  job: registrator

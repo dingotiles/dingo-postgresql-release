@@ -3,13 +3,11 @@ require 'json'
 require 'fileutils'
 require 'tmpdir'
 
-DOCKER_IMAGES_JOB = "embedded-images"
-
 namespace :jobs do
-  desc "Update #{DOCKER_IMAGES_JOB} job spec"
+  desc "Update job specs"
   task :update_spec do
     include JobSpecs
-    update_job_spec
+    update_job_specs
   end
 end
 
@@ -90,22 +88,6 @@ module CommonDirs
   end
 end
 
-module JobSpecs
-  include CommonDirs
-
-  def image_packages
-    Dir.chdir(packages_dir) { Dir.glob("*_image") }
-  end
-
-  def update_job_spec
-    file = "jobs/#{DOCKER_IMAGES_JOB}/spec"
-    spec = YAML.load_file(file)
-    spec["packages"] = image_packages
-    IO.write(file, spec.to_yaml)
-    puts "Updated: #{file}"
-  end
-end
-
 module ImageConfig
   include CommonDirs
 
@@ -113,14 +95,17 @@ module ImageConfig
     @images ||= begin
       images = YAML.load_file(File.expand_path('../images.yml', __FILE__))
       images.keep_if { |i| i['image'].to_s == image } if image
-      images.map! { |i| Image.new(i["image"], i["tag"]) }
+      images.map! { |i| Image.new(i["image"], i["tag"], i["job"]) }
     end
   end
 
   class Image
-    def initialize(name, tag)
+    attr_reader :job
+
+    def initialize(name, tag, job)
       @name = name
       @tag = tag
+      @job = job
     end
 
     def name
@@ -138,6 +123,25 @@ module ImageConfig
   end
 end
 
+module JobSpecs
+  include CommonDirs
+  include ImageConfig
+
+  def packages_for_job(job)
+    images.select { |i| i.job == job }.map(&:package)
+  end
+
+  def update_job_specs
+    jobs = images.collect(&:job)
+    jobs.each do |job|
+      file = "jobs/#{job}/spec"
+      spec = YAML.load_file(file)
+      spec["packages"] = packages_for_job(job)
+      IO.write(file, spec.to_yaml)
+      puts "Updated: #{file}"
+    end
+  end
+end
 module DockerImagePackaging
   include CommonDirs
 
