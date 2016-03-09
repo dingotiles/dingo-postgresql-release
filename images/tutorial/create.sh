@@ -27,6 +27,7 @@ if [[ "${POSTGRESQL_IMAGE}X" == "X" ]]; then
   exit 1
 fi
 
+DOCKER_OPTS=${DOCKER_OPTS:-}
 PATRONI_SCOPE=${PATRONI_SCOPE:-my_first_cluster}
 
 beatle=${beatle:-john}
@@ -40,7 +41,7 @@ if [[ ! -f $env_file ]]; then
 fi
 
 docker rm -f ${beatle}
-docker run -d \
+docker run -d ${DOCKER_OPTS} \
     --name ${beatle} -p ${public_port}:5432 \
     --env-file=${env_file} \
     -e NAME=${beatle} \
