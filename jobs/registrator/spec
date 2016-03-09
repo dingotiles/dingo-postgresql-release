@@ -1,6 +1,7 @@
 ---
 name: registrator
-packages: []
+packages:
+- cfcommunity_registrator_latest_image
 templates:
   bin/ctl: bin/ctl
   bin/monit_debugger: bin/monit_debugger

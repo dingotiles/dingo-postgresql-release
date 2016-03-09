@@ -14,9 +14,16 @@ case $1 in
   start)
     pid_guard $PIDFILE $JOB_NAME
 
+    image_file=/var/vcap/packages/cfcommunity_registrator_latest_image/*.tgz
+    docker_sock=/var/vcap/sys/run/docker/docker.sock
+
+    docker --host unix://${docker_sock} \
+      load -i ${image_file} \
+      >>${LOG_DIR}/${output_label}.stdout.log \
+      2>>${LOG_DIR}/${output_label}.stderr.log
+
     # REGISTRATOR_IMAGE=gliderlabs/registrator:latest
     REGISTRATOR_IMAGE="cfcommunity/registrator:latest /bin/registrator" #Dockerfile.dev
-    docker_sock=/var/vcap/sys/run/docker/docker.sock
     container_name=registrator
 
     # Stop and remove previously Docker Container if exists
