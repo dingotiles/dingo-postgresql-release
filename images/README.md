@@ -26,18 +26,18 @@ If you are running this tutorial on a Docker VM managed by docker-boshrelease:
 
 ```
 export PATH=/var/vcap/packages/docker/bin:$PATH
-docker_sock=/var/vcap/sys/run/docker/docker.sock
-alias _docker="docker --host unix://${docker_sock}"
+DOCKER_SOCK=/var/vcap/sys/run/docker/docker.sock
+alias _docker="docker --host unix://${DOCKER_SOCK}"
 ```
 
 If default `docker` or configured via environment variables, say via [docker-toolbox](https://www.docker.com/products/docker-toolbox) (using `docker-machine`), then:
 
 ```
-docker_sock=/var/run/docker.sock
+DOCKER_SOCK=/var/run/docker.sock
 alias _docker="docker"
 ```
 
-NOTE: `$docker_sock` is the path inside the VM running docker; it does not represent how you will be talking to `docker` yourself. It is used by the `registrator` to self-inspect.
+NOTE: `$DOCKER_SOCK` is the path inside the VM running docker; it does not represent how you will be talking to `docker` yourself. It is used by the `registrator` to self-inspect.
 
 ### PostgreSQL version
 
@@ -48,13 +48,13 @@ The [postgresql-docker-boshrelease](https://github.com/cloudfoundry-community/po
 Setup the environment variable used in the rest of the tutorial:
 
 ```
-postgresql_image=cfcommunity/postgresql-patroni:9.5
+POSTGRESQL_IMAGE=cfcommunity/postgresql-patroni:9.5
 ```
 
 ### Pull the image
 
 ```
-_docker pull ${postgresql_image}
+_docker pull ${POSTGRESQL_IMAGE}
 ```
 
 ### Build the image
@@ -63,7 +63,7 @@ To create the image `cfcommunity/postgresql-patroni`, execute the following comm
 
 ```
 git clone https://github.com/drnic/patroni -b connect_address_20150308 postgresql95-patroni/patroni
-docker build -t ${postgresql_image} postgresql95-patroni
+docker build -t ${POSTGRESQL_IMAGE} postgresql95-patroni
 ```
 
 Running a cluster
@@ -76,15 +76,15 @@ The docker containers do not know their host IP by default, and need it passed i
 On Linux:
 
 ```
-HostIP=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | tail -n1)
-echo $HostIP
+HOST_IP=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | tail -n1)
+echo $HOST_IP
 ```
 
 On `docker-machine`:
 
 ```
-HostIP=$(docker-machine ip default)
-echo $HostIP
+HOST_IP=$(docker-machine ip default)
+echo $HOST_IP
 ```
 
 ### Running etcd
@@ -95,12 +95,12 @@ There are many production ways to run etcd. In this section we don't follow them
 _docker rm -f etcd
 _docker run -d -p 4001:4001 -p 2380:2380 -p 2379:2379 --name etcd quay.io/coreos/etcd:v2.2.5 \
     -name etcd0 \
-    -advertise-client-urls "http://${HostIP}:2379,http://${HostIP}:4001" \
+    -advertise-client-urls "http://${HOST_IP}:2379,http://${HOST_IP}:4001" \
     -listen-client-urls http://0.0.0.0:2379,http://0.0.0.0:4001 \
-    -initial-advertise-peer-urls "http://${HostIP}:2380" \
+    -initial-advertise-peer-urls "http://${HOST_IP}:2380" \
     -listen-peer-urls http://0.0.0.0:2380 \
     -initial-cluster-token etcd-cluster-1 \
-    -initial-cluster "etcd0=http://${HostIP}:2380" \
+    -initial-cluster "etcd0=http://${HOST_IP}:2380" \
     -initial-cluster-state new
 _docker logs etcd
 ```
@@ -110,7 +110,7 @@ NOTE: see https://quay.io/repository/coreos/etcd?tab=tags for latest etcd image 
 Set an env var to document where one of the etcd nodes is located:
 
 ```
-ETCD_CLUSTER=${HostIP}:4001
+ETCD_CLUSTER=${HOST_IP}:4001
 ```
 
 Confirm that etcd is running:
@@ -133,9 +133,9 @@ Containers do not know their own public host:port information. In our solution w
 _docker rm -f registrator
 _docker run -d --name registrator \
     --net host \
-    --volume ${docker_sock}:/tmp/docker.sock \
+    --volume ${DOCKER_SOCK}:/tmp/docker.sock \
   cfcommunity/registrator:latest /bin/registrator \
-    -hostname ${HostIP} -ip ${HostIP} \
+    -hostname ${HOST_IP} -ip ${HOST_IP} \
   etcd://${ETCD_CLUSTER}
 _docker logs registrator
 ```
@@ -177,10 +177,10 @@ _docker run -d \
     -e NAME=john \
     -e PATRONI_SCOPE=my_first_cluster \
     -e "ETCD_HOST_PORT=${ETCD_CLUSTER}" \
-    -e "DOCKER_HOSTNAME=${HostIP}" \
+    -e "DOCKER_HOSTNAME=${HOST_IP}" \
     -e "POSTGRES_USERNAME=${POSTGRES_USERNAME}" \
     -e "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}" \
-    ${postgresql_image}
+    ${POSTGRESQL_IMAGE}
 ```
 
 To view the start up logs for the container:
@@ -259,12 +259,12 @@ The `conn_address` field is from unmerged patroni [PR #91](https://github.com/za
 The `conn_url` represents how replicas can connect to the current master. It can be passed directly to `psql` or using the admin username password we can confirm we can connect to the server using credentials above:
 
 ```
-$ psql postgres://replicator:replicator@${HostIP}:40000/postgres
+$ psql postgres://replicator:replicator@${HOST_IP}:40000/postgres
 psql (9.5.1)
 Type "help" for help.
 
 postgres=>
-$ psql postgres://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@${HostIP}:40000/postgres
+$ psql postgres://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@${HOST_IP}:40000/postgres
 psql (9.5.1)
 Type "help" for help.
 
@@ -367,10 +367,10 @@ _docker run -d --name paul -p 40001:5432 \
     -e NAME=paul \
     -e PATRONI_SCOPE=my_first_cluster \
     -e "ETCD_HOST_PORT=${ETCD_CLUSTER}" \
-    -e "DOCKER_HOSTNAME=${HostIP}" \
+    -e "DOCKER_HOSTNAME=${HOST_IP}" \
     -e POSTGRES_USERNAME=${POSTGRES_USERNAME} \
     -e POSTGRES_USERNAME=${POSTGRES_PASSWORD} \
-    ${postgresql_image}
+    ${POSTGRESQL_IMAGE}
 ```
 
 To view the start up logs for the container:
@@ -412,7 +412,7 @@ curl -s ${ETCD_CLUSTER}/v2/keys/service/my_first_cluster/members | jq -r ".node.
 Confirm that the master has the replica registered:
 
 ```
-$ psql postgres://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@${HostIP}:40000/postgres -c 'select * from pg_stat_replication;'
+$ psql postgres://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@${HOST_IP}:40000/postgres -c 'select * from pg_stat_replication;'
 pid | usesysid |  usename   | application_name | client_addr |...
  82 |    16384 | replicator | walreceiver      | 172.17.42.1 |...
 ```
@@ -547,10 +547,10 @@ _docker run -d --name john -p 40000:5432 \
     -e NAME=john \
     -e PATRONI_SCOPE=my_first_cluster \
     -e "ETCD_HOST_PORT=${ETCD_CLUSTER}" \
-    -e "DOCKER_HOSTNAME=${HostIP}" \
+    -e "DOCKER_HOSTNAME=${HOST_IP}" \
     -e "POSTGRES_USERNAME=${POSTGRES_USERNAME}" \
     -e "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}" \
-    ${postgresql_image}
+    ${POSTGRESQL_IMAGE}
 _docker logs -f john
 ```
 
@@ -580,8 +580,8 @@ wal_e.operator.backup INFO     MSG: start upload postgres version metadata
 To add some data to trigger the initial WAL pushes:
 
 ```
-pgbench -i postgres://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@${HostIP}:40000/postgres
-pgbench postgres://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@${HostIP}:40000/postgres -T 60
+pgbench -i postgres://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@${HOST_IP}:40000/postgres
+pgbench postgres://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@${HOST_IP}:40000/postgres -T 60
 _docker logs -f john
 ```
 
@@ -606,10 +606,10 @@ _docker run -d --name paul -p 40001:5432 \
     -e NAME=paul \
     -e PATRONI_SCOPE=my_first_cluster \
     -e "ETCD_HOST_PORT=${ETCD_CLUSTER}" \
-    -e "DOCKER_HOSTNAME=${HostIP}" \
+    -e "DOCKER_HOSTNAME=${HOST_IP}" \
     -e "POSTGRES_USERNAME=${POSTGRES_USERNAME}" \
     -e "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}" \
-    ${postgresql_image}
+    ${POSTGRESQL_IMAGE}
 _docker logs -f paul
 ```
 
