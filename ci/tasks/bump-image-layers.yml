@@ -7,6 +7,8 @@ inputs:
 - name: boshrelease-ci
 - name: docker-image-pg95-patroni
   path: images/cfcommunity_postgresql_patroni_9_5_image
+- name: docker-image-registrator
+  path: images/cfcommunity_registrator_latest_image
 
 outputs:
 - name: boshrelease-images-updated

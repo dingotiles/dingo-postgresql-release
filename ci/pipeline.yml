@@ -47,6 +47,7 @@ jobs:
     - {get: boshrelease-ci}
     - {get: boshrelease}
     - {get: docker-image-pg95-patroni, passed: [image-patroni-pg95], trigger: true, params: {save: true}}
+    - {get: docker-image-registrator, trigger: true, params: {save: true}}
   - task: bump-image-blob
     file: boshrelease-ci/ci/tasks/bump-image-layers.yml
     config:
@@ -351,6 +352,15 @@ resources:
     password: {{docker-hub-password}}
     repository: cfcommunity/postgresql-patroni
     tag: "9.5"
+
+- name: docker-image-registrator
+  type: docker-image
+  source:
+    email: {{docker-hub-email}}
+    username: {{docker-hub-username}}
+    password: {{docker-hub-password}}
+    repository: cfcommunity/registrator
+    tag: "latest"
 
 - name: docker-image-pg95-patroni-master
   type: docker-image
