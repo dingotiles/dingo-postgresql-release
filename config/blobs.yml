@@ -131,22 +131,6 @@ docker/docker-1.10.2:
   object_id: bad79415-0c1b-489f-81f6-9ac98f8f4f69
   sha: 7cd5c77dffa05a9d6b57d0fd9da6f40f6c9044bf
   size: 34892323
-docker_images/2832aab4dce6b2753b1b2dd4e3b62627ce3590edc30260613b2b6e25a6a16e66.json.tgz:
-  object_id: a151de4b-9592-49fa-9ae2-9ff19fcb027c
-  sha: 48b12e2c9abb6e695404d5900c74b2ad837f16ef
-  size: 3046
-docker_images/cfcommunity_postgresql_patroni_9_5_image.tgz:
-  object_id: 8d26cb94-29d0-4102-8d56-098ae243c3ec
-  sha: 2ebe63cae52920186af367dce6384fbf5989e21b
-  size: 970
-docker_images/0cccb789bfacb961b40fe03ef498d8beec081b832813de523af475c824789d0c.json.tgz:
-  object_id: a12e51c1-0848-41b4-953f-d4847d733221
-  sha: 7b6cfe1f1900b590557434fe1952eff4895cb1ee
-  size: 1169
-docker_images/cfcommunity_registrator_latest_image.tgz:
-  object_id: 7aae0ef5-297f-44d3-a9fa-ff197742362f
-  sha: 7bf7e8fdca2341ecc40b110d3c8aa173f53db051
-  size: 512
 docker_layers/43cd95a6f63c5092e5cf241408f444285275ff40b61b84acda9325c347a37e4e.tgz:
   object_id: a42d391c-124a-4855-95e8-22344459283e
   sha: 7622ac4d0c6e9b6a0a03d86ccd7410f06b0681d5
@@ -171,3 +155,19 @@ docker_layers/f3d65a3a739fa1a647cb1ef3e768ed0815923568311914e89d192f93bfe5d716.t
   object_id: e10d664b-18a0-4626-83de-633d5ca32bc9
   sha: ba572ad5f8fcdf396fbadfdfd09eb70eb039700b
   size: 42055332
+docker_images/2832aab4dce6b2753b1b2dd4e3b62627ce3590edc30260613b2b6e25a6a16e66.json.tgz:
+  object_id: 2013ee73-2aa4-470a-a6bc-8bd5627a9c0a
+  sha: f91a0e7af07123269afac4b1f12b57b2f7146cc1
+  size: 3046
+docker_images/cfcommunity_postgresql_patroni_9_5_image.tgz:
+  object_id: 4648c29b-e5bd-40fa-878f-ac07255bd5ea
+  sha: dd8145ada427e12dbc6c3b7847008796ca42b42e
+  size: 970
+docker_images/0cccb789bfacb961b40fe03ef498d8beec081b832813de523af475c824789d0c.json.tgz:
+  object_id: a11afc08-9db1-4831-ae9a-7a38ad6ab9b1
+  sha: 19f7142c62afc08228493274337db430263e2c89
+  size: 1155
+docker_images/cfcommunity_registrator_latest_image.tgz:
+  object_id: 9229cb5c-bd02-4beb-8d68-348208f01f48
+  sha: 4f6850fe5672b45238a052234c3e964ed3f617f0
+  size: 496
