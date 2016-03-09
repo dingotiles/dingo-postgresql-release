@@ -154,7 +154,7 @@ if [[ "${WALE_CMD}X" != "X" ]]; then
     no_master: 1
   restore: /patroni/scripts/restore.py
   recovery_conf:
-    restore_command: "${restore_command}"
+    restore_command: ${restore_command}
 EOF
 fi
 
@@ -173,7 +173,7 @@ cat <<EOF >>/patroni/postgres.yml
     wal_level: hot_standby
     wal_log_hints: "on"
     archive_mode: "${archive_mode}"
-    archive_command: "${archive_command}"
+    archive_command: ${archive_command}
     archive_timeout: 10min
 
     # http://www.postgresql.org/docs/9.5/static/runtime-config-replication.html
