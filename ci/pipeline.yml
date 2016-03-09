@@ -93,6 +93,7 @@ jobs:
     - {get: candidate-release, passed: [bosh-rc], trigger: true}
     - {get: etcd}
     - {get: remote-syslog}
+    - {get: lite-stemcell}
   - task: create-lite-manifest
     file: boshrelease-ci/ci/tasks/create-manifest.yml
     config:
@@ -121,7 +122,7 @@ jobs:
   - put: lite-deployment
     params:
       manifest: manifest/manifest.yml
-      stemcells: []
+      stemcells: [lite-stemcell/*.tgz]
       releases:
         - candidate-release/*.tgz
         - etcd/*.tgz
@@ -388,6 +389,11 @@ resources:
 - name: lite-errand
   type: bosh-errand
   source: *lite-defaults
+
+- name: lite-stemcell
+  type: bosh-io-stemcell
+  source:
+    name: bosh-warden-boshlite-ubuntu-trusty-go_agent
 
 - name: vsphere-deployment
   type: bosh-deployment
