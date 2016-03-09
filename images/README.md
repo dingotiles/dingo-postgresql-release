@@ -26,16 +26,18 @@ If you are running this tutorial on a Docker VM managed by docker-boshrelease:
 
 ```
 export PATH=/var/vcap/packages/docker/bin:$PATH
-docker_sock=/var/vcap/sys/run/docker/docker.sock
-alias _docker="docker --host unix://${docker_sock}"
+DOCKER_SOCK=/var/vcap/sys/run/docker/docker.sock
+alias _docker="docker --host unix://${DOCKER_SOCK}"
 ```
 
-If standard `docker --host`, say via docker-machine, then:
+If default `docker` or configured via environment variables, say via [docker-toolbox](https://www.docker.com/products/docker-toolbox) (using `docker-machine`), then:
 
 ```
-docker_sock=/var/run/docker.sock
+DOCKER_SOCK=/var/run/docker.sock
 alias _docker="docker"
 ```
+
+NOTE: `$DOCKER_SOCK` is the path inside the VM running docker; it does not represent how you will be talking to `docker` yourself. It is used by the `registrator` to self-inspect.
 
 ### PostgreSQL version
 
@@ -46,13 +48,13 @@ The [postgresql-docker-boshrelease](https://github.com/cloudfoundry-community/po
 Setup the environment variable used in the rest of the tutorial:
 
 ```
-postgresql_image=cfcommunity/postgresql-patroni:9.5
+POSTGRESQL_IMAGE=cfcommunity/postgresql-patroni:9.5
 ```
 
 ### Pull the image
 
 ```
-_docker pull ${postgresql_image}
+_docker pull ${POSTGRESQL_IMAGE}
 ```
 
 ### Build the image
@@ -60,8 +62,8 @@ _docker pull ${postgresql_image}
 To create the image `cfcommunity/postgresql-patroni`, execute the following command in the `postgresql95-patroni` folder:
 
 ```
-git clone https://github.com/drnic/patroni -b connect_address_20150308 postgresql95-patroni/patroni
-docker build -t ${postgresql_image} postgresql95-patroni
+git clone https://github.com/drnic/patroni -b connect_address_20150308 images/postgresql95-patroni/patroni
+docker build -t ${POSTGRESQL_IMAGE} images/postgresql95-patroni
 ```
 
 Running a cluster
@@ -74,13 +76,15 @@ The docker containers do not know their host IP by default, and need it passed i
 On Linux:
 
 ```
-HostIP=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | tail -n1)
+HOST_IP=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | tail -n1)
+echo $HOST_IP
 ```
 
 On `docker-machine`:
 
 ```
-HostIP=$(docker-machine ip default)
+HOST_IP=$(docker-machine ip default)
+echo $HOST_IP
 ```
 
 ### Running etcd
@@ -89,29 +93,36 @@ There are many production ways to run etcd. In this section we don't follow them
 
 ```
 _docker rm -f etcd
-_docker run -d -p 4001:4001 -p 2380:2380 -p 2379:2379 --name etcd quay.io/coreos/etcd:v2.0.3 \
+_docker run -d -p 4001:4001 -p 2380:2380 -p 2379:2379 --name etcd quay.io/coreos/etcd:v2.2.5 \
     -name etcd0 \
-    -advertise-client-urls "http://${HostIP}:2379,http://${HostIP}:4001" \
+    -advertise-client-urls "http://${HOST_IP}:2379,http://${HOST_IP}:4001" \
     -listen-client-urls http://0.0.0.0:2379,http://0.0.0.0:4001 \
-    -initial-advertise-peer-urls "http://${HostIP}:2380" \
+    -initial-advertise-peer-urls "http://${HOST_IP}:2380" \
     -listen-peer-urls http://0.0.0.0:2380 \
     -initial-cluster-token etcd-cluster-1 \
-    -initial-cluster "etcd0=http://${HostIP}:2380" \
+    -initial-cluster "etcd0=http://${HOST_IP}:2380" \
     -initial-cluster-state new
 _docker logs etcd
 ```
 
+NOTE: see https://quay.io/repository/coreos/etcd?tab=tags for latest etcd image version
+
 Set an env var to document where one of the etcd nodes is located:
 
 ```
-ETCD_CLUSTER=${HostIP}:4001
+ETCD_CLUSTER=${HOST_IP}:4001
 ```
 
 Confirm that etcd is running:
 
 ```
 curl -s ${ETCD_CLUSTER}/version
-{"releaseVersion":"2.0.3","internalVersion":"2"}
+```
+
+The output will look like:
+
+```
+{"etcdserver":"2.2.5","etcdcluster":"2.2.0"}
 ```
 
 ### Running registrator
@@ -122,9 +133,9 @@ Containers do not know their own public host:port information. In our solution w
 _docker rm -f registrator
 _docker run -d --name registrator \
     --net host \
-    --volume ${docker_sock}:/tmp/docker.sock \
+    --volume ${DOCKER_SOCK}:/tmp/docker.sock \
   cfcommunity/registrator:latest /bin/registrator \
-    -hostname ${HostIP} -ip ${HostIP} \
+    -hostname ${HOST_IP} -ip ${HOST_IP} \
   etcd://${ETCD_CLUSTER}
 _docker logs registrator
 ```
@@ -166,10 +177,10 @@ _docker run -d \
     -e NAME=john \
     -e PATRONI_SCOPE=my_first_cluster \
     -e "ETCD_HOST_PORT=${ETCD_CLUSTER}" \
-    -e "DOCKER_HOSTNAME=${HostIP}" \
+    -e "DOCKER_HOSTNAME=${HOST_IP}" \
     -e "POSTGRES_USERNAME=${POSTGRES_USERNAME}" \
     -e "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}" \
-    ${postgresql_image}
+    ${POSTGRESQL_IMAGE}
 ```
 
 To view the start up logs for the container:
@@ -179,6 +190,10 @@ _docker logs -f john
 ...
 2015-11-23 16:24:13,464 INFO: established a new patroni connection to the postgres cluster
 2015-11-23 16:24:13,481 INFO: initialized a new cluster
+...
+2016-03-08 22:15:38,543 INFO: initialized a new cluster
+2016-03-08 22:15:46,016 INFO: Lock owner: pg_172_17_0_3; I am pg_172_17_0_3
+2016-03-08 22:15:46,020 INFO: no action.  i am the leader with the lock
 ```
 
 Cancel `docker logs -f` with Ctrl-C.
@@ -195,6 +210,11 @@ Also confirm registrator is advertising into etcd:
 
 ```
 curl -s ${ETCD_CLUSTER}/v2/keys/postgresql-patroni\?recursive=true | jq .
+```
+
+Output may look like:
+
+```
 {
   "action": "get",
   "node": {
@@ -218,6 +238,11 @@ Confirm that the PostgreSQL node is advertising itself in etcd:
 
 ```
 curl -s ${ETCD_CLUSTER}/v2/keys/service/my_first_cluster/members | jq -r ".node.nodes[].value" | jq .
+```
+
+The output may look like:
+
+```
 {
   "conn_url": "postgres://replicator:replicator@10.244.21.6:40000/postgres",
   "api_url": "http://127.0.0.1:8008/patroni",
@@ -229,26 +254,112 @@ curl -s ${ETCD_CLUSTER}/v2/keys/service/my_first_cluster/members | jq -r ".node.
 }
 ```
 
-The `conn_address` field is from unmerged patroni [PR #91](https://github.com/zalando/patroni/pull/91); and is used by the routing tier to easily get the `host:port` information (it cannot easily parse the `conn_url` field).
+The `conn_address` field is from unmerged patroni [PR #91](https://github.com/zalando/patroni/pull/91); and is used by the routing tier to easily get the `host:port` information (it cannot easily parse the `conn_url` field). I've subsequently learned that I could do load balancing via communication with the patroni API; so `conn_address` may disappear in future.
 
-The `conn_url` can be passed directly to `psql` or using the admin username password we can confirm we can connect to the server using credentials above:
+The `conn_url` represents how replicas can connect to the current master. It can be passed directly to `psql` or using the admin username password we can confirm we can connect to the server using credentials above:
 
 ```
-$ psql postgres://replicator:replicator@10.244.21.6:40000/postgres
+$ psql postgres://replicator:replicator@${HOST_IP}:40000/postgres
 psql (9.5.1)
 Type "help" for help.
 
 postgres=>
-$ psql postgres://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@10.244.21.6:40000/postgres
+$ psql postgres://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@${HOST_IP}:40000/postgres
 psql (9.5.1)
 Type "help" for help.
 
 postgres=>
+```
+
+### Debugging Docker containers
+
+To get an interactive bash session into a running container:
+
+```
+_docker exec -it john bash
+```
+
+For example you can now see the version of packages installed in current container:
+
+```
+# wal-e version
+0.8.1
+# psql --version
+psql (PostgreSQL) 9.5.1
+```
+
+The patroni configuration file:
+
+```
+# cat /patroni/postgres.yml
+ttl: &ttl 30
+loop_wait: &loop_wait 10
+scope: &scope my_first_cluster
+restapi:
+  listen: 127.0.0.1:8008
+  connect_address: 127.0.0.1:8008
+etcd:
+  scope: *scope
+  ttl: *ttl
+  host: 192.168.99.100:4001
+...
+```
+
+Patroni runs an API on local port `:8008`. Currently it is only configured for local loopback access, and doesn't require additional authentication.
+
+To check Patroni's local status:
+
+```
+curl 127.0.0.1:8008/patroni | jq .
+```
+
+The output might be:
+
+```
+{
+  "server_version": 90501,
+  "xlog": {
+    "location": 100664256
+  },
+  "tags": {},
+  "postmaster_start_time": "2016-03-08 23:29:49.080 UTC",
+  "patroni": {
+    "version": "0.76",
+    "scope": "my_first_cluster"
+  },
+  "role": "master",
+  "state": "running"
+}```
+
+To ask Patroni to restart PostgreSQL:
+
+```
+curl 127.0.0.1:8008/restart -X POST
+```
+
+A replica container can request to reinitialize:
+
+```
+curl -X POST 127.0.0.1:8008/reinitialize
+```
+
+A replica container can request to failover:
+
+```
+curl -X POST 127.0.0.1:8008/failover -d '{"leader": "pg_172_17_0_3"}'
+```
+
+You can also run the above commands from the host machine/outside the container. For example, to restart PostgreSQL:
+
+```
+_docker exec -it john curl -XPOST localhost:8008/restart
 ```
 
 ### Expand the cluster
 
-To run a second container that joins to the same cluster, binding to host port 40001:
+One feature of Patroni is that it makes adding replicas very easy. We just need to start another Patroni container that connects to the same etcd with the same `$PATRONI_SCOPE`.
+
+To run a second container that joins to the same cluster, binding to host port 40001 (just a different port from above given that currently the container is on the same host machine):
 
 ```
 _docker rm -f paul
@@ -256,10 +367,10 @@ _docker run -d --name paul -p 40001:5432 \
     -e NAME=paul \
     -e PATRONI_SCOPE=my_first_cluster \
     -e "ETCD_HOST_PORT=${ETCD_CLUSTER}" \
-    -e "DOCKER_HOSTNAME=${HostIP}" \
+    -e "DOCKER_HOSTNAME=${HOST_IP}" \
     -e POSTGRES_USERNAME=${POSTGRES_USERNAME} \
     -e POSTGRES_USERNAME=${POSTGRES_PASSWORD} \
-    ${postgresql_image}
+    ${POSTGRESQL_IMAGE}
 ```
 
 To view the start up logs for the container:
@@ -301,7 +412,7 @@ curl -s ${ETCD_CLUSTER}/v2/keys/service/my_first_cluster/members | jq -r ".node.
 Confirm that the master has the replica registered:
 
 ```
-$ psql postgres://replicator:replicator@${HostIP}:40000/postgres -c 'select * from pg_stat_replication;'
+$ psql postgres://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@${HOST_IP}:40000/postgres -c 'select * from pg_stat_replication;'
 pid | usesysid |  usename   | application_name | client_addr |...
  82 |    16384 | replicator | walreceiver      | 172.17.42.1 |...
 ```
@@ -404,12 +515,11 @@ Patroni supports [wal-e](https://github.com/wal-e/wal-e) for continuous archivin
 
 To setup wal-e we need to pass in some environment variables to the Docker containers.
 
--	`WALE_ENV_DIR` - directory where WAL-E environment is kept
--	`WAL_S3_BUCKET` - a name of the S3 bucket for WAL-E
--	`WALE_BACKUP_THRESHOLD_MEGABYTES` - if WAL amount is above that - use pg_basebackup
--	`WALE_BACKUP_THRESHOLD_PERCENTAGE` - if WAL size exceeds a certain percentage of the latest backup size
 -	`AWS_ACCESS_KEY_ID` - AWS access key
 -	`AWS_SECRET_ACCESS_KEY` - AWS secret key
+-	`WAL_S3_BUCKET` - a name of the S3 bucket for WAL-E
+-	`WALE_BACKUP_THRESHOLD_MEGABYTES` - if WAL amount is above that - use fresh `pg_basebackup` from master, rather that fetch old base backup from S3
+-	`WALE_BACKUP_THRESHOLD_PERCENTAGE` - if WAL size exceeds a certain percentage of the latest backup size
 
 For example, create a local file `tmp/wal-e.env` which will be passed into `docker run`:
 
@@ -417,11 +527,10 @@ For example, create a local file `tmp/wal-e.env` which will be passed into `dock
 AWS_ACCESS_KEY_ID=XXX
 AWS_SECRET_ACCESS_KEY=YYY
 
-WAL_S3_BUCKET=ZZZ
+WAL_S3_BUCKET=ZZZ-backups
 WALE_S3_ENDPOINT=https+path://s3.amazonaws.com:443
 #WALE_S3_ENDPOINT=https+path://s3-us-west-2.amazonaws.com:443
 
-WALE_ENV_DIR=/data/wal-e/env
 WALE_BACKUP_THRESHOLD_PERCENTAGE=30
 WALE_BACKUP_THRESHOLD_MEGABYTES=10240
 ```
@@ -438,16 +547,18 @@ _docker run -d --name john -p 40000:5432 \
     -e NAME=john \
     -e PATRONI_SCOPE=my_first_cluster \
     -e "ETCD_HOST_PORT=${ETCD_CLUSTER}" \
-    -e "DOCKER_HOSTNAME=${HostIP}" \
+    -e "DOCKER_HOSTNAME=${HOST_IP}" \
     -e "POSTGRES_USERNAME=${POSTGRES_USERNAME}" \
     -e "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}" \
-    ${postgresql_image}
+    ${POSTGRESQL_IMAGE}
 _docker logs -f john
 ```
 
 After PostgreSQL creates the initial database, the first backup and first wal segement will be taken and uploaded to your S3 bucket:
 
 ```
+Enabling wal-e archives to S3 bucket 'ZZZ-backups'
+...
 wal_e.worker.base INFO     MSG: Not deleting any data.
         DETAIL: No existing base backups.
         STRUCTURED: time=2015-11-23T22:19:03.033284-00 pid=150
@@ -469,8 +580,8 @@ wal_e.operator.backup INFO     MSG: start upload postgres version metadata
 To add some data to trigger the initial WAL pushes:
 
 ```
-pgbench -i postgres://replicator:replicator@192.168.99.100:40000/postgres
-pgbench postgres://replicator:replicator@192.168.99.100:40000/postgres -T 60
+pgbench -i postgres://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@${HOST_IP}:40000/postgres
+pgbench postgres://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@${HOST_IP}:40000/postgres -T 60
 _docker logs -f john
 ```
 
@@ -495,11 +606,59 @@ _docker run -d --name paul -p 40001:5432 \
     -e NAME=paul \
     -e PATRONI_SCOPE=my_first_cluster \
     -e "ETCD_HOST_PORT=${ETCD_CLUSTER}" \
-    -e "DOCKER_HOSTNAME=${HostIP}" \
+    -e "DOCKER_HOSTNAME=${HOST_IP}" \
     -e "POSTGRES_USERNAME=${POSTGRES_USERNAME}" \
     -e "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}" \
-    ${postgresql_image}
+    ${POSTGRESQL_IMAGE}
 _docker logs -f paul
+```
+
+### Debugging archives
+
+Start a bash session into the master container:
+
+```
+_docker exec -ti john bash
+```
+
+Confirm the wal-e configuration values for wal-e:
+
+```
+tail -f /data/wal-e/env/*
+```
+
+Output might look like:
+
+```
+==> /data/wal-e/env/PG_DATA_DIR <==
+/data/postgres0
+
+==> /data/wal-e/env/WALE_BACKUP_THRESHOLD_MEGABYTES <==
+10240
+
+==> /data/wal-e/env/WALE_BACKUP_THRESHOLD_PERCENTAGE <==
+30
+
+==> /data/wal-e/env/WALE_CMD <==
+envdir /data/wal-e/env wal-e
+
+==> /data/wal-e/env/WALE_S3_ENDPOINT <==
+https+path://s3-ap-southeast-1.amazonaws.com:443
+...
+==> /data/wal-e/env/WAL_S3_BUCKET <==
+ZZZ-backups
+```
+
+To run `wal-e` commands, pass the `/data/wal-e/env` as an `envdir`:
+
+```
+envdir /data/wal-e/env wal-e backup-list
+```
+
+To fetch a backup:
+
+```
+envdir /data/wal-e/env wal-e backup-fetch $(cat /data/wal-e/env/PG_DATA_DIR) LATEST
 ```
 
 Copyright

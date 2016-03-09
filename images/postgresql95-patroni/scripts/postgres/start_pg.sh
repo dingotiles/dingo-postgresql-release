@@ -13,8 +13,8 @@ DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 cd $DIR
 
 # test for empty dir comes from http://stackoverflow.com/a/91639
-if find $WALE_ENV_DIR/ -maxdepth 0 -empty | read v; then
-  echo "Not starting backup script."
+if [[ ! -f ${WALE_ENV_DIR}/WALE_CMD ]]; then
+  echo "wal-e not configured: not starting backup script."
 else
   echo "Starting backups..."
   envdir ${WALE_ENV_DIR} ${DIR}/regular_backup.sh
