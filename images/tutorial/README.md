@@ -31,6 +31,46 @@ The `pgbench.sh` script will lookup the current leader's `conn_url` and run `pgb
 env $(cat tmp/tutorial.env | xargs) ./images/tutorial/pgbench.sh
 ```
 
+The output should look something like:
+
+```
+NOTICE:  table "pgbench_history" does not exist, skipping
+NOTICE:  table "pgbench_tellers" does not exist, skipping
+NOTICE:  table "pgbench_accounts" does not exist, skipping
+NOTICE:  table "pgbench_branches" does not exist, skipping
+creating tables...
+100000 of 100000 tuples (100%) done (elapsed 0.07 s, remaining 0.00 s)
+vacuum...
+set primary keys...
+done.
+starting vacuum...end.
+transaction type: TPC-B (sort of)
+scaling factor: 1
+query mode: simple
+number of clients: 1
+number of threads: 1
+duration: 20 s
+number of transactions actually processed: 9117
+latency average: 2.194 ms
+tps = 455.773453 (including connections establishing)
+tps = 455.858137 (excluding connections establishing)
+ tid | bid | tbalance | filler
+-----+-----+----------+--------
+   3 |   1 |   -19174 |
+   6 |   1 |   123932 |
+   1 |   1 |   -66061 |
+   5 |   1 |   148816 |
+  10 |   1 |   129705 |
+   2 |   1 |   -58518 |
+   8 |   1 |  -129058 |
+   4 |   1 |    21528 |
+   7 |   1 |    51759 |
+   9 |   1 |  -150641 |
+(10 rows)
+```
+
+The same results should return from the database after it is recovered from backups!
+
 ### Delete and restore leader
 
 To delete and recreate a container, and restore from the backup:
