@@ -1,9 +1,7 @@
 ---
 groups:
 - name: pipeline
-  jobs: [bosh-rc, testflight, deploy, shipit, rc]
-- name: versions
-  jobs: [minor, major, patch]
+  jobs: [rc, bosh-rc, testflight, deploy, shipit, minor, major, patch]
 - name: patroni-images
   jobs: [image-patroni-pg95-base, image-patroni-pg95, bump-image-layers]
 - name: ci-image
@@ -64,8 +62,7 @@ jobs:
   - aggregate:
     - {get: boshrelease}
     - {get: boshrelease-trigger, trigger: true}
-    - get: version
-      params: {pre: rc}
+    - {get: version, params: {pre: rc}}
   - put: version
     params: {file: version/number}
 
@@ -158,6 +155,7 @@ jobs:
       errand: sanity-test
 
 - name: shipit
+  serial_groups: [version]
   public: true
   plan:
   - aggregate:
