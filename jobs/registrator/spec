@@ -10,11 +10,10 @@ templates:
   helpers/ctl_utils.sh: helpers/ctl_utils.sh
 properties:
   docker.user:
-    description: "User which will own the Docker services"
-    default: "root"
+    description: User which will own the Docker services
+    default: root
   docker.group:
-    description: "Group which will own the Docker services"
-    default: "vcap"
-
+    description: Group which will own the Docker services
+    default: vcap
   registrator.backend_uri:
-    description: "protocol://host:port to consul/etcd/skydns2 for registrator updates"
+    description: protocol://host:port to consul/etcd/skydns2 for registrator updates
