@@ -349,6 +349,12 @@ A replica container can request to failover:
 curl -X POST 127.0.0.1:8008/failover
 ```
 
+You can also run the above commands from the host machine/outside the container. For example, to restart PostgreSQL:
+
+```
+_docker exec -it john curl -XPOST localhost:8008/restart
+```
+
 ### Expand the cluster
 
 One feature of Patroni is that it makes adding replicas very easy. We just need to start another Patroni container that connects to the same etcd with the same `$PATRONI_SCOPE`.
