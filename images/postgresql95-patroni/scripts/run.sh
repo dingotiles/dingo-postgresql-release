@@ -85,9 +85,15 @@ if [[ "${WAL_S3_BUCKET}X" != "X" ]]; then
   export WALE_S3_PREFIX="s3://${WAL_S3_BUCKET}/backups/${PATRONI_SCOPE}/wal/"
   echo $WALE_S3_PREFIX > ${WALE_ENV_DIR}/WALE_S3_PREFIX
   echo $WALE_CMD > ${WALE_ENV_DIR}/WALE_CMD
+  replica_methods="[wal_e,basebackup]"
+  archive_command="$WALE_CMD wal-push \"%p\" -p 1"
+  restore_command="$WALE_CMD wal-fetch \"%f\" \"%p\" -p 1"
 else
   echo "Disabling wal-e archives"
   archive_mode="off"
+  replica_methods="[basebackup]"
+  archive_command="mkdir -p ../wal_archive && test ! -f ../wal_archive/%f && cp %p ../wal_archive/%f"
+  restore_command="cp ../wal_archive/%f %p"
 fi
 
 
@@ -95,7 +101,7 @@ fi
 # TODO fix hard-coded bosh-lite 10.244.0.0/16
 # TODO add host ip into postgresql.name to ensure unique if two containers have same local DOCKER_IP
 
-cat > /patroni/postgres.yml <<__EOF__
+cat > /patroni/postgres.yml <<EOF
 ttl: &ttl 30
 loop_wait: &loop_wait 10
 scope: &scope ${PATRONI_SCOPE}
@@ -132,9 +138,11 @@ postgresql:
   admin: # user will be created during initialization. It would have CREATEDB and CREATEROLE privileges
     username: ${POSTGRES_USERNAME}
     password: ${POSTGRES_PASSWORD}
-  create_replica_method:
-    - wal_e
-    - basebackup
+  create_replica_method: ${replica_methods}
+EOF
+
+if [[ "${WALE_CMD}X" != "X" ]]; then
+  cat <<EOF >>/patroni/postgres.yml
   wal_e:
     command: /patroni/scripts/wale_restore.py
     # {key: value} below are converted to options for wale_restore.py script
@@ -146,8 +154,11 @@ postgresql:
     no_master: 1
   restore: /patroni/scripts/restore.py
   recovery_conf:
-    restore_command: "$WALE_CMD wal-fetch \"%f\" \"%p\" -p 1"
+    restore_command: "${restore_command}"
+EOF
+fi
 
+cat <<EOF >>/patroni/postgres.yml
   # parameters are converted into --<name> <value> flags on the server command line
   parameters:
     # http://www.postgresql.org/docs/9.5/static/runtime-config-connection.html
@@ -162,7 +173,7 @@ postgresql:
     wal_level: hot_standby
     wal_log_hints: "on"
     archive_mode: "${archive_mode}"
-    archive_command: "$WALE_CMD wal-push \"%p\" -p 1"
+    archive_command: "${archive_command}"
     archive_timeout: 10min
 
     # http://www.postgresql.org/docs/9.5/static/runtime-config-replication.html
@@ -183,7 +194,7 @@ postgresql:
     # synchronous_commit: "on"
     # synchronous_standby_names: "*"
 
-__EOF__
+EOF
 
 chown postgres:postgres -R $DATA_DIR /patroni /patroni.py ${DIR}/postgres
 

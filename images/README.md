@@ -279,6 +279,76 @@ To get an interactive bash session into a running container:
 _docker exec -it john bash
 ```
 
+For example you can now see the version of packages installed in current container:
+
+```
+# wal-e version
+0.8.1
+# psql --version
+psql (PostgreSQL) 9.5.1
+```
+
+The patroni configuration file:
+
+```
+# cat /patroni/postgres.yml
+ttl: &ttl 30
+loop_wait: &loop_wait 10
+scope: &scope my_first_cluster
+restapi:
+  listen: 127.0.0.1:8008
+  connect_address: 127.0.0.1:8008
+etcd:
+  scope: *scope
+  ttl: *ttl
+  host: 192.168.99.100:4001
+...
+```
+
+Patroni runs an API on local port `:8008`. Currently it is only configured for local loopback access, and doesn't require additional authentication.
+
+To check Patroni's local status:
+
+```
+curl 127.0.0.1:8008/patroni | jq .
+```
+
+The output might be:
+
+```
+{
+  "server_version": 90501,
+  "xlog": {
+    "location": 100664256
+  },
+  "tags": {},
+  "postmaster_start_time": "2016-03-08 23:29:49.080 UTC",
+  "patroni": {
+    "version": "0.76",
+    "scope": "my_first_cluster"
+  },
+  "role": "master",
+  "state": "running"
+}```
+
+To ask Patroni to restart PostgreSQL:
+
+```
+curl 127.0.0.1:8008/restart -X POST
+```
+
+A replica container can request to reinitialize:
+
+```
+curl -X POST 127.0.0.1:8008/reinitialize
+```
+
+A replica container can request to failover:
+
+```
+curl -X POST 127.0.0.1:8008/failover
+```
+
 ### Expand the cluster
 
 One feature of Patroni is that it makes adding replicas very easy. We just need to start another Patroni container that connects to the same etcd with the same `$PATRONI_SCOPE`.
@@ -535,6 +605,54 @@ _docker run -d --name paul -p 40001:5432 \
     -e "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}" \
     ${postgresql_image}
 _docker logs -f paul
+```
+
+### Debugging archives
+
+Start a bash session into the master container:
+
+```
+_docker exec -ti john bash
+```
+
+Confirm the wal-e configuration values for wal-e:
+
+```
+tail -f /data/wal-e/env/*
+```
+
+Output might look like:
+
+```
+==> /data/wal-e/env/PG_DATA_DIR <==
+/data/postgres0
+
+==> /data/wal-e/env/WALE_BACKUP_THRESHOLD_MEGABYTES <==
+10240
+
+==> /data/wal-e/env/WALE_BACKUP_THRESHOLD_PERCENTAGE <==
+30
+
+==> /data/wal-e/env/WALE_CMD <==
+envdir /data/wal-e/env wal-e
+
+==> /data/wal-e/env/WALE_S3_ENDPOINT <==
+https+path://s3-ap-southeast-1.amazonaws.com:443
+...
+==> /data/wal-e/env/WAL_S3_BUCKET <==
+ZZZ-backups
+```
+
+To run `wal-e` commands, pass the `/data/wal-e/env` as an `envdir`:
+
+```
+envdir /data/wal-e/env wal-e backup-list
+```
+
+To fetch a backup:
+
+```
+envdir /data/wal-e/env wal-e backup-fetch $(cat /data/wal-e/env/PG_DATA_DIR) LATEST
 ```
 
 Copyright
