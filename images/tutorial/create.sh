@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# USAGE:
+# Create container without wal-e archives, where tmp/tutorial.env containers required args:
+#   env $(cat tmp/tutorial.env| xargs) ./images/tutorial/create.sh
+# Create container with wal-e archives, where tmp/tutorial-wale.env is passed to docker container
+#   env_file=tmp/tutorial-wale.env env $(cat tmp/tutorial.env| xargs) ./images/tutorial/create.sh
+
 if [[ "${ETCD_CLUSTER}X" == "X" ]]; then
   echo "Requires \$ETCD_CLUSTER"
   exit 1
