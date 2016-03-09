@@ -221,6 +221,8 @@ jobs:
   serial_groups: [version]
   plan:
   - get: version
+    passed: [shipit]
+    trigger: true
     params: {bump: patch, pre: rc}
   - put: version
     params: {file: version/number}
