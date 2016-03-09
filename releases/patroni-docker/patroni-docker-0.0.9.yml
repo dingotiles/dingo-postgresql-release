@@ -1,0 +1,114 @@
+---
+packages:
+- name: bosh-helpers
+  version: 55717f488eb12fd47c95fd524ab1cd6304c7ce7e
+  fingerprint: 55717f488eb12fd47c95fd524ab1cd6304c7ce7e
+  sha1: ae5206f0f8688b66fcafcc3b813dc23fd436cd6d
+  dependencies: []
+- name: cf-containers-broker
+  version: ec62d2b5de8cce1317258719ffd6f6f28ecc2929
+  fingerprint: ec62d2b5de8cce1317258719ffd6f6f28ecc2929
+  sha1: 570b5ba567cfa949abfcffebd75549d169d7f5d2
+  dependencies:
+  - ruby
+- name: cfcommunity_postgresql_patroni_9_5_image
+  version: 2243131bfdaa49cdc5a20ee6151d3737e0a644d9
+  fingerprint: 2243131bfdaa49cdc5a20ee6151d3737e0a644d9
+  sha1: adc86602c17b88322f32b47b9fcf09701b91b518
+  dependencies: []
+- name: cfcommunity_registrator_latest_image
+  version: ac7dbde738d870684d49dc92d2d32ebb75599a36
+  fingerprint: ac7dbde738d870684d49dc92d2d32ebb75599a36
+  sha1: 5afc44df85e6811c3aed40ade6a2c39079473ffd
+  dependencies: []
+- name: confd
+  version: 26982514ebb3aa88348deb7748a7e1c4c29b351f
+  fingerprint: 26982514ebb3aa88348deb7748a7e1c4c29b351f
+  sha1: e2b6c0821d1e81dd3a6bcd2287549afa1f1d790e
+  dependencies: []
+- name: docker
+  version: 895a3ae7cab5ae2a33121fa312c7d747a060de9b
+  fingerprint: 895a3ae7cab5ae2a33121fa312c7d747a060de9b
+  sha1: e07bc754a571376a5eead49bc0903ecf9c54f110
+  dependencies: []
+- name: golang-1.5
+  version: 0602b57071fe6222933892ccc25a331574f55b3f
+  fingerprint: 0602b57071fe6222933892ccc25a331574f55b3f
+  sha1: 9d4504e07194dd9c6c714c4664204251cccc418b
+  dependencies: []
+- name: haproxy
+  version: cfbf611621acbcc12fa0df04a33ae2c51c789e5b
+  fingerprint: cfbf611621acbcc12fa0df04a33ae2c51c789e5b
+  sha1: d2afba4e83cdd477603c97c91ac2aa4f3b4f3342
+  dependencies: []
+- name: jq
+  version: f502bfc65e67f129d21866f86e68f8458bd0ae28
+  fingerprint: f502bfc65e67f129d21866f86e68f8458bd0ae28
+  sha1: 1e5f54e34fc35740e5ec96f22f4f0378bbbce26d
+  dependencies: []
+- name: patroni-broker
+  version: 227658282091c929e2de97b9893e726bc2350aa3
+  fingerprint: 227658282091c929e2de97b9893e726bc2350aa3
+  sha1: 75796cb5c8cb96dba0050a41a9cb4b64b54c937d
+  dependencies:
+  - golang-1.5
+- name: postgresql-9.4
+  version: b2c913e2b04ace4977d3507b1b4fdcdf2fd5363f
+  fingerprint: b2c913e2b04ace4977d3507b1b4fdcdf2fd5363f
+  sha1: 8d7df46f82fbbd7aa40545b3dcdf6bf0dddb1c68
+  dependencies: []
+- name: remote_syslog
+  version: 058f109050e53969590f7707db92e1efa2a01654
+  fingerprint: 058f109050e53969590f7707db92e1efa2a01654
+  sha1: 7b2ca7c7544e910146d25ec871cbf7243950c22b
+  dependencies: []
+- name: ruby
+  version: 1702980750298e853f3ccc6521e0d91cb6a5bf94
+  fingerprint: 1702980750298e853f3ccc6521e0d91cb6a5bf94
+  sha1: 12b0263ab0f09b186124e9acc1d430216e429fa4
+  dependencies: []
+jobs:
+- name: broker
+  version: 46671c5f9be2bb8d149d7829f8a5c1ed56f7dfd4
+  fingerprint: 46671c5f9be2bb8d149d7829f8a5c1ed56f7dfd4
+  sha1: 1f007895c5c09a9754ef2bbbdb5ff45faa2f99fa
+- name: cf-containers-broker
+  version: 82001e72d6258b6f98a853d47454dd07a113e2ec
+  fingerprint: 82001e72d6258b6f98a853d47454dd07a113e2ec
+  sha1: d9dea37ddfefe77bdea1fda0bf6522a058e44ed8
+- name: container-env-vars
+  version: 25e0fe47c45079c5fffc81325947db0d2484057f
+  fingerprint: 25e0fe47c45079c5fffc81325947db0d2484057f
+  sha1: b0429710c38fb23ddeda965cb8dd668dbd3d16d2
+- name: docker
+  version: 7078c1bdbee459f9aa347cd46a5206511311c6ef
+  fingerprint: 7078c1bdbee459f9aa347cd46a5206511311c6ef
+  sha1: 1b10f4772eccf026b6e5fe65f30fe2455772b95f
+- name: embedded-images
+  version: 8057a10163638339660aa3e36315bf6c85fa85fa
+  fingerprint: 8057a10163638339660aa3e36315bf6c85fa85fa
+  sha1: 5b9b347781f13bf319a91d73ce9241d0fb2e1b10
+- name: registrator
+  version: 02a98bf55ac29790436bf8464abab2d64c855885
+  fingerprint: 02a98bf55ac29790436bf8464abab2d64c855885
+  sha1: aae37ee7386b6e3df8902890b47d348d96f562cd
+- name: router
+  version: 67dda125e569017dbec1717127f72fef7ca77edf
+  fingerprint: 67dda125e569017dbec1717127f72fef7ca77edf
+  sha1: 3329eda7fc402b8bb74ab589c01fe65ce7761f02
+- name: sanity-test
+  version: dc6da0de61e3da07c8302f5a0e31aebfeca910fa
+  fingerprint: dc6da0de61e3da07c8302f5a0e31aebfeca910fa
+  sha1: 9656fc2a18a521cd221afba12bfb439fb433b26c
+- name: upstream-images
+  version: eaff2b1c2f2fe50af14c0bdda20bcb91211f97f4
+  fingerprint: eaff2b1c2f2fe50af14c0bdda20bcb91211f97f4
+  sha1: 11c4ed6eb35374d2036d3fe5d298f5ee94531784
+license:
+  version: 3617b655e46c560d9118fb0e2ceeee46c0053659
+  fingerprint: 3617b655e46c560d9118fb0e2ceeee46c0053659
+  sha1: 20f4f90025d227a10dbc0b22cc6622590d806fbb
+commit_hash: 4ab82f85
+uncommitted_changes: false
+name: patroni-docker
+version: 0.0.9
