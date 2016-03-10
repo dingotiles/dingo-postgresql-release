@@ -132,7 +132,7 @@ module JobSpecs
   end
 
   def update_job_specs
-    jobs = images.collect(&:job)
+    jobs = images.collect(&:job).uniq
     jobs.each do |job|
       file = "jobs/#{job}/spec"
       spec = YAML.load_file(file)
