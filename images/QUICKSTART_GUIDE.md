@@ -1,6 +1,6 @@
-#Quickstart with docke-compose
+#Quickstart with docker-compose
 
-This is a very quick demonstration to see this in action quickly.
+This is a very quick demonstration to see a postgresql-patroni cluster in action.
 
 ## Dependencies
 
