@@ -327,7 +327,8 @@ The output might be:
   },
   "role": "master",
   "state": "running"
-}```
+}
+```
 
 To ask Patroni to restart PostgreSQL:
 
