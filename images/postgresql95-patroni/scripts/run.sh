@@ -73,6 +73,10 @@ PG_DATA_DIR=${PG_DATA_DIR:-${DATA_DIR}/postgres0}
 echo $PG_DATA_DIR > ${WALE_ENV_DIR}/PG_DATA_DIR
 
 if [[ "${WAL_S3_BUCKET}X" != "X" ]]; then
+  if ! curl -s s3-website-us-east-1.amazonaws.com >/dev/null; then
+    echo Cannot access AWS S3. Check DNS and Internet access.
+    exit 1
+  fi
   echo "Enabling wal-e archives to S3 bucket '${WAL_S3_BUCKET}'"
   if [[ "${AWS_INSTANCE_PROFILE}X" != "X" ]]; then
     export WALE_CMD="envdir ${WALE_ENV_DIR} wal-e --aws-instance-profile"
