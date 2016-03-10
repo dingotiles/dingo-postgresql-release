@@ -12,14 +12,37 @@ WALE_ENV_DIR=${WALE_ENV_DIR:-${DATA_DIR}/wal-e/env}
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 cd $DIR
 
+# sed -l basically makes sed replace and buffer through stdin to stdout
+# so you get updates while the command runs and dont wait for the end
+# e.g. npm install | indent
+indent_backup() {
+  c='s/^/backup> /'
+  case $(uname) in
+    Darwin) sed -l "$c";; # mac/bsd sed: -l buffers on line boundaries
+    *)      sed -u "$c";; # unix/gnu sed: -u unbuffered (arbitrary) chunks of data
+  esac
+}
+
+# sed -l basically makes sed replace and buffer through stdin to stdout
+# so you get updates while the command runs and dont wait for the end
+# e.g. npm install | indent
+indent_patroni() {
+  c='s/^/patroni> /'
+  case $(uname) in
+    Darwin) sed -l "$c";; # mac/bsd sed: -l buffers on line boundaries
+    *)      sed -u "$c";; # unix/gnu sed: -u unbuffered (arbitrary) chunks of data
+  esac
+}
+
 # test for empty dir comes from http://stackoverflow.com/a/91639
 if [[ ! -f ${WALE_ENV_DIR}/WALE_CMD ]]; then
   echo "wal-e not configured: not starting backup script."
 else
   echo "Starting backups..."
   envdir ${WALE_ENV_DIR} ${DIR}/regular_backup.sh
+  # envdir ${WALE_ENV_DIR} ${DIR}/regular_backup.sh | indent_backup
 fi
 
 echo "Starting Patroni..."
 cd /
-python /patroni.py /patroni/postgres.yml
+python /patroni.py /patroni/postgres.yml 2>&1 | indent_patroni
