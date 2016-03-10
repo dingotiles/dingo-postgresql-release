@@ -142,10 +142,11 @@ jobs:
     - {get: candidate-release, passed: [testflight], trigger: true}
     - {get: etcd}
     - {get: remote-syslog}
+    - {get: vsphere-stemcell}
   - put: vsphere-deployment
     params:
       manifest: boshrelease-ci/ci/manifests/vsphere.yml
-      stemcells: []
+      stemcells: [vsphere-stemcell/*.tgz]
       releases:
         - candidate-release/*.tgz
         - etcd/*.tgz
@@ -378,6 +379,11 @@ resources:
     password: {{docker-hub-password}}
     repository: dingotiles/patroni-docker-boshrelease-pipeline
 
+- name: lite-stemcell
+  type: bosh-io-stemcell
+  source:
+    name: bosh-warden-boshlite-ubuntu-trusty-go_agent
+
 - name: lite-deployment
   type: bosh-deployment
   source: &lite-defaults
@@ -390,10 +396,10 @@ resources:
   type: bosh-errand
   source: *lite-defaults
 
-- name: lite-stemcell
+- name: vsphere-stemcell
   type: bosh-io-stemcell
   source:
-    name: bosh-warden-boshlite-ubuntu-trusty-go_agent
+    name: bosh-vsphere-esxi-ubuntu-trusty-go_agent
 
 - name: vsphere-deployment
   type: bosh-deployment
