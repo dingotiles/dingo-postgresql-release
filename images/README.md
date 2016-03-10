@@ -6,6 +6,8 @@ A Dockerfile that produces a Docker image for [PostgreSQL](http://www.postgresql
 Tutorial to learn and play
 --------------------------
 
+Check out the [QUICKSTART_GUIDE](./QUICKSTART_GUIDE) to play around with this setup via `docker-compose`. This document goes into more detail.
+
 ### Dependencies
 
 Linux:
