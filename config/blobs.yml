@@ -103,30 +103,6 @@ docker_layers/215388668fce606ebb9f4508defea760fc647c7b0dbb2b859bdb30e15fe54699.t
   object_id: f52e5c0a-65b5-401a-bcec-600c0d09838a
   sha: f001711ae9a6d12b38c7458dec782aa8839eb1d6
   size: 99874883
-docker_layers/b58272f33bbf7edbf1b931d110c86af9bdbe8bf6145b9a5de7bffcc25be6df8f.tgz:
-  object_id: 36a2fa17-40a9-4ceb-a172-196ff58f50b0
-  sha: b06311c15ca75b0599ddff640e9f224bc67dae7e
-  size: 582731
-docker_layers/059bbf7ec4c0fdaa0f6e07166358e4f5f937c6cb3f7e0bdac0cacbfd731e95d3.tgz:
-  object_id: 4b155337-b3fb-4504-8686-eec341e43c42
-  sha: 05ca4b50b78ed1ed8a11fcb347dcab17783dccb5
-  size: 4605
-docker_layers/7f249612d575772ac952553fcd5658b7a7b45b19bd13c6f6070c8f17ade39f34.tgz:
-  object_id: 2da3e8bc-6b93-4055-899b-c563f29589ff
-  sha: 376f0cc256debcee91802a6370f8a4fa1b40012e
-  size: 646
-docker_layers/1c2c8259f9cb9dd19114d6085118632e893c477cd3ac0cda87a329dd9293eb9d.tgz:
-  object_id: d4fb1404-f193-430f-9c30-4053829c632b
-  sha: c6a5243a76e034e15f3e1b2d8fa864ae75084266
-  size: 37596
-docker_layers/593724b4d6e706b1197a895b4199ee9315acb0f95d7fd03e7ad5bb6503026188.tgz:
-  object_id: a9232839-58c6-4a5c-80e3-d141f7adc29a
-  sha: 27c6d10e0873481fe54474a167f162c850e49cf4
-  size: 3687
-docker_layers/04905049e40e8499398b5d186d2e7d0a27e88ca413a94555553525627a7fbc87.tgz:
-  object_id: ca9eddfb-c8f5-4e7a-8385-70a0c3712cf1
-  sha: 259d0d8d727e347cf985bbff860ae8e84c98d3a5
-  size: 597
 docker/docker-1.10.2:
   object_id: bad79415-0c1b-489f-81f6-9ac98f8f4f69
   sha: 7cd5c77dffa05a9d6b57d0fd9da6f40f6c9044bf
@@ -155,19 +131,43 @@ docker_layers/f3d65a3a739fa1a647cb1ef3e768ed0815923568311914e89d192f93bfe5d716.t
   object_id: e10d664b-18a0-4626-83de-633d5ca32bc9
   sha: ba572ad5f8fcdf396fbadfdfd09eb70eb039700b
   size: 42055332
-docker_images/2832aab4dce6b2753b1b2dd4e3b62627ce3590edc30260613b2b6e25a6a16e66.json.tgz:
-  object_id: 2013ee73-2aa4-470a-a6bc-8bd5627a9c0a
-  sha: f91a0e7af07123269afac4b1f12b57b2f7146cc1
-  size: 3046
+docker_layers/a4189817eedfa74417b37465815153230f902f4f4cc2c074fe04f357afb8a498.tgz:
+  object_id: bd08b160-dd0f-45ba-b4d8-068096585401
+  sha: 245dc5a7ff6e54b2ce668c4b283932f02e47fa6e
+  size: 601
+docker_layers/de4b3202927291c6043f290859ba4a5eba8b5f7989924b5d4e865e746449f21f.tgz:
+  object_id: ad9e018f-6747-4453-bced-1da1498c562d
+  sha: c2aad00f92f12f86e091fb084b5bf2a48389a5ed
+  size: 3780
+docker_layers/b5a77363da026de106d93f2e5f4e6546a3de1e2389cb88b650476dfbeedec9f1.tgz:
+  object_id: 7711436a-3278-46bd-a84a-2fe396760d62
+  sha: 83c826e6f3e1fbe2e61f4bbff5587b692b8a5298
+  size: 646
+docker_layers/78ed49a653106fb0e45c061e55582db4227919b50ba1f841d403095cdc9c1da7.tgz:
+  object_id: f140573f-dcb9-44a2-bfbf-2591e2797f71
+  sha: c13cec9425cd95f2d81c38f69ed2da95e8d5c6c1
+  size: 37602
+docker_layers/3edaeed8b9ca579c72e3101532e5629297d5bd93fd5f6e593451c5f30bb72994.tgz:
+  object_id: afc32b7c-fa2d-4df6-9887-0b27f66d59a4
+  sha: fe8d215b058aef6ba5101913c0d3150c0a04455f
+  size: 4723
+docker_layers/0d2a31ef8a825078509a771b97fe369398b93681edde7a1bf7cc568d2a254c6e.tgz:
+  object_id: 2d364245-50ce-4dd8-933f-8d124b3823a0
+  sha: d8f51dc7587ae148856f5483293f8c7db69dcd5a
+  size: 582752
+docker_images/7c039dad6a3febfd504d5f296b34e8d25074a38c3ede6c492180cb1ef761262a.json.tgz:
+  object_id: c2aacdd2-699c-4291-aac9-7a880368311b
+  sha: 41b7ff53d8168084993c27ace9ba57b58614148e
+  size: 3047
 docker_images/cfcommunity_postgresql_patroni_9_5_image.tgz:
-  object_id: 4648c29b-e5bd-40fa-878f-ac07255bd5ea
-  sha: dd8145ada427e12dbc6c3b7847008796ca42b42e
-  size: 970
+  object_id: d157c6d0-0b7b-4d59-bc3a-5909fe85c04f
+  sha: 82309bb5143df322d20ecfef4cdfe696ee0bdd21
+  size: 973
 docker_images/0cccb789bfacb961b40fe03ef498d8beec081b832813de523af475c824789d0c.json.tgz:
-  object_id: a11afc08-9db1-4831-ae9a-7a38ad6ab9b1
-  sha: 19f7142c62afc08228493274337db430263e2c89
+  object_id: 2e7bee95-3a74-44b3-bfc6-8b4d3586d4f2
+  sha: f5a19f2c69f1b9466368050d9f13dd2e3cf71e49
   size: 1155
 docker_images/cfcommunity_registrator_latest_image.tgz:
-  object_id: 9229cb5c-bd02-4beb-8d68-348208f01f48
-  sha: 4f6850fe5672b45238a052234c3e964ed3f617f0
-  size: 496
+  object_id: aee06cfe-474e-4506-839d-06af4073f4ce
+  sha: 4a2749a1fece275c3892c2183c0ed00d592c55bc
+  size: 494
