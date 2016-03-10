@@ -13,6 +13,22 @@ fi
 BACKUP_HOUR=${BACKUP_HOUR:-1}
 BACKUP_INTERVAL=${BACKUP_INTERVAL:-3600}
 
+indent_backup() {
+  c='s/^/backup> /'
+  case $(uname) in
+    Darwin) sed -l "$c";; # mac/bsd sed: -l buffers on line boundaries
+    *)      sed -u "$c";; # unix/gnu sed: -u unbuffered (arbitrary) chunks of data
+  esac
+}
+
+# run wal-e backup-list periodically to log summary to stdout
+(
+  while true; do
+    $WALE_CMD backup-list 2>&1 | indent_backup
+    sleep 30
+  done
+) &
+
 # run wal-e s3 backup periodically
 (
   INITIAL=1
