@@ -15,17 +15,6 @@ cd $DIR
 # sed -l basically makes sed replace and buffer through stdin to stdout
 # so you get updates while the command runs and dont wait for the end
 # e.g. npm install | indent
-indent_backup() {
-  c='s/^/backup> /'
-  case $(uname) in
-    Darwin) sed -l "$c";; # mac/bsd sed: -l buffers on line boundaries
-    *)      sed -u "$c";; # unix/gnu sed: -u unbuffered (arbitrary) chunks of data
-  esac
-}
-
-# sed -l basically makes sed replace and buffer through stdin to stdout
-# so you get updates while the command runs and dont wait for the end
-# e.g. npm install | indent
 indent_patroni() {
   c='s/^/patroni> /'
   case $(uname) in

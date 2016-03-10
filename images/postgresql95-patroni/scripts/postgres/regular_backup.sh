@@ -24,10 +24,10 @@ indent_backup() {
 # run wal-e backup-list periodically to log summary to stdout
 (
   while true; do
-    $WALE_CMD backup-list 2>&1 | indent_backup
+    $WALE_CMD backup-list 2>&1
     sleep 30
   done
-) &
+) | indent_backup &
 
 # run wal-e s3 backup periodically
 (
@@ -87,4 +87,4 @@ indent_backup() {
       LAST_BACKUP_TS=0
     fi
   done
-) &
+) 2>&1 | indent_backup &
