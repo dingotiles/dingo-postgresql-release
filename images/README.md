@@ -43,8 +43,6 @@ NOTE: `$DOCKER_SOCK` is the path inside the VM running docker; it does not repre
 
 Each subfolder, such as `postgresql95-patroni`, builds the image from a different major PostgreSQL version, such as PG 9.5.
 
-The [postgresql-docker-boshrelease](https://github.com/cloudfoundry-community/postgresql-docker-boshrelease) project currently owns and builds the upstream `cfcommunity/postgresql-base:9.5` images that are used.
-
 Setup the environment variable used in the rest of the tutorial:
 
 ```
