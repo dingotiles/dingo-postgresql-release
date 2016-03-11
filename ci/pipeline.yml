@@ -137,7 +137,10 @@ jobs:
         aws_secret_access_key: {{cfcommunity-aws-secret}}
   - put: docker-image-pg95-patroni
     params:
-      load_base:       edge-image
+      load_base: edge-image
+      load_file:       edge-image/image
+      load_repository: edge-image/repository
+      load_tag: edge-image/tag
   - put: boshrelease
     params: {repository: boshrelease-images-updated, rebase: true}
 
