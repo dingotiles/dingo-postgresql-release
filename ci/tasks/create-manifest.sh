@@ -49,8 +49,8 @@ meta:
     s3_bucket: "${s3_bucket}"
     s3_endpoint: "${s3_endpoint}"
 EOF
-services_template=templates/services-solo-backup-s3.yml
-# services_template=templates/services-solo.yml
+# services_template=templates/services-solo-backup-s3.yml
+services_template=templates/services-solo.yml
 
 bosh target ${bosh_target}
 
