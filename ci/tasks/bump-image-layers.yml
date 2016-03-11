@@ -5,7 +5,7 @@ image: docker:///dingotiles/patroni-docker-boshrelease-pipeline
 inputs:
 - name: boshrelease
 - name: boshrelease-ci
-- name: docker-image-pg95-patroni
+- name: edge-image
   path: images/cfcommunity_postgresql_patroni_9_5_image
 - name: docker-image-registrator
   path: images/cfcommunity_registrator_latest_image

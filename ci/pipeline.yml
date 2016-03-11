@@ -1,9 +1,9 @@
 ---
 groups:
 - name: pipeline
-  jobs: [rc, bosh-rc, testflight, deploy, shipit, minor, major, patch]
+  jobs: [rc, bosh-rc, testflight, bump-image-layers, deploy, shipit, minor, major, patch]
 - name: patroni-images
-  jobs: [image-patroni-pg95-base, image-patroni-pg95, bump-image-layers]
+  jobs: [image-patroni-pg95-base, image-patroni-pg95]
 - name: ci-image
   jobs: [build-task-image]
 
@@ -33,27 +33,9 @@ jobs:
     config:
       params:
         dockerfile_root: boshrelease/images/postgresql95-patroni
-  - put: docker-image-pg95-patroni
+  - put: edge-image
     params:
       build: dockerfile
-
-- name: bump-image-layers
-  public: true
-  serial: true
-  plan:
-  - aggregate:
-    - {get: boshrelease-ci}
-    - {get: boshrelease}
-    - {get: docker-image-pg95-patroni, passed: [image-patroni-pg95], trigger: true, params: {save: true}}
-    - {get: docker-image-registrator, trigger: true, params: {save: true}}
-  - task: bump-image-blob
-    file: boshrelease-ci/ci/tasks/bump-image-layers.yml
-    config:
-      params:
-        aws_access_key_id: {{cfcommunity-aws-access}}
-        aws_secret_access_key: {{cfcommunity-aws-secret}}
-  - put: boshrelease
-    params: {repository: boshrelease-images-updated, rebase: true}
 
 - name: rc
   public: true
@@ -61,8 +43,10 @@ jobs:
   plan:
   - aggregate:
     - {get: boshrelease}
-    - {get: boshrelease-trigger, trigger: true}
-    - {get: version, params: {pre: rc}}
+    - {get: edge-image, passed: [image-patroni-pg95], trigger: true}
+    - {get: boshrelease-trigger, trigger: true, params: {skip_download: true}}
+    - {get: docker-image-registrator, trigger: true, params: {skip_download: true}}
+    - {get: version, trigger: true, params: {pre: rc}}
   - put: version
     params: {file: version/number}
 
@@ -72,6 +56,8 @@ jobs:
   - aggregate:
     - {get: boshrelease-ci}
     - {get: boshrelease, passed: [rc], trigger: true}
+    - {get: edge-image, passed: [rc], trigger: true, params: {save: true}}
+    - {get: docker-image-registrator, passed: [rc], trigger: true, params: {save: true}}
     - {get: version, passed: [rc], trigger: true}
   - task: create-candidate-release
     file: boshrelease-ci/ci/tasks/create-candidate-release.yml
@@ -87,14 +73,15 @@ jobs:
   serial: true
   plan:
   - aggregate:
-    - {get: boshrelease-ci}
-    - {get: boshrelease, passed: [bosh-rc]}
-    - {get: version, passed: [bosh-rc]}
+    - {get: boshrelease-ci, passed: [bosh-rc]}
+    - {get: boshrelease, passed: [bosh-rc], trigger: true}
+    - {get: version, passed: [bosh-rc], trigger: true}
     - {get: candidate-release, passed: [bosh-rc], trigger: true}
+    - {get: edge-image, passed: [bosh-rc], trigger: true}
+    - {get: docker-image-registrator, passed: [bosh-rc], trigger: true, params: {save: true}}
     - {get: etcd}
     - {get: remote-syslog}
     - {get: lite-stemcell}
-    - {get: docker-image-pg95-patroni, passed: [image-patroni-pg95], trigger: true}
   - task: create-lite-manifest
     file: boshrelease-ci/ci/tasks/create-manifest.yml
     config:
@@ -133,11 +120,34 @@ jobs:
       manifest: manifest/manifest.yml
       errand: sanity-test
 
+- name: bump-image-layers
+  public: true
+  serial: true
+  plan:
+  - aggregate:
+    - {get: boshrelease-ci, passed: [testflight]}
+    - {get: boshrelease, passed: [testflight]}
+    - {get: edge-image, passed: [testflight], trigger: true}
+    - {get: docker-image-registrator, passed: [testflight], trigger: true, params: {save: true}}
+  - task: bump-image-blob
+    file: boshrelease-ci/ci/tasks/bump-image-layers.yml
+    config:
+      params:
+        aws_access_key_id: {{cfcommunity-aws-access}}
+        aws_secret_access_key: {{cfcommunity-aws-secret}}
+  - put: docker-image-pg95-patroni
+    params:
+      load_base:       edge-image
+      load_file:       edge-image/image
+      load_tag:        edge
+  - put: boshrelease
+    params: {repository: boshrelease-images-updated, rebase: true}
+
 - name: deploy
   serial: true
   plan:
   - aggregate:
-    - {get: boshrelease-ci}
+    - {get: boshrelease-ci, passed: [testflight]}
     - {get: boshrelease, passed: [testflight]}
     - {get: version, passed: [testflight]}
     - {get: candidate-release, passed: [testflight], trigger: true}
@@ -163,7 +173,7 @@ jobs:
   plan:
   - aggregate:
     - {get: boshrelease-ci}
-    - {get: boshrelease, passed: [deploy]}
+    - {get: boshrelease, passed: [bump-image-layers]}
     - {get: candidate-release, passed: [deploy]}
     - {get: version, passed: [deploy], params: {bump: final}}
   - task: create-final-release
@@ -353,6 +363,15 @@ resources:
     password: {{docker-hub-password}}
     repository: cfcommunity/postgresql-patroni
     tag: "9.5"
+
+- name: edge-image
+  type: docker-image
+  source:
+    email: {{docker-hub-email}}
+    username: {{docker-hub-username}}
+    password: {{docker-hub-password}}
+    repository: cfcommunity/postgresql-patroni
+    tag: "edge"
 
 - name: docker-image-registrator
   type: docker-image
