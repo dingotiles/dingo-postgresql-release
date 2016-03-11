@@ -1,11 +1,20 @@
 #!/bin/bash
 
 if [[ -z $WALE_CMD ]]; then
-  echo "Requires \$WALE_CMD; e.g. envdir \${WALE_ENV_DIR} wal-e --aws-instance-profile"
+  echo "regular_backup.sh: Requires \$WALE_CMD; e.g. envdir \${WALE_ENV_DIR} wal-e --aws-instance-profile"
   exit 0
 fi
 if [[ -z ${PG_DATA_DIR} ]]; then
-  echo "Requires \${PG_DATA_DIR}"
+  echo "regular_backup.sh: Requires \${PG_DATA_DIR}"
+  exit 0
+fi
+
+if [[ -z "${PATRONI_SCOPE}" ]]; then
+  echo "regular_backup.sh: Requires \$PATRONI_SCOPE to report backup-list for service"
+  exit 0
+fi
+if [[ -z "${ETCD_HOST_PORT}" ]]; then
+  echo "regular_backup.sh: Requires \$ETCD_HOST_PORT (host:port) to update backup-list data to etcd"
   exit 0
 fi
 
@@ -21,13 +30,16 @@ indent_backup() {
   esac
 }
 
-# run wal-e backup-list periodically to log summary to stdout
+# run wal-e backup-list periodically to log summary to stdout & etcd /wale-backup-list
 (
   while true; do
-    $WALE_CMD backup-list 2>&1
+    BACKUP_LIST=$($WALE_CMD backup-list 2>/dev/null)
+    echo $BACKUP_LIST
+    curl -s ${ETCD_HOST_PORT}/v2/keys/service/${PATRONI_SCOPE}/wale-backup-list \
+      -X PUT -d "value=${BACKUP_LIST}" > /dev/null
     sleep 30
   done
-) | indent_backup &
+) 2>&1 | indent_backup &
 
 # run wal-e s3 backup periodically
 (

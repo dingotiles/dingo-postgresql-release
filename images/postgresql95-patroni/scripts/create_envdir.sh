@@ -22,5 +22,9 @@ wal_env_var_count=$(ls $WALE_ENV_DIR/* | wc -l | awk '{print $1}')
 if find $WALE_ENV_DIR/ -maxdepth 0 -empty | read v; then
   echo "No wal-e env vars"
 else
+  # setup additional env vars for reporting backups via ETCD
+  echo ${PATRONI_SCOPE} > $WALE_ENV_DIR/PATRONI_SCOPE
+  echo ${ETCD_HOST_PORT} > $WALE_ENV_DIR/ETCD_HOST_PORT
+
   ls $WALE_ENV_DIR/*
 fi
