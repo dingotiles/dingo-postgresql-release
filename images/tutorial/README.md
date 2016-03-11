@@ -2,6 +2,21 @@
 
 This folder contains some helper scripts that match to the series of commands in `images/README.md` tutorial.
 
+For the following tutorial to work you will need to provide the following environment variables:
+```
+cat <<EOF > tmp/tutorial.env
+HOST_IP=$(docker-machine ip)
+ETCD_CLUSTER=${HOST_IP}:4001
+PATRONI_SCOPE=my-first-cluster
+EOF
+
+cat <<EOF > tmp/tutorial-wale.env
+AWS_ACCESS_KEY_ID=<aws_access_key_id>
+AWS_SECRET_ACCESS_KEY=<aws_secret_access_key>
+WAL_S3_BUCKET=<wal_s3_bucket>
+EOF
+```
+
 ### Create first container
 
 To clean out the containers, ALL etcd data, and the S3 backups:
