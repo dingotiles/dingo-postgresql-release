@@ -36,13 +36,34 @@ docker-compose ps
 docker-compose logs
 ```
 
-You will see all containers start. Either `john` or `paul` will be elected leader you can play around with what happens if one of them fails and rejoins by doing:
+You will see all containers start, a leader be elected (probably `john` as it is started first), and the follower start replicating from the leader.
+
+You can run `pg_bench` against which PostgreSQL container is currently leader (either port 40000 for `john` or 40001 for `paul`):
+
+```
+pg_uri=postgres://john:johnpass@${HOST_IP}:40000/postgres
+pgbench -i ${pg_uri}
+pgbench ${pg_uri} -T 60
+psql ${pg_uri} -c '\dt;'
+psql ${pg_uri} -c 'select * from pgbench_tellers;'
+```
+
+You can play around with what happens if the leader (say its currently `john`) fails:
 
 ```
 docker-compose stop john
 docker-compose logs paul
 docker-compose start john
 docker-compose logs
+```
+
+You will notice that `paul` eventually realises that `john` isn't coming back and becomes the leader. When `john` returns, it recognizes that it is no longer the leader and reinitializes itself as a replica.
+
+To confirm that the data is replicated to the replica-cum-leader `paul`:
+
+```
+pg_uri=postgres://john:johnpass@${HOST_IP}:40001/postgres
+psql ${pg_uri} -c 'select * from pgbench_tellers;'
 ```
 
 ## Backups
@@ -53,10 +74,4 @@ To enable backups uncomment the lines in [wal-e-example.env](./wal-e-example.env
 docker-compose down
 docker-compose up -d
 docker-compose logs
-```
-
-and run `pg_bench`
-```
-pgbench -i postgres://john:johnpass@${HOST_IP}:40000/postgres
-pgbench postgres://john:johnpass@${HOST_IP}:40000/postgres -T 60
 ```
