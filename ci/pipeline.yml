@@ -127,7 +127,7 @@ jobs:
   - aggregate:
     - {get: boshrelease-ci}
     - {get: boshrelease, passed: [testflight]}
-    - {get: edge-image, passed: [testflight], trigger: true}
+    - {get: edge-image, passed: [testflight], trigger: true, params: {save: true}}
     - {get: docker-image-registrator, passed: [testflight], trigger: true, params: {save: true}}
   - task: bump-image-blob
     file: boshrelease-ci/ci/tasks/bump-image-layers.yml
