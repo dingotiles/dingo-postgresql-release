@@ -12,7 +12,7 @@ brew install docker-compose
 
 ## Services
 
-[docker-compose.yml](./docker-compose.yml) defines the services introduced in the (README tutorial)(./README.md).
+[docker-compose.yml](./docker-compose.yml) defines the services introduced in the [README tutorial](./README.md).
 
 * `john` and `paul` are going to make up a 2 node postgresql-patroni cluster
 * `etcd` and `registrator` are backing services required to get everything running
@@ -38,7 +38,7 @@ docker-compose logs
 
 You will see all containers start, a leader be elected (probably `john` as it is started first), and the follower start replicating from the leader.
 
-You can run `pg_bench` against which PostgreSQL container is currently leader (either port 40000 for `john` or 40001 for `paul`):
+You can run `pgbench` against which PostgreSQL container is currently leader (either port 40000 for `john` or 40001 for `paul`):
 
 ```
 pg_uri=postgres://john:johnpass@${HOST_IP}:40000/postgres
