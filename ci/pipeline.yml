@@ -94,6 +94,7 @@ jobs:
     - {get: etcd}
     - {get: remote-syslog}
     - {get: lite-stemcell}
+    - {get: docker-image-pg95-patroni, passed: [image-patroni-pg95], trigger: true}
   - task: create-lite-manifest
     file: boshrelease-ci/ci/tasks/create-manifest.yml
     config:
