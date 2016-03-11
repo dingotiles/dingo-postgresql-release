@@ -138,7 +138,6 @@ jobs:
   - put: docker-image-pg95-patroni
     params:
       load_base:       edge-image
-      load_file:       edge-image/image
   - put: boshrelease
     params: {repository: boshrelease-images-updated, rebase: true}
 
