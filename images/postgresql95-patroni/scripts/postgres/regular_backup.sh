@@ -33,10 +33,9 @@ indent_backup() {
 # run wal-e backup-list periodically to log summary to stdout & etcd /wale-backup-list
 (
   while true; do
-    BACKUP_LIST=$($WALE_CMD backup-list 2>/dev/null)
-    echo $BACKUP_LIST
+    $WALE_CMD backup-list --detail LATEST 2>/dev/null
     curl -s ${ETCD_HOST_PORT}/v2/keys/service/${PATRONI_SCOPE}/wale-backup-list \
-      -X PUT -d "value=${BACKUP_LIST}" > /dev/null
+      -X PUT -d "value=$($WALE_CMD backup-list --detail LATEST 2>/dev/null)" > /dev/null
     sleep 30
   done
 ) 2>&1 | indent_backup &
