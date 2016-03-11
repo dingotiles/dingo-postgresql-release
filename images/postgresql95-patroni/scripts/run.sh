@@ -7,9 +7,6 @@ mkdir -p $DATA_DIR
 
 DOCKER_IP=$(hostname --ip-address)
 
-REGISTRATOR_PREFIX=${REGISTRATOR_PREFIX:-}
-REGISTRATOR_DOCKER_IMAGE=${REGISTRATOR_DOCKER_IMAGE:-postgresql-patroni} # used as path by registrator entries
-
 if [[ -z "${NAME}" ]]; then
   echo "Requires \$NAME to look up container in registrator"
   exit 1
@@ -29,25 +26,32 @@ fi
 
 # look up public host:port binding from registrar entry in etcd
 # this is then advertised via patroni for replicas to connect
+lookup_connection_address_for_port() {
+  local port=$1
+
+  REGISTRATOR_DOCKER_IMAGE=${REGISTRATOR_DOCKER_IMAGE:-postgresql-patroni} # used as path by registrator entries
+  registrator_uri="${ETCD_HOST_PORT}/v2/keys/${REGISTRATOR_DOCKER_IMAGE}-${port}/${DOCKER_HOSTNAME}:${NAME}:${port}"
+  echo $(curl -sL ${registrator_uri} | jq -r .node.value)
+}
+
 i="0"
 while [[  $i -lt 4 ]]
 do
   sleep 3
-  registrator_uri="${ETCD_HOST_PORT}/v2/keys/${REGISTRATOR_DOCKER_IMAGE}/${DOCKER_HOSTNAME}:${NAME}:5432"
-  echo "looking up public host:port from etcd -> ${registrator_uri} ($i)"
-  CONNECT_ADDRESS=$(curl -sL ${registrator_uri} | jq -r .node.value)
-  if [[ "${CONNECT_ADDRESS}" == "null" ]]; then
+  REPLICATION_ADDRESS=$(lookup_connection_address_for_port 5432)
+  PATRONI_API_ADDRESS=$(lookup_connection_address_for_port 8008)
+  if [[ "${REPLICATION_ADDRESS}" == "null" ]]; then
     echo container not yet registered, waiting...
   else
     break
   fi
   i=$[$i+1]
 done
-if [[ "${CONNECT_ADDRESS}" == "null" ]]; then
+if [[ "${REPLICATION_ADDRESS}" == "null" ]]; then
   echo failed to look up container in etcd
   exit 1
 else
-  echo public address ${CONNECT_ADDRESS}
+  echo public address ${REPLICATION_ADDRESS}
 fi
 
 POSTGRES_USERNAME=${POSTGRES_USERNAME:-pgadmin}
@@ -109,8 +113,8 @@ ttl: &ttl 30
 loop_wait: &loop_wait 10
 scope: &scope ${PATRONI_SCOPE}
 restapi:
-  listen: 127.0.0.1:8008
-  connect_address: 127.0.0.1:8008
+  listen: 0.0.0.0:8008
+  connect_address: ${PATRONI_API_ADDRESS}
 etcd:
   scope: *scope
   ttl: *ttl
@@ -119,7 +123,7 @@ postgresql:
   name: ${NODE_NAME//./_} ## Replication slots do not allow dots in their name
   scope: *scope
   listen: 0.0.0.0:5432
-  connect_address: ${CONNECT_ADDRESS}
+  connect_address: ${REPLICATION_ADDRESS}
   data_dir: ${PG_DATA_DIR}
   maximum_lag_on_failover: 1048576 # 1 megabyte in bytes
   use_slots: False

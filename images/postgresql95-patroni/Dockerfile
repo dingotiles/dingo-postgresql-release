@@ -16,6 +16,7 @@ ADD patroni/patroni /patroni
 ADD patroni/requirements-py2.txt /requirements-py2.txt
 RUN pip install -r /requirements-py2.txt
 
+EXPOSE 8008
 
 # Add scripts
 ADD scripts /scripts
