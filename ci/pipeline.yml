@@ -139,7 +139,6 @@ jobs:
     params:
       load_base:       edge-image
       load_file:       edge-image/image
-      load_tag:        edge
   - put: boshrelease
     params: {repository: boshrelease-images-updated, rebase: true}
 
