@@ -73,7 +73,7 @@ jobs:
   serial: true
   plan:
   - aggregate:
-    - {get: boshrelease-ci, passed: [bosh-rc]}
+    - {get: boshrelease-ci}
     - {get: boshrelease, passed: [bosh-rc], trigger: true}
     - {get: version, passed: [bosh-rc], trigger: true}
     - {get: candidate-release, passed: [bosh-rc], trigger: true}
@@ -125,7 +125,7 @@ jobs:
   serial: true
   plan:
   - aggregate:
-    - {get: boshrelease-ci, passed: [testflight]}
+    - {get: boshrelease-ci}
     - {get: boshrelease, passed: [testflight]}
     - {get: edge-image, passed: [testflight], trigger: true}
     - {get: docker-image-registrator, passed: [testflight], trigger: true, params: {save: true}}
@@ -147,7 +147,7 @@ jobs:
   serial: true
   plan:
   - aggregate:
-    - {get: boshrelease-ci, passed: [testflight]}
+    - {get: boshrelease-ci}
     - {get: boshrelease, passed: [testflight]}
     - {get: version, passed: [testflight]}
     - {get: candidate-release, passed: [testflight], trigger: true}
