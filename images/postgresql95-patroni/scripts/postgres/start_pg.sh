@@ -25,11 +25,12 @@ indent_patroni() {
 
 # test for empty dir comes from http://stackoverflow.com/a/91639
 if [[ ! -f ${WALE_ENV_DIR}/WALE_CMD ]]; then
-  echo "wal-e not configured: not starting backup script."
+  echo "WARNING: wal-e not configured, cannot start uploading base backups"
+elif [[ -f ${WALE_ENV_DIR}/DISABLE_REGULAR_BACKUPS ]]; then
+  echo "Disabling regular backups."
 else
-  echo "Starting backups..."
+  echo "Starting base backups..."
   envdir ${WALE_ENV_DIR} ${DIR}/regular_backup.sh
-  # envdir ${WALE_ENV_DIR} ${DIR}/regular_backup.sh | indent_backup
 fi
 
 echo "Starting Patroni..."

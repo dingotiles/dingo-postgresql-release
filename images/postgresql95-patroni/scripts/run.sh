@@ -88,6 +88,11 @@ if [[ "${WAL_S3_BUCKET}X" != "X" ]]; then
   export WALE_S3_PREFIX="s3://${WAL_S3_BUCKET}/backups/${PATRONI_SCOPE}/wal/"
   echo $WALE_S3_PREFIX > ${WALE_ENV_DIR}/WALE_S3_PREFIX
   echo $WALE_CMD > ${WALE_ENV_DIR}/WALE_CMD
+  if [[ ! -z "${DISABLE_REGULAR_BACKUPS}" ]]; then
+    echo "Disabling regular backups"
+    echo $DISABLE_REGULAR_BACKUPS > ${WALE_ENV_DIR}/DISABLE_REGULAR_BACKUPS
+  fi
+
   replica_methods="[wal_e,basebackup]"
   archive_command="$WALE_CMD wal-push \"%p\" -p 1"
   restore_command="$WALE_CMD wal-fetch \"%f\" \"%p\" -p 1"
