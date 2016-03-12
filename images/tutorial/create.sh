@@ -4,7 +4,7 @@
 # Create container without wal-e archives, where tmp/tutorial.env containers required args:
 #   env $(cat tmp/tutorial.env| xargs) ./images/tutorial/create.sh
 # Create container with wal-e archives, where tmp/tutorial-wale.env is passed to docker container
-#   env_file=tmp/tutorial-wale.env env $(cat tmp/tutorial.env| xargs) ./images/tutorial/create.sh
+#   ENV_FILE=tmp/tutorial-wale.env env $(cat tmp/tutorial.env| xargs) ./images/tutorial/create.sh
 
 if [[ "${ETCD_CLUSTER}X" == "X" ]]; then
   echo "Requires \$ETCD_CLUSTER"
@@ -36,15 +36,15 @@ public_port=${public_port:-40000}
 if [[ "${beatle}" == "paul" ]]; then
   public_port=40001
 fi
-env_file=${env_file:-/tmp/empty}
-if [[ ! -f $env_file ]]; then
-  touch $env_file
+ENV_FILE=${ENV_FILE:-/tmp/empty}
+if [[ ! -f $ENV_FILE ]]; then
+  touch $ENV_FILE
 fi
 
 docker rm -f ${beatle}
 docker run -d ${DOCKER_OPTS} \
     --name ${beatle} -p ${public_port}:5432 \
-    --env-file=${env_file} \
+    --env-file=${ENV_FILE} \
     -e NAME=${beatle} \
     -e NODE_GUID=${NODE_GUID} \
     -e PATRONI_SCOPE=${PATRONI_SCOPE} \

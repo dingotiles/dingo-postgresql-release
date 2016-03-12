@@ -22,7 +22,7 @@ EOF
 To clean out the containers, ALL etcd data, and the S3 backups:
 
 ```
-env $(cat tmp/tutorial.env| xargs) ./images/tutorial/cleanup.sh; env $(cat tmp/tutorial-wale.env | xargs) ./images/tutorial/cleanup-s3.sh; env_file=tmp/tutorial-wale.env env $(cat tmp/tutorial.env| xargs) NODE_GUID=test-first ./images/tutorial/create.sh
+env $(cat tmp/tutorial.env| xargs) ./images/tutorial/cleanup.sh; env $(cat tmp/tutorial-wale.env | xargs) ./images/tutorial/cleanup-s3.sh; ENV_FILE=tmp/tutorial-wale.env env $(cat tmp/tutorial.env| xargs) NODE_GUID=test-first ./images/tutorial/create.sh
 ```
 
 This takes a few minutes until the basebackup is complete and new WAL segments archived:
@@ -91,7 +91,7 @@ The same results should return from the database after it is recovered from back
 To delete and recreate a container, and restore from the backup:
 
 ```
-env_file=tmp/tutorial-wale.env env $(cat tmp/tutorial.env| xargs) NODE_GUID=test-$(uuid) ./images/tutorial/create.sh
+ENV_FILE=tmp/tutorial-wale.env env $(cat tmp/tutorial.env| xargs) NODE_GUID=test-$(uuid) ./images/tutorial/create.sh
 ```
 
 When successful, the logs include:
