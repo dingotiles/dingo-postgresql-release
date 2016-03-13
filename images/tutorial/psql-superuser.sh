@@ -1,9 +1,13 @@
 #!/bin/bash
 
 # USAGE:
-# Run pgbench against current master
-#   env $(cat tmp/tutorial.env| xargs) ./images/tutorial/psql.sh
-#   env $(cat tmp/tutorial.env| xargs) ./images/tutorial/psql.sh -c "select * from pgbench_tellers;"
+# Perform superuser tasks, such as:
+#   env $(cat tmp/tutorial.env| xargs) ./images/tutorial/psql-superuser.sh
+#   postgres=# select pg_switch_xlog();
+#    pg_switch_xlog
+#   ----------------
+#    0/11000078
+#   (1 row)
 
 if [[ "${ETCD_CLUSTER}X" == "X" ]]; then
   echo "Requires \$ETCD_CLUSTER"
@@ -23,4 +27,6 @@ if [[ "${pg_uri}X" == "X" || "${pg_uri}" == "null" ]]; then
   exit 1
 fi
 
-psql ${pg_uri} $@
+superuser_uri=$(echo ${pg_uri} | sed -e "s/replicator:replicator@/postgres:starkandwayne@/g")
+
+psql ${superuser_uri} $@
