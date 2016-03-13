@@ -33,6 +33,10 @@ else
   envdir ${WALE_ENV_DIR} ${DIR}/regular_backup.sh
 fi
 
+if [[ -f ${WALE_ENV_DIR}/WALE_CMD ]]; then
+  envdir ${WALE_ENV_DIR} ${DIR}/restore_leader_if_missing.sh
+fi
+
 echo "Starting Patroni..."
 cd /
 python /patroni.py /patroni/postgres.yml 2>&1 | indent_patroni

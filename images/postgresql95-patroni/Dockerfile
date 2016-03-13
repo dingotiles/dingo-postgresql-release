@@ -19,4 +19,4 @@ RUN pip install -r /requirements-py2.txt
 
 # Add scripts
 ADD scripts /scripts
-RUN chmod +x /scripts/*.sh
+RUN chmod +x /scripts/*.sh /scripts/postgres/*.sh

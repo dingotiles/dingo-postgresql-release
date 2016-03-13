@@ -8,7 +8,6 @@ if [[ -z ${PG_DATA_DIR} ]]; then
   echo "regular_backup.sh: Requires \${PG_DATA_DIR}"
   exit 0
 fi
-
 if [[ -z "${PATRONI_SCOPE}" ]]; then
   echo "regular_backup.sh: Requires \$PATRONI_SCOPE to report backup-list for service"
   exit 0
