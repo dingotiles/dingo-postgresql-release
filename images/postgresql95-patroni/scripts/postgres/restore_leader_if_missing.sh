@@ -58,9 +58,9 @@ indent_restore_leader() {
   # 1. add fake-leader to /members
   fake_leader=fake-leader
   fake_credentials="{\"role\":\"master\",\"conn_url\":\"postgres://replicator:replicator@192.168.99.100:20000/postgres\",\"api_url\":\"http://127.0.0.1:8008/patroni\",\"tags\":{},\"conn_address\":\"192.168.99.100:40000\",\"state\":\"running\",\"xlog_location\":67109184}"
-  curl -s ${ETCD_HOST_PORT}/v2/keys/service/${PATRONI_SCOPE}/members/${fake_leader} -XPUT -d "value=${fake_credentials}"
+  curl -s ${ETCD_HOST_PORT}/v2/keys/service/${PATRONI_SCOPE}/members/${fake_leader} -XPUT -d "value=${fake_credentials}" -d ttl=5
   # 2. set /leader to 'fake-leader'
-  curl -s ${ETCD_HOST_PORT}/v2/keys/service/${PATRONI_SCOPE}/leader -XPUT -d "value=${fake_leader}"
+  curl -s ${ETCD_HOST_PORT}/v2/keys/service/${PATRONI_SCOPE}/leader -XPUT -d "value=${fake_leader}" -d ttl=5
   # 3. MAYBE: update router so it ignores leader 'fake-leader' unless difficult or irrelevant
 
   echo "preparing patroni to restore this container from wal-e backups"

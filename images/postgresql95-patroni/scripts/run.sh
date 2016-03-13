@@ -83,7 +83,6 @@ if [[ "${WAL_S3_BUCKET}X" != "X" ]]; then
     # see wal-e readme for env variables to configure for S3, Swift, etc
     export WALE_CMD="envdir ${WALE_ENV_DIR} wal-e"
   fi
-  archive_mode="on"
 
   export WALE_S3_PREFIX="s3://${WAL_S3_BUCKET}/backups/${PATRONI_SCOPE}/wal/"
   echo $WALE_S3_PREFIX > ${WALE_ENV_DIR}/WALE_S3_PREFIX
@@ -93,6 +92,7 @@ if [[ "${WAL_S3_BUCKET}X" != "X" ]]; then
     echo $DISABLE_REGULAR_BACKUPS > ${WALE_ENV_DIR}/DISABLE_REGULAR_BACKUPS
   fi
 
+  archive_mode="on"
   replica_methods="[wal_e,basebackup]"
   archive_command="$WALE_CMD wal-push \"%p\" -p 1"
   restore_command="$WALE_CMD wal-fetch \"%f\" \"%p\" -p 1"
