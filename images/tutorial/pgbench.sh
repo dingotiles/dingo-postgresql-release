@@ -22,6 +22,11 @@ if [[ "${pg_uri}X" == "X" || "${pg_uri}" == "null" ]]; then
   exit 1
 fi
 
+superuser_uri=$(echo ${pg_uri} | sed -e "s/replicator:replicator@/postgres:starkandwayne@/g")
+
+set -x
+
 pgbench -i ${pg_uri}
 pgbench ${pg_uri} -T 20
+psql ${superuser_uri} -c "select pg_switch_xlog();"
 psql ${pg_uri} -c "select * from pgbench_tellers;"
