@@ -172,8 +172,8 @@ properties:
           displayName: Solo
         container:
           backend: docker
-          image: cfcommunity/postgresql-patroni
-          tag: "9.5"
+          image: cfcommunity/postgres95-patroni
+          tag: "latest"
           persistent_volumes: [/data]
           environment:
           - ETCD_HOST_PORT=10.58.111.59:4001
