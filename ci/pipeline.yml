@@ -98,7 +98,7 @@ jobs:
         s3_endpoint: {{backups-testflight-s3-endpoint}}
         # docker_image_image: "cfcommunity/postgresql-patroni"
         # docker_image_tag: "9.5"
-        docker_image_source: embedded
+        docker_image_source: upstream
   - task: delete-testflight
     file: boshrelease-ci/ci/tasks/delete-testflight.yml
     config:
