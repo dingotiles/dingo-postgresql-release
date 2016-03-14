@@ -140,7 +140,7 @@ jobs:
       params:
         load_base: edge-image
         load_file:       edge-image/image
-        load_repository: cfcommunity/postgresql-patroni
+        load_repository: cfcommunity/postgres95-patroni
         load_tag: edge
     - put: boshrelease
       params: {repository: boshrelease-images-updated, rebase: true}
@@ -354,8 +354,8 @@ resources:
     email: {{docker-hub-email}}
     username: {{docker-hub-username}}
     password: {{docker-hub-password}}
-    repository: cfcommunity/postgresql-patroni-base
-    tag: "9.5"
+    repository: cfcommunity/postgres95-patroni-base
+    tag: "latest"
 
 - name: docker-image-pg95-patroni
   type: docker-image
@@ -363,8 +363,8 @@ resources:
     email: {{docker-hub-email}}
     username: {{docker-hub-username}}
     password: {{docker-hub-password}}
-    repository: cfcommunity/postgresql-patroni
-    tag: "9.5"
+    repository: cfcommunity/postgres95-patroni
+    tag: "latest"
 
 - name: edge-image
   type: docker-image
@@ -372,7 +372,7 @@ resources:
     email: {{docker-hub-email}}
     username: {{docker-hub-username}}
     password: {{docker-hub-password}}
-    repository: cfcommunity/postgresql-patroni
+    repository: cfcommunity/postgres95-patroni
     tag: "edge"
 
 - name: docker-image-registrator
