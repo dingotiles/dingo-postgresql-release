@@ -77,11 +77,12 @@ if [[ "${WAL_S3_BUCKET}X" != "X" ]]; then
     exit 1
   fi
   echo "Enabling wal-e archives to S3 bucket '${WAL_S3_BUCKET}'"
+  ENVDIR="envdir ${WALE_ENV_DIR}"
   if [[ "${AWS_INSTANCE_PROFILE}X" != "X" ]]; then
-    export WALE_CMD="envdir ${WALE_ENV_DIR} wal-e --aws-instance-profile"
+    export WALE_CMD="${ENVDIR} wal-e --aws-instance-profile"
   else
     # see wal-e readme for env variables to configure for S3, Swift, etc
-    export WALE_CMD="envdir ${WALE_ENV_DIR} wal-e"
+    export WALE_CMD="${ENVDIR} wal-e"
   fi
 
   export WALE_S3_PREFIX="s3://${WAL_S3_BUCKET}/backups/${PATRONI_SCOPE}/wal/"
