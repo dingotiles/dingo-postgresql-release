@@ -15,7 +15,7 @@ ADD patroni/patroni.py /patroni.py
 ADD patroni/patroni /patroni
 ADD patroni/requirements-py2.txt /requirements-py2.txt
 RUN pip install -r /requirements-py2.txt
-
+RUN pip install awscli --upgrade
 
 # Add scripts
 ADD scripts /scripts
