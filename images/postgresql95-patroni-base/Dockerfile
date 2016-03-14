@@ -21,6 +21,6 @@ RUN DEBIAN_FRONTEND=noninteractive \
 
 RUN pip install pip --upgrade
 # WAL-e requests a relatively new version of requests, install other modules via pip as well
-RUN pip install python-etcd requests six wal-e psycopg2 dnspython kazoo --upgrade
+RUN pip install python-etcd requests six wal-e psycopg2 dnspython kazoo awscli --upgrade
 
 ENV PATH /usr/lib/postgresql/${PG_VERSION}/bin:$PATH
