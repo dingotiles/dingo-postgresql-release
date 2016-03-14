@@ -139,8 +139,8 @@ jobs:
     params:
       load_base: edge-image
       load_file:       edge-image/image
-      load_repository: edge-image/repository
-      load_tag: edge-image/tag
+      load_repository: cfcommunity/postgresql-patroni
+      load_tag: edge
   - put: boshrelease
     params: {repository: boshrelease-images-updated, rebase: true}
 
