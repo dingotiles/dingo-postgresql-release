@@ -43,9 +43,7 @@ jobs:
   plan:
   - aggregate:
     - {get: boshrelease}
-    - {get: edge-image, passed: [image-patroni-pg95], trigger: true}
     - {get: boshrelease-trigger, trigger: true, params: {skip_download: true}}
-    - {get: docker-image-registrator, trigger: true, params: {skip_download: true}}
     - {get: version, trigger: true, params: {pre: rc}}
   - put: version
     params: {file: version/number}
@@ -56,8 +54,6 @@ jobs:
   - aggregate:
     - {get: boshrelease-ci}
     - {get: boshrelease, passed: [rc], trigger: true}
-    - {get: edge-image, passed: [rc], trigger: true, params: {skip_download: true}}
-    - {get: docker-image-registrator, passed: [rc], trigger: true, params: {skip_download: true}}
     - {get: version, passed: [rc], trigger: true}
   - task: create-candidate-release
     file: boshrelease-ci/ci/tasks/create-candidate-release.yml
@@ -77,8 +73,8 @@ jobs:
     - {get: boshrelease, passed: [bosh-rc], trigger: true}
     - {get: version, passed: [bosh-rc], trigger: true}
     - {get: candidate-release, passed: [bosh-rc], trigger: true}
-    - {get: edge-image, passed: [bosh-rc], trigger: true, params: {skip_download: true}}
-    - {get: docker-image-registrator, passed: [bosh-rc], trigger: true, params: {skip_download: true}}
+    - {get: edge-image, trigger: true, params: {skip_download: true}}
+    - {get: docker-image-registrator, trigger: true, params: {skip_download: true}}
     - {get: etcd}
     - {get: remote-syslog}
     - {get: lite-stemcell}
