@@ -19,7 +19,7 @@ case $1 in
 
     docker_host=unix:///var/vcap/sys/run/docker/docker.sock
 
-    image="cfcommunity/postgresql-patroni:9.5"
+    image="cfcommunity/postgres95-patroni:edge"
 
     set -x # print commands
     docker --host $docker_host pull $image \
