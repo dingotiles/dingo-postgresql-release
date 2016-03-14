@@ -29,9 +29,9 @@ jobs:
     release: simple-remote-syslog
   - name: docker
     release: patroni-docker
-  - name: registrator
-    release: patroni-docker
   - name: embedded-images
+    release: patroni-docker
+  - name: registrator
     release: patroni-docker
   - name: container-env-vars
     release: patroni-docker
