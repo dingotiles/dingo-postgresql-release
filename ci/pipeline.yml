@@ -1,7 +1,7 @@
 ---
 groups:
 - name: pipeline
-  jobs: [rc, bosh-rc, testflight, bump-image-layers, deploy, shipit, minor, major, patch]
+  jobs: [rc, bosh-rc, testflight, promote-image, deploy, shipit, minor, major, patch]
 - name: patroni-images
   jobs: [image-patroni-pg95-base, image-patroni-pg95]
 - name: ci-image
@@ -120,30 +120,40 @@ jobs:
       manifest: manifest/manifest.yml
       errand: sanity-test
 
-- name: bump-image-layers
-  public: true
-  serial: true
+- name: promote-image
   plan:
-  - aggregate:
-    - {get: boshrelease-ci}
-    - {get: boshrelease, passed: [testflight]}
     - {get: edge-image, passed: [testflight], trigger: true, params: {save: true}}
-    - {get: docker-image-registrator, passed: [testflight], trigger: true, params: {save: true}}
-  - task: bump-image-blob
-    file: boshrelease-ci/ci/tasks/bump-image-layers.yml
-    config:
-      params:
-        aws_access_key_id: {{cfcommunity-aws-access}}
-        aws_secret_access_key: {{cfcommunity-aws-secret}}
-  - aggregate:
     - put: docker-image-pg95-patroni
       params:
         load_base: edge-image
         load_file:       edge-image/image
         load_repository: cfcommunity/postgres95-patroni
         load_tag: edge
-    - put: boshrelease
-      params: {repository: boshrelease-images-updated, rebase: true}
+
+# - name: bump-image-layers
+#   public: true
+#   serial: true
+#   plan:
+#   - aggregate:
+#     - {get: boshrelease-ci}
+#     - {get: boshrelease, passed: [testflight]}
+#     - {get: edge-image, passed: [testflight], trigger: true, params: {save: true}}
+#     - {get: docker-image-registrator, passed: [testflight], trigger: true, params: {save: true}}
+#   - task: bump-image-blob
+#     file: boshrelease-ci/ci/tasks/bump-image-layers.yml
+#     config:
+#       params:
+#         aws_access_key_id: {{cfcommunity-aws-access}}
+#         aws_secret_access_key: {{cfcommunity-aws-secret}}
+#   - aggregate:
+#     - put: docker-image-pg95-patroni
+#       params:
+#         load_base: edge-image
+#         load_file:       edge-image/image
+#         load_repository: cfcommunity/postgres95-patroni
+#         load_tag: edge
+#     - put: boshrelease
+#       params: {repository: boshrelease-images-updated, rebase: true}
 
 - name: deploy
   serial: true
@@ -152,6 +162,7 @@ jobs:
     - {get: boshrelease-ci}
     - {get: boshrelease, passed: [testflight]}
     - {get: version, passed: [testflight]}
+    - {get: docker-image-pg95-patroni, passed: [promote-image], trigger: true, params: {skip_download: true}}
     - {get: candidate-release, passed: [testflight], trigger: true}
     - {get: etcd}
     - {get: remote-syslog}
@@ -175,7 +186,7 @@ jobs:
   plan:
   - aggregate:
     - {get: boshrelease-ci}
-    - {get: boshrelease, passed: [bump-image-layers]}
+    - {get: boshrelease, passed: [deploy]}
     - {get: candidate-release, passed: [deploy]}
     - {get: version, passed: [deploy], params: {bump: final}}
   - task: create-final-release
