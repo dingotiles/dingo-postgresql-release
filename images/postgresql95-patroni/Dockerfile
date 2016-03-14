@@ -1,4 +1,4 @@
-FROM cfcommunity/postgresql-patroni-base:9.5
+FROM cfcommunity/postgresql95-patroni-base:latest
 MAINTAINER Dr Nic Williams
 
 # Command to run
