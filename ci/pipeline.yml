@@ -96,8 +96,8 @@ jobs:
         aws_secret_key: {{dingotiles-aws-secret}}
         s3_bucket: {{backups-testflight-s3-bucket}}
         s3_endpoint: {{backups-testflight-s3-endpoint}}
-        # docker_image_image: "cfcommunity/postgresql-patroni"
-        # docker_image_tag: "9.5"
+        docker_image_image: "cfcommunity/postgres95-patroni"
+        docker_image_tag: "edge"
         docker_image_source: upstream
   - task: delete-testflight
     file: boshrelease-ci/ci/tasks/delete-testflight.yml
