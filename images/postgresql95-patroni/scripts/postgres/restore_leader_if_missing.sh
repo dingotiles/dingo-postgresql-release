@@ -32,6 +32,10 @@ if [[ -z "${ETCD_HOST_PORT}" ]]; then
   echo "restore_leader_if_missing.sh: Requires \$ETCD_HOST_PORT (host:port) to update backup-list data to etcd"
   exit 0
 fi
+if [[ -z "${WALE_S3_PREFIX}" ]]; then
+  echo "restore_leader_if_missing.sh: Requires \$WALE_S3_PREFIX into which to store sysid"
+  exit 0
+fi
 
 indent_restore_leader() {
   c='s/^/restore_leader_if_missing> /'
@@ -58,8 +62,16 @@ indent_restore_leader() {
 
   # must have /initialize set
   if [[ "$(curl -s ${ETCD_HOST_PORT}/v2/keys/service/${PATRONI_SCOPE}/initialize | jq -r .node.value)" == "null" ]]; then
-    echo "etcd missing /v2/keys/service/${PATRONI_SCOPE}/initialize, so cannot restore cluster from archive"
-    exit 1
+    echo "etcd missing /initialize system ID, fetching from ${WALE_S3_PREFIX}sysids"
+    aws s3 sync ${WALE_S3_PREFIX}sysids /tmp/sysids
+
+    if [[ ! -f /tmp/sysids/sysid ]]; then
+      echo "Target ${WALE_S3_PREFIX} missing /sysids/sysid for original 'Database system identifier'"
+      exit 1
+    fi
+
+    echo "Re-initializing /${PATRONI_SCOPE}/initialize with original 'Database system identifier'"
+    curl -s ${ETCD_HOST_PORT}/v2/keys/service/${PATRONI_SCOPE}/initialize -XPUT -d "value=$(cat /tmp/sysids/sysid)"
   fi
 
   # 1. add fake-leader to /members
