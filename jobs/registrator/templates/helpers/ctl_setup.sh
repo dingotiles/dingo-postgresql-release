@@ -35,12 +35,6 @@ do
   export PATH=${package_bin_dir}:$PATH
 done
 
-export LD_LIBRARY_PATH=${LD_LIBRARY_PATH:-''} # default to empty
-for package_bin_dir in $(ls -d /var/vcap/packages/*/lib)
-do
-  export LD_LIBRARY_PATH=${package_bin_dir}:$LD_LIBRARY_PATH
-done
-
 # Setup log, run and tmp folders
 
 export RUN_DIR=/var/vcap/sys/run/$JOB_NAME
@@ -54,27 +48,6 @@ do
   chmod 775 ${dir}
 done
 export TMPDIR=$TMP_DIR
-
-export C_INCLUDE_PATH=/var/vcap/packages/mysqlclient/include/mysql:/var/vcap/packages/sqlite/include:/var/vcap/packages/libpq/include
-export LIBRARY_PATH=/var/vcap/packages/mysqlclient/lib/mysql:/var/vcap/packages/sqlite/lib:/var/vcap/packages/libpq/lib
-
-# consistent place for vendoring python libraries within package
-if [[ -d ${WEBAPP_DIR:-/xxxx} ]]
-then
-  export PYTHONPATH=$WEBAPP_DIR/vendor/lib/python
-fi
-
-if [[ -d /var/vcap/packages/java7 ]]
-then
-  export JAVA_HOME="/var/vcap/packages/java7"
-fi
-
-# setup CLASSPATH for all jars/ folders within packages
-export CLASSPATH=${CLASSPATH:-''} # default to empty
-for java_jar in $(ls -d /var/vcap/packages/*/*/*.jar)
-do
-  export CLASSPATH=${java_jar}:$CLASSPATH
-done
 
 PIDFILE=$RUN_DIR/$output_label.pid
 
