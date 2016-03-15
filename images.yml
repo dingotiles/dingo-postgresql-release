@@ -1,5 +1,5 @@
-- image: cfcommunity/postgresql-patroni
-  tag: "9.5"
+- image: cfcommunity/postgres95-patroni
+  tag: "latest"
   job: embedded-images
 - image: cfcommunity/registrator
   tag: "latest"
