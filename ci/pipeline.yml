@@ -160,8 +160,8 @@ jobs:
     - {get: version, passed: [testflight]}
     - {get: docker-image-pg95-patroni, passed: [promote-image], trigger: true, params: {skip_download: true}}
     - {get: candidate-release, passed: [testflight], trigger: true}
-    - {get: etcd}
-    - {get: remote-syslog}
+    - {get: etcd, passed: [testflight]}
+    - {get: remote-syslog, passed: [testflight]}
     - {get: vsphere-stemcell}
   - put: vsphere-deployment
     params:
@@ -184,6 +184,8 @@ jobs:
     - {get: boshrelease-ci}
     - {get: boshrelease, passed: [deploy]}
     - {get: candidate-release, passed: [deploy]}
+    - {get: etcd, passed: [deploy]}
+    - {get: remote-syslog, passed: [deploy]}
     - {get: version, passed: [deploy], params: {bump: final}}
   - task: create-final-release
     file: boshrelease-ci/ci/tasks/finalize-release.yml
@@ -211,13 +213,15 @@ jobs:
         - -c
         - |
           git -C boshrelease rev-parse HEAD > generated-commitish/commitish
+  - task: rename-dependency-releases
+    file: boshrelease-ci/ci/tasks/rename-dependency-releases.yml
   - put: github-release
     params:
       name: release-notes/release-name
       tag: release-notes/release-name
       body: release-notes/notes.md
       commitish: generated-commitish/commitish
-      globs: [final-release-tarball/*.tgz]
+      globs: [final-release-tarball/*.tgz, dependency-releases/*.tgz]
 
 - name: major
   public: true

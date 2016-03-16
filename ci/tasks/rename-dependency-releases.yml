@@ -1,0 +1,14 @@
+---
+platform: linux
+image: docker:///dingotiles/patroni-docker-boshrelease-pipeline
+
+inputs:
+- {name: boshrelease-ci}
+- {name: etcd}
+- {name: remote-syslog}
+
+outputs:
+- {name: dependency-releases}
+
+run:
+  path: ./boshrelease-ci/ci/tasks/rename-dependency-releases.sh
