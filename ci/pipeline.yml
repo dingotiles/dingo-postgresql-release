@@ -3,23 +3,23 @@ groups:
 - name: pipeline
   jobs: [rc, bosh-rc, testflight, promote-image, deploy, shipit, minor, major, patch]
 - name: patroni-images
-  jobs: [image-patroni-pg95-base, image-patroni-pg95]
+  jobs: [build-pg95-base-image, build-pg95-image]
 - name: ci-image
   jobs: [build-task-image]
 
 jobs:
-- name: image-patroni-pg95-base
+- name: build-pg95-base-image
   public: true
   serial: true
   plan:
   - aggregate:
     - {get: boshrelease}
     - {get: boshrelease-pg95-base-image, trigger: true, params: {submodules: none}}
-  - put: docker-image-pg95-patroni-base
+  - put: pg95-base-image-latest
     params:
       build: boshrelease/images/postgresql95-patroni-base
 
-- name: image-patroni-pg95
+- name: build-pg95-image
   public: true
   serial: true
   plan:
@@ -27,13 +27,13 @@ jobs:
     - {get: boshrelease-ci}
     - {get: boshrelease, resource: boshrelease-pg95-image, trigger: true, params: {submodules: none}}
     - {get: patroni, resource: patched-patroni, trigger: true}
-    - {get: docker-image-pg95-patroni-base, passed: [image-patroni-pg95-base], trigger: true}
+    - {get: pg95-base-image-latest, passed: [build-pg95-base-image], trigger: true}
   - task: prepare-dockerfile
     file: boshrelease-ci/ci/tasks/prepare-dockerfile.yml
     config:
       params:
         dockerfile_root: boshrelease/images/postgresql95-patroni
-  - put: edge-image
+  - put: pg95-image-edge
     params:
       build: dockerfile
 
@@ -73,7 +73,7 @@ jobs:
     - {get: boshrelease, passed: [bosh-rc], trigger: true}
     - {get: version, passed: [bosh-rc], trigger: true}
     - {get: candidate-release, passed: [bosh-rc], trigger: true}
-    - {get: edge-image, trigger: true, params: {skip_download: true}}
+    - {get: pg95-image-edge, trigger: true, params: {skip_download: true}}
     - {get: docker-image-registrator, trigger: true, params: {skip_download: true}}
     - {get: etcd}
     - {get: remote-syslog}
@@ -118,11 +118,11 @@ jobs:
 
 - name: promote-image
   plan:
-    - {get: edge-image, passed: [testflight], trigger: true, params: {save: true}}
-    - put: docker-image-pg95-patroni
+    - {get: pg95-image-edge, passed: [testflight], trigger: true, params: {save: true}}
+    - put: pg95-image-latest
       params:
-        load_base: edge-image
-        load_file:       edge-image/image
+        load_base: pg95-image-edge
+        load_file:       pg95-image-edge/image
         load_repository: dingotiles/dingo-postgresql95
         load_tag: edge
 
@@ -133,7 +133,7 @@ jobs:
 #   - aggregate:
 #     - {get: boshrelease-ci}
 #     - {get: boshrelease, passed: [testflight]}
-#     - {get: edge-image, passed: [testflight], trigger: true, params: {save: true}}
+#     - {get: pg95-image-edge, passed: [testflight], trigger: true, params: {save: true}}
 #     - {get: docker-image-registrator, passed: [testflight], trigger: true, params: {save: true}}
 #   - task: bump-image-blob
 #     file: boshrelease-ci/ci/tasks/bump-image-layers.yml
@@ -144,8 +144,8 @@ jobs:
 #   - aggregate:
 #     - put: docker-image-pg95-patroni
 #       params:
-#         load_base: edge-image
-#         load_file:       edge-image/image
+#         load_base: pg95-image-edge
+#         load_file:       pg95-image-edge/image
 #         load_repository: dingotiles/dingo-postgresql95
 #         load_tag: edge
 #     - put: boshrelease
@@ -158,7 +158,7 @@ jobs:
     - {get: boshrelease-ci}
     - {get: boshrelease, passed: [testflight]}
     - {get: version, passed: [testflight]}
-    - {get: docker-image-pg95-patroni, passed: [promote-image], trigger: true, params: {skip_download: true}}
+    - {get: pg95-image-latest, passed: [promote-image], trigger: true, params: {skip_download: true}}
     - {get: candidate-release, passed: [testflight], trigger: true}
     - {get: etcd, passed: [testflight]}
     - {get: remote-syslog, passed: [testflight]}
@@ -359,7 +359,7 @@ resources:
     # branch: master
     private_key: {{github-private-key}}
 
-- name: docker-image-pg95-patroni-base
+- name: pg95-base-image-latest
   type: docker-image
   source:
     email: {{docker-hub-email}}
@@ -368,7 +368,7 @@ resources:
     repository: dingotiles/dingo-postgresql95-base
     tag: "latest"
 
-- name: docker-image-pg95-patroni
+- name: pg95-image-latest
   type: docker-image
   source:
     email: {{docker-hub-email}}
@@ -377,7 +377,7 @@ resources:
     repository: dingotiles/dingo-postgresql95
     tag: "latest"
 
-- name: edge-image
+- name: pg95-image-edge
   type: docker-image
   source:
     email: {{docker-hub-email}}
