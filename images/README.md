@@ -48,7 +48,7 @@ Each subfolder, such as `postgresql95-patroni`, builds the image from a differen
 Setup the environment variable used in the rest of the tutorial:
 
 ```
-POSTGRESQL_IMAGE=cfcommunity/postgresql-patroni:9.5
+POSTGRESQL_IMAGE=dingotiles/dingo-postgresql95:latest
 ```
 
 ### Pull the image
@@ -59,7 +59,7 @@ _docker pull ${POSTGRESQL_IMAGE}
 
 ### Build the image
 
-To create the image `cfcommunity/postgresql-patroni`, execute the following command in the root of this repo:
+To create the image `dingotiles/dingo-postgresql95`, execute the following command in the root of this repo:
 
 ```
 git clone https://github.com/drnic/patroni -b connect_address_20150308 images/postgresql95-patroni/patroni

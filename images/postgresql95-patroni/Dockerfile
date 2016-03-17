@@ -1,4 +1,4 @@
-FROM cfcommunity/postgres95-patroni-base:latest
+FROM dingotiles/dingo-postgresql95-base:latest
 MAINTAINER Dr Nic Williams
 
 # Command to run

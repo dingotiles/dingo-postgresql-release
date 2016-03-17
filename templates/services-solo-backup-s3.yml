@@ -1,7 +1,7 @@
 ---
 meta:
   docker_image:
-    image: "cfcommunity/postgres95-patroni"
+    image: "dingotiles/dingo-postgresql95"
     tag: "edge"
 
   broker:

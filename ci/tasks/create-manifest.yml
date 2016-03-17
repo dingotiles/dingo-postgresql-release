@@ -16,7 +16,7 @@ params:
   bosh_syslog_port:
   deployment_name:
   docker_image_source: embedded
-  docker_image_image: "cfcommunity/postgresql-patroni"
+  docker_image_image: "dingotiles/dingo-postgresql95"
   docker_image_tag: "9.5"
   aws_access_key:
   aws_secret_key:

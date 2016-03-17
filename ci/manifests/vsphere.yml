@@ -172,7 +172,7 @@ properties:
           displayName: Solo
         container:
           backend: docker
-          image: cfcommunity/postgres95-patroni
+          image: dingotiles/dingo-postgresql95
           tag: "latest"
           persistent_volumes: [/data]
           environment:

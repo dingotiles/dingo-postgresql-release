@@ -2,7 +2,7 @@ version: '2'
 services:
   john:
     build: postgresql95-patroni
-    image: cfcommunity/postgres95-patroni:latest
+    image: dingotiles/dingo-postgresql95:latest
     container_name: john
     ports: ["40000:5432"]
     env_file: wal-e-example.env
@@ -16,7 +16,7 @@ services:
     depends_on: [registrator, etcd]
   paul:
     build: postgresql95-patroni
-    image: cfcommunity/postgres95-patroni:latest
+    image: dingotiles/dingo-postgresql95:latest
     container_name: paul
     ports: ["40001:5432"]
     env_file: wal-e-example.env

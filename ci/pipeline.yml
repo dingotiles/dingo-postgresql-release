@@ -92,7 +92,7 @@ jobs:
         aws_secret_key: {{dingotiles-aws-secret}}
         s3_bucket: {{backups-testflight-s3-bucket}}
         s3_endpoint: {{backups-testflight-s3-endpoint}}
-        docker_image_image: "cfcommunity/postgres95-patroni"
+        docker_image_image: "dingotiles/dingo-postgresql95"
         docker_image_tag: "edge"
         docker_image_source: upstream
   - task: delete-testflight
@@ -123,7 +123,7 @@ jobs:
       params:
         load_base: edge-image
         load_file:       edge-image/image
-        load_repository: cfcommunity/postgres95-patroni
+        load_repository: dingotiles/dingo-postgresql95
         load_tag: edge
 
 # - name: bump-image-layers
@@ -146,7 +146,7 @@ jobs:
 #       params:
 #         load_base: edge-image
 #         load_file:       edge-image/image
-#         load_repository: cfcommunity/postgres95-patroni
+#         load_repository: dingotiles/dingo-postgresql95
 #         load_tag: edge
 #     - put: boshrelease
 #       params: {repository: boshrelease-images-updated, rebase: true}
@@ -365,7 +365,7 @@ resources:
     email: {{docker-hub-email}}
     username: {{docker-hub-username}}
     password: {{docker-hub-password}}
-    repository: cfcommunity/postgres95-patroni-base
+    repository: dingotiles/dingo-postgresql95-base
     tag: "latest"
 
 - name: docker-image-pg95-patroni
@@ -374,7 +374,7 @@ resources:
     email: {{docker-hub-email}}
     username: {{docker-hub-username}}
     password: {{docker-hub-password}}
-    repository: cfcommunity/postgres95-patroni
+    repository: dingotiles/dingo-postgresql95
     tag: "latest"
 
 - name: edge-image
@@ -383,7 +383,7 @@ resources:
     email: {{docker-hub-email}}
     username: {{docker-hub-username}}
     password: {{docker-hub-password}}
-    repository: cfcommunity/postgres95-patroni
+    repository: dingotiles/dingo-postgresql95
     tag: "edge"
 
 - name: docker-image-registrator
@@ -401,7 +401,7 @@ resources:
     email: {{docker-hub-email}}
     username: {{docker-hub-username}}
     password: {{docker-hub-password}}
-    repository: cfcommunity/postgresql-patroni
+    repository: dingotiles/dingo-postgresql95
     tag: "9.5-patroni-master"
 
 - name: docker-image-ci
