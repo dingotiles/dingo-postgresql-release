@@ -22,7 +22,7 @@ export CF_CONTAINERS_BROKER_TMP_DIR=$TMP_DIR
 # Fetch new/updated container images on restart
 export CF_CONTAINERS_FETCH_IMAGES=<%= p('broker.fetch_images') ? 'true' : '' %>
 #
-# Fetch new/updated container images on restart
+# Restart containers with latest image/config on restart
 export CF_CONTAINERS_UPDATE_CONTAINERS=<%= p('broker.update_containers') ? 'true' : '' %>
 
 # CF-Containers-Broker Gemfile
