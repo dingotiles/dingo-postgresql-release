@@ -47,6 +47,7 @@ properties:
     cookie_secret: (( grab meta.cfcontainersbroker.cookie_secret ))
     max_containers: (( grab meta.cfcontainersbroker.max_containers ))
     fetch_images: true
+    update_containers: true
     services: (( grab meta.broker.services))
   servicebroker:
     services: (( grab meta.broker.services))
