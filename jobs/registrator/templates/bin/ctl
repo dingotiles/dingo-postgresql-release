@@ -13,6 +13,7 @@ case $1 in
 
   start)
     pid_guard $PIDFILE $JOB_NAME
+    echo $$ > $PIDFILE
 
     # REGISTRATOR_IMAGE=gliderlabs/registrator:latest
     REGISTRATOR_IMAGE="cfcommunity/registrator:latest /bin/registrator" #Dockerfile.dev
