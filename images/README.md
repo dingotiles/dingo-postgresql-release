@@ -27,9 +27,8 @@ brew install jq
 If you are running this tutorial on a Docker VM managed by docker-boshrelease:
 
 ```
-export PATH=/var/vcap/packages/docker/bin:$PATH
 DOCKER_SOCK=/var/vcap/sys/run/docker/docker.sock
-alias _docker="docker --host unix://${DOCKER_SOCK}"
+alias _docker="/var/vcap/packages/docker/bin/docker --host unix://${DOCKER_SOCK}"
 ```
 
 If default `docker` or configured via environment variables, say via [docker-toolbox](https://www.docker.com/products/docker-toolbox) (using `docker-machine`), then:
