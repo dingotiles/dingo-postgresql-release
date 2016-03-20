@@ -35,13 +35,16 @@ for plan_id in ${plan_ids[@]}; do
   set +e
   error_code=x
   i="0"
-  backups=null
-  while [[ $i -lt 20 && "${backups}" != "null" ]]; do
+  backups_lines="0"
+  while [[ $i -lt 20 ]] && $backups_lines -ge 2; do
     i=$[$i+1]
     sleep 1s
     echo attempt $i
-    backups=$(curl ${ETCD_CLUSTER}/v2/keys/service/${instance_id}/wale-backup-list | jq -r .node.value)
+    backups_lines=$(curl ${ETCD_CLUSTER}/v2/keys/service/${instance_id}/wale-backup-list | jq -r .node.value | wc -l)
   done
+  # display wal-e backup status
+  curl ${ETCD_CLUSTER}/v2/keys/service/${instance_id}/wale-backup-list | jq -r .node.value
+
   set -e # exit immediately if a simple command exits with a non-zero status
   pgbench -i $uri
   pgbench $uri
