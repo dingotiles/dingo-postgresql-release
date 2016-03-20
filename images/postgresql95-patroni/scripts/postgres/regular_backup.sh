@@ -42,6 +42,7 @@ indent_backup() {
 # run wal-e s3 backup periodically
 (
   INITIAL=1
+  SYSID_UPLOADED=0
   RETRY=0
   LAST_BACKUP_TS=0
   while true
@@ -64,7 +65,7 @@ indent_backup() {
       [[ $PIPESTATUS[0] = 0 ]] && [[ $BACKUPS_LINES -ge 2 ]] && INITIAL=0
     fi
     # store the system ID into AWS
-    if [[ $INITIAL = 0 ]] && [[ "${WALE_S3_PREFIX}X" != "X" ]]
+    if [[ $SYSID_UPLOADED = 0 ]] && [[ "${WALE_S3_PREFIX}X" != "X" ]]
     then
       pg_controldata ${PG_DATA_DIR}
 
@@ -72,6 +73,7 @@ indent_backup() {
       pg_controldata ${PG_DATA_DIR} | grep "Database system identifier" | cut -d ":" -f2 | awk '{print $1}' > /tmp/sysids/sysid
 
       aws s3 sync /tmp/sysids ${WALE_S3_PREFIX}sysids
+      SYSID_UPLOADED=1
     fi
     # produce backup only at a given hour, unless it's set to *, which means
     # that only backup_interval is taken into account. We also skip all checks
