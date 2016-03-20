@@ -1,0 +1,232 @@
+---
+name: pg-vsphere
+director_uuid: f635b1ba-5000-48e1-92c8-19471d20e0e4
+releases:
+- name: patroni-docker
+  version: latest
+- name: simple-remote-syslog
+  version: latest
+- name: etcd
+  version: latest
+compilation:
+  reuse_compilation_vms: true
+  network: patroni1
+  cloud_properties:
+    ram: 4096
+    disk: 20480
+    cpu: 4
+  workers: 2
+# 10.58.111.54 - 10.58.111.54
+jobs:
+- name: cell_z1
+  instances: 1
+  networks: [{name: patroni1, static_ips: [10.58.111.55]}]
+  persistent_disk: 10240
+  properties: {zone: z1}
+  resource_pool: cell_z1
+  templates:
+  - name: remote-syslog
+    release: simple-remote-syslog
+  - name: docker
+    release: patroni-docker
+  - name: upstream-images
+    release: patroni-docker
+  - name: registrator
+    release: patroni-docker
+  - name: container-env-vars
+    release: patroni-docker
+  - name: cf-containers-broker
+    release: patroni-docker
+- name: cell_z2
+  instances: 1
+  networks: [{name: patroni1, static_ips: [10.58.111.56]}]
+  persistent_disk: 10240
+  properties: {zone: z2}
+  resource_pool: cell_z2
+  templates:
+  - name: remote-syslog
+    release: simple-remote-syslog
+  - name: docker
+    release: patroni-docker
+  - name: registrator
+    release: patroni-docker
+  - name: upstream-images
+    release: patroni-docker
+  - name: container-env-vars
+    release: patroni-docker
+  - name: cf-containers-broker
+    release: patroni-docker
+- name: router
+  templates:
+  - name: remote-syslog
+    release: simple-remote-syslog
+  - name: broker
+    release: patroni-docker
+  - name: router
+    release: patroni-docker
+  properties:
+    servicebroker:
+      backends:
+        machines:
+          z1: [10.58.111.55]
+          z2: [10.58.111.56]
+      machines: [127.0.0.1]
+      public_port: 8888
+      port: 8889
+      router: {hostname: 10.58.111.57}
+  resource_pool: router_z1
+  instances: 1
+  networks: [{name: patroni1, static_ips: [10.58.111.57]}]
+- name: sanity-test
+  instances: 1
+  lifecycle: errand
+  templates:
+  - name: sanity-test
+    release: patroni-docker
+  networks: [{name: patroni1}]
+  resource_pool: router_z1
+  properties:
+    servicebroker:
+      machines: [10.58.111.57]
+      port: 8889
+    backups:
+      backend: s3
+      s3:
+        aws_access_key: (( grab meta.backups.aws_access_key ))
+        aws_secret_key: (( grab meta.backups.aws_secret_key ))
+        s3_bucket: (( grab meta.backups.s3_bucket ))
+        s3_endpoint: (( grab meta.backups.s3_endpoint ))
+- name: etcd
+  instances: 1
+  templates:
+  - name: remote-syslog
+    release: simple-remote-syslog
+  - name: etcd
+    release: etcd
+  resource_pool: router_z1
+  networks: [{name: patroni1, static_ips: [10.58.111.59]}]
+  persistent_disk: 10240
+  properties:
+    etcd:
+      peer_require_ssl: false
+      require_ssl: false
+networks:
+- name: patroni1
+  type: manual
+  subnets:
+  - range: 10.58.111.0/24
+    gateway: 10.58.111.1
+    dns:
+    - 10.58.20.2
+    - 10.57.20.2
+    static:
+    - 10.58.111.54
+    - 10.58.111.55
+    - 10.58.111.56
+    - 10.58.111.57
+    - 10.58.111.58
+    - 10.58.111.59
+    - 10.58.111.60
+    reserved:
+    - 10.58.111.2-10.58.111.53
+    - 10.58.111.65-10.58.111.254
+    cloud_properties:
+      name: net-10-58-111-0
+properties:
+  remote_syslog:
+    address: logs.papertrailapp.com
+    port: 25374
+    short_hostname: true
+  docker:
+    log_driver: syslog
+    log_options:
+    - syslog-address=udp://logs.papertrailapp.com:25374
+    - tag="{{.Name}}"
+  cf:
+    api_url: https://api.10.244.0.34.xip.io
+  etcd:
+    machines: [10.58.111.59]
+  registrator:
+    backend_uri: etcd://10.58.111.59:4001
+  broker:
+    cookie_secret: e7247dae-a252-4393-afa3-2219c1c02efd
+    fetch_images: true
+    max_containers: 20
+    username: containers
+    password: containers
+    host: cf-containers-broker.10.244.0.34.xip.io
+    port: 80
+    ssl_enabled: true
+    protocol: https
+    services: &services
+    - name: postgresql95
+      description: Solo instance of PostgreSQL 9.5
+      id: beb5973c-e1b2-11e5-a736-c7c0b526363d
+      bindable: true
+      metadata:
+        displayName: postgresql 9.5
+        documentationUrl: https://pg.dingotiles.com
+        longDescription: Solo instance of PostgreSQL 9.5
+        providerDisplayName: Dingo Tiles
+        supportUrl: https://slack.dingotiles.com
+      tags: [postgresql95, postgresql]
+      plans:
+      - name: solo
+        id: 1545e30e-6dc3-11e5-826a-6c4008a663f0
+        description: Solo instance of PostgreSQL
+        free: true
+        metadata:
+          displayName: Solo
+        container:
+          backend: docker
+          image: dingotiles/dingo-postgresql95
+          tag: "latest"
+          persistent_volumes: [/data]
+          environment:
+          - ETCD_HOST_PORT=10.58.111.59:4001
+          - (( concat "AWS_ACCESS_KEY_ID=" meta.backups.aws_access_key ))
+          - (( concat "AWS_SECRET_ACCESS_KEY=" meta.backups.aws_secret_key ))
+          - (( concat "WAL_S3_BUCKET=" meta.backups.s3_bucket ))
+          - (( concat "WALE_S3_ENDPOINT=https+path://" meta.backups.s3_endpoint ))
+          - "WALE_ENV_DIR=/data/wal-e/env"
+          - "WALE_BACKUP_THRESHOLD_PERCENTAGE=30"
+          - "WALE_BACKUP_THRESHOLD_MEGABYTES=10240"
+  servicebroker:
+    password: starkandwayne
+    port: 8888
+    services: *services
+    username: starkandwayne
+resource_pools:
+- cloud_properties:
+    ram: 4096
+    disk: 20480
+    cpu: 2
+  name: cell_z1
+  network: patroni1
+  stemcell:
+    name: bosh-vsphere-esxi-ubuntu-trusty-go_agent
+    version: latest
+- name: cell_z2
+  cloud_properties:
+    ram: 4096
+    disk: 20480
+    cpu: 2
+  network: patroni1
+  stemcell:
+    name: bosh-vsphere-esxi-ubuntu-trusty-go_agent
+    version: latest
+- name: router_z1
+  cloud_properties:
+    ram: 4096
+    disk: 20480
+    cpu: 1
+  network: patroni1
+  stemcell:
+    name: bosh-vsphere-esxi-ubuntu-trusty-go_agent
+    version: latest
+update:
+  canaries: 1
+  canary_watch_time: 30000-300000
+  max_in_flight: 1
+  serial: false
+  update_watch_time: 30000-300000

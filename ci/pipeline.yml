@@ -163,9 +163,17 @@ jobs:
     - {get: etcd, passed: [testflight]}
     - {get: remote-syslog, passed: [testflight]}
     - {get: vsphere-stemcell}
+  - task: setup-vsphere-manifest
+    file: boshrelease-ci/ci/tasks/setup-vsphere-manifest.yml
+    config:
+      params:
+        aws_access_key: {{dingotiles-aws-access}}
+        aws_secret_key: {{dingotiles-aws-secret}}
+        s3_bucket: {{backups-testflight-s3-bucket}}
+        s3_endpoint: {{backups-testflight-s3-endpoint}}
   - put: vsphere-deployment
     params:
-      manifest: boshrelease-ci/ci/manifests/vsphere.yml
+      manifest: vsphere-manifest/manifest.yml
       stemcells: [vsphere-stemcell/*.tgz]
       releases:
         - candidate-release/*.tgz
@@ -173,7 +181,7 @@ jobs:
         - remote-syslog/*.tgz
   - put: vsphere-errand
     params:
-      manifest: boshrelease-ci/ci/manifests/vsphere.yml
+      manifest: vsphere-manifest/manifest.yml
       errand: sanity-test
 
 - name: shipit
