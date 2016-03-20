@@ -63,6 +63,16 @@ indent_backup() {
       BACKUPS_LINES=$($WALE_CMD backup-list 2>/dev/null|wc -l)
       [[ $PIPESTATUS[0] = 0 ]] && [[ $BACKUPS_LINES -ge 2 ]] && INITIAL=0
     fi
+    # store the system ID into AWS
+    if [[ $INITIAL = 0 ]] && [[ "${WALE_S3_PREFIX}X" != "X" ]]
+    then
+      pg_controldata ${PG_DATA_DIR}
+
+      mkdir -p /tmp/sysids
+      pg_controldata ${PG_DATA_DIR} | grep "Database system identifier" | cut -d ":" -f2 | awk '{print $1}' > /tmp/sysids/sysid
+
+      aws s3 sync /tmp/sysids ${WALE_S3_PREFIX}sysids
+    fi
     # produce backup only at a given hour, unless it's set to *, which means
     # that only backup_interval is taken into account. We also skip all checks
     # when the backup is forced because of previous attempt's failure or because

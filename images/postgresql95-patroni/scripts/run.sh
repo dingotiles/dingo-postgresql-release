@@ -164,8 +164,6 @@ if [[ "${WALE_CMD}X" != "X" ]]; then
   restore: /patroni/scripts/restore.py
   recovery_conf:
     restore_command: ${restore_command}
-  callbacks:
-    on_start: ${ENVDIR} /scripts/postgres/backup_sysid.sh
 EOF
 fi
 
