@@ -13,7 +13,7 @@ source /var/vcap/jobs/sanity-test/helpers/ctl_setup.sh 'sanity-test'
 EXITSTATUS=0
 
 BROKER_URI=http://<%= p("servicebroker.username") %>:<%= p("servicebroker.password") %>@<%= p("servicebroker.machines").first %>:<%= p("servicebroker.port") %>
-ETCD_CLUSTER=<%= p("etcd.machines").first %>
+ETCD_CLUSTER=<%= p("etcd.machines").first %>:4001
 
 echo Confirm broker access
 curl -v ${BROKER_URI}/v2/catalog
@@ -42,10 +42,11 @@ for plan_id in ${plan_ids[@]}; do
     echo attempt $i
     backups_lines=$(curl ${ETCD_CLUSTER}/v2/keys/service/${instance_id}/wale-backup-list | jq -r .node.value | wc -l)
   done
+  set -e # exit immediately if a simple command exits with a non-zero status
+
   # display wal-e backup status
   curl ${ETCD_CLUSTER}/v2/keys/service/${instance_id}/wale-backup-list | jq -r .node.value
 
-  set -e # exit immediately if a simple command exits with a non-zero status
   pgbench -i $uri
   pgbench $uri
 
