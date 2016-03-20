@@ -33,6 +33,7 @@ for plan_id in ${plan_ids[@]}; do
 
   # 20 seconds to allow backups to have started and be ready
   set +e
+  set +x # silence commands
   error_code=x
   i="0"
   backups_lines="0"
@@ -43,6 +44,7 @@ for plan_id in ${plan_ids[@]}; do
     backups_lines=$(curl -sf ${ETCD_CLUSTER}/v2/keys/service/${instance_id}/wale-backup-list | jq -r .node.value | wc -l)
   done
   set -e # exit immediately if a simple command exits with a non-zero status
+  set -x # print commands
 
   if [[ $backups_lines -lt 2 ]]; then
     echo "Still no backups completed for cluster!"
