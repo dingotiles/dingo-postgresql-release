@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -x # show commands
+
 if [[ -z $WALE_CMD ]]; then
   echo "regular_backup.sh: Requires \$WALE_CMD; e.g. envdir \${WALE_ENV_DIR} wal-e --aws-instance-profile"
   exit 0
