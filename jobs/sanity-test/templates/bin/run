@@ -40,7 +40,7 @@ for plan_id in ${plan_ids[@]}; do
     i=$[$i+1]
     sleep 1s
     echo attempt $i
-    backups_lines=$(curl ${ETCD_CLUSTER}/v2/keys/service/${instance_id}/wale-backup-list | jq -r .node.value | wc -l)
+    backups_lines=$(curl -sf ${ETCD_CLUSTER}/v2/keys/service/${instance_id}/wale-backup-list | jq -r .node.value | wc -l)
   done
   set -e # exit immediately if a simple command exits with a non-zero status
 
