@@ -13,6 +13,7 @@ source /var/vcap/jobs/sanity-test/helpers/ctl_setup.sh 'sanity-test'
 EXITSTATUS=0
 
 BROKER_URI=http://<%= p("servicebroker.username") %>:<%= p("servicebroker.password") %>@<%= p("servicebroker.machines").first %>:<%= p("servicebroker.port") %>
+ETCD_CLUSTER=<%= p("etcd.machines").first %>
 
 echo Confirm broker access
 curl -v ${BROKER_URI}/v2/catalog
@@ -30,18 +31,19 @@ for plan_id in ${plan_ids[@]}; do
   credentials=$(curl -sf ${BROKER_URI}/v2/service_instances/${instance_id}/service_bindings/${binding_id} -XPUT -d "{\"service_id\": \"${single_node_service_id}\", \"plan_id\": \"${plan_id}\"}")
   uri=$(echo $credentials | jq -r ".credentials.uri")
 
-  # 60 seconds to allow confd/haproxy restart to kick in
+  # 20 seconds to allow backups to have started and be ready
   set +e
   error_code=x
   i="0"
-  while [[ $i -lt 60 && "${error_code}" != "0" ]]; do
+  backups=null
+  while [[ $i -lt 20 && "${backups}" != "null" ]]; do
     i=$[$i+1]
     sleep 1s
     echo attempt $i
-    pgbench -i $uri
-    error_code=$?
+    backups=$(curl ${ETCD_CLUSTER}/v2/keys/service/${instance_id}/wale-backup-list | jq -r .node.value)
   done
   set -e # exit immediately if a simple command exits with a non-zero status
+  pgbench -i $uri
   pgbench $uri
 
   nodes=3

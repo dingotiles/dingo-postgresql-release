@@ -16,3 +16,16 @@ properties:
     description: password for service brokers to connect to
   etcd.machines:
     description: hostnames for etcd servers
+
+  backups.backend:
+    description: The type of object store backend being used by service plans (only 's3' implemented at moment)
+    default: s3
+  backups.s3.aws_access_key:
+    description: Amazon S3 API access key
+  backups.s3.aws_secret_key:
+    description: Amazon S3 API secret key
+  backups.s3.s3_bucket:
+    description: Amazon S3 bucket name
+  backups.s3.s3_endpoint:
+    description: Amazon S3 API endpoint
+    default: s3.amazonaws.com

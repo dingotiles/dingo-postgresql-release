@@ -42,3 +42,14 @@ meta:
                 - "WALE_ENV_DIR=/data/wal-e/env"
                 - "WALE_BACKUP_THRESHOLD_PERCENTAGE=30"
                 - "WALE_BACKUP_THRESHOLD_MEGABYTES=10240"
+
+jobs:
+- name: sanity-test
+  properties:
+    backups:
+      backend: s3
+      s3:
+        aws_access_key: (( grab meta.backups.aws_access_key ))
+        aws_secret_key: (( grab meta.backups.aws_secret_key ))
+        s3_bucket: (( grab meta.backups.s3_bucket ))
+        s3_endpoint: (( grab meta.backups.s3_endpoint ))
