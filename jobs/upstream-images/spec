@@ -10,3 +10,5 @@ templates:
 properties:
   broker.services:
     description: "Services and plans offered by the broker, including dockerimages:tags required"
+  release_version:
+    description: "Pass the ever-changing bosh release version and will force job to reload upstream images"

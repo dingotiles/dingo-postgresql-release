@@ -37,6 +37,8 @@ jobs:
     release: patroni-docker
   - name: cf-containers-broker
     release: patroni-docker
+  properties:
+    release_version: (( grab meta.release_version ))
 - name: cell_z2
   instances: 1
   networks: [{name: patroni1, static_ips: [10.58.111.56]}]
@@ -56,6 +58,8 @@ jobs:
     release: patroni-docker
   - name: cf-containers-broker
     release: patroni-docker
+  properties:
+    release_version: (( grab meta.release_version ))
 - name: router
   templates:
   - name: remote-syslog
