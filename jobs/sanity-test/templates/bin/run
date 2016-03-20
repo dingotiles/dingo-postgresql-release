@@ -36,7 +36,7 @@ for plan_id in ${plan_ids[@]}; do
   error_code=x
   i="0"
   backups_lines="0"
-  while [[ $i -lt 30 ]] || [[ $backups_lines -lt 2 ]]; do
+  while [[ $i -lt 30 ]] && [[ $backups_lines -lt 2 ]]; do
     i=$[$i+1]
     sleep 1s
     echo waiting for initial backup to complete $i
@@ -44,6 +44,10 @@ for plan_id in ${plan_ids[@]}; do
   done
   set -e # exit immediately if a simple command exits with a non-zero status
 
+  if [[ $backups_lines -lt 2 ]]; then
+    echo "Still no backups completed for cluster!"
+    exit 1
+  fi
   # display wal-e backup status
   curl ${ETCD_CLUSTER}/v2/keys/service/${instance_id}/wale-backup-list | jq -r .node.value
 
