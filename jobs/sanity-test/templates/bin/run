@@ -39,7 +39,7 @@ for plan_id in ${plan_ids[@]}; do
   while [[ $i -lt 30 ]] || [[ $backups_lines -lt 2 ]]; do
     i=$[$i+1]
     sleep 1s
-    echo attempt $i
+    echo waiting for initial backup to complete $i
     backups_lines=$(curl -sf ${ETCD_CLUSTER}/v2/keys/service/${instance_id}/wale-backup-list | jq -r .node.value | wc -l)
   done
   set -e # exit immediately if a simple command exits with a non-zero status
