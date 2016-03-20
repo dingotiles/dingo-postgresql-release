@@ -36,7 +36,7 @@ for plan_id in ${plan_ids[@]}; do
   error_code=x
   i="0"
   backups_lines="0"
-  while [[ $i -lt 20 ]] && [[ $backups_lines -ge 2 ]]; do
+  while [[ $i -lt 30 ]] || [[ $backups_lines -lt 2 ]]; do
     i=$[$i+1]
     sleep 1s
     echo attempt $i
