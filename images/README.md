@@ -664,4 +664,4 @@ envdir /data/wal-e/env wal-e backup-fetch $(cat /data/wal-e/env/PG_DATA_DIR) LAT
 Copyright
 ---------
 
-Copyright (c) 2015 Dr Nic Williams. See [LICENSE](https://github.com/drnic/patroni-docker-boshrelease/blob/master/LICENSE.md) for details.
+Copyright (c) 2015 Dr Nic Williams. See [LICENSE](https://github.com/drnic/dingo-postgresql-release/blob/master/LICENSE.md) for details.

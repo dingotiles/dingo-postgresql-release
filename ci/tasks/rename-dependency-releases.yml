@@ -1,6 +1,6 @@
 ---
 platform: linux
-image: docker:///dingotiles/patroni-docker-boshrelease-pipeline
+image: docker:///dingotiles/dingo-postgresql-release-pipeline
 
 inputs:
 - {name: boshrelease-ci}

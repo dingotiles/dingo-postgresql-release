@@ -212,7 +212,7 @@ jobs:
   - task: generate-commitish
     config:
       platform: linux
-      image: docker:///dingotiles/patroni-docker-boshrelease-pipeline
+      image: docker:///dingotiles/dingo-postgresql-release-pipeline
       inputs: [{name: boshrelease}]
       outputs: [{name: generated-commitish}]
       run:
@@ -272,7 +272,7 @@ resources:
 - name: boshrelease
   type: git
   source:
-    uri: git@github.com:dingotiles/patroni-docker-boshrelease.git
+    uri: git@github.com:dingotiles/dingo-postgresql-release.git
     branch: {{pipeline-branch}}
     private_key: {{github-private-key}}
 
@@ -281,12 +281,12 @@ resources:
   source:
     access_token: {{github-release-access-token}}
     user: dingotiles
-    repository: patroni-docker-boshrelease
+    repository: dingo-postgresql-release
 
 - name: boshrelease-trigger
   type: git
   source:
-    uri: git@github.com:dingotiles/patroni-docker-boshrelease.git
+    uri: git@github.com:dingotiles/dingo-postgresql-release.git
     branch: {{pipeline-branch}}
     private_key: {{github-private-key}}
     paths: [jobs/*, templates/*, src/*]
@@ -294,14 +294,14 @@ resources:
 - name: boshrelease-ci
   type: git
   source:
-    uri: git@github.com:dingotiles/patroni-docker-boshrelease.git
+    uri: git@github.com:dingotiles/dingo-postgresql-release.git
     branch: {{pipeline-branch}}
     private_key: {{github-private-key}}
 
 - name: boshrelease-ci-task
   type: git
   source:
-    uri: git@github.com:dingotiles/patroni-docker-boshrelease.git
+    uri: git@github.com:dingotiles/dingo-postgresql-release.git
     branch: {{pipeline-branch}}
     private_key: {{github-private-key}}
     paths: [ci/ci_image/*]
@@ -309,7 +309,7 @@ resources:
 - name: boshrelease-pg95-image
   type: git
   source:
-    uri: git@github.com:dingotiles/patroni-docker-boshrelease.git
+    uri: git@github.com:dingotiles/dingo-postgresql-release.git
     branch: {{pipeline-branch}}
     private_key: {{github-private-key}}
     paths: [images/postgresql95-patroni]
@@ -317,7 +317,7 @@ resources:
 - name: boshrelease-pg95-base-image
   type: git
   source:
-    uri: git@github.com:dingotiles/patroni-docker-boshrelease.git
+    uri: git@github.com:dingotiles/dingo-postgresql-release.git
     branch: {{pipeline-branch}}
     private_key: {{github-private-key}}
     paths: [images/postgresql95-patroni-base]
@@ -335,7 +335,7 @@ resources:
   source:
     driver: git
     initial_version: 0.0.1
-    uri: git@github.com:dingotiles/patroni-docker-boshrelease.git
+    uri: git@github.com:dingotiles/dingo-postgresql-release.git
     branch: version
     file: version
     private_key: {{github-private-key}}
@@ -418,7 +418,7 @@ resources:
     email: {{docker-hub-email}}
     username: {{docker-hub-username}}
     password: {{docker-hub-password}}
-    repository: dingotiles/patroni-docker-boshrelease-pipeline
+    repository: dingotiles/dingo-postgresql-release-pipeline
 
 - name: lite-stemcell
   type: bosh-io-stemcell
