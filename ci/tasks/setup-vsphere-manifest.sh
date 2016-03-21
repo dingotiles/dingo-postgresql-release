@@ -26,3 +26,5 @@ spruce merge --prune meta \
   ci/manifests/vsphere.s3-backups.yml \
   tmp/backups.yml tmp/release_version.yml \
     > ${output_manifest}
+
+cat ${output_manifest}
