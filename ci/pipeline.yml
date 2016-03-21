@@ -44,7 +44,7 @@ jobs:
   - aggregate:
     - {get: boshrelease}
     - {get: boshrelease-trigger, trigger: true, params: {skip_download: true}}
-    - {get: version, trigger: true, params: {pre: rc}}
+    - {get: version, params: {pre: rc}}
   - put: version
     params: {file: version/number}
 
