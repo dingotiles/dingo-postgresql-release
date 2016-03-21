@@ -3,7 +3,7 @@
 set -e
 
 VERSION=$(cat version/number)
-RELEASE_NAME=${RELEASE_NAME:-"patroni-docker"}
+RELEASE_NAME=${RELEASE_NAME:-"dingo-postgresql"}
 
 FINAL_RELEASE_TARBALL=$PWD/final-release-tarball
 FINAL_RELEASE_REPO=$PWD/final-release-repo

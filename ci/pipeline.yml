@@ -62,7 +62,7 @@ jobs:
         aws_access_key_id: {{dingotiles-aws-access}}
         aws_secret_access_key: {{dingotiles-aws-secret}}
   - put: candidate-release
-    params: {file: candidate-release/patroni-docker-*.tgz}
+    params: {file: candidate-release/dingo-postgresql-*.tgz}
 
 - name: testflight
   public: true
@@ -82,7 +82,7 @@ jobs:
     file: boshrelease-ci/ci/tasks/create-manifest.yml
     config:
       params:
-        deployment_name: patroni-docker-testflight
+        deployment_name: dingo-postgresql-testflight
         bosh_target: {{bosh-lite-target}}
         bosh_username: {{bosh-lite-username}}
         bosh_password: {{bosh-lite-password}}
@@ -99,7 +99,7 @@ jobs:
     file: boshrelease-ci/ci/tasks/delete-testflight.yml
     config:
       params:
-        deployment_name: patroni-docker-testflight
+        deployment_name: dingo-postgresql-testflight
         bosh_target: {{bosh-lite-target}}
         bosh_username: {{bosh-lite-username}}
         bosh_password: {{bosh-lite-password}}
@@ -343,8 +343,8 @@ resources:
 - name: final-release
   type: s3
   source:
-    bucket: patroni-docker-releases
-    regexp: patroni-docker-(.*).tgz
+    bucket: dingo-postgresql-releases
+    regexp: dingo-postgresql-(.*).tgz
     access_key_id: {{dingotiles-aws-access}}
     secret_access_key: {{dingotiles-aws-secret}}
     region_name: {{dingotiles-aws-region}}
@@ -352,8 +352,8 @@ resources:
 - name: candidate-release
   type: s3
   source:
-    bucket: patroni-docker-release-candidates
-    regexp: patroni-docker-(.*).tgz
+    bucket: dingo-postgresql-release-candidates
+    regexp: dingo-postgresql-(.*).tgz
     access_key_id: {{dingotiles-aws-access}}
     secret_access_key: {{dingotiles-aws-secret}}
     region_name: {{dingotiles-aws-region}}
@@ -431,7 +431,7 @@ resources:
     target: {{bosh-lite-target}}
     username: {{bosh-lite-username}}
     password: {{bosh-lite-password}}
-    deployment: patroni-docker-testflight
+    deployment: dingo-postgresql-testflight
 
 - name: lite-errand
   type: bosh-errand

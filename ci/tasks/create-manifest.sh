@@ -3,7 +3,7 @@
 set -e
 set -x
 
-release_name=${release_name:-"patroni-docker"}
+release_name=${release_name:-"dingo-postgresql"}
 manifest_dir=$PWD/manifest
 
 cat > ~/.bosh_config <<EOF

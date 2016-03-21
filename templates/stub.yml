@@ -10,5 +10,5 @@ meta:
 director_uuid: PLACEHOLDER-DIRECTOR-UUID
 
 releases:
-  - name: patroni-docker
+  - name: dingo-postgresql
     version: latest

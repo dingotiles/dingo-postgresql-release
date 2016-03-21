@@ -5,7 +5,7 @@ set -x # print commands
 
 OUTPUT="$PWD/candidate-release"
 VERSION="$(cat version/number)"
-RELEASE_NAME=${RELEASE_NAME:-patroni-docker}
+RELEASE_NAME=${RELEASE_NAME:-dingo-postgresql}
 
 export IMAGE_BASE_DIR=$(pwd)/images
 

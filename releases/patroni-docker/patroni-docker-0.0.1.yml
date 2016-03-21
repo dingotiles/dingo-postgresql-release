@@ -92,5 +92,5 @@ license:
   sha1: e70678ad6e128d6595dc2712b263aae277decd05
 commit_hash: 9f2f9b88
 uncommitted_changes: false
-name: patroni-docker
+name: dingo-postgresql
 version: 0.0.1

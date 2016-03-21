@@ -2,7 +2,7 @@
 name: pg-vsphere
 director_uuid: f635b1ba-5000-48e1-92c8-19471d20e0e4
 releases:
-- name: patroni-docker
+- name: dingo-postgresql
   version: latest
 - name: simple-remote-syslog
   version: latest
@@ -28,15 +28,15 @@ jobs:
   - name: remote-syslog
     release: simple-remote-syslog
   - name: docker
-    release: patroni-docker
+    release: dingo-postgresql
   - name: upstream-images
-    release: patroni-docker
+    release: dingo-postgresql
   - name: registrator
-    release: patroni-docker
+    release: dingo-postgresql
   - name: container-env-vars
-    release: patroni-docker
+    release: dingo-postgresql
   - name: cf-containers-broker
-    release: patroni-docker
+    release: dingo-postgresql
 - name: cell_z2
   instances: 1
   networks: [{name: patroni1, static_ips: [10.58.111.56]}]
@@ -47,23 +47,23 @@ jobs:
   - name: remote-syslog
     release: simple-remote-syslog
   - name: docker
-    release: patroni-docker
+    release: dingo-postgresql
   - name: registrator
-    release: patroni-docker
+    release: dingo-postgresql
   - name: upstream-images
-    release: patroni-docker
+    release: dingo-postgresql
   - name: container-env-vars
-    release: patroni-docker
+    release: dingo-postgresql
   - name: cf-containers-broker
-    release: patroni-docker
+    release: dingo-postgresql
 - name: router
   templates:
   - name: remote-syslog
     release: simple-remote-syslog
   - name: broker
-    release: patroni-docker
+    release: dingo-postgresql
   - name: router
-    release: patroni-docker
+    release: dingo-postgresql
   properties:
     servicebroker:
       backends:
@@ -82,7 +82,7 @@ jobs:
   lifecycle: errand
   templates:
   - name: sanity-test
-    release: patroni-docker
+    release: dingo-postgresql
   networks: [{name: patroni1}]
   resource_pool: router_z1
   properties:

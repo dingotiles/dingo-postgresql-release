@@ -3,7 +3,7 @@ meta:
     patroni: (( param "please provide templates for cells" ))
 
 releases:
-- name: patroni-docker
+- name: dingo-postgresql
   version: latest
 - name: simple-remote-syslog
   version: latest
@@ -29,8 +29,8 @@ jobs:
     instances: 1
     templates:
       - {name: remote-syslog, release: simple-remote-syslog}
-      - {name: broker, release: patroni-docker}
-      - {name: router, release: patroni-docker}
+      - {name: broker, release: dingo-postgresql}
+      - {name: router, release: dingo-postgresql}
     resource_pool: router_z1
     networks: [{name: router1}]
     properties:
@@ -47,7 +47,7 @@ jobs:
   - name: sanity-test
     instances: 1
     lifecycle: errand
-    templates: [{name: sanity-test, release: patroni-docker}]
+    templates: [{name: sanity-test, release: dingo-postgresql}]
     resource_pool: router_z1
     networks: [{name: router1}]
     properties:
