@@ -7,6 +7,8 @@ set -u # report the usage of uninitialized variables
 
 LOG_DIR=/var/vcap/sys/log/broker
 
+tee >> $LOG_DIR/broker.backup_provisioned_service.log
+
 (
-  tee
+  echo "test inside paretheses"
 ) 2>&1 >> $LOG_DIR/broker.backup_provisioned_service.log
