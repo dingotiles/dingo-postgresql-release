@@ -31,13 +31,13 @@ for plan_id in ${plan_ids[@]}; do
   credentials=$(curl -sf ${BROKER_URI}/v2/service_instances/${instance_id}/service_bindings/${binding_id} -XPUT -d "{\"service_id\": \"${single_node_service_id}\", \"plan_id\": \"${plan_id}\"}")
   uri=$(echo $credentials | jq -r ".credentials.uri")
 
-  # 20 seconds to allow backups to have started and be ready
+  # 60 seconds to allow backups to have started and be ready
   set +e
   set +x # silence commands
   error_code=x
   i="0"
   backups_lines="0"
-  while [[ $i -lt 30 ]] && [[ $backups_lines -lt 2 ]]; do
+  while [[ $i -lt 60 ]] && [[ $backups_lines -lt 2 ]]; do
     i=$[$i+1]
     sleep 1s
     echo waiting for initial backup to complete $i
