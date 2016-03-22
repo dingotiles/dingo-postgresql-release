@@ -13,6 +13,9 @@ case $1 in
   start)
     pid_guard $PIDFILE $JOB_NAME
 
+    touch $LOG_DIR/broker.backup_provisioned_service.log
+    chown vcap:vcap $LOG_DIR/broker.backup_provisioned_service.log
+
     # store pid in $PIDFILE
     echo $$ > $PIDFILE
 
