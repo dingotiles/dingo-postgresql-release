@@ -51,7 +51,5 @@ properties:
     description: Bucket name
   backups.clusterdata.region:
     description: Amazon S3 region endpoint
-    default: us-east-1
   backups.clusterdata.endpoint:
     description: Amazon S3 API endpoint
-    default: s3.amazonaws.com
