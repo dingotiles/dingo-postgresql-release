@@ -1,6 +1,9 @@
 ---
 name: broker
-packages: [patroni-broker]
+packages:
+- patroni-broker
+- dingo-postgresql-clusterdata-backup
+- ruby
 templates:
   bin/ctl: bin/ctl
   bin/monit_debugger: bin/monit_debugger

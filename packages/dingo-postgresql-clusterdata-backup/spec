@@ -1,0 +1,4 @@
+---
+name: dingo-postgresql-clusterdata-backup
+dependencies: [ruby]
+files: [dingo-postgresql-clusterdata-backup/**/*]
