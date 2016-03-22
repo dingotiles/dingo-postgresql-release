@@ -20,8 +20,10 @@ params:
   docker_image_tag: "9.5"
   aws_access_key:
   aws_secret_key:
-  s3_bucket:
-  s3_endpoint:
+  s3_endpoint: s3.amazonaws.com
+  region: us-east-1
+  backups_bucket:
+  clusterdata_bucket:
 
 run:
   path: boshrelease-ci/ci/tasks/create-manifest.sh

@@ -13,10 +13,12 @@ kvstore:
   username: ""
   password: ""
 
+<% if_p("backups.clusterdata.aws_access_key_id") do |aws_access_key_id| %>
 callbacks:
   provision_success:
     cmd: /var/vcap/jobs/broker/bin/backup_provisioned_service
     args: []
+<% end %>
 
 backends:
 <% p("servicebroker.backends.machines").each do |az, machines| %>

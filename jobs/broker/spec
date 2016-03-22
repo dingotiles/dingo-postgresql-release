@@ -9,6 +9,7 @@ templates:
   bin/monit_debugger: bin/monit_debugger
   bin/backup_provisioned_service: bin/backup_provisioned_service
   config/broker.yml.erb: config/broker.yml
+  config/backup-fog.yml.erb: config/backup-fog.yml
   data/properties.sh.erb: data/properties.sh
   helpers/ctl_setup.sh: helpers/ctl_setup.sh
   helpers/ctl_utils.sh: helpers/ctl_utils.sh
@@ -41,3 +42,16 @@ properties:
 
   servicebroker.services:
     description: The CF service broker catalog of services/plans
+
+  backups.clusterdata.aws_access_key_id:
+    description: Amazon S3 API access key
+  backups.clusterdata.aws_secret_access_key:
+    description: Amazon S3 API secret key
+  backups.clusterdata.bucket_name:
+    description: Bucket name
+  backups.clusterdata.region:
+    description: Amazon S3 region endpoint
+    default: us-east-1
+  backups.clusterdata.endpoint:
+    description: Amazon S3 API endpoint
+    default: s3.amazonaws.com

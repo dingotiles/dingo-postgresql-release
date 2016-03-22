@@ -90,8 +90,10 @@ jobs:
         bosh_syslog_port: {{bosh-lite-syslog-port}}
         aws_access_key: {{dingotiles-aws-access}}
         aws_secret_key: {{dingotiles-aws-secret}}
-        s3_bucket: {{backups-testflight-s3-bucket}}
+        backups_bucket: {{backups-testflight-backups-bucket}}
+        clusterdata_bucket: {{backups-testflight-clusterdata-bucket}}
         s3_endpoint: {{backups-testflight-s3-endpoint}}
+        region: {{backups-testflight-s3-region}}
         docker_image_image: "dingotiles/dingo-postgresql95"
         docker_image_tag: "edge"
         docker_image_source: upstream
@@ -169,7 +171,7 @@ jobs:
       params:
         aws_access_key: {{dingotiles-aws-access}}
         aws_secret_key: {{dingotiles-aws-secret}}
-        s3_bucket: {{backups-testflight-s3-bucket}}
+        s3_bucket: {{backups-testflight-backups-bucket}}
         s3_endpoint: {{backups-testflight-s3-endpoint}}
   - put: vsphere-deployment
     params:

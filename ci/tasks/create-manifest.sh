@@ -46,8 +46,10 @@ meta:
   backups:
     aws_access_key: "${aws_access_key}"
     aws_secret_key: "${aws_secret_key}"
-    s3_bucket: "${s3_bucket}"
+    backups_bucket: "${backups_bucket}"
+    clusterdata_bucket: "${clusterdata_bucket}"
     s3_endpoint: "${s3_endpoint}"
+    region: "${region}"
 EOF
 services_template=templates/services-solo-backup-s3.yml
 # services_template=templates/services-solo.yml
