@@ -13,6 +13,11 @@ kvstore:
   username: ""
   password: ""
 
+callbacks:
+  provision_success:
+    cmd: /var/vcap/jobs/broker/bin/backup_provisioned_service
+    args: []
+
 backends:
 <% p("servicebroker.backends.machines").each do |az, machines| %>
   <% machines.each do |machine| %>

@@ -4,6 +4,7 @@ packages: [patroni-broker]
 templates:
   bin/ctl: bin/ctl
   bin/monit_debugger: bin/monit_debugger
+  bin/backup_provisioned_service: bin/backup_provisioned_service
   config/broker.yml.erb: config/broker.yml
   data/properties.sh.erb: data/properties.sh
   helpers/ctl_setup.sh: helpers/ctl_setup.sh
