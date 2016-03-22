@@ -171,8 +171,10 @@ jobs:
       params:
         aws_access_key: {{dingotiles-aws-access}}
         aws_secret_key: {{dingotiles-aws-secret}}
-        s3_bucket: {{backups-testflight-backups-bucket}}
+        backups_bucket: {{backups-testflight-backups-bucket}}
+        clusterdata_bucket: {{backups-testflight-clusterdata-bucket}}
         s3_endpoint: {{backups-testflight-s3-endpoint}}
+        region: {{backups-testflight-s3-region}}
   - put: vsphere-deployment
     params:
       manifest: vsphere-manifest/manifest.yml

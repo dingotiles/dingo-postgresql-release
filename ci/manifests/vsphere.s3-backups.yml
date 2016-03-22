@@ -78,6 +78,12 @@ jobs:
       public_port: 8888
       port: 8889
       router: {hostname: 10.58.111.57}
+    backups:
+      clusterdata:
+        aws_access_key_id: (( grab meta.backups.aws_access_key ))
+        aws_secret_access_key: (( grab meta.backups.aws_secret_key ))
+        bucket_name: (( grab meta.backups.clusterdata_bucket ))
+        region: (( grab meta.backups.region ))
   resource_pool: router_z1
   instances: 1
   networks: [{name: patroni1, static_ips: [10.58.111.57]}]

@@ -13,8 +13,10 @@ outputs:
 params:
   aws_access_key:
   aws_secret_key:
-  s3_bucket:
   s3_endpoint:
+  region:
+  backups_bucket:
+  clusterdata_bucket:
 
 run:
   path: ./boshrelease-ci/ci/tasks/setup-vsphere-manifest.sh

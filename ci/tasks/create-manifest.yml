@@ -20,8 +20,8 @@ params:
   docker_image_tag: "9.5"
   aws_access_key:
   aws_secret_key:
-  s3_endpoint: s3.amazonaws.com
-  region: us-east-1
+  s3_endpoint:
+  region:
   backups_bucket:
   clusterdata_bucket:
 
