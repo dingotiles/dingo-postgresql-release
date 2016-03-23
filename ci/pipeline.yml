@@ -1,7 +1,7 @@
 ---
 groups:
 - name: pipeline
-  jobs: [rc, bosh-rc, testflight, promote-image, deploy, shipit, minor, major, patch]
+  jobs: [broker, rc, bosh-rc, testflight, promote-image, deploy, shipit, minor, major, patch]
 - name: patroni-images
   jobs: [build-pg95-base-image, build-pg95-image]
 - name: ci-image
@@ -36,6 +36,13 @@ jobs:
   - put: pg95-image-edge
     params:
       build: dockerfile
+
+- name: broker
+  public: true
+  plan:
+  - {get: broker, trigger: true}
+  - task: build-and-test
+    file: broker/ci/build.yml
 
 - name: rc
   public: true
