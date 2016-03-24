@@ -83,7 +83,7 @@ jobs:
     - {get: pg95-image-edge, trigger: true, params: {skip_download: true}}
     - {get: docker-image-registrator, trigger: true, params: {skip_download: true}}
     - {get: etcd}
-    - {get: remote-syslog}
+    - {get: simple-remote-syslog}
     - {get: lite-stemcell}
   - task: create-lite-manifest
     file: boshrelease-ci/ci/tasks/create-manifest.yml
@@ -119,7 +119,7 @@ jobs:
       releases:
         - candidate-release/*.tgz
         - etcd/*.tgz
-        - remote-syslog/*.tgz
+        - simple-remote-syslog/*.tgz
   - put: lite-errand
     params:
       manifest: manifest/manifest.yml
@@ -170,7 +170,7 @@ jobs:
     - {get: pg95-image-latest, passed: [promote-image], trigger: true, params: {skip_download: true}}
     - {get: candidate-release, passed: [testflight], trigger: true}
     - {get: etcd, passed: [testflight]}
-    - {get: remote-syslog, passed: [testflight]}
+    - {get: simple-remote-syslog, passed: [testflight]}
     - {get: vsphere-stemcell}
   - task: setup-vsphere-manifest
     file: boshrelease-ci/ci/tasks/setup-vsphere-manifest.yml
@@ -189,7 +189,7 @@ jobs:
       releases:
         - candidate-release/*.tgz
         - etcd/*.tgz
-        - remote-syslog/*.tgz
+        - simple-remote-syslog/*.tgz
   - put: vsphere-errand
     params:
       manifest: vsphere-manifest/manifest.yml
@@ -204,7 +204,7 @@ jobs:
     - {get: boshrelease, passed: [deploy]}
     - {get: candidate-release, passed: [deploy]}
     - {get: etcd, passed: [deploy]}
-    - {get: remote-syslog, passed: [deploy]}
+    - {get: simple-remote-syslog, passed: [deploy]}
     - {get: version, passed: [deploy], params: {bump: final}}
   - task: create-final-release
     file: boshrelease-ci/ci/tasks/finalize-release.yml
@@ -470,7 +470,7 @@ resources:
   source:
     repository: cloudfoundry-incubator/etcd-release
 
-- name: remote-syslog
+- name: simple-remote-syslog
   type: bosh-io-release
   source:
     repository: cloudfoundry-community/simple-remote-syslog-boshrelease

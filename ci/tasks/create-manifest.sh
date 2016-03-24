@@ -8,7 +8,7 @@ manifest_dir=$PWD/manifest
 
 dingo_postgresql_version=$(cat candidate-release/version)
 etcd_version=$(cat etcd/version)
-remote_syslog_version=$(cat remote-syslog/version)
+simple_remote_syslog_version=$(cat simple-remote-syslog/version)
 
 cat > ~/.bosh_config <<EOF
 ---
@@ -31,7 +31,7 @@ releases:
 - name: etcd
   version: ${etcd_version}
 - name: simple-remote-syslog
-  version: ${remote_syslog_version}
+  version: ${simple_remote_syslog_version}
 EOF
 
 cat > tmp/syslog.yml <<EOF
