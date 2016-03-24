@@ -15,9 +15,8 @@ kvstore:
 
 <% if_p("backups.clusterdata.aws_access_key_id") do |aws_access_key_id| %>
 callbacks:
-  clusterdata_backup:
-    cmd: /var/vcap/jobs/broker/bin/backup_provisioned_service
-    args: []
+  clusterdata_backup: {cmd: /var/vcap/jobs/broker/bin/backup_provisioned_service}
+  clusterdata_restore: {cmd: /var/vcap/jobs/broker/bin/restore_provisioned_service}
 <% end %>
 
 backends:
