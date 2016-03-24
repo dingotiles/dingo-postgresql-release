@@ -30,6 +30,15 @@ for plan_id in ${plan_ids[@]}; do
   echo creating service binding
   credentials=$(curl -sf ${BROKER_URI}/v2/service_instances/${instance_id}/service_bindings/${binding_id} -XPUT -d "{\"service_id\": \"${single_node_service_id}\", \"plan_id\": \"${plan_id}\"}")
   uri=$(echo $credentials | jq -r ".credentials.uri")
+  if [[ "${uri}X" == "X" ]]; then
+    echo "Binding credentials missing 'uri' key"
+    exit 1
+  fi
+  superuser_uri=$(echo $credentials | jq -r ".credentials.superuser_uri")
+  if [[ "${superuser_uri}X" == "X" ]]; then
+    echo "Binding credentials missing 'superuser_uri' key"
+    exit 1
+  fi
 
   # 60 seconds to allow backups to have started and be ready
   set +e
@@ -55,10 +64,31 @@ for plan_id in ${plan_ids[@]}; do
 
   pgbench -i $uri
   pgbench $uri
+  psql ${uri} -c "select * from pgbench_tellers;"
 
-  nodes=3
-  echo updating service instance to $nodes nodes
-  curl -f ${BROKER_URI}/v2/service_instances/${instance_id} -XPATCH -d "{\"service_id\": \"${single_node_service_id}\", \"plan_id\": \"${plan_id}\", \"parameters\": {\"node-count\": $nodes}}"
+  echo flush latest commits to WAL archive
+  psql ${superuser_uri} -c "select pg_switch_xlog();"
+
+  echo deleting service instance and restoring
+  curl -f ${BROKER_URI}/v2/service_instances/${instance_id}\?plan_id=${plan_id}\&service_id=${single_node_service_id} -XDELETE
+  curl -f ${BROKER_URI}/v2/service_instances/${instance_id} -XPUT -d '{}'
+
+  echo getting new service binding
+  binding_id=BINDINGID-$(date +"%s")
+  credentials=$(curl -sf ${BROKER_URI}/v2/service_instances/${instance_id}/service_bindings/${binding_id} -XPUT -d "{\"service_id\": \"${single_node_service_id}\", \"plan_id\": \"${plan_id}\"}")
+  uri=$(echo $credentials | jq -r ".credentials.uri")
+  if [[ "${uri}X" == "X" ]]; then
+    echo "Restored binding credentials missing 'uri' key"
+    exit 1
+  fi
+
+  echo Waiting 60 seconds to allow restoration of database
+  sleep 60
+  psql ${uri} -c "select * from pgbench_tellers;"
+
+  # nodes=3
+  # echo updating service instance to $nodes nodes
+  # curl -f ${BROKER_URI}/v2/service_instances/${instance_id} -XPATCH -d "{\"service_id\": \"${single_node_service_id}\", \"plan_id\": \"${plan_id}\", \"parameters\": {\"node-count\": $nodes}}"
 
   echo deleting service binding
   curl -f ${BROKER_URI}/v2/service_instances/${instance_id}/service_bindings/${binding_id}\?plan_id=${plan_id}\&service_id=${single_node_service_id} -XDELETE
