@@ -6,6 +6,7 @@ inputs:
 - name: boshrelease-ci
 - name: etcd
 - name: remote-syslog
+- name: candidate-release
 
 outputs:
 - name: manifest

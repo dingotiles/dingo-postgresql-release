@@ -6,6 +6,7 @@ set -x
 release_name=${release_name:-"dingo-postgresql"}
 manifest_dir=$PWD/manifest
 
+dingo_postgresql_version=$(cat candidate-release/version)
 etcd_version=$(cat etcd/version)
 remote_syslog_version=$(cat remote-syslog/version)
 
@@ -25,9 +26,11 @@ mkdir -p tmp
 
 cat > tmp/releases.yml <<EOF
 releases:
+- name: dingo-postgresql
+  version: ${dingo_postgresql_version}
 - name: etcd
   version: ${etcd_version}
-- name: remote-syslog
+- name: simple-remote-syslog
   version: ${remote_syslog_version}
 EOF
 
