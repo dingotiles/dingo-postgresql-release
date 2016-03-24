@@ -59,3 +59,7 @@ docker/docker-1.10.2:
   object_id: bad79415-0c1b-489f-81f6-9ac98f8f4f69
   sha: 7cd5c77dffa05a9d6b57d0fd9da6f40f6c9044bf
   size: 34892323
+cf-cli/cf-cli_6.16.1_linux_x86-64.tgz:
+  object_id: 14c97fd9-483c-4820-a0e2-216e39cfa96c
+  sha: ad1782a564c5bf47270e1bfbe0fdd1298394a1d0
+  size: 6104120

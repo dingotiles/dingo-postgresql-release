@@ -1,0 +1,20 @@
+---
+name: disaster-recovery
+packages: [cf-cli, jq]
+templates:
+  bin/run: bin/run
+properties:
+  recover.service_instance_ids:
+    description: Fixed list of Service Instance IDs to restore instead of looking them up from Cloud Foundry
+    default: []
+
+  # OR, dynamically lookup Service Instance IDs from Cloud Foundry
+  cf.api_endpoint:
+    description: 'Full URL of Cloud Foundry API'
+  cf.skip_ssl_verification:
+    description: 'Set if target CF uses self-signed certificates'
+  cf.user:
+    description: 'Name of the Cloud Foundry user for who to perform disaster recovery'
+    default: admin
+  cf.password:
+    description: 'Password of the Cloud Foundry user'

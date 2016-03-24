@@ -55,7 +55,6 @@ networks:
   - range: 10.244.22.0/24
     gateway: 10.244.22.1
     static: [10.244.22.2-10.244.22.20]
-
 - name: router1
   type: manual
   subnets:

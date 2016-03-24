@@ -53,6 +53,12 @@ jobs:
     properties:
       servicebroker:
         port: 8889 # FIXME: since haproxy isn't always running
+  - name: disaster-recovery
+    instances: 1
+    lifecycle: errand
+    templates: [{name: disaster-recovery, release: dingo-postgresql}]
+    resource_pool: router_z1
+    networks: [{name: patroni1}]
 
 resource_pools:
   - name: cell_z1
