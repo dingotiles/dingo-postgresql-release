@@ -459,7 +459,7 @@ resources:
     target: {{bosh-vsphere-target}}
     username: {{bosh-vsphere-username}}
     password: {{bosh-vsphere-password}}
-    deployment: pg-vsphere
+    deployment: dingo-postgresql-vsphere
 
 - name: vsphere-errand
   type: bosh-errand

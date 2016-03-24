@@ -1,5 +1,5 @@
 ---
-name: pg-vsphere
+name: dingo-postgresql-vsphere
 director_uuid: f635b1ba-5000-48e1-92c8-19471d20e0e4
 releases:
 - name: dingo-postgresql
