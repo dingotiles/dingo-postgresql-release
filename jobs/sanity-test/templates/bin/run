@@ -68,6 +68,8 @@ for plan_id in ${plan_ids[@]}; do
 
   echo flush latest commits to WAL archive
   psql ${superuser_uri} -c "select pg_switch_xlog();"
+  echo wait 10 seconds for WAL archive flush to complete
+  sleep 10
 
   echo deleting service instance and restoring
   curl -f ${BROKER_URI}/v2/service_instances/${instance_id}\?plan_id=${plan_id}\&service_id=${single_node_service_id} -XDELETE
