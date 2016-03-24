@@ -75,15 +75,6 @@ for plan_id in ${plan_ids[@]}; do
   curl -f ${BROKER_URI}/v2/service_instances/${instance_id}\?plan_id=${plan_id}\&service_id=${single_node_service_id} -XDELETE
   curl -f ${BROKER_URI}/v2/service_instances/${instance_id} -XPUT -d '{}'
 
-  echo getting new service binding
-  binding_id=BINDINGID-$(date +"%s")
-  credentials=$(curl -sf ${BROKER_URI}/v2/service_instances/${instance_id}/service_bindings/${binding_id} -XPUT -d "{\"service_id\": \"${single_node_service_id}\", \"plan_id\": \"${plan_id}\"}")
-  uri=$(echo $credentials | jq -r ".credentials.uri")
-  if [[ "${uri}X" == "X" ]]; then
-    echo "Restored binding credentials missing 'uri' key"
-    exit 1
-  fi
-
   echo Waiting 60 seconds to allow restoration of database
   sleep 60
   psql ${uri} -c "select * from pgbench_tellers;"
