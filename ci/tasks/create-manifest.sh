@@ -6,6 +6,9 @@ set -x
 release_name=${release_name:-"dingo-postgresql"}
 manifest_dir=$PWD/manifest
 
+etcd_version=$(cat etcd/version)
+remote_syslog_version=$(cat remote-syslog/version)
+
 cat > ~/.bosh_config <<EOF
 ---
 aliases:
@@ -19,6 +22,14 @@ EOF
 
 cd boshrelease-ci
 mkdir -p tmp
+
+cat > tmp/releases.yml <<EOF
+releases:
+- name: etcd
+  version: ${etcd_version}
+- name: remote-syslog
+  version: ${remote_syslog_version}
+EOF
 
 cat > tmp/syslog.yml <<EOF
 properties:
@@ -58,7 +69,7 @@ bosh target ${bosh_target}
 
 export DEPLOYMENT_NAME=${deployment_name}
 ./templates/make_manifest warden ${docker_image_source} ${services_template} \
-  templates/jobs-etcd.yml tmp/syslog.yml tmp/docker_image.yml tmp/backups.yml
+  templates/jobs-etcd.yml tmp/syslog.yml tmp/docker_image.yml tmp/backups.yml tmp/releases.yml
 
 cp tmp/${DEPLOYMENT_NAME}*.yml ${manifest_dir}/manifest.yml
 

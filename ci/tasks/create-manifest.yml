@@ -4,6 +4,8 @@ image: docker:///dingotiles/dingo-postgresql-release-pipeline
 
 inputs:
 - name: boshrelease-ci
+- name: etcd
+- name: remote-syslog
 
 outputs:
 - name: manifest
