@@ -4,6 +4,15 @@ packages: [cf-cli, jq]
 templates:
   bin/run: bin/run
 properties:
+  servicebroker.host:
+    description: Host for service broker
+  servicebroker.port:
+    description: Port for service broker
+  servicebroker.username:
+    description: Basic auth username for service broker
+  servicebroker.password:
+    description: Basic auth password for service broker
+
   restore.service_instance_ids:
     description: Fixed list of Service Instance IDs to restore instead of looking them up from Cloud Foundry
     default: []

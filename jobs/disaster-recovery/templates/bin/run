@@ -7,9 +7,17 @@ set -x # show commands
 export PATH=$PATH:/var/vcap/packages/cf-cli/bin
 export PATH=$PATH:/var/vcap/packages/jq/bin
 
+servicebroker=<%= p("servicebroker.host") %>
+<% if_p("servicebroker.port") do |port| %>
+servicebroker="${host}:${port}"
+<% end %>
+servicebroker_auth="<%= p('servicebroker.username') %>:<%= p('servicebroker.password') %>"
+
 function restoreServiceInstance() {
   instance_id=$1
-  echo restoring ${instance_id}
+  echo deleting and restoring ${instance_id}
+  curl -u ${servicebroker_auth} ${servicebroker}/v2/service_instances/${instance_id} -XDELETE
+  curl -u ${servicebroker_auth} ${servicebroker}/v2/service_instances/${instance_id} -XPUT -d '{}'
 }
 
 echo "<%= p('restore.service_instance_ids').inspect %>"
