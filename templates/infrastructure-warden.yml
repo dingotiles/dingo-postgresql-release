@@ -31,6 +31,10 @@ jobs:
       servicebroker:
         machines: (( grab jobs.router.networks.router1.static_ips ))
 
+properties:
+  servicebroker:
+    host: (( grab jobs.router.networks.router1.static_ips.[0] ))
+
 compilation:
   cloud_properties: {name: random}
 

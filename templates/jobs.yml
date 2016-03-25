@@ -81,6 +81,7 @@ networks:
 
 properties:
   servicebroker:
+    host: (( param "please provide servicebroker.host, such as the router IP" ))
     port: 8888
     username: starkandwayne
     password: starkandwayne
