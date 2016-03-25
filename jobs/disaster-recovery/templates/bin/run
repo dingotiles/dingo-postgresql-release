@@ -14,7 +14,7 @@ function restoreServiceInstance() {
 
 echo "<%= p('restore.service_instance_ids').inspect %>"
 <% p('restore.service_instance_ids').each do |instance_id| %>
-restoreServiceInstance "${instance_id}"
+restoreServiceInstance "<%= instance_id %>"
 <% end %>
 
 <% if_p('cf.api_endpoint', 'cf.user', 'cf.password', 'cf.org') do |cf_api_endpoint, cf_user, cf_password, cf_org| %>
