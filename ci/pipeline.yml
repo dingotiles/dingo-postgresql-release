@@ -69,7 +69,7 @@ jobs:
   - put: candidate-release
     params: {file: candidate-release/dingo-postgresql-*.tgz}
 
-- name: testflight
+- name: testflight-dr
   public: true
   serial: true
   plan:
@@ -78,6 +78,55 @@ jobs:
     - {get: boshrelease, passed: [bosh-rc], trigger: true}
     - {get: version, passed: [bosh-rc], trigger: true}
     - {get: candidate-release, passed: [bosh-rc], trigger: true}
+    - {get: pg95-image-edge, trigger: true, params: {skip_download: true}}
+    - {get: docker-image-registrator, trigger: true, params: {skip_download: true}}
+    - {get: etcd}
+    - {get: simple-remote-syslog}
+    - {get: lite-stemcell}
+  - task: create-lite-manifest
+    file: boshrelease-ci/ci/tasks/create-manifest.yml
+    params:
+      deployment_name: dingo-postgresql-testflight
+      bosh_target: {{bosh-lite-target}}
+      bosh_username: {{bosh-lite-username}}
+      bosh_password: {{bosh-lite-password}}
+      bosh_syslog_host: {{bosh-lite-syslog-host}}
+      bosh_syslog_port: {{bosh-lite-syslog-port}}
+      aws_access_key: {{dingotiles-aws-access}}
+      aws_secret_key: {{dingotiles-aws-secret}}
+      backups_bucket: {{backups-testflight-backups-bucket}}
+      clusterdata_bucket: {{backups-testflight-clusterdata-bucket}}
+      s3_endpoint: {{backups-testflight-s3-endpoint}}
+      region: {{backups-testflight-s3-region}}
+      docker_image_image: "dingotiles/dingo-postgresql95"
+      docker_image_tag: "edge"
+      docker_image_source: upstream
+      recover_service_instance_id: TESTID-1458866109
+  - put: lite-deployment
+    params:
+      manifest: manifest/manifest.yml
+      stemcells: [lite-stemcell/*.tgz]
+      releases:
+        - candidate-release/*.tgz
+        - etcd/*.tgz
+        - simple-remote-syslog/*.tgz
+  - put: lite-errand
+    params:
+      manifest: manifest/manifest.yml
+      errand: disaster-recovery
+
+- name: testflight
+  public: true
+  serial: true
+  plan:
+  - aggregate:
+    - {get: boshrelease-ci}
+    - {get: boshrelease, passed: [bosh-rc], trigger: false}
+    - {get: version, passed: [bosh-rc], trigger: false}
+    - {get: candidate-release, passed: [bosh-rc], trigger: false}
+    # - {get: boshrelease, passed: [bosh-rc], trigger: true}
+    # - {get: version, passed: [bosh-rc], trigger: true}
+    # - {get: candidate-release, passed: [bosh-rc], trigger: true}
     - {get: pg95-image-edge, trigger: true, params: {skip_download: true}}
     - {get: docker-image-registrator, trigger: true, params: {skip_download: true}}
     - {get: etcd}
