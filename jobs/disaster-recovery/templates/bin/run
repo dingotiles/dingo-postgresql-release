@@ -9,7 +9,7 @@ export PATH=$PATH:/var/vcap/packages/jq/bin
 
 servicebroker=<%= p("servicebroker.host") %>
 <% if_p("servicebroker.port") do |port| %>
-servicebroker="${host}:${port}"
+servicebroker="${servicebroker}:<%= port %>"
 <% end %>
 servicebroker_auth="<%= p('servicebroker.username') %>:<%= p('servicebroker.password') %>"
 
