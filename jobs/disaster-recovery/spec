@@ -4,7 +4,7 @@ packages: [cf-cli, jq]
 templates:
   bin/run: bin/run
 properties:
-  recover.service_instance_ids:
+  restore.service_instance_ids:
     description: Fixed list of Service Instance IDs to restore instead of looking them up from Cloud Foundry
     default: []
 

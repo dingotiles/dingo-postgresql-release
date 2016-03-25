@@ -12,8 +12,8 @@ function restoreServiceInstance() {
   echo restoring ${instance_id}
 }
 
-echo "<%= p('recover.service_instance_ids').inspect %>"
-<% p('recover.service_instance_ids').each do |instance_id| %>
+echo "<%= p('restore.service_instance_ids').inspect %>"
+<% p('restore.service_instance_ids').each do |instance_id| %>
 restoreServiceInstance "${instance_id}"
 <% end %>
 
