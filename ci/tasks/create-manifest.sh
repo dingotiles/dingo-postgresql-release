@@ -66,13 +66,14 @@ meta:
     region: "${region}"
 EOF
 
-touch tmp/recover_service_instance_ids.yml
-if [[ "${recover_service_instance_id}X" != "X" ]]; then
-  cat > tmp/recover_service_instance_ids.yml <<EOF
+touch tmp/restore_service_instance_ids.yml
+if [[ "${restore_service_instance_id}X" != "X" ]]; then
+  cat > tmp/restore_service_instance_ids.yml <<EOF
 ---
-restore:
-  service_instance_ids:
-  - ${recover_service_instance_id}
+properties:
+  restore:
+    service_instance_ids:
+    - ${restore_service_instance_ids}
 EOF
 fi
 services_template=templates/services-solo-backup-s3.yml
@@ -83,7 +84,7 @@ bosh target ${bosh_target}
 export DEPLOYMENT_NAME=${deployment_name}
 ./templates/make_manifest warden ${docker_image_source} ${services_template} \
   templates/jobs-etcd.yml tmp/syslog.yml tmp/docker_image.yml tmp/backups.yml \
-  tmp/releases.yml tmp/recover_service_instance_ids.yml
+  tmp/releases.yml tmp/restore_service_instance_ids.yml
 
 cp tmp/${DEPLOYMENT_NAME}*.yml ${manifest_dir}/manifest.yml
 

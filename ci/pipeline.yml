@@ -103,7 +103,7 @@ jobs:
       docker_image_image: "dingotiles/dingo-postgresql95"
       docker_image_tag: "edge"
       docker_image_source: upstream
-      recover_service_instance_id: TESTID-1458866109
+      restore_service_instance_id: TESTID-1458866109
   - put: lite-deployment
     params:
       manifest: manifest/manifest.yml

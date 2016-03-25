@@ -27,7 +27,7 @@ params:
   region:
   backups_bucket:
   clusterdata_bucket:
-  recover_service_instance_id: ""
+  restore_service_instance_id: ""
 
 run:
   path: boshrelease-ci/ci/tasks/create-manifest.sh
