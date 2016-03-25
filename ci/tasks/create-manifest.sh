@@ -73,9 +73,11 @@ if [[ "${restore_service_instance_id}X" != "X" ]]; then
 properties:
   restore:
     service_instance_ids:
-    - ${restore_service_instance_ids}
+    - ${restore_service_instance_id}
 EOF
 fi
+cat tmp/restore_service_instance_ids.yml
+
 services_template=templates/services-solo-backup-s3.yml
 # services_template=templates/services-solo.yml
 
