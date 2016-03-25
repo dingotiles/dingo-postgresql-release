@@ -30,9 +30,8 @@ jobs:
     - {get: pg95-base-image-latest, passed: [build-pg95-base-image], trigger: true}
   - task: prepare-dockerfile
     file: boshrelease-ci/ci/tasks/prepare-dockerfile.yml
-    config:
-      params:
-        dockerfile_root: boshrelease/images/postgresql95-patroni
+    params:
+      dockerfile_root: boshrelease/images/postgresql95-patroni
   - put: pg95-image-edge
     params:
       build: dockerfile
@@ -64,10 +63,9 @@ jobs:
     - {get: version, passed: [rc], trigger: true}
   - task: create-candidate-release
     file: boshrelease-ci/ci/tasks/create-candidate-release.yml
-    config:
-      params:
-        aws_access_key_id: {{dingotiles-aws-access}}
-        aws_secret_access_key: {{dingotiles-aws-secret}}
+    params:
+      aws_access_key_id: {{dingotiles-aws-access}}
+      aws_secret_access_key: {{dingotiles-aws-secret}}
   - put: candidate-release
     params: {file: candidate-release/dingo-postgresql-*.tgz}
 
@@ -87,31 +85,29 @@ jobs:
     - {get: lite-stemcell}
   - task: create-lite-manifest
     file: boshrelease-ci/ci/tasks/create-manifest.yml
-    config:
-      params:
-        deployment_name: dingo-postgresql-testflight
-        bosh_target: {{bosh-lite-target}}
-        bosh_username: {{bosh-lite-username}}
-        bosh_password: {{bosh-lite-password}}
-        bosh_syslog_host: {{bosh-lite-syslog-host}}
-        bosh_syslog_port: {{bosh-lite-syslog-port}}
-        aws_access_key: {{dingotiles-aws-access}}
-        aws_secret_key: {{dingotiles-aws-secret}}
-        backups_bucket: {{backups-testflight-backups-bucket}}
-        clusterdata_bucket: {{backups-testflight-clusterdata-bucket}}
-        s3_endpoint: {{backups-testflight-s3-endpoint}}
-        region: {{backups-testflight-s3-region}}
-        docker_image_image: "dingotiles/dingo-postgresql95"
-        docker_image_tag: "edge"
-        docker_image_source: upstream
+    params:
+      deployment_name: dingo-postgresql-testflight
+      bosh_target: {{bosh-lite-target}}
+      bosh_username: {{bosh-lite-username}}
+      bosh_password: {{bosh-lite-password}}
+      bosh_syslog_host: {{bosh-lite-syslog-host}}
+      bosh_syslog_port: {{bosh-lite-syslog-port}}
+      aws_access_key: {{dingotiles-aws-access}}
+      aws_secret_key: {{dingotiles-aws-secret}}
+      backups_bucket: {{backups-testflight-backups-bucket}}
+      clusterdata_bucket: {{backups-testflight-clusterdata-bucket}}
+      s3_endpoint: {{backups-testflight-s3-endpoint}}
+      region: {{backups-testflight-s3-region}}
+      docker_image_image: "dingotiles/dingo-postgresql95"
+      docker_image_tag: "edge"
+      docker_image_source: upstream
   - task: delete-testflight
     file: boshrelease-ci/ci/tasks/delete-testflight.yml
-    config:
-      params:
-        deployment_name: dingo-postgresql-testflight
-        bosh_target: {{bosh-lite-target}}
-        bosh_username: {{bosh-lite-username}}
-        bosh_password: {{bosh-lite-password}}
+    params:
+      deployment_name: dingo-postgresql-testflight
+      bosh_target: {{bosh-lite-target}}
+      bosh_username: {{bosh-lite-username}}
+      bosh_password: {{bosh-lite-password}}
   - put: lite-deployment
     params:
       manifest: manifest/manifest.yml
@@ -146,10 +142,9 @@ jobs:
 #     - {get: docker-image-registrator, passed: [testflight], trigger: true, params: {save: true}}
 #   - task: bump-image-blob
 #     file: boshrelease-ci/ci/tasks/bump-image-layers.yml
-#     config:
-#       params:
-#         aws_access_key_id: {{cfcommunity-aws-access}}
-#         aws_secret_access_key: {{cfcommunity-aws-secret}}
+#     params:
+#       aws_access_key_id: {{cfcommunity-aws-access}}
+#       aws_secret_access_key: {{cfcommunity-aws-secret}}
 #   - aggregate:
 #     - put: docker-image-pg95-patroni
 #       params:
@@ -174,14 +169,13 @@ jobs:
     - {get: vsphere-stemcell}
   - task: setup-vsphere-manifest
     file: boshrelease-ci/ci/tasks/setup-vsphere-manifest.yml
-    config:
-      params:
-        aws_access_key: {{dingotiles-aws-access}}
-        aws_secret_key: {{dingotiles-aws-secret}}
-        backups_bucket: {{backups-testflight-backups-bucket}}
-        clusterdata_bucket: {{backups-testflight-clusterdata-bucket}}
-        s3_endpoint: {{backups-testflight-s3-endpoint}}
-        region: {{backups-testflight-s3-region}}
+    params:
+      aws_access_key: {{dingotiles-aws-access}}
+      aws_secret_key: {{dingotiles-aws-secret}}
+      backups_bucket: {{backups-testflight-backups-bucket}}
+      clusterdata_bucket: {{backups-testflight-clusterdata-bucket}}
+      s3_endpoint: {{backups-testflight-s3-endpoint}}
+      region: {{backups-testflight-s3-region}}
   - put: vsphere-deployment
     params:
       manifest: vsphere-manifest/manifest.yml
@@ -208,10 +202,9 @@ jobs:
     - {get: version, passed: [deploy], params: {bump: final}}
   - task: create-final-release
     file: boshrelease-ci/ci/tasks/finalize-release.yml
-    config:
-      params:
-        aws_access_key_id: {{cfcommunity-aws-access}}
-        aws_secret_access_key: {{cfcommunity-aws-secret}}
+    params:
+      aws_access_key_id: {{cfcommunity-aws-access}}
+      aws_secret_access_key: {{cfcommunity-aws-secret}}
   - put: boshrelease
     params:
       repository: final-release-repo
