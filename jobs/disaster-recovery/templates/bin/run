@@ -15,8 +15,10 @@ servicebroker_auth="<%= p('servicebroker.username') %>:<%= p('servicebroker.pass
 
 function restoreServiceInstance() {
   instance_id=$1
-  echo deleting and restoring ${instance_id}
-  curl -u ${servicebroker_auth} ${servicebroker}/v2/service_instances/${instance_id} -XDELETE
+  # echo looking up instance ${instance_id}
+  # curl -u ${servicebroker_auth} ${servicebroker}/v2/service_instances/${instance_id}\?plan_id=${plan_id}\&service_id=${service_id} -XDELETE
+
+  echo restoring ${instance_id}
   curl -u ${servicebroker_auth} ${servicebroker}/v2/service_instances/${instance_id} -XPUT -d '{}'
 }
 
