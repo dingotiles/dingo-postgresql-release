@@ -77,9 +77,12 @@ jobs:
   plan:
   - aggregate:
     - {get: boshrelease-ci}
-    - {get: boshrelease, passed: [bosh-rc], trigger: true}
-    - {get: version, passed: [bosh-rc], trigger: true}
-    - {get: candidate-release, passed: [bosh-rc], trigger: true}
+    - {get: boshrelease, passed: [bosh-rc], trigger: false}
+    - {get: version, passed: [bosh-rc], trigger: false}
+    - {get: candidate-release, passed: [bosh-rc], trigger: false}
+    # - {get: boshrelease, passed: [bosh-rc], trigger: true}
+    # - {get: version, passed: [bosh-rc], trigger: true}
+    # - {get: candidate-release, passed: [bosh-rc], trigger: true}
     - {get: pg95-image-edge, trigger: true, params: {skip_download: true}}
     - {get: docker-image-registrator, trigger: true, params: {skip_download: true}}
     - {get: etcd}
@@ -123,12 +126,12 @@ jobs:
   plan:
   - aggregate:
     - {get: boshrelease-ci}
-    - {get: boshrelease, passed: [bosh-rc], trigger: false}
-    - {get: version, passed: [bosh-rc], trigger: false}
-    - {get: candidate-release, passed: [bosh-rc], trigger: false}
-    # - {get: boshrelease, passed: [bosh-rc], trigger: true}
-    # - {get: version, passed: [bosh-rc], trigger: true}
-    # - {get: candidate-release, passed: [bosh-rc], trigger: true}
+    # - {get: boshrelease, passed: [bosh-rc], trigger: false}
+    # - {get: version, passed: [bosh-rc], trigger: false}
+    # - {get: candidate-release, passed: [bosh-rc], trigger: false}
+    - {get: boshrelease, passed: [bosh-rc], trigger: true}
+    - {get: version, passed: [bosh-rc], trigger: true}
+    - {get: candidate-release, passed: [bosh-rc], trigger: true}
     - {get: pg95-image-edge, trigger: true, params: {skip_download: true}}
     - {get: docker-image-registrator, trigger: true, params: {skip_download: true}}
     - {get: etcd}
