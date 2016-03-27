@@ -90,9 +90,7 @@ jobs:
 - name: sanity-test
   instances: 1
   lifecycle: errand
-  templates:
-  - name: sanity-test
-    release: dingo-postgresql
+  templates: [{name: sanity-test, release: dingo-postgresql}]
   networks: [{name: patroni1}]
   resource_pool: router_z1
   properties:
@@ -106,6 +104,16 @@ jobs:
         aws_secret_key: (( grab meta.backups.aws_secret_key ))
         s3_bucket: (( grab meta.backups.backups_bucket ))
         s3_endpoint: (( grab meta.backups.s3_endpoint ))
+- name: disaster-recovery
+  instances: 1
+  lifecycle: errand
+  templates: [{name: disaster-recovery, release: dingo-postgresql}]
+  resource_pool: router_z1
+  networks: [{name: patroni1}]
+  properties:
+    servicebroker:
+      host: 10.58.111.57
+      port: 8889
 - name: etcd
   instances: 1
   templates:
