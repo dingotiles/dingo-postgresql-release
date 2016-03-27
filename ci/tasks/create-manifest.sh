@@ -66,7 +66,6 @@ meta:
     region: "${region}"
 EOF
 
-touch tmp/restore_service_instance_ids.yml
 if [[ "${restore_service_instance_id}X" != "X" ]]; then
   cat > tmp/restore_service_instance_ids.yml <<EOF
 ---
@@ -75,6 +74,10 @@ properties:
     service_id: beb5973c-e1b2-11e5-a736-c7c0b526363d
     service_instance_ids:
     - ${restore_service_instance_id}
+EOF
+else
+  cat > tmp/restore_service_instance_ids.yml <<EOF
+--- {}
 EOF
 fi
 cat tmp/restore_service_instance_ids.yml
