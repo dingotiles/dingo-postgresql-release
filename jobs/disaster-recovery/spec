@@ -16,6 +16,10 @@ properties:
   restore.service_instance_ids:
     description: Fixed list of Service Instance IDs to restore instead of looking them up from Cloud Foundry
     default: []
+  restore.service_id:
+    description: Service ID for the Service Instance IDs to clean/delete them up first
+  restore.plan_id:
+    description: Plan ID for the Service Instance IDs to clean/delete them up first
 
   # OR, dynamically lookup Service Instance IDs from Cloud Foundry
   cf.api_endpoint:
