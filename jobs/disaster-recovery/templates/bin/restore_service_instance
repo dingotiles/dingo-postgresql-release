@@ -1,0 +1,14 @@
+#!/bin/bash
+
+servicebroker=<%= p("servicebroker.host") %>
+<% if_p("servicebroker.port") do |port| %>
+servicebroker="${servicebroker}:<%= port %>"
+<% end %>
+servicebroker_auth="<%= p('servicebroker.username') %>:<%= p('servicebroker.password') %>"
+
+instance_id=$1
+echo deleting ${instance_id}
+curl -u ${servicebroker_auth} ${servicebroker}/v2/service_instances/${instance_id}\?plan_id=unknown\&service_id=unknown -XDELETE
+
+echo restoring ${instance_id}
+curl -u ${servicebroker_auth} ${servicebroker}/v2/service_instances/${instance_id} -XPUT -d '{}'

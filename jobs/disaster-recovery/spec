@@ -3,6 +3,7 @@ name: disaster-recovery
 packages: [cf-cli, jq]
 templates:
   bin/run: bin/run
+  bin/restore_service_instance: bin/restore_service_instance
 properties:
   restore.service_instance_ids:
     description: Fixed list of Service Instance IDs to restore instead of looking them up from Cloud Foundry

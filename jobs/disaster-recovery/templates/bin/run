@@ -6,24 +6,11 @@ set -x # show commands
 
 export PATH=$PATH:/var/vcap/packages/cf-cli/bin
 export PATH=$PATH:/var/vcap/packages/jq/bin
-
-servicebroker=<%= p("servicebroker.host") %>
-<% if_p("servicebroker.port") do |port| %>
-servicebroker="${servicebroker}:<%= port %>"
-<% end %>
-servicebroker_auth="<%= p('servicebroker.username') %>:<%= p('servicebroker.password') %>"
-
-function restoreServiceInstance() {
-  instance_id=$1
-  curl -u ${servicebroker_auth} ${servicebroker}/v2/service_instances/${instance_id}\?plan_id=unknown\&service_id=unknown -XDELETE
-
-  echo restoring ${instance_id}
-  curl -u ${servicebroker_auth} ${servicebroker}/v2/service_instances/${instance_id} -XPUT -d '{}'
-}
+export PATH=$PATH:/var/vcap/jobs/disaster-recovery/bin
 
 echo "<%= p('restore.service_instance_ids').inspect %>"
 <% p('restore.service_instance_ids').each do |instance_id| %>
-restoreServiceInstance "<%= instance_id %>"
+restore_service_instance "<%= instance_id %>"
 <% end %>
 
 <% if_p('cf.api_endpoint', 'cf.user', 'cf.password', 'cf.org') do |cf_api_endpoint, cf_user, cf_password, cf_org| %>
@@ -42,6 +29,6 @@ cf curl /v2/services/${service_id}/service_plans | \
   jq -r ".resources[].entity.service_instances_url" | \
   xargs -L1 cf curl | \
   jq -r ".resources[].metadata.guid" | \
-  xargs -L1 restoreServiceInstance
+  xargs -L1 restore_service_instance
 
 <% end %>
