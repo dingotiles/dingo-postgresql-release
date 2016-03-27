@@ -72,6 +72,7 @@ if [[ "${restore_service_instance_id}X" != "X" ]]; then
 ---
 properties:
   restore:
+    service_id: beb5973c-e1b2-11e5-a736-c7c0b526363d
     service_instance_ids:
     - ${restore_service_instance_id}
 EOF
