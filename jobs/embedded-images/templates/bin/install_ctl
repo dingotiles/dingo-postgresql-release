@@ -21,8 +21,6 @@ case $1 in
 
     set -x # print commands
     for image in /var/vcap/packages/*_image/*.tgz; do
-      img_dir=`dirname $image`
-      docker_tag=`cat $img_dir/docker_meta.txt`
       echo "Loading docker image $image with tag $docker_tag" >>$LOG_DIR/$JOB_NAME.stdout.log
       docker --host $docker_host \
            load -i $image \
