@@ -32,14 +32,14 @@ bosh upload release https://bosh.io/d/github.com/cloudfoundry-community/simple-r
 To use your own etcd cluster:
 
 ```
-./templates/make_manifest warden upstream templates/services-solo.yml tmp/etcd.yml
+./templates/make_manifest warden upstream templates/services-cluster.yml tmp/etcd.yml
 bosh deploy
 ```
 
 To deploy a simple one-node etcd cluster for demonstration purposes:
 
 ```
-./templates/make_manifest warden upstream templates/services-solo.yml templates/jobs-etcd.yml
+./templates/make_manifest warden upstream templates/services-cluster.yml templates/jobs-etcd.yml
 bosh deploy
 ```
 
@@ -83,7 +83,7 @@ properties:
 Then include the file in your `make_manifest` command to build your BOSH deployment manifest.
 
 ```
-./templates/make_manifest warden upstream templates/services-solo.yml templates/jobs-etcd.yml \
+./templates/make_manifest warden upstream templates/services-cluster.yml templates/jobs-etcd.yml \
   tmp/syslog.yml
 bosh deploy
 ```
@@ -94,7 +94,7 @@ Each PostgreSQL master container can continuously stream its write-ahead logs (W
 
 To enable it requires only passing in some environment variables to the Docker containers, and Patroni will use them to enable continuous archiving via [wal-e](https://github.com/wal-e/wal-e).
 
-See [templates/services-solo-backup-s3.yml](https://github.com/dingotiles/dingo-postgresql-release/blob/master/templates/services-solo-backup-s3.yml#L33-L39) for an example of the environment variables required.
+See [templates/services-cluster-backup-s3.yml](https://github.com/dingotiles/dingo-postgresql-release/blob/master/templates/services-cluster-backup-s3.yml#L33-L39) for an example of the environment variables required.
 
 To explore how this is implemented within the Docker image, see [image tutorial](https://github.com/dingotiles/dingo-postgresql-release/tree/master/images#backuprestore-from-aws).
 

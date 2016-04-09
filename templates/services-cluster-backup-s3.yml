@@ -7,26 +7,23 @@ meta:
   broker:
     services:
       - id: 'beb5973c-e1b2-11e5-a736-c7c0b526363d'
-        name: 'postgresql95'
-        description: 'Solo instance of PostgreSQL 9.5'
+        name: 'dingo-postgresql'
+        description: 'High-availability cluster of PostgreSQL 9.5'
         bindable: true
-        tags:
-          - 'postgresql95'
-          - 'postgresql'
-          - 'syslog'
+        tags: [postgresql95, postgresql]
         metadata:
-          displayName: 'postgresql 9.5'
-          longDescription: 'Solo instance of PostgreSQL 9.5'
+          displayName: 'Dingo PostgreSQL'
+          longDescription: 'High-availability cluster of PostgreSQL 9.5 with continuous backups'
           providerDisplayName: 'Dingo Tiles'
           documentationUrl: 'https://pg.dingotiles.com'
           supportUrl: 'https://slack.dingotiles.com'
         plans:
           - id: 'b96d0936-e423-11e5-accb-93d374e93368'
-            name: 'solo'
-            description: 'Solo instance of PostgreSQL with continuous backups'
+            name: 'cluster'
+            description: 'High-availability cluster of PostgreSQL with continuous backups'
             free: true
             metadata:
-              displayName: 'Solo'
+              displayName: 'Cluster with continuous backups'
             container:
               backend: 'docker'
               image: (( grab meta.docker_image.image ))

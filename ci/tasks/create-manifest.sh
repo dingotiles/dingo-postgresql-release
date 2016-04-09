@@ -82,8 +82,8 @@ EOF
 fi
 cat tmp/restore_service_instance_ids.yml
 
-services_template=templates/services-solo-backup-s3.yml
-# services_template=templates/services-solo.yml
+services_template=templates/services-cluster-backup-s3.yml
+# services_template=templates/services-cluster.yml
 
 bosh target ${bosh_target}
 
