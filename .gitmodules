@@ -4,3 +4,6 @@
 [submodule "src/dingo-postgresql-clusterdata-backup"]
 	path = src/dingo-postgresql-clusterdata-backup
 	url = https://github.com/dingotiles/dingo-postgresql-clusterdata-backup.git
+[submodule "src/dingo-postgresql-broker"]
+	path = src/dingo-postgresql-broker
+	url = git@github.com:dingotiles/dingo-postgresql-broker.git

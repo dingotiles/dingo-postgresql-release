@@ -383,7 +383,7 @@ resources:
 - name: broker
   type: git
   source:
-    uri: git@github.com:dingotiles/patroni-broker.git
+    uri: git@github.com:dingotiles/dingo-postgresql-broker.git
     branch: {{pipeline-branch}}
     private_key: {{github-private-key}}
 

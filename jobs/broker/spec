@@ -1,7 +1,7 @@
 ---
 name: broker
 packages:
-- patroni-broker
+- dingo-postgresql-broker
 - dingo-postgresql-clusterdata-backup
 - ruby
 templates:

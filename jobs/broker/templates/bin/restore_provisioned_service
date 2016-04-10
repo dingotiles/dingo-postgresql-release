@@ -3,7 +3,7 @@
 set -e # exit immediately if a simple command exits with a non-zero status
 set -u # report the usage of uninitialized variables
 
-# NOTE: this script is called by patroni-broker, not via monit as root user
+# NOTE: this script is called by dingo-postgresql-broker, not via monit as root user
 
 LOG_DIR=/var/vcap/sys/log/broker
 (
@@ -15,5 +15,5 @@ LOG_DIR=/var/vcap/sys/log/broker
   # STDIN is passed into next command
   bundle exec exe/dingo-postgresql-clusterdata-backup restore
 
-  # STDOUT is returned to patroni-broker
+  # STDOUT is returned to dingo-postgresql-broker
 ) 2>> $LOG_DIR/broker.backup_provisioned_service.log
