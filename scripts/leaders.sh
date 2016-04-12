@@ -6,7 +6,10 @@ set +x # print commands
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 cd $DIR/..
 
-ETCD_CLUSTER=${ETCD_CLUSTER:-10.244.4.2:4001}
+if [[ -z "${ETCD_CLUSTER}" ]]; then
+  echo "Requires \$ETCD_CLUSTER"
+  exit 1
+fi
 
 services=$(curl -s $ETCD_CLUSTER/v2/keys/service | jq -r ".node.nodes[].key")
 

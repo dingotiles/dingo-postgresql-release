@@ -9,7 +9,10 @@ DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 cd $DIR/..
 
 method=$1
-ETCD_CLUSTER=${ETCD_CLUSTER:-10.244.4.2:4001}
+if [[ -z "${ETCD_CLUSTER}" ]]; then
+  echo "Requires \$ETCD_CLUSTER"
+  exit 1
+fi
 
 if [[ -z "${method}" ]]; then
   echo "USAGE: ./scripts/members.sh uuid|cf [uuid|service-name]"

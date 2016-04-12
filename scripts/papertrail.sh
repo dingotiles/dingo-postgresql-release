@@ -6,7 +6,10 @@ set -e # fail fast
 # https://papertrailapp.com/groups/688143/events?q=(a65aebfc-3e73-419b-b50c-bdc0110136a1+OR+8e8f0540-8719-4d2a-9f2a-ffc02cb892dd)&r=604849041863630862-604849149376266257
 
 BASE_PAPERTRAIL=${BASE_PAPERTRAIL:-https://papertrailapp.com/groups/688143}
-ETCD_CLUSTER=${ETCD_CLUSTER:-10.244.4.2:4001}
+if [[ -z "${ETCD_CLUSTER}" ]]; then
+  echo "Requires \$ETCD_CLUSTER"
+  exit 1
+fi
 
 service_name=$1
 if [[ -z $service_name ]]; then
