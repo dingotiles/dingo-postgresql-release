@@ -30,5 +30,17 @@ backends:
   <% end %>
 <% end %>
 
+<% if_p("license_text", "cf.api", "cf.username", "cf.password", "cf.skip_ssl_validation") do |license_text, api, username, password, skip_ssl_validation| %>
+license_text: '<%= license_text %>'
+
+cf:
+  api: <%= api %>
+  username: <%= username %>
+  password: <%= password %>
+  skip_ssl_validation: <%= skip_ssl_validation %>
+<% end.else do %>
+# WARNING: license_text and cf.api etc were not provided. Defaulting to trial quota.
+<% end %>
+
 catalog:
   services: <%= JSON.pretty_generate(p('servicebroker.services')) %>

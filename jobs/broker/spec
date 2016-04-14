@@ -4,6 +4,7 @@ packages:
 - dingo-postgresql-broker
 - dingo-postgresql-clusterdata-backup
 - ruby
+- cf-cli
 templates:
   bin/ctl: bin/ctl
   bin/monit_debugger: bin/monit_debugger
@@ -54,3 +55,16 @@ properties:
     description: Amazon S3 region endpoint
   backups.clusterdata.endpoint:
     description: Amazon S3 API endpoint
+
+  license_text:
+    description: Single-line string license key to grant quota limits beyond trial quota
+  cf.api:
+    description: HTTPS endpoint to Cloud Foundry to confirm license quota
+  cf.skip_ssl_validation:
+    description: Skip SSL validation of HTTPS endpoint to Cloud Foundry to confirm license quota
+    default: false
+  cf.username:
+    description: Username for Cloud Foundry to confirm license quota
+    default: admin
+  cf.password:
+    description: Password for Cloud Foundry to confirm license quota
