@@ -138,6 +138,6 @@ So we need to manufacture the etcd data for a "recently deceased leader".
 
 ```
 curl -s ${ETCD_CLUSTER}/v2/keys/service/my_first_cluster/leader -XPUT -d 'value=dummy'
-curl -s ${ETCD_CLUSTER}/v2/keys/service/my_first_cluster/members/dummy -XPUT -d 'value="{\"conn_url\":\"postgres://replicator:replicator@192.168.99.100:40000/postgres\",\"api_url\":\"http://127.0.0.1:8008/patroni\",\"tags\":{},\"conn_address\":\"192.168.99.100:40000\",\"state\":\"running\",\"role\":\"master\",\"xlog_location\":100663392}"'
-{"action":"set","node":{"key":"/service/my_first_cluster/members/dummy","value":"\"{\\\"conn_url\\\":\\\"postgres://replicator:replicator@192.168.99.100:40000/postgres\\\",\\\"api_url\\\":\\\"http://127.0.0.1:8008/patroni\\\",\\\"tags\\\":{},\\\"conn_address\\\":\\\"192.168.99.100:40000\\\",\\\"state\\\":\\\"running\\\",\\\"role\\\":\\\"master\\\",\\\"xlog_location\\\":100663392}\"","modifiedIndex":11751,"createdIndex":11751}
+curl -s ${ETCD_CLUSTER}/v2/keys/service/my_first_cluster/members/dummy -XPUT -d 'value="{\"conn_url\":\"postgres://dvw7DJgqzFBJC8:jkT3TTNebfrh6C@192.168.99.100:40000/postgres\",\"api_url\":\"http://127.0.0.1:8008/patroni\",\"tags\":{},\"conn_address\":\"192.168.99.100:40000\",\"state\":\"running\",\"role\":\"master\",\"xlog_location\":100663392}"'
+{"action":"set","node":{"key":"/service/my_first_cluster/members/dummy","value":"\"{\\\"conn_url\\\":\\\"postgres://dvw7DJgqzFBJC8:jkT3TTNebfrh6C@192.168.99.100:40000/postgres\\\",\\\"api_url\\\":\\\"http://127.0.0.1:8008/patroni\\\",\\\"tags\\\":{},\\\"conn_address\\\":\\\"192.168.99.100:40000\\\",\\\"state\\\":\\\"running\\\",\\\"role\\\":\\\"master\\\",\\\"xlog_location\\\":100663392}\"","modifiedIndex":11751,"createdIndex":11751}
 ```

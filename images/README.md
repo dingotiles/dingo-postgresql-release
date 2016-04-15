@@ -243,7 +243,7 @@ The output may look like:
 
 ```
 {
-  "conn_url": "postgres://replicator:replicator@10.244.21.6:40000/postgres",
+  "conn_url": "postgres://dvw7DJgqzFBJC8:jkT3TTNebfrh6C@10.244.21.6:40000/postgres",
   "api_url": "http://127.0.0.1:8008/patroni",
   "tags": {},
   "conn_address": "192.168.99.100:40000",
@@ -258,7 +258,7 @@ The `conn_address` field is from unmerged patroni [PR #91](https://github.com/za
 The `conn_url` represents how replicas can connect to the current master. It can be passed directly to `psql` or using the admin username password we can confirm we can connect to the server using credentials above:
 
 ```
-$ psql postgres://replicator:replicator@${HOST_IP}:40000/postgres
+$ psql postgres://dvw7DJgqzFBJC8:jkT3TTNebfrh6C@${HOST_IP}:40000/postgres
 psql (9.5.1)
 Type "help" for help.
 
@@ -390,7 +390,7 @@ Confirm the additional container has added itself to the etcd list of members:
 ```
 curl -s ${ETCD_CLUSTER}/v2/keys/service/my_first_cluster/members | jq -r ".node.nodes[].value" | jq .
 {
-  "conn_url": "postgres://replicator:replicator@10.244.21.6:40000/postgres",
+  "conn_url": "postgres://dvw7DJgqzFBJC8:jkT3TTNebfrh6C@10.244.21.6:40000/postgres",
   "api_url": "http://127.0.0.1:8008/patroni",
   "tags": {},
   "conn_address": "10.244.21.6:40000",
@@ -399,7 +399,7 @@ curl -s ${ETCD_CLUSTER}/v2/keys/service/my_first_cluster/members | jq -r ".node.
   "xlog_location": 50331744
 }
 {
-  "conn_url": "postgres://replicator:replicator@10.244.21.6:40001/postgres",
+  "conn_url": "postgres://dvw7DJgqzFBJC8:jkT3TTNebfrh6C@10.244.21.6:40001/postgres",
   "api_url": "http://127.0.0.1:8008/patroni",
   "tags": {},
   "conn_address": "10.244.21.6:40001",

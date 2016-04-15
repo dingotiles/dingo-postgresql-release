@@ -22,7 +22,7 @@ if [[ "${pg_uri}X" == "X" || "${pg_uri}" == "null" ]]; then
   exit 1
 fi
 
-superuser_uri=$(echo ${pg_uri} | sed -e "s/replicator:replicator@/postgres:starkandwayne@/g")
+superuser_uri=$(echo ${pg_uri} | sed -e "s/dvw7DJgqzFBJC8:jkT3TTNebfrh6C@/postgres:starkandwayne@/g")
 
 set -x
 
