@@ -136,14 +136,14 @@ postgresql:
   pg_hba:
   - host all all 0.0.0.0/0 md5
   - hostssl all all 0.0.0.0/0 md5
-  - host replication replicator 0.0.0.0/0 md5
+  - host dvw7DJgqzFBJC8 jkT3TTNebfrh6C 0.0.0.0/0 md5
   replication: # replication username, user will be created during initialization
-    username: replicator
-    password: replicator
+    username: dvw7DJgqzFBJC8
+    password: jkT3TTNebfrh6C
     network:  127.0.0.1/32
   superuser:
     username: postgres
-    password: starkandwayne # password for postgres user. It would be set during initialization
+    password: Tof2gNVZMz6Dun # password for postgres user. It would be set during initialization
   admin: # user will be created during initialization. It would have CREATEDB and CREATEROLE privileges
     username: ${POSTGRES_USERNAME}
     password: ${POSTGRES_PASSWORD}
