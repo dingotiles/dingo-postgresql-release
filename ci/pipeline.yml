@@ -347,7 +347,7 @@ resources:
     uri: git@github.com:dingotiles/dingo-postgresql-release.git
     branch: {{pipeline-branch}}
     private_key: {{github-private-key}}
-    paths: [jobs/*, templates/*, src/*]
+    paths: [packages/*, jobs/*, templates/*, src/*]
 
 - name: boshrelease-ci
   type: git
