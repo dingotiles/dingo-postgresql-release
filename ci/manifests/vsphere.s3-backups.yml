@@ -177,9 +177,9 @@ properties:
     ssl_enabled: true
     protocol: https
     services: &services
-    - id: beb5973c-e1b2-11e5-a736-c7c0b526363d
-      name: 'dingo-postgresql'
+    - name: 'dingo-postgresql'
       description: 'High-availability cluster of PostgreSQL 9.5'
+      id: beb5973c-e1b2-11e5-a736-c7c0b526363d
       bindable: true
       metadata:
         displayName: 'Dingo PostgreSQL'
@@ -189,9 +189,9 @@ properties:
         supportUrl: 'https://slack.dingotiles.com'
       tags: [postgresql95, postgresql]
       plans:
-      - id: 1545e30e-6dc3-11e5-826a-6c4008a663f0
-        name: 'cluster'
+      - name: 'cluster'
         description: 'High-availability cluster of PostgreSQL with continuous backups'
+        id: b96d0936-e423-11e5-accb-93d374e93368
         free: true
         metadata:
           displayName: 'Cluster with continuous backups'

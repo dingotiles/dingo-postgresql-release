@@ -152,7 +152,6 @@ properties:
     ssl_enabled: true
     protocol: https
     services: &services
-    services: &services
     - name: dingo-postgresql
       description: Dedicated PostgreSQL 9.5
       id: beb5973c-e1b2-11e5-a736-c7c0b526363d
