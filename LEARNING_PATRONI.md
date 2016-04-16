@@ -62,7 +62,7 @@ Looking up information for a member reveals information for that node including 
 ```
 curl -s ${ETCD_CLUSTER}/v2/keys/service/batman/members/postgresql0 | jq -r '.node.value' | jq
 {
-  "conn_url": "postgres://replicator:rep-pass@127.0.0.1:5432/postgres",
+  "conn_url": "postgres://dvw7DJgqzFBJC8:jkT3TTNebfrh6C@127.0.0.1:5432/postgres",
   "api_url": "http://127.0.0.1:8008/patroni",
   "tags": {
     "nofailover": false,
@@ -78,7 +78,7 @@ curl -s ${ETCD_CLUSTER}/v2/keys/service/batman/members/postgresql0 | jq -r '.nod
 We can connect to the database with the `conn_url`:
 
 ```
-psql postgres://replicator:rep-pass@127.0.0.1:5432/postgres
+psql postgres://dvw7DJgqzFBJC8:jkT3TTNebfrh6C@127.0.0.1:5432/postgres
 psql (9.5.1)
 Type "help" for help.
 
