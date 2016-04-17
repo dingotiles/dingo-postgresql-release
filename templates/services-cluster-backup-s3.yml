@@ -21,7 +21,7 @@ meta:
         plans:
           - name: cluster
             description: Dedicated, highly-available cluster that is continously archived
-            id: b96d0936-e423-11e5-accb-93d374e93368
+            id: 1545e30e-6dc3-11e5-826a-6c4008a663f0
             free: true
             metadata:
               displayname: Cluster
