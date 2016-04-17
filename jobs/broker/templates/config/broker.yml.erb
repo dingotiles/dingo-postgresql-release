@@ -30,16 +30,19 @@ backends:
   <% end %>
 <% end %>
 
-<% if_p("license_text", "cf.api_url", "cf.admin_username", "cf.admin_password", "cf.skip_ssl_validation") do |license_text, api_url, admin_username, admin_password, skip_ssl_validation| %>
+<% if_p("license_text") do |license_text| %>
 license_text: '<%= license_text %>'
-
+<% end.else do %>
+# WARNING: license_text was not provided. Defaulting to trial quota.
+<% end %>
+<% if_p("cf.api_url", "cf.admin_username", "cf.admin_password", "cf.skip_ssl_validation") do |api_url, admin_username, admin_password, skip_ssl_validation| %>
 cf:
   api: <%= api_url %>
   username: <%= admin_username %>
   password: <%= admin_password %>
   skip_ssl_validation: <%= skip_ssl_validation %>
 <% end.else do %>
-# WARNING: license_text and cf.api etc were not provided. Defaulting to trial quota.
+# WARNING: cf.api etc were not provided.
 <% end %>
 
 catalog:
