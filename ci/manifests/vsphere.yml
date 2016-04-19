@@ -126,15 +126,6 @@ networks:
     cloud_properties:
       name: net-10-58-111-0
 properties:
-  remote_syslog:
-    address: logs.papertrailapp.com
-    port: 25374
-    short_hostname: true
-  docker:
-    log_driver: syslog
-    log_options:
-    - syslog-address=udp://logs.papertrailapp.com:25374
-    - tag="{{.Name}}"
   cf:
     api_url: https://api.10.244.0.34.xip.io
   etcd:

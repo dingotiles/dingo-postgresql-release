@@ -17,6 +17,8 @@ params:
   region:
   backups_bucket:
   clusterdata_bucket:
+  syslog_host:
+  syslog_port:
 
 run:
   path: ./boshrelease-ci/ci/tasks/setup-vsphere-manifest.sh

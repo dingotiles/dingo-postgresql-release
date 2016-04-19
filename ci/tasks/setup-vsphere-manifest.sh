@@ -18,6 +18,19 @@ meta:
     region: "${region}"
 EOF
 
+cat > tmp/syslog.yml <<EOF
+properties:
+  remote_syslog:
+    address: ${syslog_host}
+    port: "${syslog_port}"
+    short_hostname: true
+  docker:
+    log_driver: syslog
+    log_options:
+    - syslog-address=udp://${syslog_host}:${syslog_port}
+    - tag="{{.Name}}"
+EOF
+
 cat > tmp/release_version.yml <<EOF
 ---
 meta:
@@ -26,7 +39,9 @@ EOF
 
 spruce merge --prune meta \
   ci/manifests/vsphere.s3-backups.yml \
-  tmp/backups.yml tmp/release_version.yml \
+  tmp/backups.yml \
+  tmp/syslog.yml \
+  tmp/release_version.yml \
     > ${output_manifest}
 
 cat ${output_manifest}
