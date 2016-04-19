@@ -1,0 +1,22 @@
+#!/bin/bash
+
+set -u
+set -e
+
+uri=$1
+value=$2
+
+echo Testing basic storage
+
+psql $uri -c 'DROP TABLE IF EXISTS sanitytable;'
+psql $uri -c 'CREATE TABLE sanitytable(value text);'
+psql $uri -c "INSERT INTO sanitytable VALUES ('$value');"
+psql $uri -c 'SELECT value FROM sanitytable;' | grep $value || {
+  echo Could not store and retrieve value in cluster!
+  exit 1
+}
+
+echo Running pgbench
+
+pgbench -i $uri
+pgbench $uri
