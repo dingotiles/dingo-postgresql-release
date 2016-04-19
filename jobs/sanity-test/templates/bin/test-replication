@@ -1,0 +1,14 @@
+#!/bin/bash
+
+set -u
+set -e
+
+instance_id=$1
+
+leader_id=$(curl -s ${ETCD}/v2/keys/service/${instance_id}/leader | jq -r '.node.value')
+leader_con=$(curl -s ${ETCD}/v2/keys/service/${instance_id}/members/${leader_id} | jq -r '.node.value' | jq -r '.conn_url')
+
+psql $leader_con -c 'select * from pg_stat_replication;' | grep '0 rows'  && {
+  echo No replicas connected to leader
+  exit 1
+}
