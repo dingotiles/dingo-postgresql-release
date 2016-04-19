@@ -3,6 +3,8 @@
 set -u
 set -e
 
+echo Testing replication
+
 instance_id=$1
 
 leader_id=$(curl -s ${ETCD}/v2/keys/service/${instance_id}/leader | jq -r '.node.value')
@@ -12,3 +14,20 @@ psql $leader_con -c 'select * from pg_stat_replication;' | grep '0 rows'  && {
   echo No replicas connected to leader
   exit 1
 }
+
+echo Replicators have registered with leader
+
+psql $leader_con -c 'DROP TABLE IF EXISTS replication'
+psql $leader_con -c 'CREATE TABLE replication(value text);'
+psql $leader_con -c "INSERT INTO replication VALUES ('replicate-me');"
+
+sleep 1
+
+curl -s $ETCD/v2/keys/service/INSTANCE_BLA/members | jq -r '.node.nodes[].value' | \
+  while read info; do
+    con_url=$(echo $info | jq -r '.conn_url')
+    psql $con_url -c "SELECT * FROM replication" | grep 'replicate-me' || {
+      echo Cluster is not replicating
+      exit 1
+    }
+  done
