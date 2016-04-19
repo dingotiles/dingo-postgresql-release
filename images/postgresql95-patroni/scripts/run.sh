@@ -134,9 +134,6 @@ postgresql:
   #   username: postgres
   #   password: starkandwayne
   pg_hba:
-  # Allow any user from any host to connect to database
-  # "postgres" if the user's password is correctly supplied.
-  # TYPE    DATABASE  USER    ADDRESS   METHOD
   - host    postgres  all     0.0.0.0/0 md5
   - hostssl postgres  all     0.0.0.0/0 md5
   - host    replication  dvw7DJgqzFBJC8 0.0.0.0/0 md5
