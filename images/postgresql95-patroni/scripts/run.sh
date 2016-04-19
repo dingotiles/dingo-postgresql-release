@@ -139,6 +139,7 @@ postgresql:
   # TYPE    DATABASE  USER    ADDRESS   METHOD
   - host    postgres  all     0.0.0.0/0 md5
   - hostssl postgres  all     0.0.0.0/0 md5
+  - host    replication  dvw7DJgqzFBJC8 0.0.0.0/0 md5
   replication: # replication username, user will be created during initialization
     username: dvw7DJgqzFBJC8
     password: jkT3TTNebfrh6C
