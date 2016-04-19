@@ -3,6 +3,9 @@ name: sanity-test
 packages: [jq, postgresql-9.4]
 templates:
   bin/run: bin/run
+  bin/test-replication: bin/test-replication
+  bin/test-storage: bin/test-storage
+  bin/create-service: bin/create-service
   helpers/ctl_setup.sh: helpers/ctl_setup.sh
   helpers/ctl_utils.sh: helpers/ctl_utils.sh
 properties:
