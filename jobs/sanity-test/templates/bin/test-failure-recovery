@@ -1,0 +1,29 @@
+#!/bin/bash
+
+service_id=$1
+plan_id=$2
+instance_id=$3
+binding_id=$4
+uri=$5
+
+# psql ${superuser_uri} -c "select pg_switch_xlog();"
+
+echo Testing database restoration
+
+backups_lines=$(curl -sf ${ETCD_CLUSTER}/v2/keys/service/${instance_id}/wale-backup-list | jq -r .node.value | wc -l)
+
+# if [[ $backups_lines -lt 2 ]]; then
+#   echo "No backups have been written!"
+#   exit 1
+# fi
+
+echo Deleting service instance
+curl -sf ${BROKER_URI}/v2/service_instances/${instance_id}\?plan_id=${plan_id}\&service_id=${service_id} -XDELETE
+
+echo Recreating service instance
+curl -f ${BROKER_URI}/v2/service_instances/${instance_id} -XPUT -d '{}'
+
+echo Waiting 60 seconds to allow restoration of database
+sleep 60
+
+psql $uri -c 'SELECT * FROM sanitytest;'
