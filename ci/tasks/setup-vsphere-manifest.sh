@@ -29,6 +29,8 @@ properties:
     log_options:
     - syslog-address=udp://${syslog_host}:${syslog_port}
     - tag="{{.Name}}"
+  haproxy:
+    syslog: ${syslog_host}:${syslog_port}
 EOF
 
 cat > tmp/release_version.yml <<EOF
