@@ -43,7 +43,6 @@ for plan_id in ${plan_ids[@]}; do
   # 60 seconds to allow backups to have started and be ready
   set +e
   set +x # silence commands
-  error_code=x
   i="0"
   backups_lines="0"
   while [[ $i -lt 60 ]] && [[ $backups_lines -lt 2 ]]; do
@@ -62,7 +61,22 @@ for plan_id in ${plan_ids[@]}; do
   # display wal-e backup status
   curl ${ETCD_CLUSTER}/v2/keys/service/${instance_id}/wale-backup-list | jq -r .node.value
 
-  pgbench -i $uri
+  i="0"
+  error_code=1
+  while [[ $i -lt 10 ]] && [[ $error_code -gt 0 ]]; do
+    i=$[$i+1]
+    if [[ $i -gt 1 ]]; then
+      echo waiting for cluster to be accessible $i
+      sleep 1s
+    fi
+    pgbench -i $uri
+    error_code=$?
+  done
+  if [[ $error_code -gt 0 ]]; then
+    echo "Backups working, but cannot access cluster (pgbench -i failed for 10s)"
+    exit $error_code
+  fi
+
   pgbench $uri
   psql ${uri} -c "select * from pgbench_tellers;"
 
