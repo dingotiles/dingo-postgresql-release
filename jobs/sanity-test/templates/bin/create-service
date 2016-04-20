@@ -2,6 +2,7 @@
 
 set -u
 set -e
+set -x
 
 info() {
   echo "$@ " >&2

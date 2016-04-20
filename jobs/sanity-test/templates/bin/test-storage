@@ -2,6 +2,7 @@
 
 set -u
 set -e
+set -x
 
 uri=$1
 

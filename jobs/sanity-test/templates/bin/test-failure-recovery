@@ -1,5 +1,9 @@
 #!/bin/bash
 
+set -e
+set -u
+set -x
+
 service_id=$1
 plan_id=$2
 instance_id=$3

@@ -2,7 +2,7 @@
 
 set -u
 set -e
-
+set -x
 
 service_id=$1
 plan_id=$2
