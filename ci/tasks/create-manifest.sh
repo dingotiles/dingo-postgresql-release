@@ -45,6 +45,8 @@ properties:
     log_options:
     - (( concat "syslog-address=udp://" properties.remote_syslog.address ":" properties.remote_syslog.port ))
     - tag="{{.Name}}"
+  haproxy:
+    syslog: (( concat properties.remote_syslog.address ":" properties.remote_syslog.port ))
 EOF
 
 cat > tmp/docker_image.yml <<EOF
