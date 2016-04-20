@@ -26,3 +26,6 @@ properties:
   servicebroker.port:
     description: broker process runs on this port
     default: 8889
+
+  haproxy.syslog:
+    description: Endpoint for sending haproxy logs

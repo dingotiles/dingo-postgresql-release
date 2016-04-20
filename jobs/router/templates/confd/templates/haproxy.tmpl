@@ -1,5 +1,9 @@
 global
 	maxconn 100
+  <% if_p('haproxy.syslog') do |endpoint| %>
+  log <%= endpoint %> local0
+  log-send-hostname
+  <% end %>
 
 defaults
 	log	global
