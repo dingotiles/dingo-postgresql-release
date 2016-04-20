@@ -12,7 +12,7 @@ create_instance() {
   local plan_id=$2
   local instance_id=$3
   info creating service instance ${instance_id} for plan ${plan_id}
-  curl -sf ${BROKER_URI}/v2/service_instances/${instance_id} \
+  curl -f ${BROKER_URI}/v2/service_instances/${instance_id} \
        -XPUT \
        -d "{\"service_id\": \"${service_id}\", \"plan_id\": \"${plan_id}\"}" \
        >&2 || {

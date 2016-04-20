@@ -1,7 +1,7 @@
 #!/bin/bash
 
-set -u
 set -e
+set -u
 
 echo Testing replication
 
@@ -10,24 +10,39 @@ instance_id=$1
 leader_id=$(curl -s ${ETCD}/v2/keys/service/${instance_id}/leader | jq -r '.node.value')
 leader_con=$(curl -s ${ETCD}/v2/keys/service/${instance_id}/members/${leader_id} | jq -r '.node.value' | jq -r '.conn_url')
 
-psql $leader_con -c 'select * from pg_stat_replication;' | grep '0 rows'  && {
-  echo No replicas connected to leader
+replicators_found=''
+for ((n=0;n<30;n++)); do
+  replication_table=$(psql ${leader_con} -c 'select * from pg_stat_replication;')
+  if echo ${replication_table} | grep '0 rows'; then
+    replicators_found='false'
+    sleep 1
+  else
+    replicators_found='true'
+    break
+  fi
+done
+
+if [[ "${replicators_found}" != 'true' ]]; then
+  echo No replicators registered with leader
   exit 1
-}
+fi
 
 echo Replicators have registered with leader
 
-psql $leader_con -c 'DROP TABLE IF EXISTS replication'
-psql $leader_con -c 'CREATE TABLE replication(value text);'
-psql $leader_con -c "INSERT INTO replication VALUES ('replicate-me');"
+psql ${leader_con} -c 'DROP TABLE IF EXISTS sanitytest'
+psql ${leader_con} -c 'CREATE TABLE sanitytest(value text);'
+psql ${leader_con} -c "INSERT INTO sanitytest VALUES ('replication-test');"
 
 sleep 1
 
-curl -s $ETCD/v2/keys/service/INSTANCE_BLA/members | jq -r '.node.nodes[].value' | \
+curl -s ${ETCD}/v2/keys/service/${instance_id}/members | \
+  jq -r '.node.nodes[].value' | \
   while read info; do
-    con_url=$(echo $info | jq -r '.conn_url')
-    psql $con_url -c "SELECT * FROM replication" | grep 'replicate-me' || {
-      echo Cluster is not replicating
-      exit 1
-    }
-  done
+  con_url=$(echo ${info} | jq -r '.conn_url')
+  psql ${con_url} -c "SELECT * FROM sanitytest" | grep 'replication-test' || {
+    echo Cluster is not replicating to connection $con_url
+    exit 1
+  }
+done
+
+echo Replication successfull!

@@ -5,17 +5,34 @@ plan_id=$2
 instance_id=$3
 binding_id=$4
 uri=$5
-
-# psql ${superuser_uri} -c "select pg_switch_xlog();"
+superuser_uri=$6
 
 echo Testing database restoration
 
-backups_lines=$(curl -sf ${ETCD_CLUSTER}/v2/keys/service/${instance_id}/wale-backup-list | jq -r .node.value | wc -l)
+for ((n=0;n<60;n++)); do
+  backups_lines=$(curl -sf ${ETCD}/v2/keys/service/${instance_id}/wale-backup-list | jq -r .node.value | wc -l)
+  if [[ $backups_lines -lt 2 ]]; then
+    echo "Waiting for first backups to be written $n"
+    sleep 5
+  else
+    break
+  fi
+done
 
-# if [[ $backups_lines -lt 2 ]]; then
-#   echo "No backups have been written!"
-#   exit 1
-# fi
+if [[ $backups_lines -lt 2 ]]; then
+  echo "No backups are being written"
+  exit 1
+fi
+
+echo Backups are being written
+# display wal-e backup status
+curl -s ${ETCD}/v2/keys/service/${instance_id}/wale-backup-list | jq -r .node.value
+
+psql ${uri} -c 'DROP TABLE IF EXISTS sanitytest;'
+psql ${uri} -c 'CREATE TABLE sanitytest(value text);'
+psql ${uri} -c "INSERT INTO sanitytest VALUES ('test-failure-recovery');"
+
+psql ${superuser_uri} -c "select pg_switch_xlog();"
 
 echo Deleting service instance
 curl -sf ${BROKER_URI}/v2/service_instances/${instance_id}\?plan_id=${plan_id}\&service_id=${service_id} -XDELETE
@@ -26,4 +43,9 @@ curl -f ${BROKER_URI}/v2/service_instances/${instance_id} -XPUT -d '{}'
 echo Waiting 60 seconds to allow restoration of database
 sleep 60
 
-psql $uri -c 'SELECT * FROM sanitytest;'
+psql ${uri} -c 'SELECT * FROM sanitytest;' | grep 'test-failure-recovery' || {
+  echo Database did not restore
+  exit 1
+}
+
+echo Database restored successfully!
