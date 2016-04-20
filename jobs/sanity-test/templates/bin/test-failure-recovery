@@ -13,7 +13,7 @@ for ((n=0;n<60;n++)); do
   backups_lines=$(curl -sf ${ETCD}/v2/keys/service/${instance_id}/wale-backup-list | jq -r .node.value | wc -l)
   if [[ $backups_lines -lt 2 ]]; then
     echo "Waiting for first backups to be written $n"
-    sleep 5
+    sleep 1
   else
     break
   fi
