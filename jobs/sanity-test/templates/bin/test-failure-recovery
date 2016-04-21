@@ -36,7 +36,8 @@ psql ${uri} -c 'DROP TABLE IF EXISTS sanitytest;'
 psql ${uri} -c 'CREATE TABLE sanitytest(value text);'
 psql ${uri} -c "INSERT INTO sanitytest VALUES ('test-failure-recovery');"
 
-psql ${uri} -c "select * from pgbench_tellers;"
+psql ${uri} -c "select * from sanitytest;"
+# psql ${uri} -c "select * from pgbench_tellers;"
 
 echo flush latest commits to WAL archive
 psql ${superuser_uri} -c "select pg_switch_xlog();"
@@ -52,7 +53,8 @@ curl -sf ${BROKER_URI}/v2/service_instances/${instance_id} -XPUT -d '{}'
 echo Waiting 60 seconds to allow restoration of database
 sleep 60
 
-psql ${uri} -c "SELECT * from pgbench_tellers;"
+# psql ${uri} -c "SELECT * from pgbench_tellers;"
+psql ${uri} -c "SELECT * from sanitytest;"
 psql ${uri} -c 'SELECT * FROM sanitytest;' | grep 'test-failure-recovery' || {
   echo Database did not restore
   exit 1
