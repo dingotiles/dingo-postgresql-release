@@ -6,12 +6,14 @@ set -x # print commands
 
 # pipe stderr to stdout so it all reads chronologically
 exec 2>&1
-
 # Setup env vars and folders for the webapp_ctl script
 source /var/vcap/jobs/sanity-test/helpers/ctl_setup.sh 'sanity-test'
 export PATH=/var/vcap/jobs/sanity-test/bin:$PATH
 
 EXITSTATUS=0
+
+# Force mtu of 1500 incase icmp is blocked by sg/acl prohibiting mtu discovery
+sudo ip link set dev eth0 mtu 1500
 
 export BROKER_URI=http://<%= p("servicebroker.username") %>:<%= p("servicebroker.password") %>@<%= p("servicebroker.machines").first %>:<%= p("servicebroker.port") %>
 export ETCD=<%= p("etcd.machines").first %>:4001
