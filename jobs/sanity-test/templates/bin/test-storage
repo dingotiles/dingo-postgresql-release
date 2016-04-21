@@ -16,10 +16,8 @@ psql ${uri} -c 'SELECT value FROM sanitytest;' | grep 'storage-test' || {
   exit 1
 }
 
-# echo Running pgbench
-# pgbench -i ${uri}
-# pgbench ${uri}
-
-echo WARNING: Skipping pgbench...
+echo Running pgbench
+pgbench -i ${uri}
+pgbench ${uri}
 
 echo Successfully stored data!
