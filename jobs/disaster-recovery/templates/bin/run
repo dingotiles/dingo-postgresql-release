@@ -23,7 +23,7 @@ cf login ${skip_ssl:-''} \
   -p <%= p(cf_password) %> \
   -o <%= p(cf_org) %>
 
-service_id=<%= p("servicebroker.service_id") %>
+service_id=<%= p("servicebroker.service_broker_guid") %>
 echo Looking up service instances for all plans for dingo-postgresql $service_id
 cf curl /v2/services/${service_id}/service_plans | \
   jq -r ".resources[].entity.service_instances_url" | \
