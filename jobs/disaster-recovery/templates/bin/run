@@ -13,15 +13,14 @@ echo "<%= p('restore.service_instance_ids').inspect %>"
 restore_service_instance "<%= instance_id %>"
 <% end %>
 
-<% if_p('cf.api_endpoint', 'cf.user', 'cf.password', 'cf.org') do |cf_api_endpoint, cf_user, cf_password, cf_org| %>
+<% if_p('cf.api_endpoint', 'cf.user', 'cf.password') do |cf_api_endpoint, cf_user, cf_password| %>
 <% if_p('cf.skip_ssl_verification') do %>
 skip_ssl="--skip-ssl-validation "
 <% end %>
 cf login ${skip_ssl:-''} \
-  -a <%= cf_api_endpoint %> \
-  -u <%= p(cf_user) %> \
-  -p <%= p(cf_password) %> \
-  -o <%= p(cf_org) %>
+  -a <%= p('cf.api_endpoint') %> \
+  -u <%= p('cf.user') %> \
+  -p <%= p('cf.password') %>
 
 service_id=<%= p("servicebroker.service_broker_guid") %>
 echo Looking up service instances for all plans for dingo-postgresql $service_id
