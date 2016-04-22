@@ -44,7 +44,7 @@ else
   # exit 1
 fi
 
-running_service_instances=($(curl -s ${ETCD_CLUSTER}/v2/keys/service | jq -r ".node.nodes[].key" | sed -e 's%/service/%%'))
+running_service_instances=($(curl -s ${ETCD_CLUSTER}/v2/keys/serviceinstances | jq -r ".node.nodes[].key" | sed -e 's%/serviceinstances/%%'))
 
 for running in "${running_service_instances[@]}"; do
   found_requested_service_instance=0
