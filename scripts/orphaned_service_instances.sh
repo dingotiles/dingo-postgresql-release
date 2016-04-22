@@ -6,7 +6,7 @@ set +e # fail fast
 set +x # print commands
 
 # global GUID for "cluster" service plan
-service_plan_guid=${service_plan_guid:-1545e30e-6dc3-11e5-826a-6c4008a663f0}
+SERVICE_PLAN_GUID=${SERVICE_PLAN_GUID:-1545e30e-6dc3-11e5-826a-6c4008a663f0}
 ETCD_CLUSTER=${ETCD_CLUSTER:-$ETCD_HOST_PORT}
 if [[ -z $ETCD_CLUSTER ]]; then
   echo "Requires \$ETCD_CLUSTER or \$ETCD_HOST_PORT"
@@ -18,12 +18,10 @@ cf_target=$(cat ~/.cf/config.json | jq -r .Target)
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 cd $DIR/..
 
-# cf curl /v2/service_plans
-# cf curl /v2/service_plans/${service_plan_guid}
-if [[ "$(cf curl /v2/service_plans/${service_plan_guid}/service_instances | jq -r .error_code)" == "null" ]]; then
-  requested_service_instances=($(cf curl /v2/service_plans/${service_plan_guid}/service_instances | jq -r ".resources[].metadata.guid"))
+if [[ "$(cf curl /v2/service_plans/${SERVICE_PLAN_GUID}/service_instances | jq -r .error_code)" == "null" ]]; then
+  requested_service_instances=($(cf curl /v2/service_plans/${SERVICE_PLAN_GUID}/service_instances | jq -r ".resources[].metadata.guid"))
 else
-  echo "Service plan ${service_plan_guid} is not registered on ${cf_target}"
+  echo "Service plan ${SERVICE_PLAN_GUID} is not registered on ${cf_target}"
   cf target
   exit 1
 fi
