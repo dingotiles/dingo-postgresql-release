@@ -11,9 +11,12 @@ instance_id=$1
 leader_id=$(curl -s ${ETCD}/v2/keys/service/${instance_id}/leader | jq -r '.node.value')
 leader_con=$(curl -s ${ETCD}/v2/keys/service/${instance_id}/members/${leader_id} | jq -r '.node.value' | jq -r '.conn_url')
 
+set +x
 replicators_found=''
 for ((n=0;n<30;n++)); do
+  set -x
   replication_table=$(psql ${leader_con} -c 'select * from pg_stat_replication;')
+  set +x
   if echo ${replication_table} | grep '0 rows'; then
     replicators_found='false'
     sleep 1
@@ -22,6 +25,7 @@ for ((n=0;n<30;n++)); do
     break
   fi
 done
+set -x
 
 if [[ "${replicators_found}" != 'true' ]]; then
   echo No replicators registered with leader

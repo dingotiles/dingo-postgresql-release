@@ -12,9 +12,11 @@ uri=$5
 superuser_uri=$6
 
 echo Testing database restoration
-
+set +x
 for ((n=0;n<60;n++)); do
+  set -x
   backups_lines=$(curl -sf ${ETCD}/v2/keys/service/${instance_id}/wale-backup-list | jq -r .node.value | wc -l)
+  set +x
   if [[ $backups_lines -lt 2 ]]; then
     echo "Waiting for first backups to be written $n"
     sleep 1
@@ -22,6 +24,7 @@ for ((n=0;n<60;n++)); do
     break
   fi
 done
+set -x
 
 if [[ $backups_lines -lt 2 ]]; then
   echo "No backups are being written"
