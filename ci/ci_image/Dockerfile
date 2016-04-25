@@ -7,6 +7,9 @@ RUN apt-get update && apt-get install file curl wget bzr jq -y && \
 ADD https://github.com/geofffranks/spruce/releases/download/v1.1.2/spruce-linux-amd64 /usr/bin/spruce
 RUN chmod 755 /usr/bin/spruce
 
+ADD https://cli.run.pivotal.io/stable?release=linux64-binary&version=6.17.0 /tmp/cf.tgz
+RUN tar xzf /tmp/cf.tgz -C /usr/bin && rm /tmp/cf.tgz
+
 RUN gem install rake --no-ri --no-rdoc && \
     apt-get update && apt-get install tree -y && apt-get clean
 
