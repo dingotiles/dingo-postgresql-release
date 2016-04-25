@@ -1,9 +1,7 @@
 ---
 groups:
 - name: pipeline
-  jobs: [rc, bosh-rc, testflight, promote-image, deploy, shipit, minor, major, patch]
-- name: dr
-  jobs: [broker, rc, bosh-rc, testflight-dr]
+  jobs: [rc, bosh-rc, testflight, testflight-dr, promote-image, deploy, shipit, minor, major, patch]
 - name: patroni-images
   jobs: [build-pg95-base-image, build-pg95-image]
 - name: broker
@@ -73,64 +71,13 @@ jobs:
   - put: candidate-release
     params: {file: candidate-release/dingo-postgresql-*.tgz}
 
-- name: testflight-dr
-  public: true
-  serial: true
-  plan:
-  - aggregate:
-    - {get: boshrelease-ci}
-    - {get: boshrelease, passed: [bosh-rc], trigger: false}
-    - {get: version, passed: [bosh-rc], trigger: false}
-    - {get: candidate-release, passed: [bosh-rc], trigger: false}
-    # - {get: boshrelease, passed: [bosh-rc], trigger: true}
-    # - {get: version, passed: [bosh-rc], trigger: true}
-    # - {get: candidate-release, passed: [bosh-rc], trigger: true}
-    - {get: pg95-image-edge, trigger: true, params: {skip_download: true}}
-    - {get: docker-image-registrator, trigger: true, params: {skip_download: true}}
-    - {get: etcd}
-    - {get: simple-remote-syslog}
-    - {get: lite-stemcell}
-  - task: create-lite-manifest
-    file: boshrelease-ci/ci/tasks/create-manifest.yml
-    params:
-      deployment_name: dingo-postgresql-testflight
-      bosh_target: {{bosh-lite-target}}
-      bosh_username: {{bosh-lite-username}}
-      bosh_password: {{bosh-lite-password}}
-      bosh_syslog_host: {{bosh-lite-syslog-host}}
-      bosh_syslog_port: {{bosh-lite-syslog-port}}
-      aws_access_key: {{dingotiles-aws-access}}
-      aws_secret_key: {{dingotiles-aws-secret}}
-      backups_bucket: {{backups-testflight-backups-bucket}}
-      clusterdata_bucket: {{backups-testflight-clusterdata-bucket}}
-      s3_endpoint: {{backups-testflight-s3-endpoint}}
-      region: {{backups-testflight-s3-region}}
-      docker_image_image: "dingotiles/dingo-postgresql95"
-      docker_image_tag: "edge"
-      docker_image_source: upstream
-      restore_service_instance_id: TESTID-1458866109
-  - put: lite-deployment
-    params:
-      manifest: manifest/manifest.yml
-      stemcells: [lite-stemcell/*.tgz]
-      releases:
-        - candidate-release/*.tgz
-        - etcd/*.tgz
-        - simple-remote-syslog/*.tgz
-  - put: lite-errand
-    params:
-      manifest: manifest/manifest.yml
-      errand: disaster-recovery
-
 - name: testflight
   public: true
   serial: true
+  serial_groups: [bosh-lite]
   plan:
   - aggregate:
     - {get: boshrelease-ci}
-    # - {get: boshrelease, passed: [bosh-rc], trigger: false}
-    # - {get: version, passed: [bosh-rc], trigger: false}
-    # - {get: candidate-release, passed: [bosh-rc], trigger: false}
     - {get: boshrelease, passed: [bosh-rc], trigger: true}
     - {get: version, passed: [bosh-rc], trigger: true}
     - {get: candidate-release, passed: [bosh-rc], trigger: true}
@@ -188,9 +135,63 @@ jobs:
       manifest: manifest/manifest.yml
       errand: sanity-test
 
+- name: testflight-dr
+  public: true
+  serial: true
+  serial_groups: [bosh-lite]
+  plan:
+  - aggregate:
+    - {get: boshrelease-ci, params: {submodules: none}}
+    - {get: boshrelease, passed: [testflight], trigger: false, params: {submodules: none}}
+    - {get: version, passed: [testflight], trigger: false}
+    - {get: candidate-release, passed: [testflight], trigger: false}
+    # - {get: boshrelease, passed: [bosh-rc], trigger: true}
+    # - {get: version, passed: [bosh-rc], trigger: true}
+    # - {get: candidate-release, passed: [bosh-rc], trigger: true}
+    - {get: pg95-image-edge, passed: [testflight], trigger: true, params: {skip_download: true}}
+    - {get: docker-image-registrator, trigger: true, params: {skip_download: true}}
+    - {get: etcd}
+    - {get: simple-remote-syslog}
+    - {get: lite-stemcell}
+  - task: prepare-disaster-recovery
+    file: boshrelease-ci/ci/tasks/prepare-disaster-recovery.yml
+  - task: assert-disaster-recovery
+    file: boshrelease-ci/ci/tasks/assert-disaster-recovery.yml
+  # - task: create-lite-manifest
+  #   file: boshrelease-ci/ci/tasks/create-manifest.yml
+  #   params:
+  #     deployment_name: dingo-postgresql-testflight
+  #     bosh_target: {{bosh-lite-target}}
+  #     bosh_username: {{bosh-lite-username}}
+  #     bosh_password: {{bosh-lite-password}}
+  #     bosh_syslog_host: {{bosh-lite-syslog-host}}
+  #     bosh_syslog_port: {{bosh-lite-syslog-port}}
+  #     aws_access_key: {{dingotiles-aws-access}}
+  #     aws_secret_key: {{dingotiles-aws-secret}}
+  #     backups_bucket: {{backups-testflight-backups-bucket}}
+  #     clusterdata_bucket: {{backups-testflight-clusterdata-bucket}}
+  #     s3_endpoint: {{backups-testflight-s3-endpoint}}
+  #     region: {{backups-testflight-s3-region}}
+  #     docker_image_image: "dingotiles/dingo-postgresql95"
+  #     docker_image_tag: "edge"
+  #     docker_image_source: upstream
+  #     restore_service_instance_id: TESTID-1458866109
+  # - put: lite-deployment
+  #   params:
+  #     manifest: manifest/manifest.yml
+  #     stemcells: [lite-stemcell/*.tgz]
+  #     releases:
+  #       - candidate-release/*.tgz
+  #       - etcd/*.tgz
+  #       - simple-remote-syslog/*.tgz
+  # - put: lite-errand
+  #   params:
+  #     manifest: manifest/manifest.yml
+  #     errand: disaster-recovery
+
 - name: promote-image
   plan:
-    - {get: pg95-image-edge, passed: [testflight], trigger: true, params: {save: true}}
+    - {get: pg95-image-edge, passed: [testflight-dr], trigger: true, params: {save: true}}
     - put: pg95-image-latest
       params:
         load_base: pg95-image-edge
@@ -227,12 +228,12 @@ jobs:
   plan:
   - aggregate:
     - {get: boshrelease-ci}
-    - {get: boshrelease, passed: [testflight]}
-    - {get: version, passed: [testflight]}
+    - {get: boshrelease, passed: [testflight-dr]}
+    - {get: version, passed: [testflight-dr]}
     - {get: pg95-image-latest, passed: [promote-image], trigger: true, params: {skip_download: true}}
-    - {get: candidate-release, passed: [testflight], trigger: true}
-    - {get: etcd, passed: [testflight]}
-    - {get: simple-remote-syslog, passed: [testflight]}
+    - {get: candidate-release, passed: [testflight-dr], trigger: true}
+    - {get: etcd, passed: [testflight-dr]}
+    - {get: simple-remote-syslog, passed: [testflight-dr]}
     - {get: vsphere-stemcell}
   - task: setup-vsphere-manifest
     file: boshrelease-ci/ci/tasks/setup-vsphere-manifest.yml

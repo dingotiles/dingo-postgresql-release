@@ -1,0 +1,12 @@
+---
+platform: linux
+image: docker:///dingotiles/dingo-postgresql-release-pipeline
+
+inputs:
+- name: boshrelease-ci
+
+outputs:
+- name: broker-info
+
+run:
+  path: boshrelease-ci/ci/tasks/prepare-disaster-recovery.sh
