@@ -2,7 +2,7 @@
 
 infrastructure=$1; shift
 docker_image=$1; shift
-set -e -x
+set -e
 
 template_prefix="dingo-postgresql"
 STEMCELL_OS=${STEMCELL_OS:-ubuntu}
