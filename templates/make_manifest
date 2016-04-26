@@ -2,7 +2,7 @@
 
 infrastructure=$1; shift
 docker_image=$1; shift
-set -e
+set -e -x
 
 template_prefix="dingo-postgresql"
 STEMCELL_OS=${STEMCELL_OS:-ubuntu}
@@ -38,6 +38,10 @@ else
   DEPLOYMENT_NAME=${DEPLOYMENT_NAME:-demo}
 fi
 
+if [[ "$DIRECTOR_CPI" == "warden_cpi" ]]; then
+  DIRECTOR_CPI="warden"
+fi
+
 if [[ $DIRECTOR_NAME = "Bosh Lite Director" ]]; then
   if [[ $infrastructure != "garden" || $infrastructure != "warden" ]]; then
     echo "Not targeting bosh-lite with garden/warden CPI. Please use 'bosh target' before running this script."
@@ -61,7 +65,14 @@ STEMCELL=${STEMCELL:-$(latest_uploaded_stemcell)}
 if [[ "${STEMCELL}X" == "X" ]]; then
   echo
   echo "Uploading latest $DIRECTOR_CPI/$STEMCELL_OS stemcell..."
-  STEMCELL_URL=$(bosh public stemcells --full | grep $DIRECTOR_CPI | grep $STEMCELL_OS | sort -nr | head -n1 | awk '{ print $4 }')
+
+  if [[ "${DIRECTOR_CPI}" = "warden" && "${STEMCELL_OS}" = "ubuntu" ]]; then
+    echo "Adding hint to go after Trusty and not Lucid"
+    STEMCELL_URL=$(bosh public stemcells --full | grep $DIRECTOR_CPI | grep $STEMCELL_OS | grep "trusty" | sort -nr | head -n1 | awk '{ print $4 }')
+  else
+    STEMCELL_URL=$(bosh public stemcells --full | grep $DIRECTOR_CPI | grep $STEMCELL_OS | sort -nr | head -n1 | awk '{ print $4 }')
+  fi
+
   bosh upload stemcell $STEMCELL_URL
 fi
 STEMCELL=${STEMCELL:-$(latest_uploaded_stemcell)}
