@@ -4,7 +4,7 @@ image: docker:///dingotiles/dingo-postgresql-release-pipeline
 
 inputs:
 - name: boshrelease-ci
-- name: broker-info
+- name: service-info
 
 run:
   path: boshrelease-ci/ci/tasks/assert-disaster-recovery.sh

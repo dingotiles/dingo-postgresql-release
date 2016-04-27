@@ -6,7 +6,7 @@ inputs:
 - name: boshrelease-ci
 
 outputs:
-- name: broker-info
+- name: service-info
 
 run:
   path: boshrelease-ci/ci/tasks/prepare-disaster-recovery.sh
