@@ -1,7 +1,8 @@
 FROM concourse/concourse-ci
 # https://github.com/concourse/concourse/blob/master/ci/dockerfiles/concourse-ci/Dockerfile
 
-RUN apt-get update && apt-get install file curl wget bzr jq -y && \
+RUN apt-get update && \
+    apt-get install file curl wget bzr jq postgresql postgresql-contrib -y && \
     apt-get clean
 
 ADD https://github.com/geofffranks/spruce/releases/download/v1.1.2/spruce-linux-amd64 /usr/bin/spruce
