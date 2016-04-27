@@ -144,7 +144,7 @@ jobs:
     - {get: boshrelease-ci, params: {submodules: none}}
     - {get: boshrelease, passed: [testflight], trigger: false, params: {submodules: none}}
     - {get: version, passed: [testflight], trigger: false}
-    - {get: candidate-release, passed: [testflight], trigger: false}
+    - {get: candidate-release, passed: [testflight], trigger: true}
     # - {get: boshrelease, passed: [bosh-rc], trigger: true}
     # - {get: version, passed: [bosh-rc], trigger: true}
     # - {get: candidate-release, passed: [bosh-rc], trigger: true}
