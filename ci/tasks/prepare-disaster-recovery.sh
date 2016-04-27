@@ -50,6 +50,3 @@ sleep 10
 echo Deleting instance
 curl -sf ${BROKER_URI}/v2/service_instances/${instance_id}\?plan_id=${plan_id}\&service_id=${service_id} \
      -XDELETE
-
-echo Recreating service instance
-curl -sf ${BROKER_URI}/v2/service_instances/${instance_id} -XPUT -d '{}'
