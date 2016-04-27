@@ -10,6 +10,8 @@ dingo_postgresql_version=$(cat candidate-release/version)
 etcd_version=$(cat etcd/version)
 simple_remote_syslog_version=$(cat simple-remote-syslog/version)
 
+service_guid=$(cat service-info/service-guid)
+
 cat > ~/.bosh_config <<EOF
 ---
 aliases:
@@ -68,21 +70,24 @@ meta:
     region: "${region}"
 EOF
 
-if [[ "${restore_service_instance_id}X" != "X" ]]; then
-  cat > tmp/restore_service_instance_ids.yml <<EOF
+if [[ "${service_guid}X" != "X" ]]; then
+  cat > tmp/cf-disaster-recovery.yml <<EOF
 ---
 properties:
-  restore:
-    service_id: beb5973c-e1b2-11e5-a736-c7c0b526363d
-    service_instance_ids:
-    - ${restore_service_instance_id}
+  cf:
+    api_endpoint: api.test-cf.snw
+    skip_ssl_verification: true
+    user: admin
+    password: admin
+  servicebroker:
+    service_guid: ${service_guid}
 EOF
 else
-  cat > tmp/restore_service_instance_ids.yml <<EOF
+  cat > tmp/cf-disaster-recovery.yml <<EOF
 --- {}
 EOF
 fi
-cat tmp/restore_service_instance_ids.yml
+cat tmp/cf-disaster-recovery.yml
 
 services_template=templates/services-cluster-backup-s3.yml
 # services_template=templates/services-cluster.yml
@@ -92,7 +97,7 @@ bosh target ${bosh_target}
 export DEPLOYMENT_NAME=${deployment_name}
 ./templates/make_manifest warden ${docker_image_source} ${services_template} \
   templates/jobs-etcd.yml tmp/syslog.yml tmp/docker_image.yml tmp/backups.yml \
-  tmp/releases.yml tmp/restore_service_instance_ids.yml
+  tmp/releases.yml tmp/cf-disaster-recovery.yml
 
 cp tmp/${DEPLOYMENT_NAME}*.yml ${manifest_dir}/manifest.yml
 

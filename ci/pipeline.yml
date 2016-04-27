@@ -139,6 +139,17 @@ jobs:
     - {get: etcd}
     - {get: simple-remote-syslog}
     - {get: lite-stemcell}
+  - task: fake-service-info
+    config:
+      image: docker:///dingotiles/dingo-postgresql-release-pipeline
+      platform: linux
+      outputs:
+      - name: service-info
+      run:
+        path: sh
+        args:
+        - -exc
+        - 'touch service-info/service-guid'
   - task: create-lite-manifest
     file: boshrelease-ci/ci/tasks/create-manifest.yml
     params:
