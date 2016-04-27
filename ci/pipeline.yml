@@ -234,6 +234,7 @@ jobs:
     - {get: candidate-release, passed: [testflight-dr], trigger: true}
     - {get: etcd, passed: [testflight-dr]}
     - {get: simple-remote-syslog, passed: [testflight-dr]}
+    - {get: docker-image-registrator, passed: [testflight-dr], trigger: true, params: {skip_download: true}}
     - {get: vsphere-stemcell}
   - task: setup-vsphere-manifest
     file: boshrelease-ci/ci/tasks/setup-vsphere-manifest.yml
