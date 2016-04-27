@@ -1,10 +1,6 @@
 #!/bin/bash
 
 outdir=$PWD/service-info
-broker_ip=10.58.111.45
-plan_id=1545e30e-6dc3-11e5-826a-6c4008a663f0
-service_id=beb5973c-e1b2-11e5-a736-c7c0b526363d 
-BROKER_URI=http://starkandwayne:starkandwayne@${broker_ip}:8888
 set -x
 
 cf login --skip-ssl-validation \
@@ -19,7 +15,7 @@ cf purge-service-instance -f dr-test
 cf purge-service-offering -f testflight-dingo-pg
 cf delete-service-broker -f testflight-dingo-pg
 
-cf create-service-broker testflight-dingo-pg starkandwayne starkandwayne http://${broker_ip}:8888
+cf create-service-broker testflight-dingo-pg starkandwayne starkandwayne http://${broker_ip}:${broker_port}
 
 
 cf curl /v2/services | \

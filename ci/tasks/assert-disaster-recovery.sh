@@ -3,7 +3,6 @@
 set -x
 set -e
 
-broker_ip=10.58.111.45
 cat $PWD/service-info/service-guid
 
 cf login --skip-ssl-validation \
