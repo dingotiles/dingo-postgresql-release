@@ -40,7 +40,6 @@ psql ${uri} -c 'CREATE TABLE sanitytest(value text);'
 psql ${uri} -c "INSERT INTO sanitytest VALUES ('test-failure-recovery');"
 
 psql ${uri} -c "select * from sanitytest;"
-# psql ${uri} -c "select * from pgbench_tellers;"
 
 echo flush latest commits to WAL archive
 psql ${superuser_uri} -c "select pg_switch_xlog();"
