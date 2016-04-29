@@ -29,19 +29,31 @@ bosh upload release https://bosh.io/d/github.com/cloudfoundry-community/route-re
 bosh upload release https://bosh.io/d/github.com/cloudfoundry-community/simple-remote-syslog-boshrelease
 ```
 
+Get the necessary submodules:
+
+```
+git submodule update --init --recursive --force
+```
+
 To use your own etcd cluster:
 
 ```
 ./templates/make_manifest warden upstream templates/services-cluster.yml tmp/etcd.yml
-bosh deploy
 ```
 
 To deploy a simple one-node etcd cluster for demonstration purposes:
 
 ```
 ./templates/make_manifest warden upstream templates/services-cluster.yml templates/jobs-etcd.yml
+```
+
+Upload a Dingo PostgreSQL Release and deploy:
+
+```
+bosh create release --force && bosh upload release
 bosh deploy
 ```
+
 
 ### ETCD cluster
 
