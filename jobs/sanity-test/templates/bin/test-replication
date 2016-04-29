@@ -44,7 +44,7 @@ curl -s ${ETCD}/v2/keys/service/${instance_id}/members | \
   con_url=$(echo ${info} | jq -r '.conn_url')
   replicating=''
   set +x
-  for ((n=0;n<30;n++)); do
+  for ((n=0;n<60;n++)); do
     set -x
     sanity_table=$(psql ${con_url} -c "SELECT * FROM sanitytest" || echo '')
     set +x
@@ -53,6 +53,7 @@ curl -s ${ETCD}/v2/keys/service/${instance_id}/members | \
       break
     else
       replicating='false'
+      echo $(psql ${leader_con} -c 'select * from pg_stat_replication;')
       sleep 1
     fi
   done
