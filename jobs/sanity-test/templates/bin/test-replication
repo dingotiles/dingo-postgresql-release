@@ -13,7 +13,7 @@ leader_con=$(curl -s ${ETCD}/v2/keys/service/${instance_id}/members/${leader_id}
 
 set +x
 replicators_found=''
-for ((n=0;n<30;n++)); do
+for ((n=0;n<60;n++)); do
   set -x
   replication_table=$(psql ${leader_con} -c 'select * from pg_stat_replication;')
   set +x
@@ -44,9 +44,9 @@ curl -s ${ETCD}/v2/keys/service/${instance_id}/members | \
   con_url=$(echo ${info} | jq -r '.conn_url')
   replicating=''
   set +x
-  for ((n=0;n<20;n++)); do
+  for ((n=0;n<30;n++)); do
     set -x
-    sanity_table=$(psql ${con_url} -c "SELECT * FROM sanitytest")
+    sanity_table=$(psql ${con_url} -c "SELECT * FROM sanitytest" || echo '')
     set +x
     if echo ${sanity_table} | grep 'replication-test'; then
       replicating='true'
