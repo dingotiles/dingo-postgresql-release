@@ -38,16 +38,29 @@ psql ${leader_con} -c 'DROP TABLE IF EXISTS sanitytest'
 psql ${leader_con} -c 'CREATE TABLE sanitytest(value text);'
 psql ${leader_con} -c "INSERT INTO sanitytest VALUES ('replication-test');"
 
-sleep 5
-
 curl -s ${ETCD}/v2/keys/service/${instance_id}/members | \
   jq -r '.node.nodes[].value' | \
   while read info; do
   con_url=$(echo ${info} | jq -r '.conn_url')
-  psql ${con_url} -c "SELECT * FROM sanitytest" | grep 'replication-test' || {
-    echo Cluster is not replicating to connection $con_url
-    exit 1
-  }
+  replicating=''
+  set +x
+  for ((n=0;n<20;n++)); do
+    set -x
+    sanity_table=$(psql ${con_url} -c "SELECT * FROM sanitytest")
+    set +x
+    if echo ${sanity_table} | grep 'replication-test'; then
+      replicating='false'
+      sleep 1
+    else
+      replicating='true'
+      break
+    fi
+  done
+  set -x
+  if [[ "${replicating}" != 'true' ]]; then
+      echo Cluster is not replicating to connection $con_url
+      exit 1
+  done
 done
 
 echo Replication successfull!
