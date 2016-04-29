@@ -58,9 +58,9 @@ curl -s ${ETCD}/v2/keys/service/${instance_id}/members | \
   done
   set -x
   if [[ "${replicating}" != 'true' ]]; then
-      echo Cluster is not replicating to connection $con_url
-      exit 1
-  done
+    echo Cluster is not replicating to connection $con_url
+    exit 1
+  fi
 done
 
 echo Replication successfull!
