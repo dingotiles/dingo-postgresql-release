@@ -1,5 +1,8 @@
 #!/bin/bash
 
+set -u
+set -x
+
 servicebroker=<%= p("servicebroker.host") %>
 <% if_p("servicebroker.port") do |port| %>
 servicebroker="${servicebroker}:<%= port %>"
