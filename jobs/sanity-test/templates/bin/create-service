@@ -25,7 +25,7 @@ create_instance() {
       set -x
       last_operation=$(curl  ${BROKER_URI}/v2/service_instances/${instance_id}/last_operation)
       set +x
-      if echo ${last_operation} | grep 'succeeded'; then
+      if echo ${last_operation} | grep 'succeeded' > /dev/null; then
           set -x
           return
       fi
