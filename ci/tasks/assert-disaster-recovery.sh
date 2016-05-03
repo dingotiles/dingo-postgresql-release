@@ -21,7 +21,7 @@ for ((n=0;n<60;n++)); do
     set -x
     table=$(psql ${pg_uri} -c 'SELECT * FROM disasterrecoverytest;')
     set +x
-    if echo ${table} | grep 'dr-test'
+    if echo ${table} | grep 'dr-test'; then
         found='true'
         break
     fi
