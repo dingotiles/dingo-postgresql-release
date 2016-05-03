@@ -27,6 +27,8 @@ cf enable-service-access dingo-postgresql
 cf marketplace
 
 cf create-service dingo-postgresql cluster dr-test
+echo 'Waiting for async provisioning to complete'
+set +x
 sleep 5
 for ((n=0;n<60;n++)); do
     if cf service dr-test | grep 'create succeeded'; then
@@ -34,6 +36,7 @@ for ((n=0;n<60;n++)); do
     fi
     sleep 1
 done
+set -x
 
 instance_id=$(cf curl /v2/service_instances | jq -r '.resources[0].metadata.guid')
 
