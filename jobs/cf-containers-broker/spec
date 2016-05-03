@@ -55,6 +55,9 @@ properties:
     default: true
   broker.services:
     description: "Services and plans offered by the broker"
+  broker.container_env_var_dir:
+    description: Directory of files that will become environment variables for all containers
+    default: /var/vcap/store/cf-containers-broker/envdir
 
   cf.api_url:
     description: "URL of the CloudFoundry Cloud Controller"
