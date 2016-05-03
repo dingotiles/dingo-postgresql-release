@@ -2,6 +2,7 @@
 
 outdir=$PWD/service-info
 set -x
+set -e
 
 cf login --skip-ssl-validation \
   -a api.test-cf.snw \
@@ -26,6 +27,13 @@ cf enable-service-access dingo-postgresql
 cf marketplace
 
 cf create-service dingo-postgresql cluster dr-test
+sleep 5
+for ((n=0;n<60;n++)); do
+    if cf service dr-test | grep 'create succeeded'; then
+        break
+    fi
+    sleep 1
+done
 
 instance_id=$(cf curl /v2/service_instances | jq -r '.resources[0].metadata.guid')
 
