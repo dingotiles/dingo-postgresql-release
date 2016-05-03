@@ -30,7 +30,7 @@ create_instance() {
           set -x
           return
       fi
-      sleep 1
+      sleep 2
   done
   set -x
   echo "Couldn't create service instance"
