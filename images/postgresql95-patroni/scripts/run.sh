@@ -223,4 +223,4 @@ echo Username ${POSTGRES_USERNAME}
 echo Password ${POSTGRES_PASSWORD}
 echo ----------------------
 
-sudo -u postgres /scripts/postgres/start_pg.sh
+sudo -E -u postgres /scripts/postgres/start_pg.sh
