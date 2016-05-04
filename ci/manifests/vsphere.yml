@@ -164,7 +164,7 @@ properties:
         container:
           backend: docker
           image: dingotiles/dingo-postgresql95
-          tag: "latest"
+          tag: "edge"
           persistent_volumes: [/data]
           environment:
           - ETCD_HOST_PORT=10.58.111.59:4001
