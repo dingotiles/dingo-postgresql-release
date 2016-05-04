@@ -21,8 +21,8 @@ curl -v ${BROKER_URI}/v2/catalog
 
 service_id=$(curl -sf ${BROKER_URI}/v2/catalog | jq -r ".services[0].id")
 plan_ids=$(curl -sf ${BROKER_URI}/v2/catalog | jq -r ".services[0].plans[].id")
-instance_id=TID-$(date +"%s")
-binding_id=BID-$(date +"%s")
+instance_id=T-$(date +"%s")
+binding_id=B-$(date +"%s")
 
 for plan_id in ${plan_ids[@]}; do
   credentials=$(create-service $service_id $plan_id $instance_id $binding_id)
