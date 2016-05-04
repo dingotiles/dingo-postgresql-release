@@ -26,89 +26,98 @@ if [[ -z "${DOCKER_HOSTNAME}" ]]; then
   exit 1
 fi
 
-# look up public host:port binding from registrar entry in etcd
-# this is then advertised via patroni for replicas to connect
-i="0"
-while [[  $i -lt 4 ]]
-do
-  sleep 3
-  registrator_uri="${ETCD_HOST_PORT}/v2/keys/${REGISTRATOR_DOCKER_IMAGE}/${DOCKER_HOSTNAME}:${NAME}:5432"
-  echo "looking up public host:port from etcd -> ${registrator_uri} ($i)"
-  CONNECT_ADDRESS=$(curl -sL ${registrator_uri} | jq -r .node.value)
+indent_startup() {
+  c="s/^/${PATRONI_SCOPE:0:6}-startup> /"
+  case $(uname) in
+    Darwin) sed -l "$c";; # mac/bsd sed: -l buffers on line boundaries
+    *)      sed -u "$c";; # unix/gnu sed: -u unbuffered (arbitrary) chunks of data
+  esac
+}
+
+(
+  # look up public host:port binding from registrar entry in etcd
+  # this is then advertised via patroni for replicas to connect
+  i="0"
+  while [[  $i -lt 4 ]]
+  do
+    sleep 3
+    registrator_uri="${ETCD_HOST_PORT}/v2/keys/${REGISTRATOR_DOCKER_IMAGE}/${DOCKER_HOSTNAME}:${NAME}:5432"
+    echo "looking up public host:port from etcd -> ${registrator_uri} ($i)"
+    CONNECT_ADDRESS=$(curl -sL ${registrator_uri} | jq -r .node.value)
+    if [[ "${CONNECT_ADDRESS}" == "null" ]]; then
+      echo container not yet registered, waiting...
+    else
+      break
+    fi
+    i=$[$i+1]
+  done
   if [[ "${CONNECT_ADDRESS}" == "null" ]]; then
-    echo container not yet registered, waiting...
-  else
-    break
-  fi
-  i=$[$i+1]
-done
-if [[ "${CONNECT_ADDRESS}" == "null" ]]; then
-  echo failed to look up container in etcd
-  exit 1
-else
-  echo public address ${CONNECT_ADDRESS}
-fi
-
-POSTGRES_USERNAME=${POSTGRES_USERNAME:-pgadmin}
-POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-$(pwgen -s -1 16)}
-
-WALE_ENV_DIR=${WALE_ENV_DIR:-${DATA_DIR}/wal-e/env}
-mkdir -p $WALE_ENV_DIR
-
-# pass thru environment variables into an env dir for postgres user's archive/restore commands
-DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-${DIR}/create_envdir.sh ${WALE_ENV_DIR}
-
-if [[ "${NODE_GUID}X" != "X" ]]; then
-  NODE_NAME=${NODE_NAME:-"pg_${PATRONI_SCOPE}_${NODE_GUID}"}
-fi
-if [[ "${BROKER_GUID}X" != "X" ]]; then
-  NODE_NAME=${NODE_NAME:-"pg_${PATRONI_SCOPE}_${BROKER_GUID}"}
-fi
-NODE_NAME=${NODE_NAME:-pg_${DOCKER_IP}}
-
-PG_DATA_DIR=${PG_DATA_DIR:-${DATA_DIR}/postgres0}
-echo $PG_DATA_DIR > ${WALE_ENV_DIR}/PG_DATA_DIR
-
-if [[ "${WAL_S3_BUCKET}X" != "X" ]]; then
-  if ! curl -s s3-website-us-east-1.amazonaws.com >/dev/null; then
-    echo Cannot access AWS S3. Check DNS and Internet access.
+    echo failed to look up container in etcd
     exit 1
-  fi
-  echo "Enabling wal-e archives to S3 bucket '${WAL_S3_BUCKET}'"
-  ENVDIR="envdir ${WALE_ENV_DIR}"
-  if [[ "${AWS_INSTANCE_PROFILE}X" != "X" ]]; then
-    export WALE_CMD="${ENVDIR} wal-e --aws-instance-profile"
   else
-    # see wal-e readme for env variables to configure for S3, Swift, etc
-    export WALE_CMD="${ENVDIR} wal-e"
+    echo public address ${CONNECT_ADDRESS}
   fi
 
-  export WALE_S3_PREFIX="s3://${WAL_S3_BUCKET}/backups/${PATRONI_SCOPE}/wal/"
-  echo $WALE_S3_PREFIX > ${WALE_ENV_DIR}/WALE_S3_PREFIX
-  echo $WALE_CMD > ${WALE_ENV_DIR}/WALE_CMD
-  if [[ ! -z "${DISABLE_REGULAR_BACKUPS}" ]]; then
-    echo "Disabling regular backups"
-    echo $DISABLE_REGULAR_BACKUPS > ${WALE_ENV_DIR}/DISABLE_REGULAR_BACKUPS
+  POSTGRES_USERNAME=${POSTGRES_USERNAME:-pgadmin}
+  POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-$(pwgen -s -1 16)}
+
+  WALE_ENV_DIR=${WALE_ENV_DIR:-${DATA_DIR}/wal-e/env}
+  mkdir -p $WALE_ENV_DIR
+
+  # pass thru environment variables into an env dir for postgres user's archive/restore commands
+  DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+  ${DIR}/create_envdir.sh ${WALE_ENV_DIR}
+
+  if [[ "${NODE_GUID}X" != "X" ]]; then
+    NODE_NAME=${NODE_NAME:-"pg_${PATRONI_SCOPE}_${NODE_GUID}"}
+  fi
+  if [[ "${BROKER_GUID}X" != "X" ]]; then
+    NODE_NAME=${NODE_NAME:-"pg_${PATRONI_SCOPE}_${BROKER_GUID}"}
+  fi
+  NODE_NAME=${NODE_NAME:-pg_${DOCKER_IP}}
+
+  PG_DATA_DIR=${PG_DATA_DIR:-${DATA_DIR}/postgres0}
+  echo $PG_DATA_DIR > ${WALE_ENV_DIR}/PG_DATA_DIR
+
+  if [[ "${WAL_S3_BUCKET}X" != "X" ]]; then
+    if ! curl -s s3-website-us-east-1.amazonaws.com >/dev/null; then
+      echo Cannot access AWS S3. Check DNS and Internet access.
+      exit 1
+    fi
+    echo "Enabling wal-e archives to S3 bucket '${WAL_S3_BUCKET}'"
+    ENVDIR="envdir ${WALE_ENV_DIR}"
+    if [[ "${AWS_INSTANCE_PROFILE}X" != "X" ]]; then
+      export WALE_CMD="${ENVDIR} wal-e --aws-instance-profile"
+    else
+      # see wal-e readme for env variables to configure for S3, Swift, etc
+      export WALE_CMD="${ENVDIR} wal-e"
+    fi
+
+    export WALE_S3_PREFIX="s3://${WAL_S3_BUCKET}/backups/${PATRONI_SCOPE}/wal/"
+    echo $WALE_S3_PREFIX > ${WALE_ENV_DIR}/WALE_S3_PREFIX
+    echo $WALE_CMD > ${WALE_ENV_DIR}/WALE_CMD
+    if [[ ! -z "${DISABLE_REGULAR_BACKUPS}" ]]; then
+      echo "Disabling regular backups"
+      echo $DISABLE_REGULAR_BACKUPS > ${WALE_ENV_DIR}/DISABLE_REGULAR_BACKUPS
+    fi
+
+    archive_mode="on"
+    replica_methods="[wal_e,basebackup]"
+    archive_command="$WALE_CMD wal-push \"%p\" -p 1"
+    restore_command="$WALE_CMD wal-fetch \"%f\" \"%p\" -p 1"
+  else
+    echo "Disabling wal-e archives"
+    archive_mode="off"
+    replica_methods="[basebackup]"
+    archive_command="mkdir -p ../wal_archive && test ! -f ../wal_archive/%f && cp %p ../wal_archive/%f"
+    restore_command="cp ../wal_archive/%f %p"
   fi
 
-  archive_mode="on"
-  replica_methods="[wal_e,basebackup]"
-  archive_command="$WALE_CMD wal-push \"%p\" -p 1"
-  restore_command="$WALE_CMD wal-fetch \"%f\" \"%p\" -p 1"
-else
-  echo "Disabling wal-e archives"
-  archive_mode="off"
-  replica_methods="[basebackup]"
-  archive_command="mkdir -p ../wal_archive && test ! -f ../wal_archive/%f && cp %p ../wal_archive/%f"
-  restore_command="cp ../wal_archive/%f %p"
-fi
 
+  # TODO secure the passwords!
+  # TODO add host ip into postgresql.name to ensure unique if two containers have same local DOCKER_IP
 
-# TODO secure the passwords!
-# TODO add host ip into postgresql.name to ensure unique if two containers have same local DOCKER_IP
-
-cat > /patroni/postgres.yml <<EOF
+  cat > /patroni/postgres.yml <<EOF
 ttl: &ttl 30
 loop_wait: &loop_wait 10
 scope: &scope ${PATRONI_SCOPE}
@@ -151,8 +160,8 @@ postgresql:
   create_replica_method: ${replica_methods}
 EOF
 
-if [[ "${WALE_CMD}X" != "X" ]]; then
-  cat <<EOF >>/patroni/postgres.yml
+  if [[ "${WALE_CMD}X" != "X" ]]; then
+    cat <<EOF >>/patroni/postgres.yml
   wal_e:
     command: /patroni/scripts/wale_restore.py
     # {key: value} below are converted to options for wale_restore.py script
@@ -168,7 +177,7 @@ if [[ "${WALE_CMD}X" != "X" ]]; then
 EOF
 fi
 
-cat <<EOF >>/patroni/postgres.yml
+  cat <<EOF >>/patroni/postgres.yml
   # parameters are converted into --<name> <value> flags on the server command line
   parameters:
     # http://www.postgresql.org/docs/9.5/static/runtime-config-connection.html
@@ -206,21 +215,22 @@ cat <<EOF >>/patroni/postgres.yml
 
 EOF
 
-chown postgres:postgres -R $DATA_DIR /patroni /patroni.py ${DIR}/postgres
+  chown postgres:postgres -R $DATA_DIR /patroni /patroni.py ${DIR}/postgres
 
-if [[ -d ${PG_DATA_DIR} ]]; then
-  chown postgres:postgres -R ${PG_DATA_DIR}
-  chmod 700 $PG_DATA_DIR
-fi
+  if [[ -d ${PG_DATA_DIR} ]]; then
+    chown postgres:postgres -R ${PG_DATA_DIR}
+    chmod 700 $PG_DATA_DIR
+  fi
 
-cat /patroni/postgres.yml
+  cat /patroni/postgres.yml
 
-ls ${WALE_ENV_DIR}/*
+  ls ${WALE_ENV_DIR}/*
 
-echo ----------------------
-echo Admin user credentials
-echo Username ${POSTGRES_USERNAME}
-echo Password ${POSTGRES_PASSWORD}
-echo ----------------------
+  echo ----------------------
+  echo Admin user credentials
+  echo Username ${POSTGRES_USERNAME}
+  echo Password ${POSTGRES_PASSWORD}
+  echo ----------------------
 
-sudo -E -u postgres /scripts/postgres/start_pg.sh
+  sudo -E -u postgres /scripts/postgres/start_pg.sh
+) 2>&1 | indent_startup
