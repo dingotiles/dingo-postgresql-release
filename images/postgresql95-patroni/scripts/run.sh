@@ -7,7 +7,6 @@ mkdir -p $DATA_DIR
 
 DOCKER_IP=$(hostname --ip-address)
 
-REGISTRATOR_PREFIX=${REGISTRATOR_PREFIX:-}
 REGISTRATOR_DOCKER_IMAGE=${REGISTRATOR_DOCKER_IMAGE:-dingo-postgresql95} # used as path by registrator entries
 
 if [[ -z "${NAME}" ]]; then
