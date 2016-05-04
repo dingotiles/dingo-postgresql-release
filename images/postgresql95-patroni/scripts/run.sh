@@ -232,5 +232,6 @@ EOF
   echo Password ${POSTGRES_PASSWORD}
   echo ----------------------
 
-  sudo -E -u postgres /scripts/postgres/start_pg.sh
 ) 2>&1 | indent_startup
+
+sudo -E -u postgres /scripts/postgres/start_pg.sh
