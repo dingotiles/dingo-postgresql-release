@@ -54,7 +54,7 @@ indent_backup() {
     pg_isready >/dev/null 2>&2 || continue
     IN_RECOVERY=$(psql -tqAc "select pg_is_in_recovery()")
 
-    [[ $IN_RECOVERY != "f" ]] && echo "currently in recovery" && continue
+    [[ $IN_RECOVERY != "f" ]] && echo "Not uploading backup because I am currently in recovery" && continue
     # during initial run, count the number of backup lines. If there are
     # no backup (only line with backup-list header is returned), or there
     # is an error, try to produce a backup. Otherwise, stick to the regular
