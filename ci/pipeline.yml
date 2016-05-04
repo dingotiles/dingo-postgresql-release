@@ -1,7 +1,7 @@
 ---
 groups:
 - name: pipeline
-  jobs: [rc, bosh-rc, testflight, testflight-dr, promote-image, deploy, shipit, minor, major, patch]
+  jobs: [rc, bosh-rc, testflight, testflight-dr, deploy-vsphere, shipit, minor, major, patch]
 - name: patroni-images
   jobs: [build-pg95-base-image, build-pg95-image]
 - name: broker
@@ -182,16 +182,6 @@ jobs:
   - task: assert-disaster-recovery
     file: boshrelease-ci/ci/tasks/assert-disaster-recovery.yml
 
-- name: promote-image
-  plan:
-    - {get: pg95-image-edge, passed: [testflight-dr], trigger: true, params: {save: true}}
-    - put: pg95-image-latest
-      params:
-        load_base: pg95-image-edge
-        load_file:       pg95-image-edge/image
-        load_repository: dingotiles/dingo-postgresql95
-        load_tag: edge
-
 # - name: bump-image-layers
 #   public: true
 #   serial: true
@@ -216,14 +206,14 @@ jobs:
 #     - put: boshrelease
 #       params: {repository: boshrelease-images-updated, rebase: true}
 
-- name: deploy
+- name: deploy-vsphere
   serial: true
   plan:
   - aggregate:
     - {get: boshrelease-ci}
     - {get: boshrelease, passed: [testflight-dr]}
     - {get: version, passed: [testflight-dr]}
-    - {get: pg95-image-latest, passed: [promote-image], trigger: true, params: {skip_download: true}}
+    - {get: pg95-image-edge, passed: [testflight-dr], trigger: true, params: {skip_download: true}}
     - {get: candidate-release, passed: [testflight-dr], trigger: true}
     - {get: etcd, passed: [testflight-dr]}
     - {get: simple-remote-syslog, passed: [testflight-dr]}
@@ -259,45 +249,55 @@ jobs:
   plan:
   - aggregate:
     - {get: boshrelease-ci}
-    - {get: boshrelease, passed: [deploy]}
-    - {get: candidate-release, passed: [deploy]}
-    - {get: etcd, passed: [deploy]}
-    - {get: simple-remote-syslog, passed: [deploy]}
-    - {get: version, passed: [deploy], params: {bump: final}}
-  - task: create-final-release
-    file: boshrelease-ci/ci/tasks/finalize-release.yml
-    params:
-      aws_access_key_id: {{cfcommunity-aws-access}}
-      aws_secret_access_key: {{cfcommunity-aws-secret}}
-  - put: boshrelease
-    params:
-      repository: final-release-repo
-      rebase: true
-  - task: create-release-notes
-    file: boshrelease-ci/ci/tasks/create-release-notes.yml
-  - put: version
-    params: {file: version/number}
-  - task: generate-commitish
-    config:
-      platform: linux
-      image: docker:///dingotiles/dingo-postgresql-release-pipeline
-      inputs: [{name: boshrelease}]
-      outputs: [{name: generated-commitish}]
-      run:
-        path: sh
-        args:
-        - -c
-        - |
-          git -C boshrelease rev-parse HEAD > generated-commitish/commitish
-  - task: rename-dependency-releases
-    file: boshrelease-ci/ci/tasks/rename-dependency-releases.yml
-  - put: github-release
-    params:
-      name: release-notes/release-name
-      tag: release-notes/release-name
-      body: release-notes/notes.md
-      commitish: generated-commitish/commitish
-      globs: [final-release-tarball/*.tgz, dependency-releases/*.tgz]
+    - {get: boshrelease, passed: [deploy-vsphere]}
+    - {get: candidate-release, passed: [deploy-vsphere]}
+    - {get: etcd, passed: [deploy-vsphere]}
+    - {get: simple-remote-syslog, passed: [deploy-vsphere]}
+    - {get: version, passed: [deploy-vsphere], params: {bump: final}}
+  - aggregate:
+    - do:
+      - {get: pg95-image-edge, passed: [deploy-vsphere], params: {save: true}}
+      - put: pg95-image-latest
+        params:
+          load_base: pg95-image-edge
+          load_file:       pg95-image-edge/image
+          load_repository: dingotiles/dingo-postgresql95
+          load_tag: edge
+    - do:
+      - task: create-final-release
+        file: boshrelease-ci/ci/tasks/finalize-release.yml
+        params:
+          aws_access_key_id: {{cfcommunity-aws-access}}
+          aws_secret_access_key: {{cfcommunity-aws-secret}}
+      - put: boshrelease
+        params:
+          repository: final-release-repo
+          rebase: true
+      - task: create-release-notes
+        file: boshrelease-ci/ci/tasks/create-release-notes.yml
+      - put: version
+        params: {file: version/number}
+      - task: generate-commitish
+        config:
+          platform: linux
+          image: docker:///dingotiles/dingo-postgresql-release-pipeline
+          inputs: [{name: boshrelease}]
+          outputs: [{name: generated-commitish}]
+          run:
+            path: sh
+            args:
+            - -c
+            - |
+              git -C boshrelease rev-parse HEAD > generated-commitish/commitish
+      - task: rename-dependency-releases
+        file: boshrelease-ci/ci/tasks/rename-dependency-releases.yml
+      - put: github-release
+        params:
+          name: release-notes/release-name
+          tag: release-notes/release-name
+          body: release-notes/notes.md
+          commitish: generated-commitish/commitish
+          globs: [final-release-tarball/*.tgz, dependency-releases/*.tgz]
 
 - name: major
   public: true
