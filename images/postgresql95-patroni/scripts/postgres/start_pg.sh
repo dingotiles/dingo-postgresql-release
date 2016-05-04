@@ -16,7 +16,7 @@ cd $DIR
 # so you get updates while the command runs and dont wait for the end
 # e.g. npm install | indent
 indent_patroni() {
-  c='s/^/patroni> /'
+  c="s/^/${PATRONI_SCOPE:0:6}-patroni> /"
   case $(uname) in
     Darwin) sed -l "$c";; # mac/bsd sed: -l buffers on line boundaries
     *)      sed -u "$c";; # unix/gnu sed: -u unbuffered (arbitrary) chunks of data
