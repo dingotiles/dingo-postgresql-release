@@ -98,59 +98,23 @@ version=0.5.7
 curl -s "https://api.github.com/repos/dingotiles/dingo-postgresql-release/releases/tags/v${version}" | jq -r ".assets[].browser_download_url"  | grep tgz | xargs -L1 bosh upload release --skip-if-exists
 ```
 
-### Deployment
+### Deployment to bosh-lite
 
-Upload some dependent BOSH releases to your BOSH:
+This section focuses on deploying Dingo PostgreSQL to bosh-lite (either running locally or remotely):
 
-```
-bosh upload release https://bosh.io/d/github.com/cloudfoundry-incubator/etcd-release
-bosh upload release https://bosh.io/d/github.com/cloudfoundry-community/route-registrar-boshrelease
-bosh upload release https://bosh.io/d/github.com/cloudfoundry-community/simple-remote-syslog-boshrelease
-```
-
-Get the necessary submodules:
+Get the BOSH release repository that contains the `spruce` templates we will use to build the BOSH deployment manifest:
 
 ```
-git submodule update --init --recursive --force
+git clone https://github.com/dingotiles/dingo-postgresql-release.git
+cd dingo-postgresql-release
+git submodule update --init
 ```
 
-To use your own etcd cluster:
-
-```
-./templates/make_manifest warden upstream templates/services-cluster.yml tmp/etcd.yml
-```
-
-To deploy a simple one-node etcd cluster for demonstration purposes:
+As the first step, to deploy the service without backups nor syslogs:
 
 ```
 ./templates/make_manifest warden upstream templates/services-cluster.yml templates/jobs-etcd.yml
-```
-
-Upload a Dingo PostgreSQL Release and deploy:
-
-```
-bosh create release --force && bosh upload release
 bosh deploy
-```
-
-
-### ETCD cluster
-
-This system assumes you have an etcd cluster running.
-
-Why etcd? It is the common denominator between registrator, patroni and confd. For example, to support consul we would first need to add consul support to patroni. There are also shell scripts now that assume etcd; so they'd need updating or replacing with executable that support different backends.
-
-The templates include an easy way to run an etcd node, if you don't already have an etcd cluster, using [cloudfoundry-incubator/etcd-release](https://github.com/cloudfoundry-incubator/etcd-release). See "Deployment" section for instructions.
-
-If you do already have an etcd cluster then create a spruce stub file with your etcd cluster information, say `tmp/etcd.yml`:
-
-```yaml
----
-meta:
-  etcd:
-    host: 10.244.4.2
-  registrator:
-    backend_uri: (( concat "etcd://" meta.etcd.host ":4001" ))
 ```
 
 ### Remote syslog
