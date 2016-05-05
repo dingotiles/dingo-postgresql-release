@@ -81,7 +81,15 @@ Deploying the OSS BOSH release requires:
 
 This BOSH release is designed and tested to work with specific versions of 3rd party BOSH releases. The CI pipeline publishes final releases to Github that include the specific dependencies that have been tested to work.
 
-See https://github.com/dingotiles/dingo-postgresql-release/releases for specific upload instructions.
+To upload the latest release:
+
+```
+curl -s "https://api.github.com/repos/dingotiles/dingo-postgresql-release/releases/latest" | jq -r ".assets[].browser_download_url"  | grep tgz | xargs -L1 bosh upload release --skip-if-exists
+```
+
+Your BOSH will directly download and install the BOSH releases. They will not be downloaded to your local computer.
+
+To upload a specific release, see https://github.com/dingotiles/dingo-postgresql-release/releases for specific upload instructions.
 
 For example, if you are installing version `0.5.7`, then the following command will upload the specific releases that work together:
 
@@ -89,8 +97,6 @@ For example, if you are installing version `0.5.7`, then the following command w
 version=0.5.7
 curl -s "https://api.github.com/repos/dingotiles/dingo-postgresql-release/releases/tags/v${version}" | jq -r ".assets[].browser_download_url"  | grep tgz | xargs -L1 bosh upload release --skip-if-exists
 ```
-
-Your BOSH will directly download and install the BOSH releases. They will not be downloaded to your local computer.
 
 ### Deployment
 
