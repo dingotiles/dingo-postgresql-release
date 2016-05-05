@@ -66,20 +66,33 @@ This section documents how to install/deploy Dingo PostgreSQL to BOSH.
 
 *NOTE: for instructions for installing the tile, see http://www.dingotiles.com/dingo-postgresql/installation.html*
 
-Dependencies
-------------
+### Dependencies
 
 Deploying the OSS BOSH release requires:
 
 -	BOSH for target infrastructure, or bosh-lite
 - `bosh` CLI to upload & deploy
 -	`spruce` CLI to merge YAML files, from http://spruce.cf/
-- `jq` & `curl` for the admin support scripts
+- `jq` & `curl` for the upload command & admin support scripts
 - Log management system, such as hosted service like [Papertrail](papertrailapp.com) or on-prem system like ELK (https://www.elastic.co/products or http://logsearch.io/)
 - Object storage service for backups, such as Amazon S3; with API credentials
 
-Deployment
-----------
+## Upload required BOSH releases
+
+This BOSH release is designed and tested to work with specific versions of 3rd party BOSH releases. The CI pipeline publishes final releases to Github that include the specific dependencies that have been tested to work.
+
+See https://github.com/dingotiles/dingo-postgresql-release/releases for specific upload instructions.
+
+For example, if you are installing version `0.5.7`, then the following command will upload the specific releases that work together:
+
+```
+version=0.5.7
+curl -s "https://api.github.com/repos/dingotiles/dingo-postgresql-release/releases/tags/v${version}" | jq -r ".assets[].browser_download_url"  | grep tgz | xargs -L1 bosh upload release --skip-if-exists
+```
+
+Your BOSH will directly download and install the BOSH releases. They will not be downloaded to your local computer.
+
+### Deployment
 
 Upload some dependent BOSH releases to your BOSH:
 
