@@ -8,14 +8,14 @@ cf bind-service myapp my-first-db
 cf restart myapp
 ```
 
-The BOSH release is the basis for the Pivotal Network tile [Dingo PostgreSQL](http://www.dingotiles.com/dingo-postgresql/) and uses the same licensing system for commercial customers. Most documentation in this repository and on the documentation site will
+The BOSH release is the basis for the Pivotal Network tile [Dingo PostgreSQL](http://www.dingotiles.com/dingo-postgresql/) and uses the same licensing system for commercial customers. As the [Licensing](#licensing) system applies to both this OSS BOSH release and the Pivotal tile, we are distributing all product features, support tooling, and documentation in both distributions.
 
 ![dingo-postgresql-tile](http://www.dingotiles.com/dingo-postgresql/images/dingo-postgresql-tile.png)
 
 Important links:
 
 * [Support & Discussions](https://slack.dingotiles.com)
-* [Licensing & Support](https://slack.dingotiles.com)
+* [Licensing](#licensing)
 * [User documentation](http://www.dingotiles.com/dingo-postgresql/usage-provision.html), under "User" sidebar
 * [Disaster recovery](http://www.dingotiles.com/dingo-postgresql/disaster-recovery.html)
 * [BOSH release source](https://github.com/dingotiles/dingo-postgresql-release)
@@ -58,6 +58,14 @@ This system requires:
 -	BOSH or bosh-lite, and the `bosh` CLI installed locally
 -	`spruce` CLI to merge YAML files, from http://spruce.cf/
 -	a running etcd cluster
+
+## Licensing
+
+The BOSH release is the basis for the Pivotal Network tile [Dingo PostgreSQL](http://www.dingotiles.com/dingo-postgresql/) and uses the same licensing system for commercial customers. As the licensing system applies to both this OSS BOSH release and the Pivotal tile, we are distributing all product features, support tooling, and documentation in both distributions.
+
+![dingo-postgresql-tile](http://www.dingotiles.com/dingo-postgresql/images/dingo-postgresql-tile.png)
+
+Both the OSS BOSH release and the Pivotal tile are free to trial for 10 service instances (one service instance is a cluster of PostgreSQL created by `cf create-service` command). Commercial license purchases can be purchased in service instance batches of 25. Please [chat with us on Slack](https://slack.dingotiles.com) to help getting started, discuss support & licensing, and to discuss future product direction.
 
 Deployment
 ----------
