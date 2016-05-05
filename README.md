@@ -16,6 +16,7 @@ Important links:
 
 * [Support & Discussions](https://slack.dingotiles.com)
 * [Licensing](#licensing)
+* [Installation](#installation)
 * [User documentation](http://www.dingotiles.com/dingo-postgresql/usage-provision.html), under "User" sidebar
 * [Disaster recovery](http://www.dingotiles.com/dingo-postgresql/disaster-recovery.html)
 * [BOSH release source](https://github.com/dingotiles/dingo-postgresql-release)
@@ -50,14 +51,6 @@ Clustering between multiple nodes each PostgreSQL cluster is automatically coord
 If a cell/server is lost, then replicas on other cells are promoted to be the master of each cluster, and the front facing router automatically starts directly traffic to the new master.
 
 Refer to the [LEARNING_PATRONI](./LEARNING_PATRONI.md) guide for more information patroni.
-Dependencies
-------------
-
-This system requires:
-
--	BOSH or bosh-lite, and the `bosh` CLI installed locally
--	`spruce` CLI to merge YAML files, from http://spruce.cf/
--	a running etcd cluster
 
 ## Licensing
 
@@ -66,6 +59,24 @@ The BOSH release is the basis for the Pivotal Network tile [Dingo PostgreSQL](ht
 ![dingo-postgresql-tile](http://www.dingotiles.com/dingo-postgresql/images/dingo-postgresql-tile.png)
 
 Both the OSS BOSH release and the Pivotal tile are free to trial for 10 service instances (one service instance is a cluster of PostgreSQL created by `cf create-service` command). Commercial license purchases can be purchased in service instance batches of 25. Please [chat with us on Slack](https://slack.dingotiles.com) to help getting started, discuss support & licensing, and to discuss future product direction.
+
+## Installation
+
+This section documents how to install/deploy Dingo PostgreSQL to BOSH.
+
+*NOTE: for instructions for installing the tile, see http://www.dingotiles.com/dingo-postgresql/installation.html*
+
+Dependencies
+------------
+
+Deploying the OSS BOSH release requires:
+
+-	BOSH for target infrastructure, or bosh-lite
+- `bosh` CLI to upload & deploy
+-	`spruce` CLI to merge YAML files, from http://spruce.cf/
+- `jq` & `curl` for the admin support scripts
+- Log management system, such as hosted service like [Papertrail](papertrailapp.com) or on-prem system like ELK (https://www.elastic.co/products or http://logsearch.io/)
+- Object storage service for backups, such as Amazon S3; with API credentials
 
 Deployment
 ----------
