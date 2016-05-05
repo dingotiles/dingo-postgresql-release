@@ -77,7 +77,7 @@ Deploying the OSS BOSH release requires:
 - Log management system, such as hosted service like [Papertrail](papertrailapp.com) or on-prem system like ELK (https://www.elastic.co/products or http://logsearch.io/)
 - Object storage service for backups, such as Amazon S3; with API credentials
 
-## Upload required BOSH releases
+### Upload required BOSH releases
 
 This BOSH release is designed and tested to work with specific versions of 3rd party BOSH releases. The CI pipeline publishes final releases to Github that include the specific dependencies that have been tested to work.
 
