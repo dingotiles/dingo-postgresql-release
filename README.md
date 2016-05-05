@@ -1,4 +1,45 @@
-# High-Availability PostgreSQL for Cloud Foundry
+# Dingo PostgreSQL for Cloud Foundry
+
+Allow your Cloud Foundry users to provision High-Availability PostgreSQL clusters, backed by a disaster recovery system with maximum 10 minutes data loss.
+
+```
+cf create-service dingo-postgresql cluster my-first-db
+cf bind-service myapp my-first-db
+cf restart myapp
+```
+
+The BOSH release is the basis for the Pivotal Network tile [Dingo PostgreSQL](http://www.dingotiles.com/dingo-postgresql/) and uses the same licensing system for commercial customers. Most documentation in this repository and on the documentation site will
+
+![dingo-postgresql-tile](http://www.dingotiles.com/dingo-postgresql/images/dingo-postgresql-tile.png)
+
+Important links:
+
+* [Support & Discussions](https://slack.dingotiles.com)
+* [Licensing & Support](https://slack.dingotiles.com)
+* [User documentation](http://www.dingotiles.com/dingo-postgresql/usage-provision.html), under "User" sidebar
+* [Disaster recovery](http://www.dingotiles.com/dingo-postgresql/disaster-recovery.html)
+* [BOSH release source](https://github.com/dingotiles/dingo-postgresql-release)
+* [BOSH release releases](https://github.com/dingotiles/dingo-postgresql-release/releases)
+* [BOSH release pipeline](https://ci.vsphere.starkandwayne.com/pipelines/dingo-postgresql-release)
+
+Internal developer docs:
+
+* [docker image tutorial](images/README.md) - learn the behavior of the Dingo PostgreSQL docker images without the overarching orchestration, how clusters are formed, how backups are configured, etc.
+* [etcd schema](https://github.com/dingotiles/dingo-postgresql-broker/blob/master/docs/etcd_schema.md) - how/where/why data is stored in etcd
+
+## Introduction
+
+Users of Cloud Foundry expect that hard things are easy to do. For the first time, Dingo PostgreSQL makes it easy for any user of Cloud Foundry to provision an advanced, dynamically configuring cluster of PostgreSQL that provides high availablity across multiple availability zones.
+
+Each cluster has an independent continuous backup which allows for [service instance disaster recovery for user disasters](http://www.dingotiles.com/dingo-postgresql/recover-user-deleted-service.html); and [entire platform disaster recovery](http://www.dingotiles.com/dingo-postgresql/disaster-recovery.html) for the worst disasters.
+
+Deployments of Dingo PostgreSQL can be to any infrastructure supported by a BOSH CPI, such as vSphere, AWS, OpenStack, Google Compute, and Azure. Ideally, it would be deployed into the same infrastructure as the Cloud Foundry it will be connected to.
+
+Backups can be stored and restored from numerous object stores, such as Amazon S3 or matching API, Microsoft Azure, and OpenStack Swift.
+
+Dingo PostgreSQL offers a Cloud Foundry-compatible service broker [[API](http://docs.cloudfoundry.org/services/api.html)] to make it easy for Cloud Foundry operators to register Dingo PostgreSQL, and for Cloud Foundry users to use the service via the common `cf create-service` command set.
+
+## Architecture
 
 This BOSH release deploys a cluster of cells that can run high-availability clustered PostgreSQL. It includes a front-facing routing mesh to route connections the master/solo PostgreSQL node in each cluster.
 
