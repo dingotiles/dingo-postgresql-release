@@ -77,7 +77,7 @@ properties:
     user: admin
     password: admin
   servicebroker:
-    service_id: "beb5973c-e1b2-11e5-a736-c7c0b526363d"
+    service_id: beb5973c-e1b2-11e5-a736-c7c0b526363d
 EOF
 cat tmp/cf-disaster-recovery.yml
 
