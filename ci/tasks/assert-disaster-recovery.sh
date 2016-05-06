@@ -17,7 +17,7 @@ set +x
 for ((n=0;n<60;n++)); do
     found='false'
     set -x
-    table=$(psql ${pg_uri} -c 'SELECT * FROM disasterrecoverytest;')
+    table=$(psql ${pg_uri} -c 'SELECT * FROM disasterrecoverytest;' || '')
     set +x
     if echo ${table} | grep 'dr-test'; then
         found='true'
