@@ -75,8 +75,16 @@ jobs:
   public: true
   serial: true
   plan:
-  - {get: boshrelease-ci}
   - aggregate:
+    - do:
+      - {get: boshrelease-ci}
+      - task: delete-testflight
+        file: boshrelease-ci/ci/tasks/delete-testflight.yml
+        params:
+          deployment_name: dingo-postgresql-testflight
+          bosh_target: {{bosh-lite-target}}
+          bosh_username: {{bosh-lite-username}}
+          bosh_password: {{bosh-lite-password}}
     - {get: boshrelease, passed: [bosh-rc], trigger: true}
     - {get: version, passed: [bosh-rc], trigger: true}
     - {get: candidate-release, passed: [bosh-rc], trigger: true}
@@ -85,13 +93,6 @@ jobs:
     - {get: etcd}
     - {get: simple-remote-syslog}
     - {get: lite-stemcell}
-    - task: delete-testflight
-      file: boshrelease-ci/ci/tasks/delete-testflight.yml
-      params:
-        deployment_name: dingo-postgresql-testflight
-        bosh_target: {{bosh-lite-target}}
-        bosh_username: {{bosh-lite-username}}
-        bosh_password: {{bosh-lite-password}}
   - task: create-lite-manifest
     file: boshrelease-ci/ci/tasks/create-manifest.yml
     params:
