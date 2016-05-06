@@ -1,7 +1,7 @@
 ---
 groups:
 - name: pipeline
-  jobs: [rc, bosh-rc, testflight, testflight-dr, deploy-vsphere, shipit, minor, major, patch]
+  jobs: [rc, bosh-rc, testflight, deploy-vsphere, shipit, minor, major, patch]
 - name: patroni-images
   jobs: [build-pg95-base-image, build-pg95-image]
 - name: broker
@@ -74,10 +74,9 @@ jobs:
 - name: testflight
   public: true
   serial: true
-  serial_groups: [bosh-lite]
   plan:
+  - {get: boshrelease-ci}
   - aggregate:
-    - {get: boshrelease-ci}
     - {get: boshrelease, passed: [bosh-rc], trigger: true}
     - {get: version, passed: [bosh-rc], trigger: true}
     - {get: candidate-release, passed: [bosh-rc], trigger: true}
@@ -86,6 +85,13 @@ jobs:
     - {get: etcd}
     - {get: simple-remote-syslog}
     - {get: lite-stemcell}
+    - task: delete-testflight
+      file: boshrelease-ci/ci/tasks/delete-testflight.yml
+      params:
+        deployment_name: dingo-postgresql-testflight
+        bosh_target: {{bosh-lite-target}}
+        bosh_username: {{bosh-lite-username}}
+        bosh_password: {{bosh-lite-password}}
   - task: create-lite-manifest
     file: boshrelease-ci/ci/tasks/create-manifest.yml
     params:
@@ -104,13 +110,6 @@ jobs:
       docker_image_image: "dingotiles/dingo-postgresql95"
       docker_image_tag: "edge"
       docker_image_source: upstream
-  - task: delete-testflight
-    file: boshrelease-ci/ci/tasks/delete-testflight.yml
-    params:
-      deployment_name: dingo-postgresql-testflight
-      bosh_target: {{bosh-lite-target}}
-      bosh_username: {{bosh-lite-username}}
-      bosh_password: {{bosh-lite-password}}
   - put: lite-deployment
     params:
       manifest: manifest/manifest.yml
@@ -119,52 +118,20 @@ jobs:
         - candidate-release/*.tgz
         - etcd/*.tgz
         - simple-remote-syslog/*.tgz
-  - put: lite-errand
-    params:
-      manifest: manifest/manifest.yml
-      errand: sanity-test
-
-- name: testflight-dr
-  public: true
-  serial: true
-  serial_groups: [bosh-lite]
-  plan:
   - aggregate:
-    - {get: boshrelease-ci, params: {submodules: none}}
-    - {get: boshrelease, passed: [testflight], trigger: false, params: {submodules: none}}
-    - {get: version, passed: [testflight], trigger: false}
-    - {get: candidate-release, passed: [testflight], trigger: true}
-    - {get: pg95-image-edge, passed: [testflight], trigger: true, params: {skip_download: true}}
-    - {get: docker-image-registrator, passed: [testflight], trigger: true, params: {skip_download: true}}
-    - {get: etcd, passed: [testflight]}
-    - {get: simple-remote-syslog, passed: [testflight]}
-    - {get: lite-stemcell, passed: [testflight]}
-  - task: prepare-disaster-recovery
-    file: boshrelease-ci/ci/tasks/prepare-disaster-recovery.yml
-  - task: create-lite-manifest
-    file: boshrelease-ci/ci/tasks/create-manifest.yml
-    params:
-      deployment_name: dingo-postgresql-testflight
-      bosh_target: {{bosh-lite-target}}
-      bosh_username: {{bosh-lite-username}}
-      bosh_password: {{bosh-lite-password}}
-      bosh_syslog_host: {{bosh-lite-syslog-host}}
-      bosh_syslog_port: {{bosh-lite-syslog-port}}
-      aws_access_key: {{dingotiles-aws-access}}
-      aws_secret_key: {{dingotiles-aws-secret}}
-      backups_bucket: {{backups-testflight-backups-bucket}}
-      clusterdata_bucket: {{backups-testflight-clusterdata-bucket}}
-      s3_endpoint: {{backups-testflight-s3-endpoint}}
-      region: {{backups-testflight-s3-region}}
-      docker_image_image: "dingotiles/dingo-postgresql95"
-      docker_image_tag: "edge"
-      docker_image_source: upstream
-  - put: lite-errand
-    params:
-      manifest: manifest/manifest.yml
-      errand: disaster-recovery
-  - task: assert-disaster-recovery
-    file: boshrelease-ci/ci/tasks/assert-disaster-recovery.yml
+    - task: prepare-disaster-recovery
+      file: boshrelease-ci/ci/tasks/prepare-disaster-recovery.yml
+    - do:
+      - put: lite-errand
+        params:
+          manifest: manifest/manifest.yml
+          errand: sanity-test
+      - put: lite-errand
+        params:
+          manifest: manifest/manifest.yml
+          errand: disaster-recovery
+      - task: assert-disaster-recovery
+        file: boshrelease-ci/ci/tasks/assert-disaster-recovery.yml
 
 # - name: bump-image-layers
 #   public: true
@@ -195,13 +162,13 @@ jobs:
   plan:
   - aggregate:
     - {get: boshrelease-ci}
-    - {get: boshrelease, passed: [testflight-dr]}
-    - {get: version, passed: [testflight-dr]}
-    - {get: pg95-image-edge, passed: [testflight-dr], trigger: true, params: {skip_download: true}}
-    - {get: candidate-release, passed: [testflight-dr], trigger: true}
-    - {get: etcd, passed: [testflight-dr]}
-    - {get: simple-remote-syslog, passed: [testflight-dr]}
-    - {get: docker-image-registrator, passed: [testflight-dr], trigger: true, params: {skip_download: true}}
+    - {get: boshrelease, passed: [testflight]}
+    - {get: version, passed: [testflight]}
+    - {get: pg95-image-edge, passed: [testflight], trigger: true, params: {skip_download: true}}
+    - {get: candidate-release, passed: [testflight], trigger: true}
+    - {get: etcd, passed: [testflight]}
+    - {get: simple-remote-syslog, passed: [testflight]}
+    - {get: docker-image-registrator, passed: [testflight], trigger: true, params: {skip_download: true}}
     - {get: vsphere-stemcell}
   - task: setup-vsphere-manifest
     file: boshrelease-ci/ci/tasks/setup-vsphere-manifest.yml
