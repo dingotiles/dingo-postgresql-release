@@ -68,8 +68,7 @@ meta:
     region: "${region}"
 EOF
 
-if [[ "${service_guid}X" != "X" ]]; then
-  cat > tmp/cf-disaster-recovery.yml <<EOF
+cat > tmp/cf-disaster-recovery.yml <<EOF
 ---
 properties:
   cf:
@@ -80,11 +79,6 @@ properties:
   servicebroker:
     service_id: "beb5973c-e1b2-11e5-a736-c7c0b526363d"
 EOF
-else
-  cat > tmp/cf-disaster-recovery.yml <<EOF
---- {}
-EOF
-fi
 cat tmp/cf-disaster-recovery.yml
 
 services_template=templates/services-cluster-backup-s3.yml
