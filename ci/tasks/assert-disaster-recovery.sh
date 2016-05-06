@@ -3,8 +3,6 @@
 set -x
 set -e
 
-cat $PWD/service-info/service-guid
-
 cf login --skip-ssl-validation \
   -a api.test-cf.snw \
   -u admin \
