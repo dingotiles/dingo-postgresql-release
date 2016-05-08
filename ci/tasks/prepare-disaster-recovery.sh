@@ -1,6 +1,5 @@
 #!/bin/bash
 
-outdir=$PWD/service-info
 set -x
 set -e
 
@@ -17,11 +16,6 @@ cf purge-service-offering -f testflight-dingo-pg
 cf delete-service-broker -f testflight-dingo-pg
 
 cf create-service-broker testflight-dingo-pg starkandwayne starkandwayne http://${broker_ip}:${broker_port}
-
-
-cf curl /v2/services | \
-  jq -r '.resources[0].metadata.guid' | \
-  tee ${outdir}/service-guid
 
 cf enable-service-access dingo-postgresql
 cf marketplace

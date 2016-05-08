@@ -19,7 +19,7 @@ properties:
     default: admin
   cf.password:
     description: 'Password of the Cloud Foundry user'
-  servicebroker.service_guid:
+  servicebroker.service_id:
     description: If dynamically looking up Instane IDs from Cloud Foundry
 
   # Target service broker

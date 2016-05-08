@@ -4,7 +4,6 @@ image: docker:///dingotiles/dingo-postgresql-release-pipeline
 
 inputs:
 - name: boshrelease-ci
-- name: service-info
 
 params:
   broker_ip: 10.58.111.45

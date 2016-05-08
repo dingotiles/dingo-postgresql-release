@@ -3,8 +3,6 @@
 set -x
 set -e
 
-cat $PWD/service-info/service-guid
-
 cf login --skip-ssl-validation \
   -a api.test-cf.snw \
   -u admin \
@@ -19,7 +17,7 @@ set +x
 for ((n=0;n<60;n++)); do
     found='false'
     set -x
-    table=$(psql ${pg_uri} -c 'SELECT * FROM disasterrecoverytest;')
+    table=$(psql ${pg_uri} -c 'SELECT * FROM disasterrecoverytest;' || '')
     set +x
     if echo ${table} | grep 'dr-test'; then
         found='true'
