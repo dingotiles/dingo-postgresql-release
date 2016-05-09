@@ -186,3 +186,11 @@ To enable it requires only passing in some environment variables to the Docker c
 See [templates/services-cluster-backup-s3.yml](https://github.com/dingotiles/dingo-postgresql-release/blob/master/templates/services-cluster-backup-s3.yml#L33-L39) for an example of the environment variables required.
 
 To explore how this is implemented within the Docker image, see [image tutorial](https://github.com/dingotiles/dingo-postgresql-release/tree/master/images#backuprestore-from-aws).
+
+## Disaster recovery
+
+The instructions and tutorials for disaster recovery (for user's individual databases or for the entire platform) are available at:
+
+* [Introduction to Disaster Recovery](http://www.dingotiles.com/dingo-postgresql/disaster-recovery.html)
+* [Recover a user’s deleted service instance](http://www.dingotiles.com/dingo-postgresql/recover-user-deleted-service.html)
+* [Recover from complete disasters](http://www.dingotiles.com/dingo-postgresql/recover-from-complete-disaster.html)
