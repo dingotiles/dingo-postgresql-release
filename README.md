@@ -141,6 +141,8 @@ cf create-service dingo-postgresql cluster-dev pg-dev
 
 To learn more about provisioning, binding and using the Dingo PostgreSQL cluster visit the documentation http://www.dingotiles.com/dingo-postgresql/usage-provision.html
 
+The name `cluster-dev` service plan reflects that currently the service instance has no streaming backups configured. See section [Streaming backups to AWS S3](#streaming-backups-to-aws-s3) below to switch to a service plan that offers streaming backups to every Dingo PostgreSQL cluster automatically.
+
 ### Remote syslog
 
 To ship logs to a remote syslog endpoint, create a YAML file like below:
