@@ -145,7 +145,11 @@ The name `cluster-dev` service plan reflects that currently the service instance
 
 ### Remote syslog
 
-To ship logs to a remote syslog endpoint, create a YAML file like below:
+To aide with understanding and debugging it is very important to see all logs from system components of Dingo PostgreSQL, and from the running Docker containers for each service instance.
+
+Dingo PostgreSQL can stream all component and container logs to a central syslog endpoint for viewing and discovery by administrators.
+
+To ship logs to a remote syslog endpoint, create a YAML file like (in the example below it is at `tmp/syslog.yml`):
 
 ```yaml
 ---
@@ -161,7 +165,9 @@ properties:
     - tag="{{.Name}}"
 ```
 
-Then include the file in your `make_manifest` command to build your BOSH deployment manifest.
+For example, for [papertrail](https://papertrailapp.com) you can get your host:port details from https://papertrailapp.com/systems/setup; or can register a new syslog endpoint at https://papertrailapp.com/systems/new.
+
+Then append the file in your `make_manifest` command (from above) to build your BOSH deployment manifest.
 
 ```
 ./templates/make_manifest warden upstream templates/services-cluster.yml templates/jobs-etcd.yml \
