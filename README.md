@@ -119,6 +119,28 @@ As the first step, to deploy the service without backups nor syslogs:
 bosh deploy
 ```
 
+To register your new Dingo PostgreSQL service broker with your bosh-lite Cloud Foundry:
+
+```
+cf create-service-broker dingo-postgresql starkandwayne starkandwayne http://10.244.21.2:8889
+```
+
+To enable the service to all organizations:
+
+```
+cf enable-service-access dingo-postgresql
+```
+
+To view the service offering, and to create your first Dingo PostgreSQL service cluster:
+
+```
+cf marketplace
+cf marketplace -s dingo-postgresql
+cf create-service dingo-postgresql cluster-dev pg-dev
+```
+
+To learn more about provisioning, binding and using the Dingo PostgreSQL cluster visit the documentation http://www.dingotiles.com/dingo-postgresql/usage-provision.html
+
 ### Remote syslog
 
 To ship logs to a remote syslog endpoint, create a YAML file like below:
