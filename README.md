@@ -141,7 +141,7 @@ cf create-service dingo-postgresql cluster-dev pg-dev
 
 To learn more about provisioning, binding and using the Dingo PostgreSQL cluster visit the documentation http://www.dingotiles.com/dingo-postgresql/usage-provision.html
 
-The name `cluster-dev` service plan reflects that currently the service instance has no streaming backups configured. See section [Streaming backups to AWS S3](#streaming-backups-to-aws-s3) below to switch to a service plan that offers streaming backups to every Dingo PostgreSQL cluster automatically.
+The name `cluster-dev` service plan reflects that currently the service instance has no streaming backups configured. See section [Streaming backups to Amazon S3](#streaming-backups-to-amazon-s3) below to switch to a service plan that offers streaming backups to every Dingo PostgreSQL cluster automatically.
 
 ### Remote syslog
 
@@ -175,17 +175,63 @@ Then append the file in your `make_manifest` command (from above) to build your 
 bosh deploy
 ```
 
-### Streaming backups to AWS S3
+### Streaming backups to Amazon S3
 
 A database without a disaster recovery playbook (backup and restore) is a cache. One of Dingo PostgreSQL important features is that it is easy for an operator to enable streaming backups for every service instance.
 
-Each PostgreSQL master container can continuously stream its write-ahead logs (WAL) to AWS S3. These can later be used to restore master nodes and to create replica nodes.
+Each PostgreSQL master container can continuously stream its write-ahead logs (WAL) to Amazon S3. These can later be used to restore clusters (see [Disaster Recovery](#disaster-recovery) section below), and may also internally used to create new replica nodes.
 
-To enable it requires only passing in some environment variables to the Docker containers, and Patroni will use them to enable continuous archiving via [wal-e](https://github.com/wal-e/wal-e).
+You will need two separate Amazon S3 buckets - one to store the streaming backups from every Dingo PostgreSQL service cluster (`meta.backups.backups_bucket` below), and one to backup the cluster data (routing, passwords, cluster sizing) for the event of a disaster recovery.
 
-See [templates/services-cluster-backup-s3.yml](https://github.com/dingotiles/dingo-postgresql-release/blob/master/templates/services-cluster-backup-s3.yml#L33-L39) for an example of the environment variables required.
+Create a YAML file with configuration (`tmp/backups.yml` in example command below):
 
-To explore how this is implemented within the Docker image, see [image tutorial](https://github.com/dingotiles/dingo-postgresql-release/tree/master/images#backuprestore-from-aws).
+```yaml
+---
+meta:
+  backups:
+    aws_access_key: ACCESSKEY
+    aws_secret_key: SECRETKEY
+    backups_bucket: mycompany-dingo-postgresql-testflight-backups
+    clusterdata_bucket: mycompany-dingo-postgresql-testflight-clusterdata-backups
+    s3_endpoint: s3-ap-southeast-1.amazonaws.com
+    region: ap-southeast-1
+```
+
+Re-run the `make_manifest` command from above but with the following changes:
+
+* append this file
+* replace `templates/services-cluster.yml` with `templates/services-cluster-backup-s3.yml` template
+
+```
+./templates/make_manifest warden upstream templates/jobs-etcd.yml \
+  tmp/syslog.yml \
+  templates/services-cluster-backup-s3.yml tmp/backups.yml
+bosh deploy
+```
+
+Next:
+
+* update broker with new service plan information (`cluster-dev` changes to `cluster`)
+
+```
+cf update-service-broker dingo-postgresql starkandwayne starkandwayne http://10.244.21.2:8889
+```
+
+* create new service instance
+
+```
+cf create-service dingo-postgresql cluster pg-prod
+cf service pg-prod
+```
+
+* update pg-dev above to enable backups on existing cluster
+
+```
+cf update-service dingo-postgresql cluster pg-dev
+cf service pg-prod
+```
+
+To learn and explore how this configuration data is passed down into the Docker containers that run Patroni and PostgreSQL, see [image tutorial](https://github.com/dingotiles/dingo-postgresql-release/tree/master/images#backuprestore-from-aws).
 
 ## Disaster recovery
 
