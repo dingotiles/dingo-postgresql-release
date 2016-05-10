@@ -100,8 +100,6 @@ curl -s "https://api.github.com/repos/dingotiles/dingo-postgresql-release/releas
 
 ### Deployment to bosh-lite
 
-This section assumes you have bosh-lite running (locally or on remote infrastructure such as AWS), and have Cloud Foundry already running on your bosh-lite http://docs.cloudfoundry.org/deploying/boshlite/index.html
-
 This section focuses on deploying Dingo PostgreSQL to bosh-lite (either running locally or remotely):
 
 Get the BOSH release repository that contains the `spruce` templates we will use to build the BOSH deployment manifest:

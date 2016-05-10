@@ -72,7 +72,7 @@ cat > tmp/cf-disaster-recovery.yml <<EOF
 ---
 properties:
   cf:
-    api_endpoint: api.10-58-111-46.sslip.io
+    api_endpoint: api.test-cf.snw
     skip_ssl_verification: true
     user: admin
     password: admin

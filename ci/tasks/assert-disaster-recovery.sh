@@ -4,7 +4,7 @@ set -x
 set -e
 
 cf login --skip-ssl-validation \
-  -a api.10-58-111-46.sslip.io \
+  -a api.test-cf.snw \
   -u admin \
   -p admin \
   -o dr-test \
