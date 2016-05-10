@@ -151,8 +151,6 @@ networks:
     cloud_properties:
       name: net-10-58-111-0
 properties:
-  cf:
-    api_url: https://api.10.244.0.34.xip.io
   etcd:
     machines: [10.58.111.59]
   registrator:

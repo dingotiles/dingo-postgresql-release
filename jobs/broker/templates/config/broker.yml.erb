@@ -3,15 +3,22 @@ broker:
   username: <%= p("servicebroker.username") %>
   password: <%= p("servicebroker.password") %>
   port: <%= p("servicebroker.port") %>
+  bind_host: <%= p("servicebroker.router.hostname") %>
 
-router:
-  hostname: <%= p("servicebroker.router.hostname") %>
+scheduler:
+  backends:
+  <% p("servicebroker.backends.machines").each do |az, machines| %>
+    <% machines.each do |machine| %>
+  - guid: <%= machine %>
+    availability_zone: <%= az %>
+    uri: <%= machine %>
+    username: "<%= p('servicebroker.backends.username') %>"
+    password: "<%= p('servicebroker.backends.password') %>"
+    <% end %>
+  <% end %>
 
-kvstore:
-  type: etcd
+etcd:
   machines: <%= p("etcd.machines").map {|h| "http://#{h}:4001"} %>
-  username: ""
-  password: ""
 
 <% if_p("backups.clusterdata.aws_access_key_id") do |aws_access_key_id| %>
 callbacks:
@@ -19,30 +26,11 @@ callbacks:
   clusterdata_restore: {cmd: /var/vcap/jobs/broker/bin/restore_provisioned_service}
 <% end %>
 
-backends:
-<% p("servicebroker.backends.machines").each do |az, machines| %>
-  <% machines.each do |machine| %>
-- guid: <%= machine %>
-  availability_zone: <%= az %>
-  uri: <%= machine %>
-  username: "<%= p('servicebroker.backends.username') %>"
-  password: "<%= p('servicebroker.backends.password') %>"
-  <% end %>
-<% end %>
 
 <% if_p("license_text") do |license_text| %>
 license_text: '<%= license_text %>'
 <% end.else do %>
 # WARNING: license_text was not provided. Defaulting to trial quota.
-<% end %>
-<% if_p("cf.api_url", "cf.admin_username", "cf.admin_password", "cf.skip_ssl_validation") do |api_url, admin_username, admin_password, skip_ssl_validation| %>
-cf:
-  api: <%= api_url %>
-  username: <%= admin_username %>
-  password: <%= admin_password %>
-  skip_ssl_validation: <%= skip_ssl_validation %>
-<% end.else do %>
-# WARNING: cf.api etc were not provided.
 <% end %>
 
 catalog:

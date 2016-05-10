@@ -58,13 +58,3 @@ properties:
 
   license_text:
     description: Single-line string license key to grant quota limits beyond trial quota
-  cf.api_url:
-    description: HTTPS endpoint to Cloud Foundry to confirm license quota
-  cf.skip_ssl_validation:
-    description: Skip SSL validation of HTTPS endpoint to Cloud Foundry to confirm license quota
-    default: false
-  cf.admin_username:
-    description: Username for Cloud Foundry to confirm license quota
-    default: admin
-  cf.admin_password:
-    description: Password for Cloud Foundry to confirm license quota
