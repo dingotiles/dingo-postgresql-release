@@ -50,4 +50,6 @@ builds:
     version: 0.5.7
   09921a22-2eb3-4fe1-b38e-3b6f9164a493:
     version: 0.5.8
+  c9e4246c-ad27-408c-b48a-55da7c432ab1:
+    version: 0.5.9
 format-version: '2'
