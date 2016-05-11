@@ -28,7 +28,7 @@ for ((n=0;n<60;n++)); do
     if cf service dr-test | grep 'create succeeded'; then
         break
     fi
-    sleep 1
+    sleep 2
 done
 set -x
 
