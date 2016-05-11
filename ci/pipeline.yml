@@ -50,8 +50,8 @@ jobs:
   serial_groups: [version]
   plan:
   - aggregate:
-    - {get: boshrelease}
-    - {get: boshrelease-trigger, trigger: true, params: {skip_download: true}}
+    - {get: boshrelease, trigger: true}
+    # - {get: boshrelease-trigger, trigger: true, params: {skip_download: true}}
     - {get: version, params: {pre: rc}}
   - put: version
     params: {file: version/number}
