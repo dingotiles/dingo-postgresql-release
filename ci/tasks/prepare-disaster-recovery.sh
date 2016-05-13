@@ -3,6 +3,9 @@
 set -x
 set -e
 
+echo Waiting a few seconds for the docker images to pull
+sleep 30
+
 cf login --skip-ssl-validation \
   -a api.test-cf.snw \
   -u admin \
