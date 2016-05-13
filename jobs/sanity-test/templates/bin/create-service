@@ -22,7 +22,7 @@ create_instance() {
   }
   set +x
   sleep 5
-  for ((n=0;n<60;n++)); do
+  for ((n=0;n<120;n++)); do
       set -x
       last_operation=$(curl ${BROKER_URI}/v2/service_instances/${instance_id}/last_operation)
       set +x
@@ -30,7 +30,7 @@ create_instance() {
           set -x
           return
       fi
-      sleep 2
+      sleep 1
   done
   set -x
   echo "Couldn't create service instance"

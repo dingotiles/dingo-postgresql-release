@@ -13,7 +13,7 @@ leader_con=$(curl -s ${ETCD}/v2/keys/service/${instance_id}/members/${leader_id}
 
 set +x
 replicators_found=''
-for ((n=0;n<60;n++)); do
+for ((n=0;n<120;n++)); do
   set -x
   replication_table=$(psql ${leader_con} -c 'select * from pg_stat_replication;')
   set +x

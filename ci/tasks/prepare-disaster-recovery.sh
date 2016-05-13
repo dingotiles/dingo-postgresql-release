@@ -24,11 +24,11 @@ cf create-service dingo-postgresql cluster dr-test
 echo 'Waiting for async provisioning to complete'
 set +x
 sleep 5
-for ((n=0;n<60;n++)); do
+for ((n=0;n<120;n++)); do
     if cf service dr-test | grep 'create succeeded'; then
         break
     fi
-    sleep 2
+    sleep 1
 done
 set -x
 
