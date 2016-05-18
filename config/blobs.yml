@@ -67,3 +67,7 @@ docker/docker-1.11.0.tgz:
   object_id: 3b4bdfba-f53b-47a1-aa7e-230032903db6
   sha: 242b6a3e6def6719f5002a4d3d5b35e587036c4e
   size: 20520756
+golang/go1.6.2.linux-amd64.tar.gz:
+  object_id: 2f661769-6342-4424-99e3-bd739d293631
+  sha: b8318b09de06076d5397e6ec18ebef3b45cd315d
+  size: 84840658
