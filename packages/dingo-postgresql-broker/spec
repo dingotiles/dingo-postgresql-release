@@ -1,4 +1,4 @@
 ---
 name: dingo-postgresql-broker
-dependencies: [golang-1.5]
+dependencies: [golang-1.6]
 files: [dingo-postgresql-broker/**/*]

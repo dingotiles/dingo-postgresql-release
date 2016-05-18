@@ -9,8 +9,8 @@ mkdir -p $(dirname $REPO_DIR)
 
 cp -a $(basename $REPO_NAME)/ $REPO_DIR
 
-export GOROOT=$(readlink -nf /var/vcap/packages/golang-1.5)
-export GOPATH=$BOSH_INSTALL_TARGET:${REPO_DIR}/Godeps/_workspace
+export GOROOT=$(readlink -nf /var/vcap/packages/golang-1.6)
+export GOPATH=$BOSH_INSTALL_TARGET
 export PATH=$GOROOT/bin:$PATH
 
 go install ${REPO_NAME}
