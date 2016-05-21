@@ -22,13 +22,13 @@ listen servicebroker
   server leader_<%= i %> <%= broker %>:<%= p("servicebroker.port") %>
 	<% end %>
 
-{{range $index, $name := ls "/service"}}
+{{range $index, $name := ls "/routing/allocation"}}
 	{{range $member := getvs (printf "/service/%s/members/*" $name)}}
 		{{$data := json $member}}
 		{{if eq $data.role "master"}}
 listen {{$name}}
   mode tcp
-  bind *:{{(printf "/service/%s/port" $name | getv)}}
+  bind *:{{(printf "/routing/allocation/%s" $name | getv)}}
   server leader {{$data.conn_address}}
 		{{end}}
 	{{end}}

@@ -5,6 +5,7 @@ dest = "/var/vcap/sys/run/router/haproxy.cfg"
 owner = "vcap"
 mode = "0644"
 keys = [
+  "/routing/allocation",
   "/service",
 ]
 # check_cmd = "/usr/sbin/nginx -t -c {{.src}}"

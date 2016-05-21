@@ -52,8 +52,23 @@ curl -sf ${BROKER_URI}/v2/service_instances/${instance_id}\?plan_id=${plan_id}\&
 echo Recreating service instance
 curl -sf ${BROKER_URI}/v2/service_instances/${instance_id} -XPUT -d '{}'
 
-echo Waiting 60 seconds to allow restoration of database
-sleep 60
+echo waiting for the cluster to recover
+set +x
+sleep 30
+
+for ((n=0;n<120;n++)); do
+  set -x
+  last_operation=$(curl ${BROKER_URI}/v2/service_instances/${instance_id}/last_operation)
+  set +x
+  if echo ${last_operation} | grep 'succeeded' > /dev/null; then
+    set -x
+    break
+  fi
+  sleep 1
+done
+
+echo 'waiting for haproxy to update'
+sleep 15
 
 # psql ${uri} -c "SELECT * from pgbench_tellers;"
 psql ${uri} -c "SELECT * from sanitytest;"
