@@ -58,6 +58,12 @@ indent_startup() {
     echo public address ${CONNECT_ADDRESS}
   fi
 
+  # for backwards compatibility
+  if [[ ! -z "${POSTGRES_USERNAME}" ]]; then
+    ADMIN_USERNAME=${POSTGRES_USERNAME}
+    ADMIN_PASSWORD=${POSTGRES_PASSWORD}
+  fi
+
   ADMIN_USERNAME=${ADMIN_USERNAME:-pgadmin}
   ADMIN_PASSWORD=${ADMIN_PASSWORD:-$(pwgen -s -1 16)}
   SUPERUSER_USERNAME=${SUPERUSER_USERNAME:-postgres}
