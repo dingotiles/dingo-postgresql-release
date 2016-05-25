@@ -58,8 +58,12 @@ indent_startup() {
     echo public address ${CONNECT_ADDRESS}
   fi
 
-  POSTGRES_USERNAME=${POSTGRES_USERNAME:-pgadmin}
-  POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-$(pwgen -s -1 16)}
+  ADMIN_USERNAME=${ADMIN_USERNAME:-pgadmin}
+  ADMIN_PASSWORD=${ADMIN_PASSWORD:-$(pwgen -s -1 16)}
+  SUPERUSER_USERNAME=${SUPERUSER_USERNAME:-postgres}
+  SUPERUSER_PASSWORD=${SUPERUSER_PASSWORD:-Tof2gNVZMz6Dun}
+  APPUSER_USERNAME=${APPUSER_USERNAME:-dvw7DJgqzFBJC8}
+  APPUSER_PASSWORD=${APPUSER_PASSWORD:-jkT3TTNebfrh6C}
 
   WALE_ENV_DIR=${WALE_ENV_DIR:-${DATA_DIR}/wal-e/env}
   mkdir -p $WALE_ENV_DIR
@@ -148,15 +152,15 @@ postgresql:
   - host    postgres     all             0.0.0.0/0 md5
   - hostssl postgres     all             0.0.0.0/0 md5
   replication: # replication username, user will be created during initialization
-    username: dvw7DJgqzFBJC8
-    password: jkT3TTNebfrh6C
+    username: ${APPUSER_USERNAME}
+    password: ${APPUSER_PASSWORD}
     network:  127.0.0.1/32
   superuser:
-    username: postgres
-    password: Tof2gNVZMz6Dun # password for postgres user. It would be set during initialization
+    username: ${SUPERUSER_USERNAME}
+    password: ${SUPERUSER_PASSWORD} # password for postgres user. It would be set during initialization
   admin: # user will be created during initialization. It would have CREATEDB and CREATEROLE privileges
-    username: ${POSTGRES_USERNAME}
-    password: ${POSTGRES_PASSWORD}
+    username: ${ADMIN_USERNAME}
+    password: ${ADMIN_PASSWORD}
   create_replica_method: ${replica_methods}
 EOF
 
@@ -228,8 +232,8 @@ EOF
 
   echo ----------------------
   echo Admin user credentials
-  echo Username ${POSTGRES_USERNAME}
-  echo Password ${POSTGRES_PASSWORD}
+  echo Username ${ADMIN_USERNAME}
+  echo Password ${ADMIN_PASSWORD}
   echo ----------------------
 
 ) 2>&1 | indent_startup
