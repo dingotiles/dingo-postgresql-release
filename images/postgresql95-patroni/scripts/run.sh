@@ -58,6 +58,12 @@ indent_startup() {
     echo public address ${CONNECT_ADDRESS}
   fi
 
+  # for backwards compatibility
+  if [[ ! -z "${POSTGRES_USERNAME}" ]]; then
+    ADMIN_USERNAME=${POSTGRES_USERNAME}
+    ADMIN_PASSWORD=${POSTGRES_PASSWORD}
+  fi
+
   ADMIN_USERNAME=${ADMIN_USERNAME:-pgadmin}
   ADMIN_PASSWORD=${ADMIN_PASSWORD:-$(pwgen -s -1 16)}
   SUPERUSER_USERNAME=${SUPERUSER_USERNAME:-postgres}
@@ -118,7 +124,6 @@ indent_startup() {
   fi
 
 
-  # TODO secure the passwords!
   # TODO add host ip into postgresql.name to ensure unique if two containers have same local DOCKER_IP
 
   cat > /patroni/postgres.yml <<EOF
@@ -148,7 +153,7 @@ postgresql:
   # Allow any user from any host to connect to database
   # "postgres" if the user's password is correctly supplied.
   # TYPE    DATABASE     USER            ADDRESS   METHOD
-  - host    replication  dvw7DJgqzFBJC8  0.0.0.0/0 md5
+  - host    replication  ${APPUSER_USERNAME}  0.0.0.0/0 md5
   - host    postgres     all             0.0.0.0/0 md5
   - hostssl postgres     all             0.0.0.0/0 md5
   replication: # replication username, user will be created during initialization
