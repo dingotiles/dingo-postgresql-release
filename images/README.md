@@ -153,16 +153,16 @@ Later, registrator will advertise the ports of all the PostgreSQL/Patroni contai
 
 ```
 sudo apt-get install pwgen
-POSTGRES_USERNAME=pgadmin
-POSTGRES_PASSWORD=$(pwgen -s -1 16)
+ADMIN_USERNAME=pgadmin
+ADMIN_PASSWORD=$(pwgen -s -1 16)
 ```
 
 On Mac OS X:
 
 ```
 brew install pwgen
-POSTGRES_USERNAME=pgadmin
-POSTGRES_PASSWORD=$(pwgen -s -1 16)
+ADMIN_USERNAME=pgadmin
+ADMIN_PASSWORD=$(pwgen -s -1 16)
 ```
 
 ### Run your first cluster
@@ -177,8 +177,8 @@ _docker run -d \
     -e PATRONI_SCOPE=my_first_cluster \
     -e "ETCD_HOST_PORT=${ETCD_CLUSTER}" \
     -e "DOCKER_HOSTNAME=${HOST_IP}" \
-    -e "POSTGRES_USERNAME=${POSTGRES_USERNAME}" \
-    -e "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}" \
+    -e "ADMIN_USERNAME=${ADMIN_USERNAME}" \
+    -e "ADMIN_PASSWORD=${POSTGRES_PASSWORD}" \
     ${POSTGRESQL_IMAGE}
 ```
 

@@ -11,8 +11,8 @@ services:
       PATRONI_SCOPE: beatles_cluster
       ETCD_HOST_PORT: ${HOST_IP}:4001
       DOCKER_HOSTNAME: ${HOST_IP}
-      POSTGRES_USERNAME: john
-      POSTGRES_PASSWORD: johnpass
+      ADMIN_USERNAME: john
+      ADMIN_PASSWORD: johnpass
     depends_on: [registrator, etcd]
   paul:
     build: postgresql95-patroni
@@ -25,8 +25,8 @@ services:
       PATRONI_SCOPE: beatles_cluster
       ETCD_HOST_PORT: ${HOST_IP}:4001
       DOCKER_HOSTNAME: ${HOST_IP}
-      POSTGRES_USERNAME: paul
-      POSTGRES_PASSWORD: paulpass
+      ADMIN_USERNAME: paul
+      ADMIN_PASSWORD: paulpass
     depends_on: [registrator, etcd]
   etcd:
     image: quay.io/coreos/etcd:v2.2.5
