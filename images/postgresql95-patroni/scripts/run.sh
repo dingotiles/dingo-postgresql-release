@@ -118,7 +118,6 @@ indent_startup() {
   fi
 
 
-  # TODO secure the passwords!
   # TODO add host ip into postgresql.name to ensure unique if two containers have same local DOCKER_IP
 
   cat > /patroni/postgres.yml <<EOF
