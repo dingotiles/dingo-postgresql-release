@@ -4,7 +4,7 @@ scheme = "http"
 prefix = "/"
 watch = true
 
-interval = 5
+interval = 15
 debug = false
 verbose = true
 quiet = true
