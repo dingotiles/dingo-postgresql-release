@@ -68,7 +68,7 @@ for ((n=0;n<120;n++)); do
 done
 
 echo 'waiting for haproxy to update'
-sleep 15
+sleep 31
 
 # psql ${uri} -c "SELECT * from pgbench_tellers;"
 psql ${uri} -c "SELECT * from sanitytest;"
