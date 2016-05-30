@@ -58,7 +58,7 @@ indent_backup() {
     then
       echo "Not uploading backup because I am currently in recovery"
 
-      if [[ $(du -s ${PG_DATA_DIR}/pg_xlog | awk '{print $1}') > 100000 ]]
+      if [[ $(du -s ${PG_DATA_DIR}/pg_xlog | awk '{print $1}') -gt 100000 ]]
       then
         echo "pg_xlog is larger than 100MB, cleaning up old files"
 
