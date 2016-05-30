@@ -54,7 +54,26 @@ indent_backup() {
     pg_isready >/dev/null 2>&2 || continue
     IN_RECOVERY=$(psql -tqAc "select pg_is_in_recovery()")
 
-    [[ $IN_RECOVERY != "f" ]] && echo "Not uploading backup because I am currently in recovery" && continue
+    if [[ $IN_RECOVERY != "f" ]]
+    then
+      echo "Not uploading backup because I am currently in recovery"
+
+      if [[ $(du -s ${PG_DATA_DIR}/pg_xlog | awk '{print $1}') > 100000 ]]
+      then
+        echo "pg_xlog is larget than 100MB, cleaning up old files"
+
+        last_wal_file=$(pg_controldata ${PG_DATA_DIR} | grep "Latest checkpoint's REDO WAL file" | awk '{print $NF}')
+        if [[ "${last_wal_file}X" != "X" ]]; then
+          find ${PG_DATA_DIR}/pg_xlog -maxdepth 1 -type f \
+            \! -name $last_wal_file \
+            \! -newer ${PG_DATA_DIR}/pg_xlog/$last_wal_file \
+            -exec rm {} \;
+        fi
+      fi
+
+      continue
+    fi
+
     # during initial run, count the number of backup lines. If there are
     # no backup (only line with backup-list header is returned), or there
     # is an error, try to produce a backup. Otherwise, stick to the regular
