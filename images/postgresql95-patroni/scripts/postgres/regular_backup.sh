@@ -60,7 +60,7 @@ indent_backup() {
 
       if [[ $(du -s ${PG_DATA_DIR}/pg_xlog | awk '{print $1}') > 100000 ]]
       then
-        echo "pg_xlog is larget than 100MB, cleaning up old files"
+        echo "pg_xlog is larger than 100MB, cleaning up old files"
 
         last_wal_file=$(pg_controldata ${PG_DATA_DIR} | grep "Latest checkpoint's REDO WAL file" | awk '{print $NF}')
         if [[ "${last_wal_file}X" != "X" ]]; then
