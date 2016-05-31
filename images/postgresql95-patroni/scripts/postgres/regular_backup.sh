@@ -60,15 +60,15 @@ indent_backup() {
 
       if [[ $(du -s ${PG_DATA_DIR}/pg_xlog | awk '{print $1}') -gt 100000 ]]
       then
-        echo "pg_xlog is larger than 100MB, cleaning up old files"
+        echo "WARNING pg_xlog dir is getting large (> 100MB)."
 
-        last_wal_file=$(pg_controldata ${PG_DATA_DIR} | grep "Latest checkpoint's REDO WAL file" | awk '{print $NF}')
-        if [[ "${last_wal_file}X" != "X" ]]; then
-          find ${PG_DATA_DIR}/pg_xlog -maxdepth 1 -type f \
-            \! -name $last_wal_file \
-            \! -newer ${PG_DATA_DIR}/pg_xlog/$last_wal_file \
-            -exec rm {} \;
-        fi
+        # last_wal_file=$(pg_controldata ${PG_DATA_DIR} | grep "Latest checkpoint's REDO WAL file" | awk '{print $NF}')
+        # if [[ "${last_wal_file}X" != "X" ]]; then
+        #   find ${PG_DATA_DIR}/pg_xlog -maxdepth 1 -type f \
+        #     \! -name $last_wal_file \
+        #     \! -newer ${PG_DATA_DIR}/pg_xlog/$last_wal_file \
+        #     -exec rm {} \;
+        # fi
       fi
 
       continue
