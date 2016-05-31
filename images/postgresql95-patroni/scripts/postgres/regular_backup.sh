@@ -58,9 +58,9 @@ indent_backup() {
     then
       echo "Not uploading backup because I am currently in recovery"
 
-      if [[ $(du -s ${PG_DATA_DIR}/pg_xlog | awk '{print $1}') -gt 100000 ]]
+      if [[ $(du -s ${PG_DATA_DIR}/pg_xlog | awk '{print $1}') -gt 1000000 ]]
       then
-        echo "WARNING pg_xlog dir is getting large (> 100MB)."
+        echo "WARNING pg_xlog dir is getting large (> 1GB)."
 
         # last_wal_file=$(pg_controldata ${PG_DATA_DIR} | grep "Latest checkpoint's REDO WAL file" | awk '{print $NF}')
         # if [[ "${last_wal_file}X" != "X" ]]; then
