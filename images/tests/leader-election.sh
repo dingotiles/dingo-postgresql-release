@@ -1,8 +1,12 @@
 #!/bin/bash
 
-if [[ -z $HOST_IP ]]; then
-  HOST_IP=$(docker-machine ip)
+machine=$1
+export HOST_IP=$(docker-machine ip )
+if [[ ! -z $machine ]]; then
+  eval $(docker-machine env $machine)
+  export HOST_IP=$(docker-machine ip $machine)
 fi
+echo Running tests on host: $HOST_IP
 
 cleanup() {
   docker-compose -p leader-election stop
