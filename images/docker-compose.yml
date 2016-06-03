@@ -1,32 +1,33 @@
 version: '2'
+
 services:
-  john:
+  patroni1:
     build: postgresql95-patroni
-    image: dingotiles/dingo-postgresql95:latest
-    container_name: john
+    image: dingotiles/dingo-postgresql95:pre-test
+    container_name: patroni1
     ports: ["40000:5432"]
     env_file: wal-e-example.env
     environment:
-      NAME: john
-      PATRONI_SCOPE: beatles_cluster
+      NAME: patroni1
+      PATRONI_SCOPE: cluster
       ETCD_HOST_PORT: ${HOST_IP}:4001
       DOCKER_HOSTNAME: ${HOST_IP}
-      ADMIN_USERNAME: john
-      ADMIN_PASSWORD: johnpass
+      ADMIN_USERNAME: admin
+      ADMIN_PASSWORD: admin
     depends_on: [registrator, etcd]
-  paul:
+  patroni2:
     build: postgresql95-patroni
-    image: dingotiles/dingo-postgresql95:latest
-    container_name: paul
+    image: dingotiles/dingo-postgresql95:pre-test
+    container_name: patroni2
     ports: ["40001:5432"]
     env_file: wal-e-example.env
     environment:
-      NAME: paul
-      PATRONI_SCOPE: beatles_cluster
+      NAME: patroni2
+      PATRONI_SCOPE: cluster
       ETCD_HOST_PORT: ${HOST_IP}:4001
       DOCKER_HOSTNAME: ${HOST_IP}
-      ADMIN_USERNAME: paul
-      ADMIN_PASSWORD: paulpass
+      ADMIN_USERNAME: admin
+      ADMIN_PASSWORD: admin
     depends_on: [registrator, etcd]
   etcd:
     image: quay.io/coreos/etcd:v2.2.5
