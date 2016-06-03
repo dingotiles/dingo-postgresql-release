@@ -50,3 +50,12 @@ services:
     - /var/run/docker.sock:/tmp/docker.sock
     command: /bin/registrator -hostname ${HOST_IP} -ip ${HOST_IP} etcd://${HOST_IP}:4001
     depends_on: [etcd]
+
+  test:
+    build: ./tests/
+    image: test
+    volumes:
+    - test_state:/test-state
+
+volumes:
+  test_state:
