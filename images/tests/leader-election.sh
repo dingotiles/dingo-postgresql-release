@@ -1,6 +1,6 @@
 #!/bin/bash
 
-machine=${$1:-default}
+machine=${1:-default}
 eval $(docker-machine env ${machine})
 export HOST_IP=$(docker-machine ip ${machine})
 echo Running tests on host: $HOST_IP
