@@ -1,11 +1,8 @@
 #!/bin/bash
 
-machine=$1
-export HOST_IP=$(docker-machine ip )
-if [[ ! -z $machine ]]; then
-  eval $(docker-machine env $machine)
-  export HOST_IP=$(docker-machine ip $machine)
-fi
+machine=${$1:-default}
+eval $(docker-machine env ${machine})
+export HOST_IP=$(docker-machine ip ${machine})
 echo Running tests on host: $HOST_IP
 
 cleanup() {
