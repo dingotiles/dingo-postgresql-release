@@ -12,10 +12,6 @@ cleanup() {
 
 docker-compose -p leader-election up -d --force-recreate
 
-rm -rf tmp/leader-election-dir
-mkdir -p tmp/leader-election-dir
-export TEST_DIR=tmp/leader-election-dir
-
 run() {
   docker-compose run -e HOST_IP=${HOST_IP} -e TEST_DIR=/test-state test /scripts/$1
 }
