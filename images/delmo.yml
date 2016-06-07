@@ -1,0 +1,17 @@
+suite:
+  name: dingo-postgresql
+  system: docker-compose.yml
+  task_service: test
+
+tests:
+- name: leader-election
+  spec:
+  - wait: [leader-is-available]
+    assert: [basic-storage]
+
+tasks:
+- name: leader-is-available
+  command: /scripts/leader_is_available.sh
+- name: basic-storage
+  command: /scripts/basic-storage.sh
+
