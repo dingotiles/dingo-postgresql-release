@@ -41,7 +41,6 @@ jobs:
   plan:
   - aggregate:
     - {get: boshrelease-ci}
-    - {get: boshrelease}
     - {get: pg95-image-pre-test, passed: [build-pg95-image], trigger: true, params: {skip_download: true}}
   - task: run-delmo-test
     file: boshrelease-ci/ci/tasks/run-delmo-test.yml
