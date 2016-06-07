@@ -284,7 +284,7 @@ jobs:
   plan:
   - get: boshrelease-ci
   - task: docker-machine-setup
-    file: delmo-ci/ci/tasks/docker-machine-setup.yml
+    file: boshrelease-ci/ci/tasks/docker-machine-setup.yml
     params:
       AWS_ACCESS_KEY_ID: {{docker-machine-access-key-id}}
       AWS_SECRET_ACCESS_KEY: {{docker-machine-secret-access-key}}
