@@ -10,8 +10,8 @@ services:
     environment:
       NAME: patroni1
       PATRONI_SCOPE: cluster
-      ETCD_HOST_PORT: ${HOST_IP}:4001
-      DOCKER_HOSTNAME: ${HOST_IP}
+      ETCD_HOST_PORT: ${DOCKER_HOST_IP}:4001
+      DOCKER_HOSTNAME: ${DOCKER_HOST_IP}
       ADMIN_USERNAME: admin
       ADMIN_PASSWORD: admin
     depends_on: [registrator, etcd]
@@ -24,8 +24,8 @@ services:
     environment:
       NAME: patroni2
       PATRONI_SCOPE: cluster
-      ETCD_HOST_PORT: ${HOST_IP}:4001
-      DOCKER_HOSTNAME: ${HOST_IP}
+      ETCD_HOST_PORT: ${DOCKER_HOST_IP}:4001
+      DOCKER_HOSTNAME: ${DOCKER_HOST_IP}
       ADMIN_USERNAME: admin
       ADMIN_PASSWORD: admin
     depends_on: [registrator, etcd]
@@ -35,12 +35,12 @@ services:
     ports: ["4001:4001", "2380:2380", "2379:2379"]
     command:
     - -name=etcd0
-    - -advertise-client-urls=http://${HOST_IP}:2379,http://${HOST_IP}:4001
+    - -advertise-client-urls=http://${DOCKER_HOST_IP}:2379,http://${DOCKER_HOST_IP}:4001
     - -listen-client-urls=http://0.0.0.0:2379,http://0.0.0.0:4001
-    - -initial-advertise-peer-urls=http://${HOST_IP}:2380
+    - -initial-advertise-peer-urls=http://${DOCKER_HOST_IP}:2380
     - -listen-peer-urls=http://0.0.0.0:2380
     - -initial-cluster-token=etcd-cluster-1
-    - -initial-cluster=etcd0=http://${HOST_IP}:2380
+    - -initial-cluster=etcd0=http://${DOCKER_HOST_IP}:2380
     - -initial-cluster-state=new
   registrator:
     image: cfcommunity/registrator:latest
@@ -48,12 +48,14 @@ services:
     network_mode: "host"
     volumes:
     - /var/run/docker.sock:/tmp/docker.sock
-    command: /bin/registrator -hostname ${HOST_IP} -ip ${HOST_IP} etcd://${HOST_IP}:4001
+    command: /bin/registrator -hostname ${DOCKER_HOST_IP} -ip ${DOCKER_HOST_IP} etcd://${DOCKER_HOST_IP}:4001
     depends_on: [etcd]
 
   test:
     build: ./tests/
     image: test
+    environment:
+      TEST_STATE: /test-state
     volumes:
     - test_state:/test-state
 
