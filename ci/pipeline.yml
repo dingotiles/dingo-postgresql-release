@@ -3,7 +3,7 @@ groups:
 - name: pipeline
   jobs: [rc, bosh-rc, testflight, deploy-vsphere, shipit, minor, major, patch]
 - name: patroni-images
-  jobs: [build-pg95-base-image, build-pg95-image, docker-machine-setup]
+  jobs: [build-pg95-base-image, build-pg95-image, docker-machine-setup, test-images]
 - name: ci-image
   jobs: [build-task-image]
 
@@ -32,9 +32,25 @@ jobs:
     file: boshrelease-ci/ci/tasks/prepare-dockerfile.yml
     params:
       dockerfile_root: boshrelease/images/postgresql95-patroni
-  - put: pg95-image-edge
+  - put: pg95-image-pre-test
     params:
       build: dockerfile
+
+- name: test-images
+  serial: true
+  plan:
+  - aggregate:
+    - {get: boshrelease-ci}
+    - {get: boshrelease}
+    - {get: pg95-image-pre-test, passed: [build-pg95-image], trigger: true, params: {skip_download: true}}
+  - task: run-delmo-test
+    file: boshrelease-ci/ci/tasks/run-delmo-test.yml
+    params:
+      AWS_ACCESS_KEY_ID: {{docker-machine-access-key-id}}
+      AWS_SECRET_ACCESS_KEY: {{docker-machine-secret-access-key}}
+      AWS_DEFAULT_REGION: {{docker-machine-region}}
+      AWS_BUCKET: {{docker-machine-bucket}}
+
 
 - name: rc
   public: true
@@ -409,6 +425,15 @@ resources:
     password: {{docker-hub-password}}
     repository: dingotiles/dingo-postgresql95
     tag: "edge"
+
+- name: pg95-image-pre-test
+  type: docker-image
+  source:
+    email: {{docker-hub-email}}
+    username: {{docker-hub-username}}
+    password: {{docker-hub-password}}
+    repository: dingotiles/dingo-postgresql95
+    tag: "pre-test"
 
 - name: docker-image-registrator
   type: docker-image

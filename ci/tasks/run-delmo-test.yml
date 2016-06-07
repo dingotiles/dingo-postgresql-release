@@ -1,0 +1,19 @@
+---
+platform: linux
+image_resource:
+  type: docker-image
+  source: {repository: bodymindarts/delmo-concourse, tag: '0.1.0'}
+
+inputs:
+- name: boshrelease
+
+params:
+  AWS_ACCESS_KEY_ID:
+  AWS_SECRET_ACCESS_KEY:
+  AWS_DEFAULT_REGION:
+  AWS_BUCKET:
+  MACHINE_NAME: delmo-pipeline-machine
+
+run:
+  path: delmo
+  args: ['-f', boshrelease/images/delmo.yml, '-m', delmo-pipeline-machine]
