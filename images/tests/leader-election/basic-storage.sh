@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [[ -z ${TEST_DIR} ]];then
-  TEST_DIR=${TEST_STATE}/${DELMO_TEST_NAME}
+  TEST_DIR=${TEST_VOLUME}/${DELMO_TEST_NAME}
 fi
 
 uri=$(cat ${TEST_DIR}/leader_con)

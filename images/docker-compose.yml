@@ -55,7 +55,7 @@ services:
     build: ./tests/
     image: test
     environment:
-      TEST_STATE: /test-state
+      TEST_VOLUME: /test-state
     volumes:
     - test_state:/test-state
 
