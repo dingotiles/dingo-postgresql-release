@@ -3,7 +3,7 @@ groups:
 - name: pipeline
   jobs: [rc, bosh-rc, testflight, deploy-vsphere, shipit, minor, major, patch]
 - name: patroni-images
-  jobs: [build-pg95-base-image, build-pg95-image]
+  jobs: [build-pg95-base-image, build-pg95-image, docker-machine-setup]
 - name: ci-image
   jobs: [build-task-image]
 
@@ -278,6 +278,19 @@ jobs:
   - put: docker-image-ci
     params:
       build: boshrelease-ci-task/ci/ci_image
+
+- name: docker-machine-setup
+  serial: true
+  plan:
+  - get: boshrelease-ci
+  - task: docker-machine-setup
+    file: delmo-ci/ci/tasks/docker-machine-setup.yml
+    params:
+      AWS_ACCESS_KEY_ID: {{docker-machine-access-key-id}}
+      AWS_SECRET_ACCESS_KEY: {{docker-machine-secret-access-key}}
+      AWS_DEFAULT_REGION: {{docker-machine-region}}
+      AWS_BUCKET: {{docker-machine-bucket}}
+
 
 resources:
 - name: boshrelease
