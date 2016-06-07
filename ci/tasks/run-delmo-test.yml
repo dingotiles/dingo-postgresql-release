@@ -15,5 +15,5 @@ params:
   MACHINE_NAME: delmo-pipeline-machine
 
 run:
-  path: delmo
-  args: [-f, boshrelease-ci/images/delmo.yml, -m, delmo-pipeline-machine]
+  path: /entrypoint.sh
+  args: [delmo, -f, boshrelease-ci/images/delmo.yml, -m, delmo-pipeline-machine]
