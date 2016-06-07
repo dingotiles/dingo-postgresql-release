@@ -12,7 +12,7 @@ params:
   AWS_BUCKET:
   AWS_INSTANCE_TYPE: t2.micro
   MACHINE_NAME: dingo-postgresql-pipeline
-  OPEN_TCP_PORTS: 5000
+  OPEN_TCP_PORTS: 2300-6000
 
 run:
   path: /setup-aws

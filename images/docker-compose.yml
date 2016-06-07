@@ -5,7 +5,7 @@ services:
     build: postgresql95-patroni
     image: dingotiles/dingo-postgresql95:pre-test
     container_name: patroni1
-    ports: ["40000:5432"]
+    ports: ["5001:5432"]
     env_file: wal-e-example.env
     environment:
       NAME: patroni1
@@ -19,7 +19,7 @@ services:
     build: postgresql95-patroni
     image: dingotiles/dingo-postgresql95:pre-test
     container_name: patroni2
-    ports: ["40001:5432"]
+    ports: ["5002:5432"]
     env_file: wal-e-example.env
     environment:
       NAME: patroni2
