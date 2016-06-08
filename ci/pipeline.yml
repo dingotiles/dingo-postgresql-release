@@ -27,7 +27,7 @@ jobs:
     - {get: boshrelease-ci}
     - {get: boshrelease, resource: boshrelease-pg95-image, trigger: true, params: {submodules: none}}
     - {get: patroni, resource: patched-patroni, trigger: true}
-    - {get: pg95-base-image-latest, passed: [build-pg95-base-image], trigger: true}
+    - {get: pg95-base-image-latest, passed: [build-pg95-base-image], trigger: true, params: {skip_download: true}}
   - task: prepare-dockerfile
     file: boshrelease-ci/ci/tasks/prepare-dockerfile.yml
     params:
