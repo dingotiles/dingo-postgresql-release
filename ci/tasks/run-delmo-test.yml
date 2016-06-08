@@ -12,8 +12,8 @@ params:
   AWS_SECRET_ACCESS_KEY:
   AWS_DEFAULT_REGION:
   AWS_BUCKET:
-  MACHINE_NAME: delmo-pipeline-machine
+  MACHINE_NAME: dingo-postgresql-pipeline
 
 run:
   path: /entrypoint.sh
-  args: [delmo, --only-build-task, -f, boshrelease-ci/images/delmo.yml, -m, delmo-pipeline-machine]
+  args: [delmo, --only-build-task, -f, boshrelease-ci/images/delmo.yml, -m, dingo-postgresql-pipeline]
