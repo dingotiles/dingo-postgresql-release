@@ -6,12 +6,12 @@ suite:
 tests:
 - name: leader-election
   spec:
-  - wait: [leader-is-available]
+  - wait: [collect-leader-state]
     assert: [basic-storage]
 
 tasks:
-- name: leader-is-available
-  command: /scripts/leader-is-available.sh
+- name: collect-leader-state
+  command: /scripts/collect-leader-state.sh
 - name: basic-storage
   command: /scripts/basic-storage.sh
 
