@@ -16,4 +16,4 @@ params:
 
 run:
   path: /entrypoint.sh
-  args: [delmo, -f, boshrelease-ci/images/delmo.yml, -m, delmo-pipeline-machine]
+  args: [delmo, --only-build-task, -f, boshrelease-ci/images/delmo.yml, -m, delmo-pipeline-machine]
