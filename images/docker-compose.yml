@@ -51,9 +51,9 @@ services:
     command: /bin/registrator -hostname ${DOCKER_HOST_IP} -ip ${DOCKER_HOST_IP} etcd://${DOCKER_HOST_IP}:4001
     depends_on: [etcd]
 
-  test:
+  tests:
     build: ./tests/
-    image: test
+    image: dingo-pg-container-tests
     environment:
       TEST_VOLUME: /test-state
     volumes:

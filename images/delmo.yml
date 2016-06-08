@@ -1,7 +1,7 @@
 suite:
   name: dingo-postgresql
   system: docker-compose.yml
-  task_service: test
+  task_service: tests
 
 tests:
 - name: leader-election
