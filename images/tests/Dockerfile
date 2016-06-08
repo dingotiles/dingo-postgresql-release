@@ -1,7 +1,7 @@
 FROM alpine
 
 # psql
-RUN apk add --update bash jq curl postgresql && rm -rf /var/cache/apk
+RUN apk add --update bash jq curl postgresql && rm -rf /var/cache/apk/*
 
 # etcdctl
 RUN curl -L https://github.com/coreos/etcd/releases/download/v2.3.4/etcd-v2.3.4-linux-amd64.tar.gz -o /tmp/etcd-v2.3.4-linux-amd64.tar.gz \
