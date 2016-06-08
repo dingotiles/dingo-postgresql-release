@@ -4,7 +4,8 @@ if [[ -z ${TEST_DIR} ]];then
   TEST_DIR=${TEST_VOLUME}/${DELMO_TEST_NAME}
 fi
 
-uri=$(cat ${TEST_DIR}/leader_con)
+uri=$(cat ${TEST_DIR}/leader-state.json | jq -r '.uri')
+
 echo Testing basic storage "$uri"
 
 psql ${uri} -c 'DROP TABLE IF EXISTS sanitytest;'
