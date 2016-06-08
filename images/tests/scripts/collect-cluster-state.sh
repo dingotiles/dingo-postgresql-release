@@ -10,4 +10,7 @@ leader_uri=$(etcdctl --endpoint "http://${DOCKER_HOST_IP}:4001" get /service/clu
 
 psql ${leader_uri} -c 'SELECT current_database();' || exit 1
 
-jq -n --arg leader_uri "${leader_uri}" --arg leader_name "${leader_name}" '{leader_uri:$leader_uri, leader_name:$leader_name}' | tee ${TEST_DIR}/cluster-state.json
+curl -s ${DOCKER_HOST_IP}:4001/v2/keys/service/cluster/members?recursive=true \
+  | jq --arg leader_uri "${leader_uri}" --arg leader_name "${leader_name}" \
+  '{uris:[.node.nodes[].value | fromjson | .conn_url], leader_uri:$leader_uri, leader_name:$leader_name }' \
+  | tee ${TEST_DIR}/cluster-state.json
