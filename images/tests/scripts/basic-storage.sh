@@ -4,14 +4,14 @@ if [[ -z ${TEST_DIR} ]];then
   TEST_DIR=${TEST_VOLUME}/${DELMO_TEST_NAME}
 fi
 
-uri=$(cat ${TEST_DIR}/leader-state.json | jq -r '.uri')
+uri=$(cat ${TEST_DIR}/cluster-state.json | jq -r '.leader_uri')
 
 echo Testing basic storage "$uri"
 
-psql ${uri} -c 'DROP TABLE IF EXISTS sanitytest;'
-psql ${uri} -c 'CREATE TABLE sanitytest(value text);'
-psql ${uri} -c "INSERT INTO sanitytest VALUES ('storage-test');"
-psql ${uri} -c 'SELECT value FROM sanitytest;' | grep 'storage-test' || {
+psql ${uri} -c 'DROP TABLE IF EXISTS basicstorage;'
+psql ${uri} -c 'CREATE TABLE basicstorage(value text);'
+psql ${uri} -c "INSERT INTO basicstorage VALUES ('storage-test');"
+psql ${uri} -c 'SELECT value FROM basicstorage;' | grep 'storage-test' || {
   echo Could not store and retrieve value in cluster!
   exit 1
 }
