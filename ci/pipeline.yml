@@ -49,6 +49,10 @@ jobs:
       AWS_SECRET_ACCESS_KEY: {{docker-machine-secret-access-key}}
       AWS_DEFAULT_REGION: {{docker-machine-region}}
       AWS_BUCKET: {{docker-machine-bucket}}
+  - put: pg95-image-edge
+    params:
+      pull_repository: dingotiles/dingo-postgresql95
+      pull_tag: pre-test
 
 
 - name: rc
