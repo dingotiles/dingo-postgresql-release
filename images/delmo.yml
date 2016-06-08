@@ -11,7 +11,7 @@ tests:
 
 tasks:
 - name: leader-is-available
-  command: /scripts/leader_is_available.sh
+  command: /scripts/leader-is-available.sh
 - name: basic-storage
   command: /scripts/basic-storage.sh
 
