@@ -18,4 +18,4 @@ delmo -f images/delmo.yml --only-build-task -m <remote-machine-name>
 
 Delmo will bring up a preconfigured cluster of containers as defined by [docker-compose.yml](./docker-compose.yml) and run tests against it as defined in [delmo.yml](./delmo.yml).
 The scripts used during the tests can be found under `images/tests/scripts/*`.
-They get built into a container image by delmo before the tests get run.
+They get built into a [container](./tests/Dockerfile) image by delmo before the tests get run.
