@@ -15,7 +15,6 @@ tests:
 
 - name: failover
   spec:
-  - wait: [two-nodes-running]
   - stop: [patroni2]
     wait: [one-node-running]
     assert:
