@@ -1,0 +1,19 @@
+#!/bin/bash
+
+set -e
+
+if [[ -z ${TEST_DIR} ]];then
+  TEST_DIR=${TEST_VOLUME}/${DELMO_TEST_NAME}
+fi
+
+table_name=$1
+value=$2
+
+echo "Retrieving ${value} from ${table_name}..."
+
+uri=$(cat ${TEST_DIR}/cluster-state.json | jq -r '.leader_uri')
+
+psql ${uri} -c "SELECT value FROM ${table_name};" | grep "${value}" || {
+  echo Could not store and retrieve value in cluster!
+  exit 1
+}

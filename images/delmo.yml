@@ -9,21 +9,26 @@ tests:
   - wait: [two-nodes-running]
     assert:
     - collect-cluster-state
-    - basic-storage
-    - replication
+    - write-value-to-cluster
+    - retrieve-value-from-cluster
+    - replication-test
 
 - name: failover
   spec:
   - wait: [two-nodes-running]
-    assert: [collect-cluster-state]
-  - stop: [patroni1]
-    wait: [one-node-running]
-    assert: [collect-cluster-state]
-  - start: [patroni1]
-    wait: [two-nodes-running]
   - stop: [patroni2]
+    wait: [one-node-running]
+    assert:
+    - collect-cluster-state
+    - write-value-to-cluster
+  - start: [patroni2]
+    wait: [two-nodes-running]
+  - stop: [patroni1]
   - wait: [one-node-running]
-    assert: [leader-has-changed]
+    assert:
+    - leader-has-changed
+    - collect-cluster-state
+    - retrieve-value-from-cluster
 
 tasks:
 - name: two-nodes-running
@@ -34,7 +39,11 @@ tasks:
   command: /scripts/collect-cluster-state
 - name: basic-storage
   command: /scripts/basic-storage
-- name: replication
-  command: /scripts/replication
+- name: replication-test
+  command: /scripts/replication-test
 - name: leader-has-changed
   command: /scripts/leader-has-changed
+- name: write-value-to-cluster
+  command: /scripts/store-value testtable test-value
+- name: retrieve-value-from-cluster
+  command: /scripts/retrieve-value testtable test-value
