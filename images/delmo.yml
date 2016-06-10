@@ -8,7 +8,7 @@ tests:
   spec:
   - wait: [two-nodes-running]
     assert:
-    - collect-cluster-state
+    - cache-cluster-state
     - write-dummy-value
     - retrieve-dummy-value
     - dummy-value-replicated
@@ -18,7 +18,7 @@ tests:
   - stop: [patroni2]
     wait: [one-node-running]
     assert:
-    - collect-cluster-state
+    - cache-cluster-state
     - write-dummy-value
   - start: [patroni2]
     wait: [two-nodes-running]
@@ -26,7 +26,7 @@ tests:
   - wait: [one-node-running]
     assert:
     - leader-has-changed
-    - collect-cluster-state
+    - cache-cluster-state
     - retrieve-dummy-value
 
 tasks:
@@ -34,8 +34,8 @@ tasks:
   command: /scripts/nodes-running 2
 - name: one-node-running
   command: /scripts/nodes-running 1
-- name: collect-cluster-state
-  command: /scripts/collect-cluster-state
+- name: cache-cluster-state
+  command: /scripts/cache-cluster-state
 - name: write-dummy-value
   command: /scripts/store-value testtable test-value
 - name: retrieve-dummy-value
