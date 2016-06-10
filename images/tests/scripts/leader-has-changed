@@ -1,0 +1,14 @@
+#!/bin/bash
+
+set -e
+
+if [[ -z ${TEST_DIR} ]];then
+  TEST_DIR=${TEST_VOLUME}/${DELMO_TEST_NAME}
+fi
+
+cached_leader=$(cat ${TEST_DIR}/cluster-state.json | jq -r '.leader_name')
+current_leader=$(etcdctl --endpoint "http://${DOCKER_HOST_IP}:4001" watch /service/cluster/leader) || exit 1
+
+echo "Current leader: ${current_leader}, Previous leader: ${cached_leader}"
+
+[[ $cached_leader != $current_leader ]] || exit 1

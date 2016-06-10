@@ -1,0 +1,22 @@
+#!/bin/bash
+
+set -e
+
+expected_number_of_nodes=${1}
+
+# Leader is running
+leader_name=$(etcdctl --endpoint "http://${DOCKER_HOST_IP}:4001" get /service/cluster/leader)
+leader_state=$(etcdctl --endpoint "http://${DOCKER_HOST_IP}:4001" get /service/cluster/members/${leader_name} | jq -r '.state')
+
+# All members are running
+found=$(curl -s ${DOCKER_HOST_IP}:4001/v2/keys/service/cluster/members?recursive=true \
+   | jq -r '.node.nodes[].value | fromjson | .state' \
+   | grep "running" \
+   | wc -l \
+   | tr -d '[[:space:]]')
+
+
+echo "Expected number of nodes running: ${expected_number_of_nodes}, Actual: ${found}, leader_state: ${leader_state}"
+
+[[ "${leader_state}" == "running" ]] || exit 1
+[[ ${found} == ${expected_number_of_nodes} ]] || exit 1

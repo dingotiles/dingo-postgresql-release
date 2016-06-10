@@ -1,14 +1,16 @@
 #!/bin/bash
 
+set -e
+
 if [[ -z ${TEST_DIR} ]];then
   TEST_DIR=${TEST_VOLUME}/${DELMO_TEST_NAME}
 fi
 mkdir -p ${TEST_DIR}
 
-leader_name=$(etcdctl --endpoint "http://${DOCKER_HOST_IP}:4001" get /service/cluster/leader) || exit 1
-leader_uri=$(etcdctl --endpoint "http://${DOCKER_HOST_IP}:4001" get /service/cluster/members/${leader_name} | jq -r '.conn_url') || exit 1
+leader_name=$(etcdctl --endpoint "http://${DOCKER_HOST_IP}:4001" get /service/cluster/leader)
+leader_uri=$(etcdctl --endpoint "http://${DOCKER_HOST_IP}:4001" get /service/cluster/members/${leader_name} | jq -r '.conn_url')
 
-psql ${leader_uri} -c 'SELECT current_database();' || exit 1
+psql ${leader_uri} -c 'SELECT current_database();'
 
 curl -s ${DOCKER_HOST_IP}:4001/v2/keys/service/cluster/members?recursive=true \
   | jq -r --arg leader_uri "${leader_uri}" --arg leader_name "${leader_name}" \
