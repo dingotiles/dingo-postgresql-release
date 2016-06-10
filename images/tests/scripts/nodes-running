@@ -8,6 +8,14 @@ expected_number_of_nodes=${1}
 leader_name=$(etcdctl --endpoint "http://${DOCKER_HOST_IP}:4001" get /service/cluster/leader)
 leader_state=$(etcdctl --endpoint "http://${DOCKER_HOST_IP}:4001" get /service/cluster/members/${leader_name} | jq -r '.state')
 
+leader_uri=$(etcdctl --endpoint "http://${DOCKER_HOST_IP}:4001" get /service/cluster/members/${leader_name} | jq -r '.conn_url')
+
+if psql ${leader_uri} -c 'SELECT current_database();' > /dev/null 2>&1; then
+  leader_accessible='true'
+else
+  leader_accessible='false'
+fi
+
 # All members are running
 found=$(curl -s ${DOCKER_HOST_IP}:4001/v2/keys/service/cluster/members?recursive=true \
    | jq -r '.node.nodes[].value | fromjson | .state' \
@@ -16,7 +24,8 @@ found=$(curl -s ${DOCKER_HOST_IP}:4001/v2/keys/service/cluster/members?recursive
    | tr -d '[[:space:]]')
 
 
-echo "Expected number of nodes running: ${expected_number_of_nodes}, Actual: ${found}, leader_state: ${leader_state}"
+echo "Expected number of nodes running: ${expected_number_of_nodes}, Registered: ${found}, leader_state: ${leader_state}, leader_accessible: ${leader_accessible}"
 
+[[ "${leader_accessible}" == "true" ]] || exit 1
 [[ "${leader_state}" == "running" ]] || exit 1
 [[ ${found} == ${expected_number_of_nodes} ]] || exit 1

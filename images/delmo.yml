@@ -7,19 +7,20 @@ tests:
 - name: read-write-replication
   spec:
   - wait: [two-nodes-running]
-    assert: [collect-cluster-state]
-  - assert: [basic-storage, replication]
+    assert:
+    - collect-cluster-state
+    - basic-storage
+    - replication
 
 - name: failover
   spec:
   - wait: [two-nodes-running]
+    assert: [collect-cluster-state]
   - stop: [patroni1]
-    wait: [collect-cluster-state]
-  - wait: [one-node-running]
+    wait: [one-node-running]
+    assert: [collect-cluster-state]
   - start: [patroni1]
-    wait: [collect-cluster-state]
-  - wait: [two-nodes-running]
-  - wait: [collect-cluster-state]
+    wait: [two-nodes-running]
   - stop: [patroni2]
   - wait: [one-node-running]
     assert: [leader-has-changed]
@@ -30,10 +31,10 @@ tasks:
 - name: one-node-running
   command: /scripts/nodes-running 1
 - name: collect-cluster-state
-  command: /scripts/collect-cluster-state.sh
+  command: /scripts/collect-cluster-state
 - name: basic-storage
-  command: /scripts/basic-storage.sh
+  command: /scripts/basic-storage
 - name: replication
-  command: /scripts/replication.sh
+  command: /scripts/replication
 - name: leader-has-changed
   command: /scripts/leader-has-changed
