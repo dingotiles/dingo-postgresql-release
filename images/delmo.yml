@@ -9,8 +9,8 @@ tests:
   - wait: [two-nodes-running]
     assert:
     - collect-cluster-state
-    - write-value-to-cluster
-    - retrieve-value-from-cluster
+    - write-dummy-value
+    - retrieve-dummy-value
     - replication-test
 
 - name: failover
@@ -19,7 +19,7 @@ tests:
     wait: [one-node-running]
     assert:
     - collect-cluster-state
-    - write-value-to-cluster
+    - write-dummy-value
   - start: [patroni2]
     wait: [two-nodes-running]
   - stop: [patroni1]
@@ -27,7 +27,7 @@ tests:
     assert:
     - leader-has-changed
     - collect-cluster-state
-    - retrieve-value-from-cluster
+    - retrieve-dummy-value
 
 tasks:
 - name: two-nodes-running
@@ -40,7 +40,7 @@ tasks:
   command: /scripts/replication-test
 - name: leader-has-changed
   command: /scripts/leader-has-changed
-- name: write-value-to-cluster
+- name: write-dummy-value
   command: /scripts/store-value testtable test-value
-- name: retrieve-value-from-cluster
+- name: retrieve-dummy-value
   command: /scripts/retrieve-value testtable test-value
