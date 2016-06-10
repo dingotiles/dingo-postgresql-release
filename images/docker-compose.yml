@@ -56,6 +56,7 @@ services:
     image: dingo-pg-container-tests
     environment:
       TEST_VOLUME: /test-state
+      DOCKER_HOST_IP:
     volumes:
     - test_state:/test-state
 
