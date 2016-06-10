@@ -211,7 +211,7 @@ fi
     max_wal_size: 1GB
     min_wal_size: 128MB
     wal_keep_segments: 8
-    wal_sender_timeout: 60
+    wal_sender_timeout: 60000
     # - standby servers config
     hot_standby: "on"
     wal_log_hints: "on"
