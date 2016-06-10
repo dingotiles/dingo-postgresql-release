@@ -6,12 +6,17 @@ suite:
 tests:
 - name: leader-election
   spec:
-  - wait: [collect-cluster-state]
-    assert: [basic-storage]
+  - wait: [all-members-running]
+    assert: [collect-cluster-state]
+  - assert: [basic-storage, replication]
 
 tasks:
+- name: all-members-running
+  command: /scripts/all-members-running.sh
 - name: collect-cluster-state
   command: /scripts/collect-cluster-state.sh
 - name: basic-storage
   command: /scripts/basic-storage.sh
+- name: replication
+  command: /scripts/replication.sh
 
