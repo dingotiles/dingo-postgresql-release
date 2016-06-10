@@ -37,8 +37,6 @@ tasks:
   command: /scripts/nodes-running 1
 - name: collect-cluster-state
   command: /scripts/collect-cluster-state
-- name: basic-storage
-  command: /scripts/basic-storage
 - name: replication-test
   command: /scripts/replication-test
 - name: leader-has-changed
