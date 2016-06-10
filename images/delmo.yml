@@ -4,7 +4,7 @@ suite:
   task_service: tests
 
 tests:
-- name: leader-election
+- name: read-write-replication
   spec:
   - wait: [all-members-running]
     assert: [collect-cluster-state]
