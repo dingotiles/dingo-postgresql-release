@@ -11,7 +11,7 @@ tests:
     - collect-cluster-state
     - write-dummy-value
     - retrieve-dummy-value
-    - replication-test
+    - dummy-value-replicated
 
 - name: failover
   spec:
@@ -36,11 +36,11 @@ tasks:
   command: /scripts/nodes-running 1
 - name: collect-cluster-state
   command: /scripts/collect-cluster-state
-- name: replication-test
-  command: /scripts/replication-test
-- name: leader-has-changed
-  command: /scripts/leader-has-changed
 - name: write-dummy-value
   command: /scripts/store-value testtable test-value
 - name: retrieve-dummy-value
   command: /scripts/retrieve-value testtable test-value
+- name: dummy-value-replicated
+  command: /scripts/check-replication testtable test-value
+- name: leader-has-changed
+  command: /scripts/leader-has-changed
