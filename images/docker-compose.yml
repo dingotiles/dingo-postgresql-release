@@ -49,7 +49,6 @@ services:
     depends_on: [registrator, etcd]
   etcd:
     image: quay.io/coreos/etcd:v2.2.5
-    container_name: etcd
     ports: ["4001:4001", "2380:2380", "2379:2379"]
     command:
     - -name=etcd0
@@ -62,7 +61,6 @@ services:
     - -initial-cluster-state=new
   registrator:
     image: cfcommunity/registrator:latest
-    container_name: registrator
     network_mode: "host"
     volumes:
     - /var/run/docker.sock:/tmp/docker.sock
