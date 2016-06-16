@@ -7,7 +7,8 @@ if [[ -z ${TEST_DIR} ]];then
 fi
 
 cached_leader=$(cat ${TEST_DIR}/cluster-state.json | jq -r '.leader_name')
-current_leader=$(etcdctl --endpoint "http://${DOCKER_HOST_IP}:4001" watch /service/cluster/leader)
+
+current_leader=$(etcdctl --endpoint "http://${DOCKER_HOST_IP}:4001" get /service/${PATRONI_SCOPE}/leader)
 
 echo "Current leader: ${current_leader}, Previous leader: ${cached_leader}"
 

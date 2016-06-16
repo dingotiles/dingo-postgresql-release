@@ -6,36 +6,46 @@ services:
     image: dingotiles/dingo-postgresql95:pre-test
     container_name: patroni1
     ports: ["5001:5432"]
-    env_file: wal-e-example.env
     environment:
       NAME: patroni1
-      PATRONI_SCOPE: cluster
+      PATRONI_SCOPE: test-cluster
       ETCD_HOST_PORT: ${DOCKER_HOST_IP}:4001
       DOCKER_HOSTNAME: ${DOCKER_HOST_IP}
       ADMIN_USERNAME: admin
       ADMIN_PASSWORD: admin
-      SUPERUSER_USERNAME: super
-      SUPERUSER_PASSWORD: super
+      SUPERUSER_USERNAME: postgres
+      SUPERUSER_PASSWORD: postgres
       APPUSER_USERNAME: app
       APPUSER_PASSWORD: app
+      AWS_ACCESS_KEY_ID:
+      AWS_SECRET_ACCESS_KEY:
+      WAL_S3_BUCKET:
+      WALE_S3_ENDPOINT:
+      WALE_BACKUP_THRESHOLD_MEGABYTES: 10240
+      WALE_BACKUP_THRESHOL_PERCENTAGE: 30
     depends_on: [registrator, etcd]
   patroni2:
     build: postgresql95-patroni
     image: dingotiles/dingo-postgresql95:pre-test
     container_name: patroni2
     ports: ["5002:5432"]
-    env_file: wal-e-example.env
     environment:
       NAME: patroni2
-      PATRONI_SCOPE: cluster
+      PATRONI_SCOPE: test-cluster
       ETCD_HOST_PORT: ${DOCKER_HOST_IP}:4001
       DOCKER_HOSTNAME: ${DOCKER_HOST_IP}
       ADMIN_USERNAME: admin
       ADMIN_PASSWORD: admin
-      SUPERUSER_USERNAME: super
-      SUPERUSER_PASSWORD: super
+      SUPERUSER_USERNAME: postgres
+      SUPERUSER_PASSWORD: postgres
       APPUSER_USERNAME: app
       APPUSER_PASSWORD: app
+      AWS_ACCESS_KEY_ID:
+      AWS_SECRET_ACCESS_KEY:
+      WAL_S3_BUCKET:
+      WALE_S3_ENDPOINT:
+      WALE_BACKUP_THRESHOLD_MEGABYTES: 10240
+      WALE_BACKUP_THRESHOL_PERCENTAGE: 30
     depends_on: [registrator, etcd]
   etcd:
     image: quay.io/coreos/etcd:v2.2.5
@@ -62,17 +72,22 @@ services:
   tests:
     build: ./tests/
     image: dingo-pg-container-tests
+    volumes:
+    - test_state:/test-state
     environment:
       TEST_VOLUME: /test-state
       DOCKER_HOST_IP:
       ADMIN_USERNAME: admin
       ADMIN_PASSWORD: admin
-      SUPERUSER_USERNAME: super
-      SUPERUSER_PASSWORD: super
+      SUPERUSER_USERNAME: postgres
+      SUPERUSER_PASSWORD: postgres
       APPUSER_USERNAME: app
       APPUSER_PASSWORD: app
-    volumes:
-    - test_state:/test-state
+      PATRONI_SCOPE: test-cluster
+      AWS_ACCESS_KEY_ID:
+      AWS_SECRET_ACCESS_KEY:
+      WAL_S3_BUCKET:
+      WALE_S3_ENDPOINT:
 
 volumes:
   test_state:

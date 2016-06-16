@@ -4,17 +4,21 @@ suite:
   task_service: tests
 
 tests:
-- name: read-write-replication
+- name: read-write-replication-recovery
   spec:
+  - assert: [purge-backups]
   - wait: [two-nodes-running]
     assert:
     - cache-cluster-state
     - write-dummy-value
     - retrieve-dummy-value
     - dummy-value-replicated
+    - flush-archives
+    - recreate-dummy-value-from-backups
 
 - name: failover
   spec:
+  - assert: [purge-backups]
   - stop: [patroni2]
     wait: [one-node-running]
     assert:
@@ -42,5 +46,11 @@ tasks:
   command: /scripts/retrieve-value testtable test-value
 - name: dummy-value-replicated
   command: /scripts/check-replication testtable test-value
+- name: flush-archives
+  command: /scripts/switch-xlog
+- name: recreate-dummy-value-from-backups
+  command: /scripts/recover-value testtable test-value
+- name: purge-backups
+  command: /scripts/purge-backups
 - name: leader-has-changed
   command: /scripts/leader-has-changed
