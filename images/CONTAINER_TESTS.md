@@ -8,7 +8,7 @@ To run the tests you need the following docker-tools pre-installed
 
 Download the latest [delmo-release](https://github.com/bodymindarts/delmo/releases)
 
-Since the test integrate with aws to assert backup and recovery you will need to export the following variables to run the tests successfully:
+Since the tests integrate with aws to assert backup and recovery you will need to export the following variables to run the tests successfully:
 
 ```bash
 cat .envrc # direnv
@@ -18,12 +18,12 @@ export WAL_S3_BUCKET=test-backups-bucket
 export WALE_S3_ENDPOINT=https+path://s3-eu-central-1.amazonaws.com
 ```
 
-To run the tests execute:
+To execute the tests
 ```bash
 delmo -f images/delmo.yml --only-build-task
 ```
 
-To run the tests on a remote docker-machine
+To execute the tests on a remote docker-machine
 ```bash
 delmo -f images/delmo.yml --only-build-task -m <remote-machine-name>
 ```
