@@ -5,30 +5,31 @@ suite:
 
 tests:
 - name: read-write-replication-recovery
+  before_startup: [purge-backups]
   spec:
-  - assert: [purge-backups]
   - wait: [two-nodes-running]
-    assert:
+  - exec:
     - cache-cluster-state
     - write-dummy-value
+  - assert:
     - retrieve-dummy-value
     - dummy-value-replicated
-    - flush-archives
-    - recreate-dummy-value-from-backups
+  - exec: [flush-archives]
+  - assert: [recreate-dummy-value-from-backups]
 
 - name: failover
+  before_startup: [purge-backups]
   spec:
-  - assert: [purge-backups]
   - stop: [patroni2]
-    wait: [one-node-running]
-    assert:
+  - wait: [one-node-running]
+  - exec:
     - cache-cluster-state
     - write-dummy-value
   - start: [patroni2]
-    wait: [two-nodes-running]
+  - wait: [two-nodes-running]
   - stop: [patroni1]
   - wait: [one-node-running]
-    assert:
+  - assert:
     - leader-has-changed
     - cache-cluster-state
     - retrieve-dummy-value
