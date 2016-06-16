@@ -8,11 +8,15 @@ inputs:
 - name: boshrelease-ci
 
 params:
+  MACHINE_EXPORT_AWS_ACCESS_KEY_ID:
+  MACHINE_EXPORT_AWS_SECRET_ACCESS_KEY:
+  MACHINE_EXPORT_AWS_DEFAULT_REGION:
+  MACHINE_EXPORT_AWS_BUCKET:
+  MACHINE_NAME: dingo-postgresql-pipeline
+  WAL_S3_BUCKET:
+  WALE_S3_ENDPOINT:
   AWS_ACCESS_KEY_ID:
   AWS_SECRET_ACCESS_KEY:
-  AWS_DEFAULT_REGION:
-  AWS_BUCKET:
-  MACHINE_NAME: dingo-postgresql-pipeline
 
 run:
   path: /entrypoint.sh

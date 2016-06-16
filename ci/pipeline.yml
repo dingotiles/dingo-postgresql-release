@@ -45,10 +45,14 @@ jobs:
   - task: run-delmo-test
     file: boshrelease-ci/ci/tasks/run-delmo-test.yml
     params:
-      AWS_ACCESS_KEY_ID: {{docker-machine-access-key-id}}
-      AWS_SECRET_ACCESS_KEY: {{docker-machine-secret-access-key}}
-      AWS_DEFAULT_REGION: {{docker-machine-region}}
-      AWS_BUCKET: {{docker-machine-bucket}}
+      MACHINE_EXPORT_AWS_ACCESS_KEY_ID: {{docker-machine-access-key-id}}
+      MACHINE_EXPORT_AWS_SECRET_ACCESS_KEY: {{docker-machine-secret-access-key}}
+      MACHINE_EXPORT_AWS_DEFAULT_REGION: {{docker-machine-region}}
+      MACHINE_EXPORT_AWS_BUCKET: {{docker-machine-bucket}}
+      WAL_S3_BUCKET: {{backups-testflight-backups-bucket}}
+      WALE_S3_ENDPOINT: {{delmo-test-wale-s3-endpoint}}
+      AWS_ACCESS_KEY: {{dingotiles-aws-access}}
+      AWS_SECRET_ACCESS_KEY: {{dingotiles-aws-secret}}
   - put: pg95-image-edge
     params:
       pull_repository: dingotiles/dingo-postgresql95
