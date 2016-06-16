@@ -51,7 +51,7 @@ jobs:
       MACHINE_EXPORT_AWS_BUCKET: {{docker-machine-bucket}}
       WAL_S3_BUCKET: {{backups-testflight-backups-bucket}}
       WALE_S3_ENDPOINT: {{delmo-test-wale-s3-endpoint}}
-      AWS_ACCESS_KEY: {{dingotiles-aws-access}}
+      AWS_ACCESS_KEY_ID: {{dingotiles-aws-access}}
       AWS_SECRET_ACCESS_KEY: {{dingotiles-aws-secret}}
   - put: pg95-image-edge
     params:
