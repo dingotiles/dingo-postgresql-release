@@ -14,6 +14,10 @@ services:
       DOCKER_HOSTNAME: ${DOCKER_HOST_IP}
       ADMIN_USERNAME: admin
       ADMIN_PASSWORD: admin
+      SUPERUSER_USERNAME: super
+      SUPERUSER_PASSWORD: super
+      APPUSER_USERNAME: app
+      APPUSER_PASSWORD: app
     depends_on: [registrator, etcd]
   patroni2:
     build: postgresql95-patroni
@@ -28,6 +32,10 @@ services:
       DOCKER_HOSTNAME: ${DOCKER_HOST_IP}
       ADMIN_USERNAME: admin
       ADMIN_PASSWORD: admin
+      SUPERUSER_USERNAME: super
+      SUPERUSER_PASSWORD: super
+      APPUSER_USERNAME: app
+      APPUSER_PASSWORD: app
     depends_on: [registrator, etcd]
   etcd:
     image: quay.io/coreos/etcd:v2.2.5
@@ -57,6 +65,12 @@ services:
     environment:
       TEST_VOLUME: /test-state
       DOCKER_HOST_IP:
+      ADMIN_USERNAME: admin
+      ADMIN_PASSWORD: admin
+      SUPERUSER_USERNAME: super
+      SUPERUSER_PASSWORD: super
+      APPUSER_USERNAME: app
+      APPUSER_PASSWORD: app
     volumes:
     - test_state:/test-state
 
