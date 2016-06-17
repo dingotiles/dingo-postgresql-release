@@ -63,7 +63,8 @@ indent_restore_leader() {
   # must have /initialize set
   if [[ "$(curl -s ${ETCD_HOST_PORT}/v2/keys/service/${PATRONI_SCOPE}/initialize | jq -r .node.value)" == "null" ]]; then
     echo "etcd missing /initialize system ID, fetching from ${WALE_S3_PREFIX}sysids"
-    aws s3 sync ${WALE_S3_PREFIX}sysids /tmp/sysids
+    region=$(aws s3api get-bucket-location --bucket ${WAL_S3_BUCKET} | jq -r '.LocationConstraint')
+    aws s3 --region ${region} sync ${WALE_S3_PREFIX}sysids /tmp/sysids
 
     if [[ ! -f /tmp/sysids/sysid ]]; then
       echo "Target ${WALE_S3_PREFIX} missing /sysids/sysid for original 'Database system identifier'"
