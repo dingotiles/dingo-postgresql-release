@@ -4,7 +4,7 @@ suite:
   task_service: tests
 
 tests:
-- name: read-write-replication-recovery
+- name: read-write-replication-backups
   before_startup: [purge-backups]
   spec:
   - wait: [two-nodes-running]
@@ -34,6 +34,23 @@ tests:
     - cache-cluster-state
     - retrieve-dummy-value
 
+- name: restoration
+  before_startup: [purge-backups]
+  spec:
+  - wait: [two-nodes-running]
+  - exec:
+    - cache-cluster-state
+    - write-dummy-value
+    - flush-archives
+  - stop: [patroni1, patroni2]
+  - destroy: [patroni1, patroni2]
+  - exec: [remove-cluster-from-etcd]
+  - start: [patroni1, patroni2]
+    wait: [two-nodes-running]
+  - assert:
+    - cache-cluster-state
+    - retrieve-dummy-value
+
 tasks:
 - name: two-nodes-running
   command: /scripts/nodes-running 2
@@ -55,3 +72,5 @@ tasks:
   command: /scripts/purge-backups
 - name: leader-has-changed
   command: /scripts/leader-has-changed
+- name: remove-cluster-from-etcd
+  command: /scripts/purge-etcd
