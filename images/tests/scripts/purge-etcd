@@ -2,7 +2,4 @@
 
 set -e
 
-etcdctl --endpoint "http://${DOCKER_HOST_IP}:4001" rm --recursive /service/${PATRONI_SCOPE}/optime
-etcdctl --endpoint "http://${DOCKER_HOST_IP}:4001" rm /service/${PATRONI_SCOPE}/leader
-etcdctl --endpoint "http://${DOCKER_HOST_IP}:4001" rm --recursive /service/${PATRONI_SCOPE}/members
-etcdctl --endpoint "http://${DOCKER_HOST_IP}:4001" rm /service/${PATRONI_SCOPE}/initialize
+etcdctl --endpoint "http://${DOCKER_HOST_IP}:4001" rm --recursive /service/${PATRONI_SCOPE}
