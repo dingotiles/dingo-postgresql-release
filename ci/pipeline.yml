@@ -297,7 +297,9 @@ jobs:
 - name: build-task-image
   serial: true
   plan:
-  - {get: boshrelease-ci-task, trigger: true}
+  - aggregate:
+    - {get: boshrelease-ci-task, trigger: true}
+    - {get: docker-image-ci-licensefinder, trigger: true}
   - put: docker-image-ci
     params:
       build: boshrelease-ci-task/ci/ci_image
@@ -467,6 +469,13 @@ resources:
     username: {{docker-hub-username}}
     password: {{docker-hub-password}}
     repository: dingotiles/dingo-postgresql-release-pipeline
+
+- name: docker-image-ci-licensefinder
+  type: github-release
+  source:
+    access_token: {{github-release-access-token}}
+    user: pivotal
+    repository: LicenseFinder
 
 - name: lite-stemcell
   type: bosh-io-stemcell
