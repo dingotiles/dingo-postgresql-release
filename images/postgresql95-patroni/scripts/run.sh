@@ -179,7 +179,6 @@ EOF
     retries: 2
     use_iam: 0
     no_master: 1
-  restore: /patroni/scripts/restore.py
   recovery_conf:
     restore_command: ${restore_command}
     archive_cleanup_command: 'pg_archivecleanup ${PG_DATA_DIR}/pg_xlog  %r'
