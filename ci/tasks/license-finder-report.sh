@@ -4,7 +4,11 @@
 
 set -e -x
 
+version=$(cat version/number)
+report=$PWD/license-finder-reports/submodules-${version}.csv
+
 cd boshrelease
+
 
 submodules=(dingo-postgresql-broker cf-containers-broker dingo-postgresql-clusterdata-backup)
 for submodule in ${submodules[@]}; do
@@ -13,6 +17,8 @@ for submodule in ${submodules[@]}; do
       bundle install
     fi
     echo License Report for $submodule
-    license_finder report
+    license_finder report >> $report
   popd
 done
+
+cat $report
