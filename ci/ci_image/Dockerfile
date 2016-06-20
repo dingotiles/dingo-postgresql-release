@@ -11,7 +11,7 @@ RUN chmod 755 /usr/bin/spruce
 ADD https://cli.run.pivotal.io/stable?release=linux64-binary&version=6.17.0 /tmp/cf.tgz
 RUN tar xzf /tmp/cf.tgz -C /usr/bin && rm /tmp/cf.tgz
 
-RUN gem install rake license_finder --no-ri --no-rdoc && \
+RUN gem install license_finder --no-ri --no-rdoc && \
     apt-get update && apt-get install tree -y && apt-get clean
 
 # Install Go
