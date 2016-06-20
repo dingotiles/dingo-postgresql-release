@@ -26,10 +26,12 @@ listen servicebroker
 	{{range $member := getvs (printf "/service/%s/members/*" $name)}}
 		{{$data := json $member}}
 		{{if eq $data.role "master"}}
+			{{/* extract ip:port from postgres://name:pw@host:port/postgres */}}
+			{{$conn_addr := base (replace (index (split $data.conn_url "/") 2) "@" "/" -1)}}
 listen {{$name}}
   mode tcp
   bind *:{{(printf "/routing/allocation/%s" $name | getv)}}
-  server leader {{$data.conn_address}}
+  server leader {{$conn_addr}}
 		{{end}}
 	{{end}}
 {{end}}
