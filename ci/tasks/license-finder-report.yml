@@ -1,0 +1,15 @@
+---
+platform: linux
+image_resource:
+  type: docker-image
+  source: {repository: dingotiles/dingo-postgresql-release-pipeline}
+
+inputs:
+- name: boshrelease
+- name: boshrelease-ci
+
+outputs:
+- name: license-finder-reports
+
+run:
+  path: ./boshrelease-ci/ci/tasks/license-finder-report.sh
