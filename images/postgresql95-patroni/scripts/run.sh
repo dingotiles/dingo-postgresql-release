@@ -182,7 +182,7 @@ EOF
   restore: /patroni/scripts/restore.py
   recovery_conf:
     restore_command: ${restore_command}
-    archive_cleanup_command: 'pg_archivecleanup -d ${PG_DATA_DIR}/pg_xlog  %r'
+    archive_cleanup_command: 'pg_archivecleanup ${PG_DATA_DIR}/pg_xlog  %r'
 EOF
 fi
 
