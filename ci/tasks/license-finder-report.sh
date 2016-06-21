@@ -16,9 +16,9 @@ aufs-tools, 20120411-3, GPL-2+, docker/aufs-tools_20120411-3_amd64.deb, http://c
 autoconf, 2.69, GPL-2+, docker/autoconf-2.69.tar.gz
 bridge-utils, 1.5, GPL-2+, docker/bridge-utils-1.5.tar.gz
 docker, 1.11.0, "Apache 2.0", docker/docker-1.11.0.tgz
-golang, 1.6.2, BSD, golang/go1.6.2.linux-amd64.tar.gz, https://github.com/golang/go/blob/master/LICENSE
+golang, 1.6.2, "New BSD", golang/go1.6.2.linux-amd64.tar.gz, https://github.com/golang/go/blob/master/LICENSE
 haproxy, 1.5.12, GPL-2+, haproxy/haproxy-1.5.12.tar.gz, http://www.haproxy.org/download/1.5/doc/LICENSE
-pcre, 8.37, BSD, haproxy/pcre-8.37.tar.gz
+pcre, 8.37, "New BSD", haproxy/pcre-8.37.tar.gz
 jq, 1.5, MIT, jq/jq-linux64-1.5
 postgresql, 9.4.5, PostgreSQL, postgresql/postgresql-9.4.5.tar.gz, https://www.postgresql.org/about/licence/
 remote_syslog, 0.14, MIT, remote_syslog/remote_syslog-0.14_linux_amd64.tar.gz, https://github.com/papertrail/remote_syslog/blob/master/LICENSE
