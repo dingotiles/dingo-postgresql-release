@@ -26,7 +26,7 @@ jobs:
   - aggregate:
     - {get: boshrelease-ci}
     - {get: boshrelease, resource: boshrelease-pg95-image, trigger: true, params: {submodules: none}}
-    - {get: patroni, resource: patched-patroni, trigger: true}
+    - {get: patroni, resource: patroni, trigger: true}
     - {get: pg95-base-image-latest, passed: [build-pg95-base-image], trigger: true, params: {skip_download: true}}
   - task: prepare-dockerfile
     file: boshrelease-ci/ci/tasks/prepare-dockerfile.yml
@@ -403,11 +403,11 @@ resources:
     secret_access_key: {{dingotiles-aws-secret}}
     region_name: {{dingotiles-aws-region}}
 
-- name: patched-patroni
+- name: patroni
   type: git
   source:
-    uri: https://github.com/drnic/patroni.git
-    branch: connect_address_20150308
+    uri: https://github.com/zalando/patroni.git
+    branch: v0.80
     # uri: https://github.com/zalando/patroni.git
     # branch: master
     private_key: {{github-private-key}}
