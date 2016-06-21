@@ -32,9 +32,13 @@ indent_backup() {
 # run wal-e backup-list periodically to log summary to stdout & etcd /wale-backup-list
 (
   while true; do
-    $WALE_CMD backup-list 2>/dev/null
-    curl -s ${ETCD_HOST_PORT}/v2/keys/service/${PATRONI_SCOPE}/wale-backup-list \
-      -X PUT -d "value=$($WALE_CMD backup-list 2>/dev/null)" > /dev/null
+    IN_RECOVERY=$(psql -tqAc "select pg_is_in_recovery()")
+    if [[ $IN_RECOVERY != "f" ]]
+    then
+      $WALE_CMD backup-list 2>/dev/null
+      curl -s ${ETCD_HOST_PORT}/v2/keys/service/${PATRONI_SCOPE}/wale-backup-list \
+        -X PUT -d "value=$($WALE_CMD backup-list 2>/dev/null)" > /dev/null
+    fi
     sleep 30
   done
 ) 2>&1 | indent_backup &
