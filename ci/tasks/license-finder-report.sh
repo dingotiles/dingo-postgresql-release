@@ -28,6 +28,11 @@ rubygems, 2.5.0, Ruby, ruby/rubygems-2.5.0.tgz
 libyaml, 0.1.6, MIT, ruby/yaml-0.1.6.tar.gz
 CSV
 
+# Add license for BOSH release
+cat >> $report <<CSV
+dingo-postgresql-release, ${version}, Apache2
+CSV
+
 cd boshrelease
 
 

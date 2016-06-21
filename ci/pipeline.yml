@@ -1,7 +1,7 @@
 ---
 groups:
 - name: pipeline
-  jobs: [rc, bosh-rc, testflight, deploy-vsphere, shipit, license-finder, minor, major, patch]
+  jobs: [rc, bosh-rc, testflight, deploy-vsphere, shipit, minor, major, patch]
 - name: patroni-images
   jobs: [build-pg95-base-image, build-pg95-image, docker-machine-setup, test-images]
 - name: ci-image
@@ -209,20 +209,6 @@ jobs:
       manifest: vsphere-manifest/manifest.yml
       errand: sanity-test
 
-- name: license-finder
-  public: true
-  plan:
-  - aggregate:
-    - {get: boshrelease-ci}
-    - {get: boshrelease, passed: [shipit], trigger: true}
-    - {get: version, passed: [shipit]}
-  - task: license-finder-report
-    file: boshrelease-ci/ci/tasks/license-finder-report.yml
-  - put: license-report
-    params:
-      file: license-finder-reports/dingo-postgresql-release-license-report-*.csv
-      acl: public-read
-
 - name: shipit
   serial_groups: [version]
   public: true
@@ -253,31 +239,36 @@ jobs:
         params:
           repository: final-release-repo
           rebase: true
-      - task: create-release-notes
-        file: boshrelease-ci/ci/tasks/create-release-notes.yml
-      - put: version
-        params: {file: version/number}
-      - task: generate-commitish
-        config:
-          platform: linux
-          image: docker:///dingotiles/dingo-postgresql-release-pipeline
-          inputs: [{name: boshrelease}]
-          outputs: [{name: generated-commitish}]
-          run:
-            path: sh
-            args:
-            - -c
-            - |
-              git -C boshrelease rev-parse HEAD > generated-commitish/commitish
-      - task: rename-dependency-releases
-        file: boshrelease-ci/ci/tasks/rename-dependency-releases.yml
-      - put: github-release
-        params:
-          name: release-notes/release-name
-          tag: release-notes/release-name
-          body: release-notes/notes.md
-          commitish: generated-commitish/commitish
-          globs: [final-release-tarball/*.tgz, dependency-releases/*.tgz]
+    - task: license-finder-report
+      file: boshrelease-ci/ci/tasks/license-finder-report.yml
+    - task: create-release-notes
+      file: boshrelease-ci/ci/tasks/create-release-notes.yml
+  - put: version
+    params: {file: version/number}
+  - task: generate-commitish
+    config:
+      platform: linux
+      image: docker:///dingotiles/dingo-postgresql-release-pipeline
+      inputs: [{name: boshrelease}]
+      outputs: [{name: generated-commitish}]
+      run:
+        path: sh
+        args:
+        - -c
+        - |
+          git -C boshrelease rev-parse HEAD > generated-commitish/commitish
+  - task: rename-dependency-releases
+    file: boshrelease-ci/ci/tasks/rename-dependency-releases.yml
+  - put: github-release
+    params:
+      name: release-notes/release-name
+      tag: release-notes/release-name
+      body: release-notes/notes.md
+      commitish: generated-commitish/commitish
+      globs:
+      - final-release-tarball/*.tgz
+      - dependency-releases/*.tgz
+      - license-finder-reports/dingo-postgresql-release-license-report-*.csv
 
 - name: major
   public: true
