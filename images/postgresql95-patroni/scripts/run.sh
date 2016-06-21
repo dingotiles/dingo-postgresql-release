@@ -154,7 +154,8 @@ postgresql:
   # TYPE    DATABASE     USER            ADDRESS   METHOD
   - host    replication  ${APPUSER_USERNAME}  0.0.0.0/0 md5
   - host    postgres     all             0.0.0.0/0 md5
-  - hostssl postgres     all             0.0.0.0/0 md5
+  # hostssl entry can only be turned on if  ssl: "on" is set
+  # - hostssl postgres     all             0.0.0.0/0 md5
   replication: # replication username, user will be created during initialization
     username: ${APPUSER_USERNAME}
     password: ${APPUSER_PASSWORD}
