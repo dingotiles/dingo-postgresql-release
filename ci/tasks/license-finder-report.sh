@@ -5,7 +5,7 @@
 set -e -x
 
 version=$(cat version/number)
-report=$PWD/license-finder-reports/submodules-${version}.csv
+report=$PWD/license-finder-reports/dingo-postgresql-release-license-report-${version}.csv
 
 cd boshrelease
 

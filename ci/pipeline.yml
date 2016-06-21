@@ -218,6 +218,8 @@ jobs:
     - {get: version, passed: [shipit]}
   - task: license-finder-report
     file: boshrelease-ci/ci/tasks/license-finder-report.yml
+  - put: license-report
+    params: {file: license-finder-reports/dingo-postgresql-release-license-report-*.csv}
 
 - name: shipit
   serial_groups: [version]
@@ -389,6 +391,15 @@ resources:
     branch: version
     file: version
     private_key: {{github-private-key}}
+
+- name: license-report
+  type: s3
+  source:
+    bucket: dingo-postgresql-releases
+    regexp: dingo-postgresql-release-license-report-(.*).csv
+    access_key_id: {{dingotiles-aws-access}}
+    secret_access_key: {{dingotiles-aws-secret}}
+    region_name: {{dingotiles-aws-region}}
 
 - name: final-release
   type: s3
