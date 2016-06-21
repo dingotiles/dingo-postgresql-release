@@ -219,7 +219,9 @@ jobs:
   - task: license-finder-report
     file: boshrelease-ci/ci/tasks/license-finder-report.yml
   - put: license-report
-    params: {file: license-finder-reports/dingo-postgresql-release-license-report-*.csv}
+    params:
+      file: license-finder-reports/dingo-postgresql-release-license-report-*.csv
+      acl: public-read
 
 - name: shipit
   serial_groups: [version]
