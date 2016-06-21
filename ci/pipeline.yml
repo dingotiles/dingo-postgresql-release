@@ -229,6 +229,9 @@ jobs:
           load_file:       pg95-image-edge/image
           load_repository: dingotiles/dingo-postgresql95
           load_tag: edge
+          tag: version/number
+          tag_as_latest: true
+
     - do:
       - task: create-final-release
         file: boshrelease-ci/ci/tasks/finalize-release.yml
