@@ -1,10 +1,6 @@
 FROM dingotiles/dingo-postgresql95-base:latest
 MAINTAINER Dr Nic Williams
 
-# Command to run
-ENTRYPOINT ["/scripts/run.sh"]
-CMD [""]
-
 # Expose listen port
 EXPOSE 5432
 
@@ -19,3 +15,6 @@ RUN pip install -r /requirements-py2.txt
 # Add scripts
 ADD scripts /scripts
 RUN chmod +x /scripts/*.sh /scripts/postgres/*.sh
+
+# Command to run
+CMD ["/scripts/run.sh"]
