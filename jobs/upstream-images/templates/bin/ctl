@@ -20,9 +20,7 @@ case $1 in
     docker_host=unix:///var/vcap/sys/run/docker/docker.sock
 
     set -x # print commands
-    docker --host $docker_host pull dingotiles/dingo-postgresql95:edge \
-      >>$LOG_DIR/$JOB_NAME.log 2>&1
-    docker --host $docker_host pull dingotiles/dingo-postgresql95:latest \
+    docker --host $docker_host pull dingotiles/dingo-postgresql95:${IMAGE_TAG} \
       >>$LOG_DIR/$JOB_NAME.log 2>&1
 
     # do nothing forever

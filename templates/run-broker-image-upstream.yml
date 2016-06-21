@@ -51,3 +51,5 @@ properties:
     services: (( grab meta.broker.services))
   servicebroker:
     services: (( grab meta.broker.services))
+  upstream_images:
+    tag: (( grab meta.docker_image.tag ))

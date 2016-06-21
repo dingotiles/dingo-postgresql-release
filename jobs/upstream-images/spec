@@ -10,3 +10,6 @@ templates:
 properties:
   release_version:
     description: "Pass the ever-changing bosh release version and will force job to reload upstream images"
+  upstream_images.tag:
+    description: "The tag of the images to pull"
+    default: latest

@@ -151,6 +151,8 @@ networks:
     cloud_properties:
       name: net-10-58-111-0
 properties:
+  upstream-images:
+    tag: "edge"
   etcd:
     machines: [10.58.111.59]
   registrator:
