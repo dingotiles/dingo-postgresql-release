@@ -10,12 +10,12 @@ report=$PWD/license-finder-reports/dingo-postgresql-release-license-report-${ver
 # Populate the bosh release blobs licenses
 # FIXME - this hardcoding is nasty; and yes refactoring is welcome.
 cat > $report <<CSV
-cf-cli, 6.16.1, Apache2, cf-cli/cf-cli_6.16.1_linux_x86-64.tgz
+cf-cli, 6.16.1, "Apache 2.0", cf-cli/cf-cli_6.16.1_linux_x86-64.tgz
 confd, 0.11.0, MIT, confd/confd-0.11.0-linux-amd64, https://github.com/kelseyhightower/confd/blob/master/LICENSE
 aufs-tools, 20120411-3, GPL-2+, docker/aufs-tools_20120411-3_amd64.deb, http://changelogs.ubuntu.com/changelogs/pool/universe/a/aufs-tools/aufs-tools_3.2+20130722-1.1/copyright
 autoconf, 2.69, GPL-2+, docker/autoconf-2.69.tar.gz
 bridge-utils, 1.5, GPL-2+, docker/bridge-utils-1.5.tar.gz
-docker, 1.11.0, Apache2, docker/docker-1.11.0.tgz
+docker, 1.11.0, "Apache 2.0", docker/docker-1.11.0.tgz
 golang, 1.6.2, BSD, golang/go1.6.2.linux-amd64.tar.gz, https://github.com/golang/go/blob/master/LICENSE
 haproxy, 1.5.12, GPL-2+, haproxy/haproxy-1.5.12.tar.gz, http://www.haproxy.org/download/1.5/doc/LICENSE
 pcre, 8.37, BSD, haproxy/pcre-8.37.tar.gz
@@ -30,7 +30,7 @@ CSV
 
 # Add license for BOSH release
 cat >> $report <<CSV
-dingo-postgresql-release, ${version}, Apache2
+dingo-postgresql-release, ${version}, "Apache 2.0"
 CSV
 
 cd boshrelease
