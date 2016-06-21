@@ -1,0 +1,119 @@
+---
+packages:
+- name: bosh-helpers
+  version: 55717f488eb12fd47c95fd524ab1cd6304c7ce7e
+  fingerprint: 55717f488eb12fd47c95fd524ab1cd6304c7ce7e
+  sha1: ae5206f0f8688b66fcafcc3b813dc23fd436cd6d
+  dependencies: []
+- name: cf-cli
+  version: a959b9983123be411e9891bb900fd18921384451
+  fingerprint: a959b9983123be411e9891bb900fd18921384451
+  sha1: 503bf59f1b4aea2b8ba233b6f1fa8ce609258541
+  dependencies: []
+- name: cf-containers-broker
+  version: dbbdae24e41342da1742aff225331ad641e21629
+  fingerprint: dbbdae24e41342da1742aff225331ad641e21629
+  sha1: 823fe2a1b33b64aa55962dc18c5fb5b72a2faa6d
+  dependencies:
+  - ruby
+- name: confd
+  version: d1a1250c5d4588e98ab01b8a2faffce785a44b43
+  fingerprint: d1a1250c5d4588e98ab01b8a2faffce785a44b43
+  sha1: 0b7fd8a723848cb03e42cc79a74bd74860900f6d
+  dependencies: []
+- name: dingo-postgresql-broker
+  version: b1bef70b6246508d79347a5b6c624e3e266b9a45
+  fingerprint: b1bef70b6246508d79347a5b6c624e3e266b9a45
+  sha1: 57f296f27f7424c9926aa3d410d90aecaff39ad7
+  dependencies:
+  - golang-1.6
+- name: dingo-postgresql-clusterdata-backup
+  version: e5ae42b9465ada5e5542f4f2b8018fd262c7bca0
+  fingerprint: e5ae42b9465ada5e5542f4f2b8018fd262c7bca0
+  sha1: a9da7dfb0855972a16c2162159dedfccf60fe19d
+  dependencies:
+  - ruby
+- name: docker
+  version: cef2cbc7b3e2898f19426f4a78556ecff9eb9bb0
+  fingerprint: cef2cbc7b3e2898f19426f4a78556ecff9eb9bb0
+  sha1: d8291f595b8129dc3100dc70f4509f4bb8bfa7bd
+  dependencies: []
+- name: golang-1.6
+  version: 48db0634ac42f2c05f49b3c9fadf417ad4b69bc0
+  fingerprint: 48db0634ac42f2c05f49b3c9fadf417ad4b69bc0
+  sha1: 63669777b05e18a9b42b6ab4fb0e432ad3605e40
+  dependencies: []
+- name: haproxy
+  version: cfbf611621acbcc12fa0df04a33ae2c51c789e5b
+  fingerprint: cfbf611621acbcc12fa0df04a33ae2c51c789e5b
+  sha1: d2afba4e83cdd477603c97c91ac2aa4f3b4f3342
+  dependencies: []
+- name: jq
+  version: f502bfc65e67f129d21866f86e68f8458bd0ae28
+  fingerprint: f502bfc65e67f129d21866f86e68f8458bd0ae28
+  sha1: 1e5f54e34fc35740e5ec96f22f4f0378bbbce26d
+  dependencies: []
+- name: postgresql-9.4
+  version: b2c913e2b04ace4977d3507b1b4fdcdf2fd5363f
+  fingerprint: b2c913e2b04ace4977d3507b1b4fdcdf2fd5363f
+  sha1: 8d7df46f82fbbd7aa40545b3dcdf6bf0dddb1c68
+  dependencies: []
+- name: remote_syslog
+  version: 058f109050e53969590f7707db92e1efa2a01654
+  fingerprint: 058f109050e53969590f7707db92e1efa2a01654
+  sha1: 7b2ca7c7544e910146d25ec871cbf7243950c22b
+  dependencies: []
+- name: ruby
+  version: 1702980750298e853f3ccc6521e0d91cb6a5bf94
+  fingerprint: 1702980750298e853f3ccc6521e0d91cb6a5bf94
+  sha1: 12b0263ab0f09b186124e9acc1d430216e429fa4
+  dependencies: []
+jobs:
+- name: broker
+  version: 72b39fc67ae0ed1be26ac909b1febad4fec8d68a
+  fingerprint: 72b39fc67ae0ed1be26ac909b1febad4fec8d68a
+  sha1: c3b86749618f239025b79b9e87e7395bd5af88b1
+- name: cf-containers-broker
+  version: b8d5ccd2179ddfaf270b4ef5cce0c38941103bae
+  fingerprint: b8d5ccd2179ddfaf270b4ef5cce0c38941103bae
+  sha1: 299e2088e75ae18b08e8cd4f6417ba6a82d69536
+- name: container-env-vars
+  version: 25e0fe47c45079c5fffc81325947db0d2484057f
+  fingerprint: 25e0fe47c45079c5fffc81325947db0d2484057f
+  sha1: b0429710c38fb23ddeda965cb8dd668dbd3d16d2
+- name: disaster-recovery
+  version: 5ea52330f6ec723ba7f7846a258d0f8bc2921d1d
+  fingerprint: 5ea52330f6ec723ba7f7846a258d0f8bc2921d1d
+  sha1: b1ad3b46015aa735ca7d17f73b3f4bf17637b1d7
+- name: docker
+  version: 7078c1bdbee459f9aa347cd46a5206511311c6ef
+  fingerprint: 7078c1bdbee459f9aa347cd46a5206511311c6ef
+  sha1: 1b10f4772eccf026b6e5fe65f30fe2455772b95f
+- name: embedded-images
+  version: 675bb389ac8ee79869915bcc83dc583c3f7f3d5a
+  fingerprint: 675bb389ac8ee79869915bcc83dc583c3f7f3d5a
+  sha1: 568bd761adbedf57d69f4a04ec1fa99a92ff8b30
+- name: registrator
+  version: 48649a9103fed51a43f2faa42c0da108502147be
+  fingerprint: 48649a9103fed51a43f2faa42c0da108502147be
+  sha1: c413babbba81bb49361ca535285549bff5a78282
+- name: router
+  version: 71f7882d797025d4ffb4b2e3a6f5d055a8a7ce76
+  fingerprint: 71f7882d797025d4ffb4b2e3a6f5d055a8a7ce76
+  sha1: b5ff90ffa3ff5dbf71ae1bfd377128115824b7b3
+- name: sanity-test
+  version: 5b5beaaa1fb89570a696c4ee4d4aa3180d6736fa
+  fingerprint: 5b5beaaa1fb89570a696c4ee4d4aa3180d6736fa
+  sha1: 67a6bd524f39d34d036f219d29c5d4c004c4b1d4
+- name: upstream-images
+  version: a07b48bf5a9e26a537b054c6c0454861d810544c
+  fingerprint: a07b48bf5a9e26a537b054c6c0454861d810544c
+  sha1: c2615bc7b9a40b29eafebe8033db290bd789ef71
+license:
+  version: 3617b655e46c560d9118fb0e2ceeee46c0053659
+  fingerprint: 3617b655e46c560d9118fb0e2ceeee46c0053659
+  sha1: 20f4f90025d227a10dbc0b22cc6622590d806fbb
+commit_hash: 0ce07219
+uncommitted_changes: false
+name: dingo-postgresql
+version: 0.6.4
