@@ -15,6 +15,9 @@ services=$(curl -s $ETCD_CLUSTER/v2/keys/service | jq -r ".node.nodes[].key")
 
 for service in ${services[@]}; do
   internal_id=$(basename $service)
-  ./scripts/leader.sh ${internal_id}
-  leader_info=$(./scripts/leader.sh ${internal_id})
+  state=$(curl -s $ETCD_CLUSTER/v2/keys/service/${internal_id}/state | jq -r '.message')
+  if [[ ${state} != "Key not found" ]]; then
+    ./scripts/leader.sh ${internal_id}
+    leader_info=$(./scripts/leader.sh ${internal_id})
+  fi
 done
