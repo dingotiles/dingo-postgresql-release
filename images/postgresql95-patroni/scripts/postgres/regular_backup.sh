@@ -33,7 +33,7 @@ indent_backup() {
 (
   while true; do
     IN_RECOVERY=$(psql -tqAc "select pg_is_in_recovery()")
-    if [[ $IN_RECOVERY != "f" ]]
+    if [[ $IN_RECOVERY == "f" ]]
     then
       $WALE_CMD backup-list 2>/dev/null
       curl -s ${ETCD_HOST_PORT}/v2/keys/service/${PATRONI_SCOPE}/wale-backup-list \
