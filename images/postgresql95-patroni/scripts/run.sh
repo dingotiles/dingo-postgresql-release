@@ -66,6 +66,7 @@ indent_startup() {
 
   ADMIN_USERNAME=${ADMIN_USERNAME:-pgadmin}
   ADMIN_PASSWORD=${ADMIN_PASSWORD:-$(pwgen -s -1 16)}
+  SUPERUSER_USERNAME=${SUPERUSER_USERNAME:-postgres}
   SUPERUSER_PASSWORD=${SUPERUSER_PASSWORD:-Tof2gNVZMz6Dun}
   APPUSER_USERNAME=${APPUSER_USERNAME:-dvw7DJgqzFBJC8}
   APPUSER_PASSWORD=${APPUSER_PASSWORD:-jkT3TTNebfrh6C}
@@ -161,7 +162,7 @@ postgresql:
     password: ${APPUSER_PASSWORD}
     network:  127.0.0.1/32
   superuser:
-    username: postgres
+    username: ${SUPERUSER_USERNAME}
     password: ${SUPERUSER_PASSWORD} # password for postgres user. It would be set during initialization
   admin: # user will be created during initialization. It would have CREATEDB and CREATEROLE privileges
     username: ${ADMIN_USERNAME}

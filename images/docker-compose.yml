@@ -13,6 +13,7 @@ services:
       DOCKER_HOSTNAME: ${DOCKER_HOST_IP}
       ADMIN_USERNAME: admin
       ADMIN_PASSWORD: admin
+      SUPERUSER_USERNAME: postgres
       SUPERUSER_PASSWORD: postgres
       APPUSER_USERNAME: app
       APPUSER_PASSWORD: app
@@ -35,6 +36,7 @@ services:
       DOCKER_HOSTNAME: ${DOCKER_HOST_IP}
       ADMIN_USERNAME: admin
       ADMIN_PASSWORD: admin
+      SUPERUSER_USERNAME: postgres
       SUPERUSER_PASSWORD: postgres
       APPUSER_USERNAME: app
       APPUSER_PASSWORD: app
@@ -75,6 +77,7 @@ services:
       DOCKER_HOST_IP:
       ADMIN_USERNAME: admin
       ADMIN_PASSWORD: admin
+      SUPERUSER_USERNAME: postgres
       SUPERUSER_PASSWORD: postgres
       APPUSER_USERNAME: app
       APPUSER_PASSWORD: app

@@ -9,7 +9,7 @@ fi
 uri=$(cat ${TEST_DIR}/cluster-state.json | jq -r '.leader_uri')
 
 superuser_uri=$(echo ${uri} \
-  | sed "s/${APPUSER_USERNAME}/postgres/" \
+  | sed "s/${APPUSER_USERNAME}/${SUPERUSER_USERNAME}/" \
   | sed "s/${APPUSER_PASSWORD}/${SUPERUSER_PASSWORD}/" )
 
 psql ${superuser_uri} -c "select pg_switch_xlog();"
