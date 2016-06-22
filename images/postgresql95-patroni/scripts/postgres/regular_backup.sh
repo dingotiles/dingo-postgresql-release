@@ -120,8 +120,8 @@ indent_backup() {
       ELAPSED_TIME=$((CURRENT_TS-LAST_BACKUP_TS))
       [[ $ELAPSED_TIME -lt $BACKUP_INTERVAL ]] && continue
     fi
-    # leave only 2 base backups before creating a new one
-    $WALE_CMD delete --confirm retain 2
+    # leave only 4 base backups before creating a new one
+    $WALE_CMD delete --confirm retain 4
     # push a new base backup
     echo "producing a new backup at $(date)"
     $WALE_CMD backup-push ${PG_DATA_DIR}
