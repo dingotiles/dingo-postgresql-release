@@ -6,15 +6,21 @@ DPG_DIR=~/.dpg
 main() {
   load_current
   case "$1" in
-    ls)
-      ls_command
-      ;;
     target)
       shift
       target_command $@
       ;;
     access)
-      access_command
+      shift
+      access_command $@
+      ;;
+    delete)
+      shift
+      delete_command $@
+      ;;
+    ls)
+      shift
+      ls_command $@
       ;;
     *)
       echo "Usage: bla"
@@ -25,8 +31,18 @@ load_current() {
   if [[ -f ${DPG_DIR}/current ]]; then
     current_target=$(cat ${DPG_DIR}/current)
     export TARGET_DIR=${DPG_DIR}/${current_target}
-    export ETCD_ENDPOINT=$(cat ${TARGET_DIR}/etcd_endpoint)
-    export CF_USERNAME=$(cat ${TARGET_DIR}/cf_username)
+    if [[ -f ${TARGET_DIR}/etcd_endpoint ]]; then
+      export ETCD_ENDPOINT=$(cat ${TARGET_DIR}/etcd_endpoint)
+    fi
+    if [[ -f ${TARGET_DIR}/broker_endpoint ]]; then
+      export BROKER_ENDPOINT=$(cat ${TARGET_DIR}/broker_endpoint)
+    fi
+    if [[ -f ${TARGET_DIR}/broker_username ]]; then
+      export BROKER_USERNAME=$(cat ${TARGET_DIR}/broker_username)
+    fi
+    if [[ -f ${TARGET_DIR}/cf_username ]]; then
+      export CF_USERNAME=$(cat ${TARGET_DIR}/cf_username)
+    fi
   fi
 }
 
@@ -63,6 +79,22 @@ target_command() {
   if [[ -z ${etcd_endpoint} ]]; then
     read -p 'ETCD endpoint> ' etcd_endpoint
     echo $etcd_endpoint > ${target_dir}/etcd_endpoint
+  fi
+
+  if [[ -f "${target_dir}/broker_endpoint" ]]; then
+    broker_endpoint=$(cat ${target_dir}/broker_endpoint)
+  fi
+  if [[ -z ${broker_endpoint} ]]; then
+    read -p 'BROKER endpoint> ' broker_endpoint
+    echo $broker_endpoint > ${target_dir}/broker_endpoint
+  fi
+
+  if [[ -f "${target_dir}/broker_username" ]]; then
+    broker_username=$(cat ${target_dir}/broker_username)
+  fi
+  if [[ -z ${broker_username} ]]; then
+    read -p 'BROKER username> ' broker_username
+    echo $broker_username > ${target_dir}/broker_username
   fi
 
   if [[ -f "${target_dir}/cf_endpoint" ]]; then
@@ -130,7 +162,7 @@ ls_command() {
         cf_name='<none>'
       fi
       echo $cluster_id $initialized $members $leader $cf_name
-    done
+    done | sort
   ) | column -t
 }
 
@@ -148,6 +180,16 @@ access_command() {
       cf set-space-role $CF_USERNAME $org $space SpaceDeveloper
     done
   done
+}
+
+delete_command() {
+  service_id="beb5973c-e1b2-11e5-a736-c7c0b526363d"
+  plan_id="1545e30e-6dc3-11e5-826a-6c4008a663f0"
+  instance_id=${1}
+  echo "You are about to delete the cluster '$instance_id'"
+  echo "Enter password to confirm"
+  read -sp 'BROKER password> ' broker_password
+  curl ${BROKER_USERNAME}:${broker_password}@${BROKER_ENDPOINT}/v2/service_instances/${instance_id}\?plan_id=${plan_id}\&service_id=${service_id} -XDELETE
 }
 
 main $@
