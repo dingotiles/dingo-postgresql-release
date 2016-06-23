@@ -24,9 +24,9 @@ main() {
 load_current() {
   if [[ -f ${DPG_DIR}/current ]]; then
     current_target=$(cat ${DPG_DIR}/current)
-    target_dir=${DPG_DIR}/${current_target}
-    export ETCD_ENDPOINT=$(cat ${target_dir}/etcd_endpoint)
-    export CF_USERNAME=$(cat ${target_dir}/cf_username)
+    export TARGET_DIR=${DPG_DIR}/${current_target}
+    export ETCD_ENDPOINT=$(cat ${TARGET_DIR}/etcd_endpoint)
+    export CF_USERNAME=$(cat ${TARGET_DIR}/cf_username)
   fi
 }
 
@@ -101,9 +101,37 @@ ls_command() {
       instances=$(echo "$instances $(cf curl $instances_url | jq '[ .resources[] | {id: .metadata.guid, name: .entity.name}]')" | jq -s add)
     fi
   done
-  echo $instances | jq
+  cf_cache=${TARGET_DIR}/cf_cache
+  echo $instances > $cf_cache
 
-  etcdctl  --endpoint $ETCD ls /service
+  etcd_cache=$TARGET_DIR/etcd_cache
+  curl -s $ETCD/v2/keys/service\?recursive=true > ${etcd_cache}
+  (
+    echo cluster-id initialized members leader cf-name
+    cat ${etcd_cache} | jq -r '.node.nodes[].key' \
+      | while read cluster_path; do
+      cluster_id=$(basename $cluster_path)
+      initialized=$(cat $etcd_cache | jq --arg service $cluster_path '.node.nodes[] | select(.key == $service).nodes[] | contains({key: "initialize"})' | grep true)
+      if [[ -z $initialized ]]; then
+        initialized='false'
+      fi
+
+      members_path=$cluster_path/members
+      members=$(cat $etcd_cache | jq --arg members $members_path '.node.nodes[].nodes[] | select(contains({key: $members})).nodes[].key' 2>/dev/null | wc -l)
+
+      leader_path=$cluster_path/leader
+      leader=$(cat ${etcd_cache} | jq -r --arg leader ${leader_path} '.node.nodes[].nodes[] | select(contains({key: $leader})).value' 2>/dev/null)
+      if [[ -z ${leader} ]]; then
+        leader='<none>'
+      fi
+
+      cf_name=$(cat ${cf_cache} | jq -r --arg id ${cluster_id}  '.[] | select(contains({id: $id})).name')
+      if [[ -z ${cf_name} ]]; then
+        cf_name='<none>'
+      fi
+      echo $cluster_id $initialized $members $leader $cf_name
+    done
+  ) | column -t
 }
 
 access_command() {
