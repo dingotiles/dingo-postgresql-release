@@ -18,6 +18,10 @@ main() {
       shift
       delete_command $@
       ;;
+    purge)
+      shift
+      purge_command $@
+      ;;
     ls)
       shift
       ls_command $@
@@ -56,6 +60,8 @@ load_current() {
 target_command() {
 	local target_name=${1}
   if [[ -z ${target_name} ]]; then
+    echo "Target set to: '$(cat ${DPG_DIR}/current)'"
+    echo
     echo ETCD_ENDPOINT=${ETCD_ENDPOINT}
     echo BROKER_ENDPOINT=${BROKER_ENDPOINT}
     echo CF_ENDPOINT=${CF_ENDPOINT}
@@ -228,6 +234,16 @@ delete_command() {
   echo "Enter password to confirm"
   read -sp 'BROKER password> ' broker_password
   curl ${BROKER_USERNAME}:${broker_password}@${BROKER_ENDPOINT}/v2/service_instances/${instance_id}\?plan_id=${plan_id}\&service_id=${service_id} -XDELETE
+}
+
+purge_command() {
+  instance_id=${1:?USAGE: dpg purge INSTANCE_ID}
+  echo "You are about to purge the cluster '${instance_id}' from ETCD"
+  read -p 'Are you sure? (yes)> ' answer
+  echo
+  if [[ ${answer} == 'yes' ]]; then
+    curl $ETCD_ENDPOINT/v2/keys/service/${instance_id}\?recursive=true -XDELETE
+  fi
 }
 
 main $@
