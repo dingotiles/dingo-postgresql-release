@@ -203,7 +203,6 @@ ls_command() {
           cf_space_name=''
         fi
 
-
         echo $cluster_id $initialized $members $leader $cf_name $cf_org_name $cf_space_name
       done
     fi
