@@ -171,18 +171,22 @@ ls_command() {
 
         cf_name=$(cat ${cf_cache}/service_instances | jq -r --arg id ${cluster_id} '.resources[] | select(contains({metadata: {guid: $id}})).entity.name')
         if [[ -z ${cf_name} ]]; then
-          cf_name='<unknown>'
+          cf_name='<none>'
         fi
 
         state_path=${cluster_path}/state
         state=$(cat ${etcd_cache} | jq -r --arg state ${state_path} '.node.nodes[].nodes[] | select(contains({key: $state})).value' 2>/dev/null)
         if [[ ! -z ${state} ]]; then
+          if [[ ${cf_name} == '<none>' ]]; then
+            cf_name='NOT_FOUND'
+          fi
+
           cf_org_id=$(echo $state | jq -r '.organization_guid')
           cf_org_name=$(cat ${cf_cache}/organizations | jq -r --arg id ${cf_org_id} '.resources[] | select(contains({metadata: {guid: $id}})).entity.name')
 
-        cf_space_id=$(echo $state | jq -r '.space_guid')
-        cf_space_name=$(cat ${cf_cache}/spaces | jq -r --arg id ${cf_space_id} '.resources[] | select(contains({metadata: {guid: $id}})).entity.name')
-        else 
+          cf_space_id=$(echo $state | jq -r '.space_guid')
+          cf_space_name=$(cat ${cf_cache}/spaces | jq -r --arg id ${cf_space_id} '.resources[] | select(contains({metadata: {guid: $id}})).entity.name')
+        else
           cf_org_name=''
           cf_space_name=''
         fi
