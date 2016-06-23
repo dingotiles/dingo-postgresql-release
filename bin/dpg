@@ -137,15 +137,15 @@ ls_command() {
   echo $instances > $cf_cache
 
   etcd_cache=$TARGET_DIR/etcd_cache
-  if [[ ! -z ${ETCD} ]]; then
-    curl -s $ETCD/v2/keys/service\?recursive=true > ${etcd_cache}
+  if [[ ! -z ${ETCD_ENDPOINT} ]]; then
+    curl -s $ETCD_ENDPOINT/v2/keys/service\?recursive=true > ${etcd_cache}
   else
     echo "Only showing instances known to CF"
   fi
 
   (
-    echo cluster-id initialized members leader cf-name
-    if [[ ! -z ${ETCD} ]]; then
+    echo cluster-id initialized members leader cf-name cf-org cf-space
+    if [[ ! -z ${ETCD_ENDPOINT} ]]; then
       cat ${etcd_cache} | jq -r '.node.nodes[].key' \
         | while read cluster_path; do
         cluster_id=$(basename $cluster_path)
@@ -167,7 +167,13 @@ ls_command() {
         if [[ -z ${cf_name} ]]; then
           cf_name='<unknown>'
         fi
-        echo $cluster_id $initialized $members $leader $cf_name
+
+        state_path=${cluster_path}/state
+        state=$(cat ${etcd_cache} | jq -r --arg state ${state_path} '.node.nodes[].nodes[] | select(contains({key: $state})).value' 2>/dev/null)
+        cf_org_id=$(echo $state | jq -r '.organization_guid')
+        cf_space_id=$(echo $state | jq -r '.space_guid')
+
+        echo $cluster_id $initialized $members $leader $cf_name $cf_org_id $cf_space_id
       done
     else
       cat ${cf_cache} | jq -r '.[] | "\(.id) <unknown> <unknown> <unknown> \(.name)"' | while read line; do echo ${line}; done
