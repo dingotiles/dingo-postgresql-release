@@ -28,6 +28,10 @@ main() {
 }
 
 load_current() {
+  if [[ ! -d ${target_dir} ]]; then
+    mkdir -p ${target_dir}
+  fi
+
   if [[ -f ${DPG_DIR}/current ]]; then
     current_target=$(cat ${DPG_DIR}/current)
     export TARGET_DIR=${DPG_DIR}/${current_target}
@@ -69,9 +73,6 @@ target_command() {
         ;;
     esac
   done
-  if [[ ! -d ${target_dir} ]]; then
-    mkdir -p ${target_dir}
-  fi
 
   if [[ -f "${target_dir}/etcd_endpoint" ]]; then
     etcd_endpoint=$(cat ${target_dir}/etcd_endpoint)
