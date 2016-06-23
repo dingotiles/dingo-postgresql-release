@@ -45,7 +45,7 @@ load_current() {
       export BROKER_USERNAME=$(cat ${TARGET_DIR}/broker_username)
     fi
     if [[ -f ${TARGET_DIR}/cf_endpoint ]]; then
-      export CF_ENDPOINT=$(cat ${TARGET_DIR}/cf_ENDPOINT)
+      export CF_ENDPOINT=$(cat ${TARGET_DIR}/cf_endpoint)
     fi
     if [[ -f ${TARGET_DIR}/cf_username ]]; then
       export CF_USERNAME=$(cat ${TARGET_DIR}/cf_username)
