@@ -1,0 +1,125 @@
+#!/bin/bash
+
+set -e
+DPG_DIR=~/.dpg
+
+main() {
+  load_current
+  case "$1" in
+    ls)
+      ls_command
+      ;;
+    target)
+      shift
+      target_command $@
+      ;;
+    access)
+      access_command
+      ;;
+    *)
+      echo "Usage: bla"
+  esac
+}
+
+load_current() {
+  if [[ -f ${DPG_DIR}/current ]]; then
+    current_target=$(cat ${DPG_DIR}/current)
+    target_dir=${DPG_DIR}/${current_target}
+    export ETCD_ENDPOINT=$(cat ${target_dir}/etcd_endpoint)
+    export CF_USERNAME=$(cat ${target_dir}/cf_username)
+  fi
+}
+
+target_command() {
+  target_name=$1
+  echo $target_name > ${DPG_DIR}/current
+  shift
+  target_dir="${DPG_DIR}/${target_name}"
+  while [[ $# -gt 0 ]]
+  do
+    key="$1"
+
+    case $key in
+      -k|--skip-ssl-validation)
+        skip_ssl_validation='--skip-ssl-validation'
+        shift # past argument
+        ;;
+      --init)
+        rm -rf ${target_dir}/*
+        shift # past argument
+        ;;
+      *)
+        # unknown option
+        ;;
+    esac
+  done
+  if [[ ! -d ${target_dir} ]]; then
+    mkdir -p ${target_dir}
+  fi
+
+  if [[ -f "${target_dir}/etcd_endpoint" ]]; then
+    etcd_endpoint=$(cat ${target_dir}/etcd_endpoint)
+  fi
+  if [[ -z ${etcd_endpoint} ]]; then
+    read -p 'ETCD endpoint> ' etcd_endpoint
+    echo $etcd_endpoint > ${target_dir}/etcd_endpoint
+  fi
+
+  if [[ -f "${target_dir}/cf_endpoint" ]]; then
+    endpoint=$(cat ${target_dir}/cf_endpoint)
+  fi
+  if [[ -z ${endpoint} ]]; then
+    read -p 'CF endpoint> ' endpoint
+    echo $endpoint > ${target_dir}/cf_endpoint
+  fi
+
+  if [[ -f "${target_dir}/cf_username" ]]; then
+    username=$(cat ${target_dir}/cf_username)
+  fi
+  if [[ -z ${username} ]]; then
+    read -p 'CF username> ' username
+    echo $username > ${target_dir}/cf_username
+  fi
+
+  read -sp 'CF password> ' password
+  echo
+  if [[ ! -z "${password}" ]]; then
+    cf login -a ${endpoint} -u ${username} -p ${password} ${skip_ssl_validation}
+  fi
+}
+
+ls_command() {
+  plans=$(cf curl /v2/services | jq -r '.resources[] | select(contains({entity: {label: "dingo-postgresql"}})).entity.service_plans_url')
+
+  instances=''
+  IFS='
+  '
+  plans_array=( $plans )
+  for plan_url in "${plans_array[@]}"; do
+    instances_url=$(cf curl $plan_url | jq -r '.resources[] | select(.entity.name == "cluster").entity.service_instances_url')
+    if [[ ! -z "${instances_url}" ]]; then
+      instances=$(echo "$instances $(cf curl $instances_url | jq '[ .resources[] | {id: .metadata.guid, name: .entity.name}]')" | jq -s add)
+    fi
+  done
+  echo $instances | jq
+
+  etcdctl  --endpoint $ETCD ls /service
+}
+
+access_command() {
+  cf curl /v2/organizations \
+    | jq -r '.resources[].metadata.url' \
+    | while read org_url; do
+      org_data=$(cf curl $org_url)
+      org=$(echo $org_data | jq -r '.entity.name')
+      spaces_url=$(echo $org_data | jq -r '.entity.spaces_url')
+      cf curl $spaces_url \
+        | jq -r '.resources[].entity.name' \
+        | while read space; do
+      cf set-space-role $CF_USERNAME $org $space SpaceManager
+      cf set-space-role $CF_USERNAME $org $space SpaceDeveloper
+    done
+  done
+}
+
+main $@
