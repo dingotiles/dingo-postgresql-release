@@ -44,6 +44,9 @@ load_current() {
     if [[ -f ${TARGET_DIR}/broker_username ]]; then
       export BROKER_USERNAME=$(cat ${TARGET_DIR}/broker_username)
     fi
+    if [[ -f ${TARGET_DIR}/cf_endpoint ]]; then
+      export CF_ENDPOINT=$(cat ${TARGET_DIR}/cf_ENDPOINT)
+    fi
     if [[ -f ${TARGET_DIR}/cf_username ]]; then
       export CF_USERNAME=$(cat ${TARGET_DIR}/cf_username)
     fi
@@ -51,7 +54,14 @@ load_current() {
 }
 
 target_command() {
-  target_name=$1
+	local target_name=${1}
+  if [[ -z ${target_name} ]]; then
+    echo ETCD_ENDPOINT=${ETCD_ENDPOINT}
+    echo BROKER_ENDPOINT=${BROKER_ENDPOINT}
+    echo CF_ENDPOINT=${CF_ENDPOINT}
+    return
+  fi
+
   echo $target_name > ${DPG_DIR}/current
   shift
   target_dir="${DPG_DIR}/${target_name}"
