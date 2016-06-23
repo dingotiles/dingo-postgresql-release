@@ -263,7 +263,7 @@ status_command() {
       | while read member; do
       database_available='false'
       conn=$(echo $member | jq -r '.url')
-      if psql $conn -c 'SELECT current_database()' | grep '1 row' >/dev/null 2>&1; then
+      if psql $conn -c 'SELECT current_database()' 2>/dev/null | grep '1 row' >/dev/null; then
         database_available='true'
       fi
       echo $(basename $(echo $member | jq -r '.path')) $(echo $member | jq -r '.role') $(echo $member | jq -r '.state') $database_available
