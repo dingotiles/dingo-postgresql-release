@@ -14,6 +14,10 @@ main() {
       shift
       access_command $@
       ;;
+    status)
+      shift
+      status_command $@
+      ;;
     delete)
       shift
       delete_command $@
@@ -243,6 +247,29 @@ purge_command() {
   if [[ ${answer} == 'yes' ]]; then
     curl ${ETCD_ENDPOINT}/v2/keys/service/${instance_id}\?recursive=true -XDELETE
   fi
+}
+
+status_command() {
+  instance_id=${1:?USAGE: dpg status INSTANCE_ID}
+
+  etcd_cache=${TARGET_DIR}/etcd_cache
+  cluster_path=/service/${instance_id}
+  members_path=${cluster_path}/members
+  echo "Status of cluster '${instance_id}'"
+  echo
+  (
+    echo Member Role State Available
+    cat ${etcd_cache} \
+      | jq -r --arg members ${members_path} ' .node.nodes[].nodes[] | select(contains({key: $members})).nodes[] | {path: .key, role: .value | fromjson .role, state: .value | fromjson .state, url: .value | fromjson .conn_url } | tojson' \
+      | while read member; do
+      database_available='false'
+      conn=$(echo $member | jq -r '.url')
+      if psql $conn -c 'SELECT current_database()' | grep '1 row' >/dev/null; then
+        database_available='true'
+      fi
+      echo $(basename $(echo $member | jq -r '.path')) $(echo $member | jq -r '.role') $(echo $member | jq -r '.state') $database_available
+    done
+  ) | column -t
 }
 
 main $@
