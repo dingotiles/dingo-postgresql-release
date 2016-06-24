@@ -164,15 +164,11 @@ ls_command() {
   fi
 
   (
-    echo cluster-id initialized members leader cf-name cf-org cf-space
+    echo cluster-id members leader cf-name cf-org cf-space
     if [[ ! -z ${ETCD_ENDPOINT} ]]; then
       cat ${etcd_cache} | jq -r '.node.nodes[].key' \
         | while read cluster_path; do
         cluster_id=$(basename ${cluster_path})
-        initialized=$(cat ${etcd_cache} | jq --arg service ${cluster_path} '.node.nodes[] | select(.key == $service).nodes[] | contains({key: "initialize"})' | grep true)
-        if [[ -z ${initialized} ]]; then
-          initialized='false'
-        fi
 
         members_path=${cluster_path}/members
         members=$(cat ${etcd_cache} | jq --arg members ${members_path} '.node.nodes[].nodes[] | select(contains({key: $members})).nodes[].key' 2>/dev/null | wc -l)
