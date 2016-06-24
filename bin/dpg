@@ -236,6 +236,7 @@ delete_command() {
   echo "You are about to delete the cluster '${instance_id}'"
   echo "Enter password to confirm"
   read -sp 'BROKER password> ' broker_password
+  echo
   curl ${BROKER_USERNAME}:${broker_password}@${BROKER_ENDPOINT}/v2/service_instances/${instance_id}\?plan_id=${plan_id}\&service_id=${service_id} -XDELETE
 }
 
