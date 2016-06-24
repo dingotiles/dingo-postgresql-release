@@ -30,6 +30,10 @@ main() {
       shift
       ls_command $@
       ;;
+    raw)
+      shift
+      raw_command $@
+      ;;
     *)
       echo "Usage: bla"
   esac
@@ -269,6 +273,16 @@ status_command() {
       echo $(basename $(echo $member | jq -r '.path')) $(echo $member | jq -r '.role') $(echo $member | jq -r '.state') $database_available
     done
   ) | column -t
+}
+
+raw_command() {
+  local etcd_path=${1}
+  local jq_filter=${2}
+  if [[ -z ${jq_filter} ]]; then
+    jq_filter='.'
+  fi
+
+  curl -s $ETCD_ENDPOINT/v2/keys${etcd_path} | jq $jq_filter
 }
 
 main $@
