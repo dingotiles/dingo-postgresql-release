@@ -5,7 +5,7 @@ DPG_DIR=~/.dpg
 
 main() {
   load_current
-  case "${1}" in
+  case "${1:-help}" in
     target)
       shift
       target_command $@
@@ -34,8 +34,9 @@ main() {
       shift
       raw_command $@
       ;;
-    *)
-      echo "Usage: bla"
+    help)
+      help_command
+      ;;
   esac
 }
 
@@ -280,6 +281,32 @@ raw_command() {
   fi
 
   curl -s $ETCD_ENDPOINT/v2/keys${etcd_path} | jq $jq_filter
+}
+
+help_command() {
+	cat >&2 <<EOF
+USAGE: dpg <command> [arguments]
+
+Commands:
+
+    dpg target                    Print information about the current target.
+
+    dpg target NAME [--init] [-k] Set or configure the target.
+                                  --init will recreate the target settings.
+                                  -k will use --skip-ssl-validation when logging
+                                  in to Cloud Foundry.
+
+    dpg ls                        List all clusters known to the current target.
+
+    dpg status CLUSTER_ID         Show status information of a given CLUSTER_ID.
+
+    dpg delete CLUSTER_ID         Delete a cluster via the broker api.
+
+    dpg purge CLUSTER_ID          Purge knowladge of a cluster from etcd.
+
+    dpg raw PATH JQ_FILTER        Query etcd PATH and pipe into jq applying the
+                                  given JQ_FILTER.
+EOF
 }
 
 main $@
