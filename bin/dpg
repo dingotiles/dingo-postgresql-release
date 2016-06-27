@@ -256,19 +256,26 @@ status_command() {
 
   cluster_path=/service/${instance_id}
   members_path=${cluster_path}/members
+  state_path=${cluster_path}/state
+  nodes=$(curl -s $ETCD_ENDPOINT/v2/keys${state_path} | jq -r '.node.value' | jq '.nodes')
+
   echo "Status of cluster '${instance_id}'"
   echo
   (
-    echo Member Role State Available
+    echo Member Backend Role State Available
     curl -s $ETCD_ENDPOINT/v2/keys${members_path}\?recursive=true \
       | jq -r '.node.nodes[] | {path: .key, role: .value | fromjson .role, state: .value | fromjson .state, url: .value | fromjson .conn_url } | tojson' \
       | while read member; do
+
       database_available='false'
       conn=$(echo $member | jq -r '.url')
       if psql $conn -c 'SELECT current_database()' 2>/dev/null | grep '1 row' >/dev/null; then
         database_available='true'
       fi
-      echo $(basename $(echo $member | jq -r '.path')) $(echo $member | jq -r '.role') $(echo $member | jq -r '.state') $database_available
+      member_id=$(basename $(echo $member | jq -r '.path'))
+      backend_id=$(echo $nodes | jq -r --arg id ${member_id} '.[] | select(.node_id == $id) .backend_id')
+
+      echo ${member_id} ${backend_id} $(echo $member | jq -r '.role') $(echo $member | jq -r '.state') $database_available
     done
   ) | column -t
 }
