@@ -287,7 +287,7 @@ raw_command() {
     jq_filter='.'
   fi
 
-  curl -s $ETCD_ENDPOINT/v2/keys${etcd_path} | jq $jq_filter
+  curl -s $ETCD_ENDPOINT/v2/keys${etcd_path} | jq -r $jq_filter
 }
 
 help_command() {
