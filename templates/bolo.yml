@@ -1,0 +1,14 @@
+releases:
+  - name: bolo
+    version: '0.2.1'
+
+addons:
+- name: monitoring
+  jobs:
+  - name:    dbolo
+    release: bolo
+
+  properties:
+    dbolo:
+      submission:
+        address: 10.244.151.2
