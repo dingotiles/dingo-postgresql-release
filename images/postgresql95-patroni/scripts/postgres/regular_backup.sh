@@ -96,7 +96,10 @@ indent_backup() {
       pg_controldata ${PG_DATA_DIR} | grep "Database system identifier" | cut -d ":" -f2 | awk '{print $1}' > /tmp/sysids/sysid
 
       region=$(aws s3api get-bucket-location --bucket ${WAL_S3_BUCKET} | jq -r '.LocationConstraint')
-      aws s3 --region ${region} sync /tmp/sysids ${WALE_S3_PREFIX}sysids
+      if [[ ${region} != 'null' ]]; then
+        region_option="--region ${region}"
+      fi
+      aws s3 ${region_option} sync /tmp/sysids ${WALE_S3_PREFIX}sysids
       SYSID_UPLOADED=1
     fi
     # produce backup only at a given hour, unless it's set to *, which means
