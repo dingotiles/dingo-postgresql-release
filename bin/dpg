@@ -166,7 +166,7 @@ ls_command() {
 
   (
     echo cluster-id members leader cf-name cf-org cf-space
-    if [[ ! -z ${ETCD_ENDPOINT} ]]; then
+    if [[ ! -z ${ETCD_ENDPOINT} ]] && cat ${etcd_cache} | jq '.node.nodes[]' 2>/dev/null ; then
       cat ${etcd_cache} | jq -r '.node.nodes[].key' \
         | while read cluster_path; do
         cluster_id=$(basename ${cluster_path})
