@@ -26,12 +26,5 @@ callbacks:
   clusterdata_restore: {cmd: /var/vcap/jobs/broker/bin/restore_provisioned_service}
 <% end %>
 
-
-<% if_p("license_text") do |license_text| %>
-license_text: '<%= license_text %>'
-<% end.else do %>
-# WARNING: license_text was not provided. Defaulting to trial quota.
-<% end %>
-
 catalog:
   services: <%= JSON.pretty_generate(p('servicebroker.services')) %>

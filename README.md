@@ -58,7 +58,7 @@ The BOSH release is the basis for the Pivotal Network tile [Dingo PostgreSQL](ht
 
 ![dingo-postgresql-tile](http://www.dingotiles.com/dingo-postgresql/images/dingo-postgresql-tile.png)
 
-Both the OSS BOSH release and the Pivotal tile are free to trial for 10 service instances (one service instance is a cluster of PostgreSQL created by `cf create-service` command). Commercial license purchases can be purchased in service instance batches of 25. Please [chat with us on Slack](https://slack.dingotiles.com) to help getting started, discuss support & licensing, and to discuss future product direction.
+Please [chat with us on Slack](https://slack.dingotiles.com) to help getting started, discuss support & licensing, and to discuss future product direction.
 
 ## Installation
 

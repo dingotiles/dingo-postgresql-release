@@ -55,6 +55,3 @@ properties:
     description: Amazon S3 region endpoint
   backups.clusterdata.endpoint:
     description: Amazon S3 API endpoint
-
-  license_text:
-    description: Single-line string license key to grant quota limits beyond trial quota
