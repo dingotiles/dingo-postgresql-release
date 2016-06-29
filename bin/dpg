@@ -180,7 +180,7 @@ ls_command() {
           leader='<none>'
         fi
 
-        cf_name=$(cat ${cf_cache}/service_instances | jq -r --arg id ${cluster_id} '.resources[] | select(contains({metadata: {guid: $id}})).entity.name' || echo '')
+        cf_name=$(cat ${cf_cache}/service_instances | jq -r --arg id ${cluster_id} '.resources[] | select(contains({metadata: {guid: $id}})).entity.name' 2>/dev/null || echo '')
         if [[ -z ${cf_name} ]]; then
           cf_name='<none>'
         fi
