@@ -11,10 +11,6 @@ docker/bridge-utils-1.5.tar.gz:
   object_id: bdcf1d44-6aea-4cb8-9500-5bf2d37c93bb
   sha: 1f71b6f22f5d2b6d21e146f4ac20820ad42e58ee
   size: 33472
-remote_syslog/remote_syslog-0.14_linux_amd64.tar.gz:
-  object_id: 5a50b832-b7aa-4d96-a39f-9e90eedf2d9e
-  sha: c0562f6d13e5eafece5c030c835f21fcf12fccdb
-  size: 1849384
 ruby/yaml-0.1.6.tar.gz:
   object_id: cf573004-2371-454c-92d9-e13d4d40c390
   sha: f3d404e11bec3c4efcddfd14c42d46f1aabe0b5d
@@ -63,3 +59,7 @@ confd/confd-0.11.0-linux-amd64:
   object_id: f99a9071-86a8-4f2c-aa8b-21c5b605172d
   sha: dd4479abccb24564827dcf14fcb73ccc5bba8aeb
   size: 9670104
+remote_syslog/remote_syslog-0.17_linux_amd64.tar.gz:
+  object_id: efcd067d-8c96-49eb-b375-c80e31797836
+  sha: 82f9863a2223fab901cac09bec1be1c08de8d16a
+  size: 1827896
