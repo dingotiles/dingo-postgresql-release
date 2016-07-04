@@ -59,7 +59,3 @@ confd/confd-0.11.0-linux-amd64:
   object_id: f99a9071-86a8-4f2c-aa8b-21c5b605172d
   sha: dd4479abccb24564827dcf14fcb73ccc5bba8aeb
   size: 9670104
-remote_syslog/remote_syslog-0.17_linux_amd64.tar.gz:
-  object_id: efcd067d-8c96-49eb-b375-c80e31797836
-  sha: 82f9863a2223fab901cac09bec1be1c08de8d16a
-  size: 1827896
