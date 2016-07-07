@@ -131,8 +131,8 @@ ttl: &ttl 30
 loop_wait: &loop_wait 10
 scope: &scope ${PATRONI_SCOPE}
 restapi:
-  listen: 127.0.0.1:8008
-  connect_address: 127.0.0.1:8008
+  listen: 0.0.0.0:8008
+  connect_address: ${DOCKER_IP}:8008
 etcd:
   scope: *scope
   ttl: *ttl
