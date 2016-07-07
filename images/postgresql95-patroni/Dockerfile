@@ -4,6 +4,9 @@ MAINTAINER Dr Nic Williams
 # Expose listen port
 EXPOSE 5432
 
+# Expose patroni API port
+EXPOSE 8008
+
 # Expose our data directory
 VOLUME ["/data"]
 
