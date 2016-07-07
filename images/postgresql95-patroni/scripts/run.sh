@@ -7,7 +7,7 @@ mkdir -p $DATA_DIR
 
 DOCKER_IP=$(hostname --ip-address)
 
-REGISTRATOR_DOCKER_IMAGE=${REGISTRATOR_DOCKER_IMAGE:-dingo-postgresql95} # used as path by registrator entries
+REGISTRATOR_DOCKER_IMAGE=${REGISTRATOR_DOCKER_IMAGE:-dingo-postgresql95-5432} # used as path by registrator entries
 
 if [[ -z "${NAME}" ]]; then
   echo "Requires \$NAME to look up container in registrator"
