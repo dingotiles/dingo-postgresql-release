@@ -25,6 +25,10 @@ echo $update_service_parameters
 
 update-service $service_id $plan_id $instance_id $update_service_parameters
 
+echo 'Waiting for async update to complete'
+set +x
+sleep 60
+
 psql ${uri} -c 'SELECT value FROM sanitytest;' | grep 'storage-test' || {
   echo Could not store and retrieve value in cluster!
   exit 1
