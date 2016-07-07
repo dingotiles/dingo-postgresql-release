@@ -7,7 +7,8 @@ mkdir -p $DATA_DIR
 
 DOCKER_IP=$(hostname --ip-address)
 
-REGISTRATOR_DOCKER_IMAGE=${REGISTRATOR_DOCKER_IMAGE:-dingo-postgresql95-5432} # used as path by registrator entries
+REGISTRATOR_5432=${REGISTRATOR_DOCKER_IMAGE:-dingo-postgresql95-5432} # used as path by registrator entries
+REGISTRATOR_8008=${REGISTRATOR_DOCKER_IMAGE:-dingo-postgresql95-8008} # used as path by registrator entries
 
 if [[ -z "${NAME}" ]]; then
   echo "Requires \$NAME to look up container in registrator"
@@ -41,22 +42,27 @@ indent_startup() {
   while [[  $i -lt 4 ]]
   do
     sleep 3
-    registrator_uri="${ETCD_HOST_PORT}/v2/keys/${REGISTRATOR_DOCKER_IMAGE}/${DOCKER_HOSTNAME}:${NAME}:5432"
-    echo "looking up public host:port from etcd -> ${registrator_uri} ($i)"
-    CONNECT_ADDRESS=$(curl -sL ${registrator_uri} | jq -r .node.value)
-    if [[ "${CONNECT_ADDRESS}" == "null" ]]; then
+    registrator_5432_uri="${ETCD_HOST_PORT}/v2/keys/${REGISTRATOR_5432}/${DOCKER_HOSTNAME}:${NAME}:5432"
+    echo "looking up public host:5432 from etcd -> ${registrator_5432_uri} ($i)"
+    connect_address_5432=$(curl -sL ${registrator_5432_uri} | jq -r .node.value)
+    if [[ "${connect_address_5432}" == "null" ]]; then
       echo container not yet registered, waiting...
     else
       break
     fi
     i=$[$i+1]
   done
-  if [[ "${CONNECT_ADDRESS}" == "null" ]]; then
-    echo failed to look up container in etcd
+  if [[ "${connect_address_5432}" == "null" ]]; then
+    echo "failed to look up container in etcd"
     exit 1
   else
-    echo public address ${CONNECT_ADDRESS}
+    echo "public :5432 address ${connect_address_5432}"
   fi
+
+  registrator_8008_uri="${ETCD_HOST_PORT}/v2/keys/${REGISTRATOR_8008}/${DOCKER_HOSTNAME}:${NAME}:8008"
+  echo "looking up public host:8008 from etcd -> ${registrator_8008_uri}"
+  connect_address_8008=$(curl -sL ${registrator_8008_uri} | jq -r .node.value)
+  echo "public :8008 address ${connect_address_8008}"
 
   # for backwards compatibility
   if [[ ! -z "${POSTGRES_USERNAME}" ]]; then
@@ -132,7 +138,7 @@ loop_wait: &loop_wait 10
 scope: &scope ${PATRONI_SCOPE}
 restapi:
   listen: 0.0.0.0:8008
-  connect_address: ${DOCKER_IP}:8008
+  connect_address: ${connect_address_8008}
 etcd:
   scope: *scope
   ttl: *ttl
@@ -141,7 +147,7 @@ postgresql:
   name: ${NODE_NAME//./_} ## Replication slots do not allow dots in their name
   scope: *scope
   listen: 0.0.0.0:5432
-  connect_address: ${CONNECT_ADDRESS}
+  connect_address: ${connect_address_5432}
   data_dir: ${PG_DATA_DIR}
   maximum_lag_on_failover: 1048576 # 1 megabyte in bytes
   use_slots: False
