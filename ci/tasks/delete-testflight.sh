@@ -17,7 +17,7 @@ bosh target ${bosh_target}
 
 set +x # ok to fail/noop
 set -x # print command
-if ! bosh -n delete deployment ${deployment_name} ; then
+if ! bosh -n delete deployment ${deployment_name} -f ; then
   echo Running delete second time to try again...
-  bosh -n delete deployment ${deployment_name}
+  bosh -n delete deployment ${deployment_name} -f
 fi
