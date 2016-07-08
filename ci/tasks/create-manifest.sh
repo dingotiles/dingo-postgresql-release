@@ -34,6 +34,14 @@ releases:
   version: ${simple_remote_syslog_version}
 EOF
 
+cat > tmp/scale.yml <<EOF
+jobs:
+- name: cell_z1
+  instances: 2
+- name: cell_z2
+  instances: 2
+EOF
+
 cat > tmp/syslog.yml <<EOF
 properties:
   remote_syslog:
@@ -89,7 +97,7 @@ bosh target ${bosh_target}
 export DEPLOYMENT_NAME=${deployment_name}
 ./templates/make_manifest warden ${docker_image_source} ${services_template} \
   templates/jobs-etcd.yml tmp/syslog.yml tmp/docker_image.yml tmp/backups.yml \
-  tmp/releases.yml tmp/cf-disaster-recovery.yml
+  tmp/scale.yml tmp/releases.yml tmp/cf-disaster-recovery.yml
 
 cp tmp/${DEPLOYMENT_NAME}*.yml ${manifest_dir}/manifest.yml
 
