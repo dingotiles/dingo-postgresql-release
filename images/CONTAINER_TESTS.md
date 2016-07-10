@@ -18,12 +18,12 @@ export WAL_S3_BUCKET=test-backups-bucket
 export WALE_S3_ENDPOINT=https+path://s3-eu-central-1.amazonaws.com
 ```
 
-To execute the tests
+To execute the tests on a docker daemon running locally
 ```bash
-delmo -f images/delmo.yml --only-build-task
+delmo -f images/delmo.yml --only-build-task --localhost <your-ip>
 ```
 
-To execute the tests on a remote docker-machine
+Or to execute the tests on a remote docker-machine
 ```bash
 delmo -f images/delmo.yml --only-build-task -m <remote-machine-name>
 ```
