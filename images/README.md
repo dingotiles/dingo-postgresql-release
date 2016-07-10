@@ -6,7 +6,7 @@ A Dockerfile that produces a Docker image for [PostgreSQL](http://www.postgresql
 Tutorial to learn and play
 --------------------------
 
-Check out the [QUICKSTART_GUIDE](./QUICKSTART_GUIDE.md) to play around with this setup via `docker-compose`. This document goes into more detail.
+Check out the [CONTAINER_TESTS](./CONTAINER_TESTS.md) to play around with this setup via `delmo` and `docker-compose`.
 
 ### Dependencies
 
