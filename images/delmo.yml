@@ -7,7 +7,7 @@ tests:
 - name: read-write-replication-backups
   before_startup: [purge-backups]
   spec:
-  - wait: [two-nodes-running]
+  - wait: two-nodes-running
   - exec:
     - cache-cluster-state
     - write-dummy-value
@@ -21,14 +21,14 @@ tests:
   before_startup: [purge-backups]
   spec:
   - stop: [patroni2]
-  - wait: [one-node-running]
+  - wait: one-node-running
   - exec:
     - cache-cluster-state
     - write-dummy-value
   - start: [patroni2]
-  - wait: [two-nodes-running]
+  - wait: two-nodes-running
   - stop: [patroni1]
-  - wait: [one-node-running]
+  - wait: one-node-running
   - assert:
     - leader-has-changed
     - cache-cluster-state
@@ -37,7 +37,7 @@ tests:
 - name: restoration
   before_startup: [purge-backups]
   spec:
-  - wait: [two-nodes-running]
+  - wait: two-nodes-running
   - exec:
     - cache-cluster-state
     - write-dummy-value
@@ -46,7 +46,7 @@ tests:
   - destroy: [patroni1, patroni2]
   - exec: [remove-cluster-from-etcd]
   - start: [patroni1, patroni2]
-  - {wait: [two-nodes-running], timeout: 120}
+  - {wait: two-nodes-running, timeout: 120}
   - assert:
     - cache-cluster-state
     - retrieve-dummy-value
