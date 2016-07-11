@@ -47,3 +47,16 @@ docker rm images_etcd_1; docker rm patroni1; docker rm patroni2; docker volume l
 Running `docker-compose up` and the `watch` poller in parallel windows will look like:
 
 ![docker](https://cl.ly/1e2r28440d2P/download/Image%202016-07-11%20at%2011.04.13%20AM.png)
+
+
+To discover the member IDs, look in etcd:
+
+```
+curl ${DOCKER_HOST_IP}:4001/v2/keys/service/test-cluster/members | jq -r ".node.nodes[]"
+```
+
+Using the member IDs, to trigger a failover via the REST APIs:
+
+```
+curl ${DOCKER_HOST_IP}:8001/failover -XPOST -d '{"leader": "pg_172_18_0_2", "member": "pg_172_18_0_4"}'
+```
