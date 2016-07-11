@@ -39,15 +39,17 @@ watch -n1 "curl -s ${DOCKER_HOST_IP}:4001/v2/keys/service/test-cluster/members |
 
 To shut down the docker-compose cluster, press Ctrl-C.
 
-I've found that I need to clean up the patroni/etcd containers and their volumes prior to restarting the cluster:
+I've found that I need to clean up the patroni/etcd containers and their volumes prior to restarting the cluster, as well as the AWS bucket:
 
 ```
+aws s3 rm --recursive s3://${WAL_S3_BUCKET}/backups/test-cluster/
 docker-compose -f docker-compose.yml rm -f -v
 ```
 
 To combine the cleanup and restart command:
 
 ```
+aws s3 rm --recursive s3://${WAL_S3_BUCKET}/backups/test-cluster/
 docker-compose -f docker-compose.yml rm -f -v; docker-compose -f docker-compose.yml up
 ```
 
@@ -71,4 +73,18 @@ Recreate old leader (variable `$leader` was set above):
 
 ```
 docker-compose -f docker-compose.yml up -d $leader
+```
+
+To get the API for the current leader:
+
+```
+leader=$(curl -s ${DOCKER_HOST_IP}:4001/v2/keys/service/test-cluster/leader | jq -r .node.value)
+leader_api=$(curl -s ${DOCKER_HOST_IP}:4001/v2/keys/service/test-cluster/members/${leader} | jq -r ".node.value" | jq -r .api_url | sed -e "s/patroni//")
+curl -s ${leader_api} | jq .
+```
+
+Can trigger failover with:
+
+```
+curl -XPOST ${leader_api}/failover -d "{\"leader\": \"${leader}\"}"
 ```

@@ -69,25 +69,25 @@ services:
     command: /bin/registrator -hostname ${DOCKER_HOST_IP} -ip ${DOCKER_HOST_IP} etcd://${DOCKER_HOST_IP}:4001
     depends_on: [etcd]
 
-  # tests:
-  #   build: ./tests/
-  #   image: dingo-pg-container-tests
-  #   volumes:
-  #   - test_state:/test-state
-  #   environment:
-  #     TEST_VOLUME: /test-state
-  #     DOCKER_HOST_IP:
-  #     ADMIN_USERNAME: admin
-  #     ADMIN_PASSWORD: admin
-  #     SUPERUSER_USERNAME: postgres
-  #     SUPERUSER_PASSWORD: postgres
-  #     APPUSER_USERNAME: app
-  #     APPUSER_PASSWORD: app
-  #     PATRONI_SCOPE: test-cluster
-  #     AWS_ACCESS_KEY_ID:
-  #     AWS_SECRET_ACCESS_KEY:
-  #     WAL_S3_BUCKET:
-  #     WALE_S3_ENDPOINT:
-  #
+  tests:
+    build: ./tests/
+    image: dingo-pg-container-tests
+    volumes:
+    - test_state:/test-state
+    environment:
+      TEST_VOLUME: /test-state
+      DOCKER_HOST_IP:
+      ADMIN_USERNAME: admin
+      ADMIN_PASSWORD: admin
+      SUPERUSER_USERNAME: postgres
+      SUPERUSER_PASSWORD: postgres
+      APPUSER_USERNAME: app
+      APPUSER_PASSWORD: app
+      PATRONI_SCOPE: test-cluster
+      AWS_ACCESS_KEY_ID:
+      AWS_SECRET_ACCESS_KEY:
+      WAL_S3_BUCKET:
+      WALE_S3_ENDPOINT:
+  
 volumes:
   test_state:
