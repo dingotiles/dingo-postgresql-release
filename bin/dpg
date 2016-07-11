@@ -22,6 +22,10 @@ main() {
       shift
       delete_command $@
       ;;
+    create)
+      shift
+      create_command $@
+      ;;
     purge)
       shift
       purge_command $@
@@ -239,6 +243,19 @@ delete_command() {
   read -sp 'BROKER password> ' broker_password
   echo
   curl ${BROKER_USERNAME}:${broker_password}@${BROKER_ENDPOINT}/v2/service_instances/${instance_id}\?plan_id=${plan_id}\&service_id=${service_id} -XDELETE
+}
+
+create_command() {
+  service_id="beb5973c-e1b2-11e5-a736-c7c0b526363d"
+  plan_id="1545e30e-6dc3-11e5-826a-6c4008a663f0"
+  instance_id=${1}
+  echo "You are about to delete the cluster '${instance_id}'"
+  echo "Enter password to confirm"
+  read -sp 'BROKER password> ' broker_password
+  echo
+  curl ${BROKER_USERNAME}:${broker_password}@${BROKER_ENDPOINT}/v2/service_instances/${instance_id} \
+    -XPUT \
+    -d "{\"service_id\": \"${service_id}\", \"plan_id\": \"${plan_id}\"}"
 }
 
 purge_command() {
