@@ -37,3 +37,13 @@ I've found that I need to clean up the patroni/etcd containers and their volumes
 ```
 docker rm images_etcd_1; docker rm patroni1; docker rm patroni2; docker volume ls | grep local | awk '{print $2}' | xargs -L1 docker volume rm
 ```
+
+To combine the cleanup and restart command:
+
+```
+docker rm images_etcd_1; docker rm patroni1; docker rm patroni2; docker volume ls | grep local | awk '{print $2}' | xargs -L1 docker volume rm; docker-compose -f docker-compose.yml up
+```
+
+Running `docker-compose up` and the `watch` poller in parallel windows will look like:
+
+![docker](https://cl.ly/1e2r28440d2P/download/Image%202016-07-11%20at%2011.04.13%20AM.png)
