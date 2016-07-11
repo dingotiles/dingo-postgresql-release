@@ -5,7 +5,7 @@ services:
     build: postgresql95-patroni
     image: dingotiles/dingo-postgresql95:pre-test
     container_name: patroni1
-    ports: ["5001:5432"]
+    ports: ["5001:5432", "8001:8008"]
     environment:
       NAME: patroni1
       PATRONI_SCOPE: test-cluster
@@ -28,7 +28,7 @@ services:
     build: postgresql95-patroni
     image: dingotiles/dingo-postgresql95:pre-test
     container_name: patroni2
-    ports: ["5002:5432"]
+    ports: ["5002:5432", "8002:8008"]
     environment:
       NAME: patroni2
       PATRONI_SCOPE: test-cluster
