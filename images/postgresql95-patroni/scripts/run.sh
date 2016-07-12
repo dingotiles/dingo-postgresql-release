@@ -101,8 +101,6 @@ indent_startup() {
   scripts_dir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
   ${scripts_dir}/create_envdir.sh ${WALE_ENV_DIR}
 
-  echo $PG_DATA_DIR > ${WALE_ENV_DIR}/PG_DATA_DIR
-
   if [[ "${WAL_S3_BUCKET}X" != "X" ]]; then
     if ! curl -s s3-website-us-east-1.amazonaws.com >/dev/null; then
       echo Cannot access AWS S3. Check DNS and Internet access.
