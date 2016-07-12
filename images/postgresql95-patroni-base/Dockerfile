@@ -19,4 +19,4 @@ RUN DEBIAN_FRONTEND=noninteractive \
 RUN pip install pip --upgrade
 RUN pip install wal-e awscli --upgrade
 
-ENV PATH /usr/lib/postgresql/${PG_VERSION}/bin:$PATH
+ENV PATH=/usr/lib/postgresql/${PG_VERSION}/bin:$PATH
