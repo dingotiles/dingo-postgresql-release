@@ -3,13 +3,16 @@
 set -e #fail fast
 
 # DATA_VOLUME is set in Dockerfile
-DATA_DIR=${DATA_VOLUME}
-mkdir -p $DATA_DIR
+if [[ -z "${DATA_VOLUME}" ]]; then
+  echo "Expecting DATA_VOLUME to be set in Dockerfile"
+  exit 1
+fi
+mkdir -p ${DATA_VOLUME}
 
-export WALE_ENV_DIR=${DATA_DIR}/wal-e/env
+export WALE_ENV_DIR=${DATA_VOLUME}/wal-e/env
 mkdir -p $WALE_ENV_DIR
 
-export PG_DATA_DIR=${DATA_DIR}/postgres0
+export PG_DATA_DIR=${DATA_VOLUME}/postgres0
 
 # NAME is automatically passed in from cf-containers-broker
 # It is the container name of the running container in the docker-daemon
@@ -232,7 +235,7 @@ fi
 
 EOF
 
-  chown postgres:postgres -R ${DATA_DIR} /patroni /patroni.py ${scripts_dir}/postgres
+  chown postgres:postgres -R ${DATA_VOLUME} /patroni /patroni.py ${scripts_dir}/postgres
 
   cat /patroni/postgres.yml
 
