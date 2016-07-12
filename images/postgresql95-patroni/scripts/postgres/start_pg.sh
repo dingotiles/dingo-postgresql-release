@@ -23,6 +23,12 @@ indent_patroni() {
 scripts_dir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 cd $scripts_dir
 
+if [[ -f ${WALE_ENV_DIR}/WALE_CMD ]]; then
+  export WALE_CMD=$(cat ${WALE_ENV_DIR}/WALE_CMD)
+  export WALE_S3_PREFIX=$(cat ${WALE_ENV_DIR}/WALE_S3_PREFIX)
+  ${scripts_dir}/restore_leader_if_missing.sh
+fi
+
 if [[ ! -f ${WALE_ENV_DIR}/WALE_CMD ]]; then
   echo "WARNING: wal-e not configured, cannot start uploading base backups"
 else
@@ -30,12 +36,6 @@ else
   export WALE_CMD=$(cat ${WALE_ENV_DIR}/WALE_CMD)
   export WALE_S3_PREFIX=$(cat ${WALE_ENV_DIR}/WALE_S3_PREFIX)
   ${scripts_dir}/regular_backup.sh
-fi
-
-if [[ -f ${WALE_ENV_DIR}/WALE_CMD ]]; then
-  export WALE_CMD=$(cat ${WALE_ENV_DIR}/WALE_CMD)
-  export WALE_S3_PREFIX=$(cat ${WALE_ENV_DIR}/WALE_S3_PREFIX)
-  ${scripts_dir}/restore_leader_if_missing.sh
 fi
 
 echo "Starting Patroni..."
