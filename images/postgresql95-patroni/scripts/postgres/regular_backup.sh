@@ -16,6 +16,14 @@ if [[ -z "${ETCD_HOST_PORT}" ]]; then
   echo "regular_backup.sh: Requires \$ETCD_HOST_PORT (host:port) to update backup-list data to etcd"
   exit 0
 fi
+if [[ -z "${WALE_S3_PREFIX}" ]]; then
+  echo "regular_backup.sh: Requires \$WALE_S3_PREFIX into which to store sysid"
+  exit 0
+fi
+if [[ -z "${WAL_S3_BUCKET}" ]]; then
+  echo "regular_backup.sh: Requires \$WAL_S3_BUCKET into which to store sysid"
+  exit 0
+fi
 
 # $BACKUP_HOUR can be an hour in the day, or * to run backup each hour
 BACKUP_HOUR=${BACKUP_HOUR:-1}

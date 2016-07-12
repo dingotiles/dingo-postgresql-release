@@ -32,6 +32,8 @@ else
   export PG_DATA_DIR
   export PATRONI_SCOPE
   export ETCD_HOST_PORT
+  export WALE_S3_PREFIX=$(cat ${WALE_ENV_DIR}/WALE_S3_PREFIX)
+  export WAL_S3_BUCKET
   ${scripts_dir}/regular_backup.sh
 fi
 
