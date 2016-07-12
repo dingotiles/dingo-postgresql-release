@@ -5,7 +5,7 @@ set -u # report the usage of uninitialized variables
 
 env_var_path=$1
 if [[ -z "$env_var_path" ]]; then
-  echo "USAGE: generate_node_uuid /var/vcap/store/cf-containers-broker/direnv/node_uuid"
+  echo "USAGE: generate_node_uuid /var/vcap/store/cf-containers-broker/direnv/cell_guid"
   exit 1
 fi
 mkdir -p $(dirname $env_var_path)
