@@ -5,11 +5,6 @@ set -e #fail fast
 DATA_DIR=/data
 mkdir -p $DATA_DIR
 
-DOCKER_IP=$(hostname --ip-address)
-
-REGISTRATOR_5432=${REGISTRATOR_DOCKER_IMAGE:-dingo-postgresql95-5432} # used as path by registrator entries
-REGISTRATOR_8008=${REGISTRATOR_DOCKER_IMAGE:-dingo-postgresql95-8008} # used as path by registrator entries
-
 if [[ -z "${NAME}" ]]; then
   echo "Requires \$NAME to look up container in registrator"
   exit 1
@@ -39,10 +34,11 @@ indent_startup() {
   # look up public host:port binding from registrar entry in etcd
   # this is then advertised via patroni for replicas to connect
   i="0"
+  image_name='dingo-postgresql95'
   while [[  $i -lt 4 ]]
   do
     sleep 3
-    registrator_5432_uri="${ETCD_HOST_PORT}/v2/keys/${REGISTRATOR_5432}/${DOCKER_HOSTNAME}:${NAME}:5432"
+    registrator_5432_uri="${ETCD_HOST_PORT}/v2/keys/${image_name}-5432/${DOCKER_HOSTNAME}:${NAME}:5432"
     echo "looking up public host:5432 from etcd -> ${registrator_5432_uri} ($i)"
     connect_address_5432=$(curl -sL ${registrator_5432_uri} | jq -r .node.value)
     if [[ "${connect_address_5432}" == "null" ]]; then
@@ -59,7 +55,7 @@ indent_startup() {
     echo "public :5432 address ${connect_address_5432}"
   fi
 
-  registrator_8008_uri="${ETCD_HOST_PORT}/v2/keys/${REGISTRATOR_8008}/${DOCKER_HOSTNAME}:${NAME}:8008"
+  registrator_8008_uri="${ETCD_HOST_PORT}/v2/keys/${image_name}-8008/${DOCKER_HOSTNAME}:${NAME}:8008"
   echo "looking up public host:8008 from etcd -> ${registrator_8008_uri}"
   connect_address_8008=$(curl -sL ${registrator_8008_uri} | jq -r .node.value)
   echo "public :8008 address ${connect_address_8008}"
@@ -87,10 +83,9 @@ indent_startup() {
   if [[ "${NODE_GUID}X" != "X" ]]; then
     NODE_NAME=${NODE_NAME:-"pg_${PATRONI_SCOPE}_${NODE_GUID}"}
   fi
-  if [[ "${BROKER_GUID}X" != "X" ]]; then
-    NODE_NAME=${NODE_NAME:-"pg_${PATRONI_SCOPE}_${BROKER_GUID}"}
-  fi
-  NODE_NAME=${NODE_NAME:-pg_${DOCKER_IP}}
+
+  docker_ip=$(hostname --ip-address)
+  NODE_NAME=${NODE_NAME:-pg_${docker_ip}}
 
   PG_DATA_DIR=${PG_DATA_DIR:-${DATA_DIR}/postgres0}
   echo $PG_DATA_DIR > ${WALE_ENV_DIR}/PG_DATA_DIR
