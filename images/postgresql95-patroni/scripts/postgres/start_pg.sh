@@ -8,9 +8,6 @@ export PATH=/usr/lib/postgresql/${PG_VERSION}/bin:$PATH
 DATA_DIR=/data
 WALE_ENV_DIR=${WALE_ENV_DIR:-${DATA_DIR}/wal-e/env}
 
-# pass thru environment variables into an env dir for postgres user's archive/restore commands
-DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-cd $DIR
 
 # sed -l basically makes sed replace and buffer through stdin to stdout
 # so you get updates while the command runs and dont wait for the end
@@ -23,12 +20,15 @@ indent_patroni() {
   esac
 }
 
+scripts_dir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+cd $scripts_dir
+
 # test for empty dir comes from http://stackoverflow.com/a/91639
 if [[ ! -f ${WALE_ENV_DIR}/WALE_CMD ]]; then
   echo "WARNING: wal-e not configured, cannot start uploading base backups"
 else
   echo "Starting base backups..."
-  envdir ${WALE_ENV_DIR} ${DIR}/regular_backup.sh
+  envdir ${WALE_ENV_DIR} ${scripts_dir}/regular_backup.sh
 fi
 
 if [[ -f ${WALE_ENV_DIR}/WALE_CMD ]]; then
