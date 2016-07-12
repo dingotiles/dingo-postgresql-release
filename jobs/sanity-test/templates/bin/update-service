@@ -14,7 +14,7 @@ update_instance() {
   local instance_id=$3
   local parameters=$4
   info updating service instance ${instance_id} for plan ${plan_id}
-  curl -sf ${BROKER_URI}/v2/service_instances/${instance_id} \
+  curl ${BROKER_URI}/v2/service_instances/${instance_id} \
        -XPATCH \
        -d "{\"parameters\": ${parameters}, \"service_id\": \"${service_id}\", \"plan_id\": \"${plan_id}\"}, \"previous_values\": {\"service_id\": \"${service_id}\", \"plan_id\": \"${plan_id}\"}" \
        >&2 || {
@@ -24,11 +24,10 @@ update_instance() {
   set +x
   sleep 5
   for ((n=0;n<120;n++)); do
-      set -x
-      last_operation=$(curl ${BROKER_URI}/v2/service_instances/${instance_id}/last_operation)
-      set +x
+      # set -x
+      last_operation=$(curl -s ${BROKER_URI}/v2/service_instances/${instance_id}/last_operation)
+      # set +x
       if echo ${last_operation} | grep 'succeeded' > /dev/null; then
-          set -x
           return
       fi
       sleep 1

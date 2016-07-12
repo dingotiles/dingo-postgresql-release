@@ -26,7 +26,7 @@ alternate_cell_guids=$(diff <(echo $available_cells_guids | tr " " "\n") <(echo 
 update_service_parameters=$(jq -n -c -M --arg guids "$alternate_cell_guids" '{"cell-guids": ($guids|split(","))}')
 echo $update_service_parameters
 
-update-service $service_id $plan_id $instance_id $update_service_parameters
+time update-service $service_id $plan_id $instance_id $update_service_parameters
 
 echo 'Waiting for async update to complete'
 set +x
