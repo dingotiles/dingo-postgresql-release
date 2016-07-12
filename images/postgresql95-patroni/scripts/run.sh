@@ -240,4 +240,4 @@ EOF
 
 ) 2>&1 | indent_startup
 
-sudo -E -u postgres /scripts/postgres/start_pg.sh
+sudo PATH="${PATH}" -E -u postgres /scripts/postgres/start_pg.sh
