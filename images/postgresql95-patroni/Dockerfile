@@ -9,6 +9,7 @@ EXPOSE 8008
 
 # Expose our data directory
 VOLUME ["/data"]
+ENV DATA_VOLUME=/data
 
 ADD patroni/patroni.py /patroni.py
 ADD patroni/patroni /patroni

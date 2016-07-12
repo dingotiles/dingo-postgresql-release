@@ -2,8 +2,12 @@
 
 set -e #fail fast
 
-DATA_DIR=/data
+# DATA_VOLUME is set in Dockerfile
+DATA_DIR=${DATA_VOLUME}
 mkdir -p $DATA_DIR
+
+export WALE_ENV_DIR=${DATA_DIR}/wal-e/env
+mkdir -p $WALE_ENV_DIR
 
 export PG_DATA_DIR=${DATA_DIR}/postgres0
 
@@ -93,9 +97,6 @@ indent_startup() {
   SUPERUSER_PASSWORD=${SUPERUSER_PASSWORD:-Tof2gNVZMz6Dun}
   APPUSER_USERNAME=${APPUSER_USERNAME:-dvw7DJgqzFBJC8}
   APPUSER_PASSWORD=${APPUSER_PASSWORD:-jkT3TTNebfrh6C}
-
-  WALE_ENV_DIR=${DATA_DIR}/wal-e/env
-  mkdir -p $WALE_ENV_DIR
 
   # pass thru environment variables into an env dir for postgres user's archive/restore commands
   scripts_dir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
