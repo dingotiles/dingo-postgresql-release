@@ -92,7 +92,7 @@ indent_startup() {
   APPUSER_USERNAME=${APPUSER_USERNAME:-dvw7DJgqzFBJC8}
   APPUSER_PASSWORD=${APPUSER_PASSWORD:-jkT3TTNebfrh6C}
 
-  WALE_ENV_DIR=${WALE_ENV_DIR:-${DATA_DIR}/wal-e/env}
+  WALE_ENV_DIR=${DATA_DIR}/wal-e/env
   mkdir -p $WALE_ENV_DIR
 
   # pass thru environment variables into an env dir for postgres user's archive/restore commands
