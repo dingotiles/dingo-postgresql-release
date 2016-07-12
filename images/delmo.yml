@@ -46,7 +46,7 @@ tests:
   - destroy: [patroni1, patroni2]
   - exec: [remove-cluster-from-etcd]
   - start: [patroni1, patroni2]
-  - {wait: two-nodes-running, timeout: 120}
+  - {wait: two-nodes-running, timeout: 180}
   - assert:
     - cache-cluster-state
     - retrieve-dummy-value
