@@ -28,7 +28,11 @@ if [[ ! -f ${WALE_ENV_DIR}/WALE_CMD ]]; then
   echo "WARNING: wal-e not configured, cannot start uploading base backups"
 else
   echo "Starting base backups..."
-  envdir ${WALE_ENV_DIR} ${scripts_dir}/regular_backup.sh
+  export WALE_CMD=$(cat ${WALE_ENV_DIR}/WALE_CMD)
+  export PG_DATA_DIR
+  export PATRONI_SCOPE
+  export ETCD_HOST_PORT
+  ${scripts_dir}/regular_backup.sh
 fi
 
 if [[ -f ${WALE_ENV_DIR}/WALE_CMD ]]; then
