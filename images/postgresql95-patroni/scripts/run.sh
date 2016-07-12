@@ -99,7 +99,7 @@ indent_startup() {
   scripts_dir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
   ${scripts_dir}/create_envdir.sh ${WALE_ENV_DIR}
 
-  PG_DATA_DIR=${PG_DATA_DIR:-${DATA_DIR}/postgres0}
+  PG_DATA_DIR=${DATA_DIR}/postgres0
   echo $PG_DATA_DIR > ${WALE_ENV_DIR}/PG_DATA_DIR
 
   if [[ "${WAL_S3_BUCKET}X" != "X" ]]; then
@@ -236,12 +236,10 @@ fi
 
 EOF
 
-  chown postgres:postgres -R $DATA_DIR /patroni /patroni.py ${DIR}/postgres
+  chown postgres:postgres -R $DATA_DIR /patroni /patroni.py ${scripts_dir}/postgres
 
-  if [[ -d ${PG_DATA_DIR} ]]; then
-    chown postgres:postgres -R ${PG_DATA_DIR}
-    chmod 700 $PG_DATA_DIR
-  fi
+  chown postgres:postgres -R ${PG_DATA_DIR}
+  chmod 700 $PG_DATA_DIR
 
   cat /patroni/postgres.yml
 
