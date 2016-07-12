@@ -96,8 +96,8 @@ indent_startup() {
   mkdir -p $WALE_ENV_DIR
 
   # pass thru environment variables into an env dir for postgres user's archive/restore commands
-  DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-  ${DIR}/create_envdir.sh ${WALE_ENV_DIR}
+  scripts_dir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+  ${scripts_dir}/create_envdir.sh ${WALE_ENV_DIR}
 
   PG_DATA_DIR=${PG_DATA_DIR:-${DATA_DIR}/postgres0}
   echo $PG_DATA_DIR > ${WALE_ENV_DIR}/PG_DATA_DIR
