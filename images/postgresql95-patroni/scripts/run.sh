@@ -240,12 +240,6 @@ EOF
 
   ls ${WALE_ENV_DIR}/*
 
-  echo ----------------------
-  echo Admin user credentials
-  echo Username ${ADMIN_USERNAME}
-  echo Password ${ADMIN_PASSWORD}
-  echo ----------------------
-
 ) 2>&1 | indent_startup
 
 sudo -E -u postgres /scripts/postgres/start_pg.sh
