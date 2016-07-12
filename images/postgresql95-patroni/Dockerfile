@@ -1,6 +1,7 @@
 FROM dingotiles/dingo-postgresql95-base:latest
 MAINTAINER Dr Nic Williams
 
+# Install Patroni
 ADD patroni/patroni.py /patroni.py
 ADD patroni/patroni /patroni
 ADD patroni/requirements.txt /requirements.txt
