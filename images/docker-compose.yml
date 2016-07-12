@@ -8,6 +8,7 @@ services:
     ports: ["5001:5432", "8001:8008"]
     environment:
       NAME: patroni1
+      NODE_ID: patroni1
       PATRONI_SCOPE: test-cluster
       ETCD_HOST_PORT: ${DOCKER_HOST_IP}:4001
       DOCKER_HOSTNAME: ${DOCKER_HOST_IP}
@@ -31,6 +32,7 @@ services:
     ports: ["5002:5432", "8002:8008"]
     environment:
       NAME: patroni2
+      NODE_ID: patroni2
       PATRONI_SCOPE: test-cluster
       ETCD_HOST_PORT: ${DOCKER_HOST_IP}:4001
       DOCKER_HOSTNAME: ${DOCKER_HOST_IP}

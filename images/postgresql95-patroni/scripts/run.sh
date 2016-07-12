@@ -5,20 +5,39 @@ set -e #fail fast
 DATA_DIR=/data
 mkdir -p $DATA_DIR
 
+# NAME is automatically passed in from cf-containers-broker
+# It is the container name of the running container in the docker-daemon
+# it will be cf-<node-id>
 if [[ -z "${NAME}" ]]; then
   echo "Requires \$NAME to look up container in registrator"
   exit 1
 fi
+
+# PATRONI_SCOPE is passed in from the broker and is == <instance-id>
 if [[ -z "${PATRONI_SCOPE}" ]]; then
   echo "Requires \$PATRONI_SCOPE to advertise container and form cluster"
   exit 1
 fi
+# passed in from broker
 if [[ -z "${ETCD_HOST_PORT}" ]]; then
   echo "Requires \$ETCD_HOST_PORT (host:port) for etcd used by registrator & patroni"
   exit 1
 fi
+
+# added from cf-containers-broker env_var_dir see jobs/container-env-vars/monit
 if [[ -z "${DOCKER_HOSTNAME}" ]]; then
   echo "Requires \$DOCKER_HOSTNAME to discover public host:port from registrator"
+  exit 1
+fi
+
+# for Backwards compatibility
+if [[ ! -z "${NODE_NAME}" ]]; then
+  NODE_ID=${NODE_ID:-${NODE_NAME}}
+fi
+
+# NODE_ID is the id for this node
+if [[ -z "${NODE_ID}" ]]; then
+  echo "Requires \$NODE_ID as unique identifier"
   exit 1
 fi
 
@@ -80,13 +99,6 @@ indent_startup() {
   DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
   ${DIR}/create_envdir.sh ${WALE_ENV_DIR}
 
-  if [[ "${NODE_GUID}X" != "X" ]]; then
-    NODE_NAME=${NODE_NAME:-"pg_${PATRONI_SCOPE}_${NODE_GUID}"}
-  fi
-
-  docker_ip=$(hostname --ip-address)
-  NODE_NAME=${NODE_NAME:-pg_${docker_ip}}
-
   PG_DATA_DIR=${PG_DATA_DIR:-${DATA_DIR}/postgres0}
   echo $PG_DATA_DIR > ${WALE_ENV_DIR}/PG_DATA_DIR
 
@@ -139,7 +151,7 @@ etcd:
   ttl: *ttl
   host: ${ETCD_HOST_PORT}
 postgresql:
-  name: ${NODE_NAME//./_} ## Replication slots do not allow dots in their name
+  name: ${NODE_ID//./_} ## Replication slots do not allow dots in their name
   scope: *scope
   listen: 0.0.0.0:5432
   connect_address: ${connect_address_5432}
