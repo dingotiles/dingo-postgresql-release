@@ -32,7 +32,13 @@ else
 fi
 
 if [[ -f ${WALE_ENV_DIR}/WALE_CMD ]]; then
-  envdir ${WALE_ENV_DIR} ${DIR}/restore_leader_if_missing.sh
+  export WALE_CMD=$(cat ${WALE_ENV_DIR}/WALE_CMD)
+  export PG_DATA_DIR
+  export PATRONI_SCOPE
+  export ETCD_HOST_PORT
+  export WALE_S3_PREFIX=$(cat ${WALE_ENV_DIR}/WALE_S3_PREFIX)
+  export WAL_S3_BUCKET
+  ${scripts_dir}/restore_leader_if_missing.sh
 fi
 
 echo "Starting Patroni..."

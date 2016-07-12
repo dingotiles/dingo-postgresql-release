@@ -5,6 +5,8 @@ set -e #fail fast
 DATA_DIR=/data
 mkdir -p $DATA_DIR
 
+export PG_DATA_DIR=${DATA_DIR}/postgres0
+
 # NAME is automatically passed in from cf-containers-broker
 # It is the container name of the running container in the docker-daemon
 # it will be cf-<node-id>
@@ -99,7 +101,6 @@ indent_startup() {
   scripts_dir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
   ${scripts_dir}/create_envdir.sh ${WALE_ENV_DIR}
 
-  PG_DATA_DIR=${DATA_DIR}/postgres0
   echo $PG_DATA_DIR > ${WALE_ENV_DIR}/PG_DATA_DIR
 
   if [[ "${WAL_S3_BUCKET}X" != "X" ]]; then

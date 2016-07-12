@@ -36,6 +36,10 @@ if [[ -z "${WALE_S3_PREFIX}" ]]; then
   echo "restore_leader_if_missing.sh: Requires \$WALE_S3_PREFIX into which to store sysid"
   exit 0
 fi
+if [[ -z "${WAL_S3_BUCKET}" ]]; then
+  echo "restore_leader_if_missing.sh: Requires \$WAL_S3_BUCKET into which to store sysid"
+  exit 0
+fi
 
 indent_restore_leader() {
   c="s/^/${PATRONI_SCOPE:0:6}-restore_leader_if_missing> /"
