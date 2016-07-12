@@ -1,6 +1,11 @@
 FROM dingotiles/dingo-postgresql95-base:latest
 MAINTAINER Dr Nic Williams
 
+ADD patroni/patroni.py /patroni.py
+ADD patroni/patroni /patroni
+ADD patroni/requirements.txt /requirements.txt
+RUN pip install -r /requirements.txt
+
 # Expose listen port
 EXPOSE 5432
 
@@ -9,12 +14,7 @@ EXPOSE 8008
 
 # Expose our data directory
 VOLUME ["/data"]
-ENV DATA_VOLUME=/data
-
-ADD patroni/patroni.py /patroni.py
-ADD patroni/patroni /patroni
-ADD patroni/requirements.txt /requirements.txt
-RUN pip install -r /requirements.txt
+ENV DATA_VOLUME /data
 
 # Add scripts
 ADD scripts /scripts
