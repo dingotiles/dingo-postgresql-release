@@ -23,7 +23,6 @@ indent_patroni() {
 scripts_dir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 cd $scripts_dir
 
-# test for empty dir comes from http://stackoverflow.com/a/91639
 if [[ ! -f ${WALE_ENV_DIR}/WALE_CMD ]]; then
   echo "WARNING: wal-e not configured, cannot start uploading base backups"
 else
