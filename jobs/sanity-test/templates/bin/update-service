@@ -14,6 +14,10 @@ update_instance() {
   local instance_id=$3
   local parameters=$4
   info updating service instance ${instance_id} for plan ${plan_id}
+
+  info initial state of cluster
+  curl ${BROKER_URI}/admin/service_instances/${instance_id} | jq .
+
   curl ${BROKER_URI}/v2/service_instances/${instance_id} \
        -XPATCH \
        -d "{\"parameters\": ${parameters}, \"service_id\": \"${service_id}\", \"plan_id\": \"${plan_id}\"}, \"previous_values\": {\"service_id\": \"${service_id}\", \"plan_id\": \"${plan_id}\"}" \
@@ -22,17 +26,23 @@ update_instance() {
     exit 1
   }
   set +x
-  sleep 5
-  for ((n=0;n<120;n++)); do
+  # TODO: reduce to 1s to ensure last_operation knows it is in-progress immediately
+  sleep 10
+  for ((n=0;n<20;n++)); do
       # set -x
       last_operation=$(curl -s ${BROKER_URI}/v2/service_instances/${instance_id}/last_operation)
       # set +x
       if echo ${last_operation} | grep 'succeeded' > /dev/null; then
+        info final successful state of cluster
+        curl ${BROKER_URI}/admin/service_instances/${instance_id} | jq .
           return
       fi
-      sleep 1
+      sleep 10
   done
   set -x
+
+  info final error state of cluster
+  curl ${BROKER_URI}/admin/service_instances/${instance_id} | jq .
   echo "Couldn't update service instance"
   exit 1
 }
