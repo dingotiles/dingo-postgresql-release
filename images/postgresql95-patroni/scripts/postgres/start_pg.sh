@@ -13,6 +13,15 @@ indent_patroni() {
   esac
 }
 
+indent_shutdown() {
+  c="s/^/${PATRONI_SCOPE:0:6}-shutdown> /"
+  case $(uname) in
+    Darwin) sed -l "$c";; # mac/bsd sed: -l buffers on line boundaries
+    *)      sed -u "$c";; # unix/gnu sed: -u unbuffered (arbitrary) chunks of data
+  esac
+}
+
+
 scripts_dir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 cd $scripts_dir
 
@@ -32,12 +41,14 @@ else
 fi
 
 shutdown() {
-  echo 'SIGTERM received'
-  echo "Attempting to failover from ${NODE_ID}"
-  curl localhost:8008/failover -XPOST -d "{ \"leader\":\"${NODE_ID}\" }"
-  echo
+  (
+    echo "SIGTERM received"
+    echo "Attempting to failover from ${NODE_ID}"
+    curl localhost:8008/failover -XPOST -d "{ \"leader\":\"${NODE_ID}\" }"
+    echo
 
-  echo "Shutting down patroni"
+    echo "Shutting down patroni"
+  ) 2>&1 | indent_shutdown
 
   local patroni_pid=$(ps aux | grep '^postgres.*python /patroni.py' | awk '{ print $2 }' | head -n 1)
   kill -s SIGTERM  "${patroni_pid}"
