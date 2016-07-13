@@ -44,7 +44,7 @@ shutdown() {
   (
     echo "SIGTERM received"
     echo "Attempting to failover from ${NODE_ID}"
-    curl localhost:8008/failover -XPOST -d "{ \"leader\":\"${NODE_ID}\" }"
+    curl -s localhost:8008/failover -XPOST -d "{ \"leader\":\"${NODE_ID}\" }"
     echo
 
     echo "Shutting down patroni"
