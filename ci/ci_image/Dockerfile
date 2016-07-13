@@ -1,19 +1,34 @@
-FROM concourse/concourse-ci
-# https://github.com/concourse/concourse/blob/master/ci/dockerfiles/concourse-ci/Dockerfile
+FROM ubuntu:15.10
 
 RUN apt-get update && \
-    apt-get install file curl wget bzr jq postgresql postgresql-contrib -y && \
-    apt-get clean
+    apt-get -y install git unzip \
+        libxml2-dev libxslt-dev libcurl4-openssl-dev \
+        build-essential zlib1g-dev libssl-dev libreadline6-dev libyaml-dev \
+    && apt-get install file curl wget bzr jq postgresql postgresql-contrib -y \
+    && apt-get install tree \
+    && apt-get clean
+
+# install ruby
+RUN cd \
+      && wget http://ftp.ruby-lang.org/pub/ruby/2.2/ruby-2.2.5.tar.gz \
+      && tar -xzvf ruby-2.2.5.tar.gz \
+      && cd ruby-2.2.5/ \
+      && ./configure \
+      && make \
+      && make install \
+      && ruby -v
+
+# install required gems
+RUN gem install bundler --no-rdoc --no-ri \
+      && gem install bosh_cli --no-rdoc --no-ri \
+      && gem install rake -v 11.0.1 --no-ri --no-rdoc \
+      && gem install license_finder --no-ri --no-rdoc
 
 ADD https://github.com/geofffranks/spruce/releases/download/v1.1.2/spruce-linux-amd64 /usr/bin/spruce
 RUN chmod 755 /usr/bin/spruce
 
 ADD https://cli.run.pivotal.io/stable?release=linux64-binary&version=6.17.0 /tmp/cf.tgz
 RUN tar xzf /tmp/cf.tgz -C /usr/bin && rm /tmp/cf.tgz
-
-RUN gem install rake -v 11.0.1 --no-ri --no-rdoc && \
-    gem install license_finder --no-ri --no-rdoc && \
-    apt-get update && apt-get install tree -y && apt-get clean
 
 # Install Go
 RUN \
