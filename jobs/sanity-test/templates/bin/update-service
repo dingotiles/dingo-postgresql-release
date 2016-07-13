@@ -26,18 +26,17 @@ update_instance() {
     exit 1
   }
   set +x
-  # TODO: reduce to 1s to ensure last_operation knows it is in-progress immediately
-  sleep 10
-  for ((n=0;n<20;n++)); do
-      # set -x
+  sleep 1
+  for ((n=0;n<120;n++)); do
+      set -x
       last_operation=$(curl -s ${BROKER_URI}/v2/service_instances/${instance_id}/last_operation)
-      # set +x
+      set +x
       if echo ${last_operation} | grep 'succeeded' > /dev/null; then
         info final successful state of cluster
         curl ${BROKER_URI}/admin/service_instances/${instance_id} | jq .
           return
       fi
-      sleep 10
+      sleep 1
   done
   set -x
 
