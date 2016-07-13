@@ -21,7 +21,6 @@ RUN cd \
 # install required gems
 RUN gem install bundler --no-rdoc --no-ri \
       && gem install bosh_cli --no-rdoc --no-ri \
-      && gem install rake -v 11.0.1 --no-ri --no-rdoc \
       && gem install license_finder --no-ri --no-rdoc
 
 # Install Go
