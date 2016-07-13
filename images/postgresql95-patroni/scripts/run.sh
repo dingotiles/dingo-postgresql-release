@@ -243,4 +243,5 @@ EOF
 
 ) 2>&1 | indent_startup
 
+# Use exec so that SIGNALS get passed to start_pg script
 exec sudo PATH="${PATH}" -E -u postgres /scripts/postgres/start_pg.sh
