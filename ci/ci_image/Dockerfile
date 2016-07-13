@@ -24,12 +24,6 @@ RUN gem install bundler --no-rdoc --no-ri \
       && gem install rake -v 11.0.1 --no-ri --no-rdoc \
       && gem install license_finder --no-ri --no-rdoc
 
-ADD https://github.com/geofffranks/spruce/releases/download/v1.1.2/spruce-linux-amd64 /usr/bin/spruce
-RUN chmod 755 /usr/bin/spruce
-
-ADD https://cli.run.pivotal.io/stable?release=linux64-binary&version=6.17.0 /tmp/cf.tgz
-RUN tar xzf /tmp/cf.tgz -C /usr/bin && rm /tmp/cf.tgz
-
 # Install Go
 RUN \
   mkdir -p /goroot && \
@@ -39,3 +33,9 @@ RUN \
 ENV GOROOT /goroot
 ENV GOPATH /gopath
 ENV PATH $GOROOT/bin:$GOPATH/bin:$PATH
+
+ADD https://github.com/geofffranks/spruce/releases/download/v1.1.2/spruce-linux-amd64 /usr/bin/spruce
+RUN chmod 755 /usr/bin/spruce
+
+ADD https://cli.run.pivotal.io/stable?release=linux64-binary&version=6.17.0 /tmp/cf.tgz
+RUN tar xzf /tmp/cf.tgz -C /usr/bin && rm /tmp/cf.tgz
