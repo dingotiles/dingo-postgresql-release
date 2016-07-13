@@ -31,6 +31,23 @@ else
   ${scripts_dir}/regular_backup.sh
 fi
 
+shutdown() {
+  echo 'SIGTERM received'
+  echo "Attempting to failover from ${NODE_ID}"
+  curl localhost:8008/failover -XPOST -d "{ \"leader\":\"${NODE_ID}\" }"
+  echo
+
+  echo "Shutting down patroni"
+
+  local patroni_pid=$(ps aux | grep '^postgres.*python /patroni.py' | awk '{ print $2 }' | head -n 1)
+  kill -s SIGTERM  "${patroni_pid}"
+  wait ${patroni_pid}
+}
+
+trap shutdown TERM
+
 echo "Starting Patroni..."
 cd /
-python /patroni.py /patroni/postgres.yml 2>&1 | indent_patroni
+python /patroni.py /patroni/postgres.yml 2>&1 | indent_patroni &
+patroni_pid=$!
+wait ${patroni_pid}
