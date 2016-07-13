@@ -25,7 +25,7 @@ if [[ -z "${PATRONI_SCOPE}" ]]; then
   echo "Requires \$PATRONI_SCOPE to advertise container and form cluster"
   exit 1
 fi
-# Origin: dingo-pg-broker
+# Origin: manifest broker.services.dingo-postgresql.plans.cluster.container.environment.[0]
 if [[ -z "${ETCD_HOST_PORT}" ]]; then
   echo "Requires \$ETCD_HOST_PORT (host:port) for etcd used by registrator & patroni"
   exit 1
