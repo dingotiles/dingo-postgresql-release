@@ -197,7 +197,6 @@ properties:
           - (( concat "AWS_SECRET_ACCESS_KEY=" meta.backups.aws_secret_key ))
           - (( concat "WAL_S3_BUCKET=" meta.backups.backups_bucket ))
           - (( concat "WALE_S3_ENDPOINT=https+path://" meta.backups.s3_endpoint ))
-          - "WALE_ENV_DIR=/data/wal-e/env"
           - "WALE_BACKUP_THRESHOLD_PERCENTAGE=30"
           - "WALE_BACKUP_THRESHOLD_MEGABYTES=10240"
   servicebroker:
