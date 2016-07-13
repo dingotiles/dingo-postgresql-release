@@ -157,9 +157,11 @@ ls_command() {
   cf_cache=${TARGET_DIR}/cf_cache
   rm -rf ${cf_cache}
   mkdir -p ${cf_cache}
-  cf curl /v2/service_instances > ${cf_cache}/service_instances || touch ${cf_cache}/service_instances
-  cf curl /v2/spaces > ${cf_cache}/spaces || touch ${cf_cache}/spaces
-  cf curl /v2/organizations > ${cf_cache}/organizations || touch ${cf_cache}/organizations
+  if [[ ! -z ${CF_ENDPOINT} ]];then
+    cf curl /v2/service_instances > ${cf_cache}/service_instances || touch ${cf_cache}/service_instances
+    cf curl /v2/spaces > ${cf_cache}/spaces || touch ${cf_cache}/spaces
+    cf curl /v2/organizations > ${cf_cache}/organizations || touch ${cf_cache}/organizations
+  fi
 
   etcd_cache=${TARGET_DIR}/etcd_cache
   if [[ ! -z ${ETCD_ENDPOINT} ]]; then
