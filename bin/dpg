@@ -41,6 +41,10 @@ main() {
     help)
       help_command
       ;;
+    *)
+      echo "Unknown command ${1}" >&2
+      help_command
+      ;;
   esac
 }
 
