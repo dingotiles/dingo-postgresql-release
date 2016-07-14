@@ -46,11 +46,6 @@ psql ${pg_uri} -c 'CREATE TABLE disasterrecoverytest (value text);'
 psql ${pg_uri} -c "INSERT INTO disasterrecoverytest VALUES ('dr-test');"
 psql ${pg_uri} -c 'SELECT * FROM disasterrecoverytest;'
 
-psql ${superuser_uri} -c "select pg_switch_xlog();"
-
-echo wait 10 seconds for WAL archive flush to complete
-sleep 10
-
 echo Deleting instance
 curl -sf ${BROKER_URI}/v2/service_instances/${instance_id}\?plan_id=${plan_id}\&service_id=${service_id} \
      -XDELETE
