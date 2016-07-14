@@ -20,7 +20,7 @@ RUN cd \
 
 # install required gems
 RUN gem install bundler --no-rdoc --no-ri \
-      && gem install bosh_cli --no-rdoc --no-ri \
+      && gem install bosh_cli -v 1.3177.0 --no-rdoc --no-ri \
       && gem install license_finder --no-ri --no-rdoc
 
 # Install Go
