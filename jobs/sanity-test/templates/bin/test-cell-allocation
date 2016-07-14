@@ -1,0 +1,20 @@
+#!/bin/bash
+
+set -e
+set -u
+set -x
+
+instance_id=$1
+
+echo Testing that nodes allocated to cells in different AZs
+
+node1_cell_id=$(curl ${BROKER_URI}/admin/service_instances/${instance_id} -s | jq -r ".nodes[0].backend_id")
+node2_cell_id=$(curl ${BROKER_URI}/admin/service_instances/${instance_id} -s | jq -r ".nodes[1].backend_id")
+
+node1_az=$(curl ${BROKER_URI}/admin/cells -s | jq -r ".[] | select(.guid == \"$node1_cell_id\") | .availability_zone")
+node2_az=$(curl ${BROKER_URI}/admin/cells -s | jq -r ".[] | select(.guid == \"$node2_cell_id\") | .availability_zone")
+
+if [[ "${node1_az}" == "${node2_az}" ]]; then
+  echo "The two nodes should not be scheduled into the same AZ: ${node1_az}"
+  exit 1
+fi

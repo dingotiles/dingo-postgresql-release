@@ -4,6 +4,7 @@ packages: [jq, postgresql-9.4]
 templates:
   bin/run: bin/run
   bin/create-service: bin/create-service
+  bin/test-cell-allocation: bin/test-cell-allocation
   bin/test-storage: bin/test-storage
   bin/test-replication: bin/test-replication
   bin/test-failure-recovery: bin/test-failure-recovery
