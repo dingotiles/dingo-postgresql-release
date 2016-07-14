@@ -31,7 +31,7 @@ if [[ -z "${ETCD_HOST_PORT}" ]]; then
   exit 1
 fi
 
-# Origin: jobs/container-env-vars via cf-containers-broker 
+# Origin: jobs/container-env-vars via cf-containers-broker
 if [[ -z "${DOCKER_HOSTNAME}" ]]; then
   echo "Requires \$DOCKER_HOSTNAME to discover public host:port from registrator"
   exit 1
