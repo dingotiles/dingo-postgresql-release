@@ -26,11 +26,11 @@ binding_id=B-$(date +"%s" | rev)
 
 for plan_id in ${plan_ids[@]}; do
   credentials=$(create-service $service_id $plan_id $instance_id $binding_id)
-
   uri=$(echo $credentials | jq -r ".credentials.uri")
 
   echo Giving HAPROXY some time
   sleep 10
+
   test-storage $uri
   test-replication $instance_id
   test-failure-recovery $service_id $plan_id $instance_id $binding_id $uri
