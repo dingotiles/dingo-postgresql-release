@@ -235,6 +235,11 @@ EOF
 
   chown postgres:postgres -R ${DATA_VOLUME} /patroni /patroni.py ${scripts_dir}/postgres
 
+  if [[ -d ${PG_DATA_DIR} ]]; then
+    chown postgres:postgres -R ${PG_DATA_DIR}
+    chmod 700 $PG_DATA_DIR
+  fi
+
   cat /patroni/postgres.yml
 
   ls ${WALE_ENV_DIR}/*
