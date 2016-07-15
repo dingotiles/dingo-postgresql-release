@@ -21,25 +21,6 @@ indent_shutdown() {
   esac
 }
 
-
-scripts_dir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-cd $scripts_dir
-
-if [[ -f ${WALE_ENV_DIR}/WALE_CMD ]]; then
-  export WALE_CMD=$(cat ${WALE_ENV_DIR}/WALE_CMD)
-  export WALE_S3_PREFIX=$(cat ${WALE_ENV_DIR}/WALE_S3_PREFIX)
-  ${scripts_dir}/restore_leader_if_missing.sh
-fi
-
-if [[ ! -f ${WALE_ENV_DIR}/WALE_CMD ]]; then
-  echo "WARNING: wal-e not configured, cannot start uploading base backups"
-else
-  echo "Starting base backups..."
-  export WALE_CMD=$(cat ${WALE_ENV_DIR}/WALE_CMD)
-  export WALE_S3_PREFIX=$(cat ${WALE_ENV_DIR}/WALE_S3_PREFIX)
-  ${scripts_dir}/regular_backup.sh
-fi
-
 shutdown() {
   (
     echo "SIGTERM received"
@@ -57,8 +38,28 @@ shutdown() {
 
 trap shutdown TERM
 
+scripts_dir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+cd $scripts_dir
+
+if [[ -f ${WALE_ENV_DIR}/WALE_CMD ]]; then
+  export WALE_CMD=$(cat ${WALE_ENV_DIR}/WALE_CMD)
+  export WALE_S3_PREFIX=$(cat ${WALE_ENV_DIR}/WALE_S3_PREFIX)
+  ${scripts_dir}/restore_leader_if_missing.sh
+fi
+
+
 echo "Starting Patroni..."
 cd /
 python /patroni.py /patroni/postgres.yml 2>&1 | indent_patroni &
 patroni_pid=$!
+
+if [[ ! -f ${WALE_ENV_DIR}/WALE_CMD ]]; then
+  echo "WARNING: wal-e not configured, cannot start uploading base backups"
+else
+  echo "Starting base backups..."
+  export WALE_CMD=$(cat ${WALE_ENV_DIR}/WALE_CMD)
+  export WALE_S3_PREFIX=$(cat ${WALE_ENV_DIR}/WALE_S3_PREFIX)
+  ${scripts_dir}/regular_backup.sh
+fi
+
 wait ${patroni_pid}
