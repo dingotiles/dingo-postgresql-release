@@ -64,7 +64,6 @@ done
 echo 'waiting for haproxy to update'
 sleep 31
 
-# psql ${uri} -c "SELECT * from pgbench_tellers;"
 psql ${uri} -c "SELECT * from sanitytest;"
 psql ${uri} -c 'SELECT * FROM sanitytest;' | grep 'test-failure-recovery' || {
   echo Database did not restore
