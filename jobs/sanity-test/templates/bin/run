@@ -28,6 +28,8 @@ for plan_id in ${plan_ids[@]}; do
   credentials=$(create-service $service_id $plan_id $instance_id $binding_id)
   uri=$(echo $credentials | jq -r ".credentials.uri")
 
+  test-cell-allocation $instance_id
+
   echo Giving HAPROXY some time
   sleep 10
 
