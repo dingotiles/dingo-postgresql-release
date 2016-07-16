@@ -8,7 +8,6 @@ service_id=$1
 plan_id=$2
 instance_id=$3
 uri=$4
-superuser_uri=$5
 
 echo Testing service move of containers to new cells
 

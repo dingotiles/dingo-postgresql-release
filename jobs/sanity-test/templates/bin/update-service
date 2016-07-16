@@ -27,7 +27,7 @@ update_instance() {
   }
   set +x
   sleep 1
-  for ((n=0;n<120;n++)); do
+  for ((n=0;n<300;n++)); do
       set -x
       last_operation=$(curl -s ${BROKER_URI}/v2/service_instances/${instance_id}/last_operation)
       set +x
