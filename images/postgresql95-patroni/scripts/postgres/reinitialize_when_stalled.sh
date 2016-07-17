@@ -30,8 +30,8 @@ indent_reinitialize() {
 }
 
 while true; do
-  restart_failed=$(curl -s ${ETCD_HOST_PORT}/v2/keys/service/${PATRONI_SCOPE}/members/${NODE_ID} \
-    | jq -r '.node.value | fromjson .state | startswith("restart failed")')
+  restart_failed=$(curl -s localhost:8008/patroni \
+    | jq -r '.state | startswith("restart failed")')
 
   if [[ ${restart_failed} == 'true' ]]; then
     echo 'Identified restart loop, reinitializing' | indent_reinitialize
