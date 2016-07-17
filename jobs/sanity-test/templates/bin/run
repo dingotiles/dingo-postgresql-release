@@ -33,6 +33,7 @@ for plan_id in ${plan_ids[@]}; do
 
   test-storage $uri
   test-replication $instance_id
+  test-move $service_id $plan_id $instance_id $uri
   test-failure-recovery $service_id $plan_id $instance_id $binding_id $uri
   test-storage $uri
   test-replication $instance_id

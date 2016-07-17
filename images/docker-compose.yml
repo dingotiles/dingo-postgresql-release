@@ -88,6 +88,6 @@ services:
       AWS_SECRET_ACCESS_KEY:
       WAL_S3_BUCKET:
       WALE_S3_ENDPOINT:
-
+  
 volumes:
   test_state:

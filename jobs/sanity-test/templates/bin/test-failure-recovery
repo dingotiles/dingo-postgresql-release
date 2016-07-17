@@ -30,8 +30,7 @@ if [[ $backups_lines -lt 2 ]]; then
   exit 1
 fi
 
-echo Backups are being written
-# display wal-e backup status
+echo Display wal-e backup status
 curl -s ${ETCD}/v2/keys/service/${instance_id}/wale-backup-list | jq -r .node.value
 
 psql ${uri} -c 'DROP TABLE IF EXISTS sanitytest;'
@@ -43,12 +42,18 @@ psql ${uri} -c "select * from sanitytest;"
 echo Deleting service instance
 curl -sf ${BROKER_URI}/v2/service_instances/${instance_id}\?plan_id=${plan_id}\&service_id=${service_id} -XDELETE
 
+echo Display wal-e backup status
+curl -s ${ETCD}/v2/keys/service/${instance_id}/wale-backup-list | jq -r .node.value
+
 echo Recreating service instance
 curl -sf ${BROKER_URI}/v2/service_instances/${instance_id} -XPUT -d '{}'
 
 echo waiting for the cluster to recover
 set +x
 sleep 30
+
+echo Display wal-e backup status
+curl -s ${ETCD}/v2/keys/service/${instance_id}/wale-backup-list | jq -r .node.value
 
 for ((n=0;n<120;n++)); do
   set -x
@@ -61,7 +66,7 @@ for ((n=0;n<120;n++)); do
   sleep 1
 done
 
-echo 'waiting for haproxy to update'
+echo "Waiting for haproxy to update and database to restore"
 sleep 31
 
 psql ${uri} -c "SELECT * from sanitytest;"
