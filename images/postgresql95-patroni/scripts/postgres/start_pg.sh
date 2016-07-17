@@ -47,7 +47,6 @@ if [[ -f ${WALE_ENV_DIR}/WALE_CMD ]]; then
   ${scripts_dir}/restore_leader_if_missing.sh
 fi
 
-
 echo "Starting Patroni..."
 cd /
 python /patroni.py /patroni/postgres.yml 2>&1 | indent_patroni &
@@ -61,5 +60,7 @@ else
   export WALE_S3_PREFIX=$(cat ${WALE_ENV_DIR}/WALE_S3_PREFIX)
   ${scripts_dir}/regular_backup.sh
 fi
+
+${scripts_dir}/reinitialize_when_stalled.sh &
 
 wait ${patroni_pid}
