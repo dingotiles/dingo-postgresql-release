@@ -19,6 +19,7 @@ Important links:
 * [Installation](#installation)
 * [User documentation](http://www.dingotiles.com/dingo-postgresql/usage-provision.html), under "User" sidebar
 * [Disaster recovery](http://www.dingotiles.com/dingo-postgresql/disaster-recovery.html)
+* [Admin features of service broker](https://github.com/dingotiles/dingo-postgresql-broker#recreate-service-api)
 * [BOSH release source](https://github.com/dingotiles/dingo-postgresql-release)
 * [BOSH release releases](https://github.com/dingotiles/dingo-postgresql-release/releases)
 * [BOSH release pipeline](https://ci.vsphere.starkandwayne.com/pipelines/dingo-postgresql-release)
