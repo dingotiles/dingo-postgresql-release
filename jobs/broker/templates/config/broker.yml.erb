@@ -5,16 +5,17 @@ broker:
   port: <%= p("servicebroker.port") %>
   bind_host: <%= p("servicebroker.router.hostname") %>
 
-cells:
-<% p("servicebroker.backends.machines").each do |az, machines| %>
-  <% machines.each do |machine| %>
-- guid: <%= machine %>
-  availability_zone: <%= az %>
-  uri: <%= machine %>
-  username: "<%= p('servicebroker.backends.username') %>"
-  password: "<%= p('servicebroker.backends.password') %>"
+scheduler:
+  backends:
+  <% p("servicebroker.backends.machines").each do |az, machines| %>
+    <% machines.each do |machine| %>
+  - guid: <%= machine %>
+    availability_zone: <%= az %>
+    uri: <%= machine %>
+    username: "<%= p('servicebroker.backends.username') %>"
+    password: "<%= p('servicebroker.backends.password') %>"
+    <% end %>
   <% end %>
-<% end %>
 
 etcd:
   machines: <%= p("etcd.machines").map {|h| "http://#{h}:4001"} %>
