@@ -19,8 +19,8 @@ compilation:
 # 10.58.111.54 - 10.58.111.54
 jobs:
 - name: cell_z1
-  instances: 1
-  networks: [{name: patroni1, static_ips: [10.58.111.55]}]
+  instances: 2
+  networks: [{name: patroni1, static_ips: [10.58.111.55, 10.58.111.58]}]
   persistent_disk: 10240
   properties: {zone: z1}
   resource_pool: cell_z1
@@ -40,8 +40,8 @@ jobs:
   properties:
     release_version: (( grab meta.release_version ))
 - name: cell_z2
-  instances: 1
-  networks: [{name: patroni1, static_ips: [10.58.111.56]}]
+  instances: 2
+  networks: [{name: patroni1, static_ips: [10.58.111.56, 10.58.111.60]}]
   persistent_disk: 10240
   properties: {zone: z2}
   resource_pool: cell_z2
@@ -72,8 +72,8 @@ jobs:
     servicebroker:
       backends:
         machines:
-          z1: [10.58.111.55]
-          z2: [10.58.111.56]
+          z1: [10.58.111.55, 10.58.111.58]
+          z2: [10.58.111.56, 10.58.111.60]
       machines: [127.0.0.1]
       public_port: 8888
       port: 8889
