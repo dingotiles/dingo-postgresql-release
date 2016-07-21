@@ -8,19 +8,6 @@
 # will contain {"state":"restart failed (start failed)"}
 # Reinitializing patroni will fix this state
 
-if [[ -z "${ETCD_HOST_PORT}" ]]; then
-  echo "reinitialize_when_stalled.sh: Requires \$ETCD_HOST_PORT (host:port) to lookup member state in etcd"
-  exit 0
-fi
-if [[ -z "${PATRONI_SCOPE}" ]]; then
-  echo "reinitialize_when_stalled.sh: Requires \$PATRONI_SCOPE to lookup member state in etcd"
-  exit 0
-fi
-if [[ -z "${NODE_ID}" ]]; then
-  echo "reinitialize_when_stalled.sh: Requires \$PATRONI_SCOPE to lookup member state in etcd"
-  exit 0
-fi
-
 indent_reinitialize() {
   c="s/^/${PATRONI_SCOPE:0:6}-reinitialize> /"
   case $(uname) in
@@ -36,7 +23,6 @@ while true; do
   if [[ ${restart_failed} == 'true' ]]; then
     echo 'Identified restart loop, reinitializing' | indent_reinitialize
     curl -s localhost:8008/reinitialize -XPOST 2>&1 | indent_reinitialize
-    sleep 5
   fi
 
   sleep 2
