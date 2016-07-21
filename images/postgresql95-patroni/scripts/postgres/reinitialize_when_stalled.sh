@@ -18,6 +18,8 @@ indent_reinitialize() {
   esac
 }
 
+echo 'Beginning restart-loop detection' | indent_reinitialize
+
 while true; do
   restart_failed=$(curl -s localhost:8008/patroni \
     | jq -r '.state | startswith("restart failed")')
