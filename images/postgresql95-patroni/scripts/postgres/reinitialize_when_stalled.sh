@@ -8,6 +8,8 @@
 # will contain {"state":"restart failed (start failed)"}
 # Reinitializing patroni will fix this state
 
+set +e
+
 indent_reinitialize() {
   c="s/^/${PATRONI_SCOPE:0:6}-reinitialize> /"
   case $(uname) in
