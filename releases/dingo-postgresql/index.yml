@@ -78,4 +78,6 @@ builds:
     version: 0.8.2
   e7e180ee-e726-44a7-b88b-adcbe6a60d51:
     version: 0.9.0
+  361d0834-f84d-4983-9e2b-129e0d108b3e:
+    version: 0.9.1
 format-version: '2'
