@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e # fail fast
+set +e # ok to fail; its just clean up efforts
 
 cat > ~/.bosh_config <<EOF
 ---
