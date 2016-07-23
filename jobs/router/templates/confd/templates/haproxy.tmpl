@@ -1,14 +1,14 @@
 global
 	maxconn 100
-  <% if_p('haproxy.syslog') do |endpoint| %>
-  log <%= endpoint %> local0
-  log-send-hostname
-  <% end %>
+<% if_p('haproxy.syslog') do |endpoint| %>
+	log <%= endpoint %> local0
+	log-send-hostname
+<% end %>
 
 defaults
 	log	global
 	mode	tcp
-  option tcplog
+	option tcplog
 	retries 2
 	timeout client 30m
 	timeout connect 4s
@@ -16,22 +16,25 @@ defaults
 	timeout check 5s
 
 listen servicebroker
-  mode tcp
-  bind :<%= p("servicebroker.public_port") %>
-	<% p("servicebroker.machines").each_with_index do |broker, i| %>
-  server leader_<%= i %> <%= broker %>:<%= p("servicebroker.port") %>
-	<% end %>
+	bind :<%= p("servicebroker.public_port") %>
+<% p("servicebroker.machines").each_with_index do |broker, i| %>
+	server leader_<%= i %> <%= broker %>:<%= p("servicebroker.port") %>
+<% end %>
+{{range $name := ls "/routing/allocation"}} {{with getvs (printf "/service/%s/members/*" $name)}}
+frontend {{$name}}
+	bind *:{{getv (printf "/routing/allocation/%s" $name)}}
+{{range $index, $member := .}}
+	use_backend {{$name}}_master if { srv_is_up({{$name}}_master/member_{{$index}}) }{{end}}
+	default_backend {{$name}}_replicas {{/* Fall back to read only connection if a replica is up */}}
 
-{{range $index, $name := ls "/routing/allocation"}}
-	{{range $member := getvs (printf "/service/%s/members/*" $name)}}
-		{{$data := json $member}}
-		{{if eq $data.role "master"}}
-			{{/* extract ip:port from postgres://name:pw@host:port/postgres */}}
-			{{$conn_addr := base (replace (index (split $data.conn_url "/") 2) "@" "/" -1)}}
-listen {{$name}}
-  mode tcp
-  bind *:{{(printf "/routing/allocation/%s" $name | getv)}}
-  server leader {{$conn_addr}}
-		{{end}}
-	{{end}}
-{{end}}
+backend {{$name}}_master
+	option httpchk OPTIONS /master
+{{range $index, $member := . }} {{/* extract ip:port from postgres://name:pw@host:port/postgres */}}
+{{with json $member}}	server member_{{$index}} {{base (replace (index (split .conn_url "/") 2) "@" "/" -1)}} check port {{index (split (index (split .api_url "/") 2) ":") 1}}{{end}}{{end}}
+
+backend {{$name}}_replicas
+	option httpchk OPTIONS /replica
+{{range $index, $member := . }} {{/* extract ip:port from postgres://name:pw@host:port/postgres */}}
+{{with json $member}}	server member_{{$index}} {{base (replace (index (split .conn_url "/") 2) "@" "/" -1)}} check port {{index (split (index (split .api_url "/") 2) ":") 1}}{{end}}{{end}}
+
+{{end}} {{end}}
