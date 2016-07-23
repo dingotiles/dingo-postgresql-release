@@ -21,9 +21,8 @@ RUN DEBIAN_FRONTEND=noninteractive \
 RUN pip install pip --upgrade \
       && pip install wal-e awscli --upgrade
 
-RUN wget https://github.com/stedolan/jq/releases/download/jq-${JQ_VERSION}/jq-linux64 \
-      && chmod +x jq-linux64 \
-      && mv jq-linux64 /usr/local/bin/jq \
+RUN wget -O /usr/local/bin/jq https://github.com/stedolan/jq/releases/download/jq-${JQ_VERSION}/jq-linux64 \
+      && chmod +x /usr/local/bin/jq \
       && jq --version
 
 RUN wget -O /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v${DUMB_INIT_VERSION}/dumb-init_${DUMB_INIT_VERSION}_amd64 \
