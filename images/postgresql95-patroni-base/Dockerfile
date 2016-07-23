@@ -10,6 +10,7 @@ RUN DEBIAN_FRONTEND=noninteractive \
     && echo "deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main ${PG_VERSION}" > /etc/apt/sources.list.d/pgdg.list \
     && apt-get update -y \
     && apt-get install -y python python-dev python-pip lzop pv \
+    dumb-init \
     daemontools libpq-dev \
     postgresql-${PG_VERSION} \
     postgresql-${PG_VERSION}-postgis-${POSTGIS_VERSION} \
