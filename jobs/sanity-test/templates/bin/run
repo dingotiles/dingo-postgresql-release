@@ -28,7 +28,7 @@ for plan_id in ${plan_ids[@]}; do
   credentials=$(create-service $service_id $plan_id $instance_id $binding_id)
   uri=$(echo $credentials | jq -r ".credentials.uri")
 
-  echo Giving HAPROXY some time
+  echo Giving confd some time
   sleep 10
 
   test-storage $uri

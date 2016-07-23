@@ -31,6 +31,8 @@ final_service_cells_guids=$(curl -sf ${BROKER_URI}/admin/service_instances/${ins
 if [[ "$service_cells_guids" == "$final_service_cells_guids" ]]; then
   echo "Cluster should have moved its nodes to different backend cells"
   exit 1
+else
+  echo "Cluster moved from: '$service_cells_guids' to: '$final_service_cells_guids'"
 fi
 
 psql ${uri} -c 'SELECT value FROM sanitytest;' | grep 'move-test' || {
