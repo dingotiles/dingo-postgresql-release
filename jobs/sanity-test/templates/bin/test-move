@@ -27,6 +27,9 @@ echo $update_service_parameters
 
 time update-service $service_id $plan_id $instance_id $update_service_parameters
 
+# even after "wait-for-leader" the connection might not be ready yet - for read or read/write
+sleep 30
+
 final_service_cells_guids=$(curl -sf ${BROKER_URI}/admin/service_instances/${instance_id} | jq -r ".nodes[].backend_id")
 if [[ "$service_cells_guids" == "$final_service_cells_guids" ]]; then
   echo "Cluster should have moved its nodes to different backend cells"
