@@ -22,4 +22,4 @@ ADD scripts /scripts
 RUN chmod +x /scripts/*.sh /scripts/postgres/*.sh
 
 # Command to run
-CMD ["dumb-init", "-c", "/scripts/run.sh"]
+CMD ["/scripts/run.sh"]
