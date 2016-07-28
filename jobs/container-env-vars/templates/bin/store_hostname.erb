@@ -11,5 +11,5 @@ fi
 mkdir -p $(dirname $env_var_path)
 
 # hostname matches registrator job's data/properties.sh.erb
-export DOCKER_HOSTNAME="<%= index %>.<%= name %>.<%= spec.networks.methods(false).grep(/[^=]$/).first.to_s %>.<%= spec.deployment %>.<%= spec.dns_domain_name %>"
+export DOCKER_HOSTNAME="<%= index %>.<%= name %>.<%= spec.networks.methods(false).grep(/[^=]$/).first.to_s %>.<%= spec.deployment %>.<%= spec.dns_domain_name || "bosh" %>"
 echo $DOCKER_HOSTNAME > ${env_var_path}
