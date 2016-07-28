@@ -25,5 +25,13 @@ callbacks:
   clusterdata_restore: {cmd: /var/vcap/jobs/broker/bin/restore_provisioned_service}
 <% end %>
 
+<% if_p("cf.api_url", "cf.username", "cf.password") do |api_url, username, password| %>
+cf:
+  api_url: <%= api_url %>
+  username: <%= username %>
+  password: <%= password %>
+  skip_ssl_validation: <%= p("cf.skip_ssl_validation") %>
+<% end %>
+
 catalog:
   services: <%= JSON.pretty_generate(p('servicebroker.services')) %>
