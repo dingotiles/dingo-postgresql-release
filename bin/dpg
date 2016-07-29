@@ -8,42 +8,42 @@ main() {
   case "${1:-help}" in
     target)
       shift
-      target_command $@
+      cmd_target $@
       ;;
     access)
       shift
-      access_command $@
+      cmd_access $@
       ;;
     status)
       shift
-      status_command $@
+      cmd_status $@
       ;;
     delete)
       shift
-      delete_command $@
+      cmd_delete $@
       ;;
     create)
       shift
-      create_command $@
+      cmd_create $@
       ;;
     purge)
       shift
-      purge_command $@
+      cmd_purge $@
       ;;
     ls)
       shift
-      ls_command $@
+      cmd_ls $@
       ;;
     raw)
       shift
-      raw_command $@
+      cmd_raw $@
       ;;
     help)
-      help_command
+      cmd_help
       ;;
     *)
       echo "Unknown command ${1}" >&2
-      help_command
+      cmd_help
       ;;
   esac
 }
@@ -74,7 +74,7 @@ load_current() {
   fi
 }
 
-target_command() {
+cmd_target() {
 	local target_name=${1}
   if [[ -z ${target_name} ]]; then
     echo "Target set to: '$(cat ${DPG_DIR}/current)'"
@@ -157,7 +157,7 @@ target_command() {
   fi
 }
 
-ls_command() {
+cmd_ls() {
   cf_cache=${TARGET_DIR}/cf_cache
   rm -rf ${cf_cache}
   mkdir -p ${cf_cache}
@@ -224,7 +224,7 @@ ls_command() {
   ) | column -t
 }
 
-access_command() {
+cmd_access() {
   cf curl /v2/organizations \
     | jq -r '.resources[].metadata.url' \
     | while read org_url; do
@@ -240,7 +240,7 @@ access_command() {
   done
 }
 
-delete_command() {
+cmd_delete() {
   service_id="beb5973c-e1b2-11e5-a736-c7c0b526363d"
   plan_id="1545e30e-6dc3-11e5-826a-6c4008a663f0"
   instance_id=${1}
@@ -251,7 +251,7 @@ delete_command() {
   curl ${BROKER_USERNAME}:${broker_password}@${BROKER_ENDPOINT}/v2/service_instances/${instance_id}\?plan_id=${plan_id}\&service_id=${service_id} -XDELETE
 }
 
-create_command() {
+cmd_create() {
   service_id="beb5973c-e1b2-11e5-a736-c7c0b526363d"
   plan_id="1545e30e-6dc3-11e5-826a-6c4008a663f0"
   instance_id=${1}
@@ -264,7 +264,7 @@ create_command() {
     -d "{\"service_id\": \"${service_id}\", \"plan_id\": \"${plan_id}\"}"
 }
 
-purge_command() {
+cmd_purge() {
   instance_id=${1:?USAGE: dpg purge INSTANCE_ID}
   echo "You are about to purge the cluster '${instance_id}' from ETCD"
   read -p 'Are you sure? (yes)> ' answer
@@ -274,7 +274,7 @@ purge_command() {
   fi
 }
 
-status_command() {
+cmd_status() {
   instance_id=${1:?USAGE: dpg status INSTANCE_ID}
 
   cluster_path=/service/${instance_id}
@@ -303,7 +303,7 @@ status_command() {
   ) | column -t
 }
 
-raw_command() {
+cmd_raw() {
   local etcd_path=${1}
   local jq_filter=${2}
   if [[ -z ${jq_filter} ]]; then
@@ -313,7 +313,7 @@ raw_command() {
   curl -s $ETCD_ENDPOINT/v2/keys${etcd_path} | jq -r $jq_filter
 }
 
-help_command() {
+cmd_help() {
 	cat >&2 <<EOF
 USAGE: dpg <command> [arguments]
 
