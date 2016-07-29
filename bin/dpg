@@ -34,6 +34,10 @@ main() {
       shift
       cmd_ls $@
       ;;
+    cells)
+      shift
+      cmd_cells $@
+      ;;
     raw)
       shift
       cmd_raw $@
@@ -301,6 +305,13 @@ cmd_status() {
       echo ${member_id} ${backend_id} $(echo $member | jq -r '.role') $(echo $member | jq -r '.state') $database_available
     done
   ) | column -t
+}
+
+cmd_cells() {
+  read -sp 'BROKER password> ' broker_password
+  echo
+  curl ${BROKER_USERNAME}:${broker_password}@${BROKER_ENDPOINT}/admin/cells \
+    | jq
 }
 
 cmd_raw() {
