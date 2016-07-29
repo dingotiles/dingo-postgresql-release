@@ -301,6 +301,9 @@ cmd_status() {
       fi
       member_id=$(basename $(echo $member | jq -r '.path'))
       backend_id=$(echo $nodes | jq -r --arg id ${member_id} '.[] | select(.node_id == $id) .backend_id')
+      if [[ -z ${backend_id} ]]; then
+        backend_id='<unknown>'
+      fi
 
       echo ${member_id} ${backend_id} $(echo $member | jq -r '.role') $(echo $member | jq -r '.state') $database_available
     done
