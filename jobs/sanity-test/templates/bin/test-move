@@ -42,13 +42,3 @@ psql ${uri} -c 'SELECT value FROM sanitytest;' | grep 'move-test' || {
   echo Could not retrieve value from cluster after it was moved!
   exit 1
 }
-
-psql ${uri} -c "INSERT INTO sanitytest VALUES ('post-move-test');" || {
-  echo Could not store value in cluster after it was moved!
-  exit 1
-}
-
-psql ${uri} -c 'SELECT value FROM sanitytest;' | grep 'post-move-test' || {
-  echo Could not store & retrieve value from cluster after it was moved!
-  exit 1
-}
