@@ -18,17 +18,21 @@ main() {
       shift
       cmd_status $@
       ;;
-    delete)
-      shift
-      cmd_delete $@
-      ;;
     create)
       shift
       cmd_create $@
       ;;
+    delete)
+      shift
+      cmd_delete $@
+      ;;
     purge)
       shift
       cmd_purge $@
+      ;;
+    demote-cell)
+      shift
+      cmd_demote_cell $@
       ;;
     ls)
       shift
@@ -244,6 +248,16 @@ cmd_access() {
       cf set-space-role ${CF_USERNAME} ${org} ${space} SpaceDeveloper
     done
   done
+}
+
+cmd_demote_cell() {
+  local service_id="beb5973c-e1b2-11e5-a736-c7c0b526363d"
+  local plan_id="1545e30e-6dc3-11e5-826a-6c4008a663f0"
+  local cell_id=${1}
+  echo 'Please provide the broker password'
+  read -sp 'BROKER password> ' broker_password
+  echo
+  curl "${BROKER_USERNAME}:${broker_password}@${BROKER_ENDPOINT}/admin/cells/${cell_id}/demote" -i -XPOST
 }
 
 cmd_delete() {
