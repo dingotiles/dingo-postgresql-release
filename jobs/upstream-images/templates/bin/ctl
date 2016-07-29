@@ -20,6 +20,17 @@ case $1 in
     docker_host=unix:///var/vcap/sys/run/docker/docker.sock
 
     set -x # print commands
+
+    # Allow failure during deletion
+    set +e
+    # delete old images that don't have any containers
+    docker --host ${docker_host} images \
+      | grep postgres \
+      | awk '{print$3}' xargs -n1 docker --host ${docker_host} rmi \
+      >>$LOG_DIR/$JOB_NAME.log 2>&1
+    set -e
+
+    # pull current image
     docker --host $docker_host pull dingotiles/dingo-postgresql95:${IMAGE_TAG} \
       >>$LOG_DIR/$JOB_NAME.log 2>&1
 
