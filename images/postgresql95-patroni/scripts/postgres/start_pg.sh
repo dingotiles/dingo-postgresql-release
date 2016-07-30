@@ -62,5 +62,6 @@ else
 fi
 
 ${scripts_dir}/reinitialize_when_stalled.sh &
+${scripts_dir}/self_advertize.sh &
 
 wait ${patroni_pid}

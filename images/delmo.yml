@@ -8,6 +8,7 @@ tests:
   before_startup: [purge-backups]
   spec:
   - wait: two-nodes-running
+  - assert: [self-advertizing]
   - exec:
     - cache-cluster-state
     - write-dummy-value
@@ -55,6 +56,8 @@ tasks:
   command: /scripts/nodes-running 2
 - name: one-node-running
   command: /scripts/nodes-running 1
+- name: self-advertizing
+  command: /scripts/self-advertizing
 - name: cache-cluster-state
   command: /scripts/cache-cluster-state
 - name: write-dummy-value

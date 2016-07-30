@@ -1,0 +1,11 @@
+#!/bin/bash
+
+patroni_one_state=$(etcdctl --endpoint "http://${DOCKER_HOST_IP}:4001" get /service/${PATRONI_SCOPE}/nodes/patroni1)
+
+cell_guid=$(echo ${patroni_one_state} | jq -r '.cell_guid')
+echo ${patroni_one_state}
+
+if [[ ${cell_guid} != 'cell1' ]]; then
+  echo 'patroni1 is not correctly advertizing itself'
+  exit 1
+fi

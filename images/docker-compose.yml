@@ -9,6 +9,7 @@ services:
     environment:
       NAME: patroni1
       NODE_ID: patroni1
+      CELL_GUID: cell1
       PATRONI_SCOPE: test-cluster
       ETCD_HOST_PORT: ${DOCKER_HOST_IP}:4001
       DOCKER_HOSTNAME: ${DOCKER_HOST_IP}
@@ -33,6 +34,7 @@ services:
     environment:
       NAME: patroni2
       NODE_ID: patroni2
+      CELL_GUID: cell2
       PATRONI_SCOPE: test-cluster
       ETCD_HOST_PORT: ${DOCKER_HOST_IP}:4001
       DOCKER_HOSTNAME: ${DOCKER_HOST_IP}
@@ -88,6 +90,6 @@ services:
       AWS_SECRET_ACCESS_KEY:
       WAL_S3_BUCKET:
       WALE_S3_ENDPOINT:
-  
+
 volumes:
   test_state:
