@@ -14,7 +14,7 @@ tests:
   - assert:
     - retrieve-dummy-value
     - dummy-value-replicated
-  - exec: [flush-archives]
+  - stop: [patroni1, patroni2]
   - assert: [recreate-dummy-value-from-backups]
 
 - name: failover
@@ -63,8 +63,6 @@ tasks:
   command: /scripts/retrieve-value testtable test-value
 - name: dummy-value-replicated
   command: /scripts/check-replication testtable test-value
-- name: flush-archives
-  command: /scripts/switch-xlog
 - name: recreate-dummy-value-from-backups
   command: /scripts/recover-value testtable test-value
 - name: purge-backups
