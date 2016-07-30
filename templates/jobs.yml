@@ -80,6 +80,8 @@ networks:
 - name: router1
 
 properties:
+  broker:
+    drain_endpoint: (( concat properties.servicebroker.username ":" properties.servicebroker.password "@" properties.servicebroker.host ":" properties.servicebroker.port ))
   servicebroker:
     host: (( param "please provide servicebroker.host, such as the router IP" ))
     port: 8888
