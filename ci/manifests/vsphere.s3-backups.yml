@@ -158,6 +158,7 @@ properties:
   registrator:
     backend_uri: etcd://10.58.111.59:4001
   broker:
+    drain_endpoint: starkandwayne:starkandwayne@10.58.111.57:8888
     cookie_secret: e7247dae-a252-4393-afa3-2219c1c02efd
     fetch_images: true
     max_containers: 20
