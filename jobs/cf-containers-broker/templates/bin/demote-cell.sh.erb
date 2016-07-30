@@ -1,7 +1,7 @@
 #!/bin/bash
 
 DRAIN_ENDPOINT=<%= p('broker.drain_endpoint') %>
-CELL_GUID=<%= spec.networks.send(spec.networks.methods(false).first).ip %>
+CELL_GUID=<%= spec.address %>
 
 if [[ -n ${DRAIN_ENDPOINT} ]]; then
   curl ${DRAIN_ENDPOINT}/admin/cells/${CELL_GUID}/demote -XPOST >/dev/null
