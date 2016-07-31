@@ -26,7 +26,8 @@ while true; do
 
   if [[ ${restart_failed} == 'true' ]]; then
     echo 'Identified restart loop, reinitializing' | indent_reinitialize
-    curl -s localhost:8008/reinitialize -XPOST 2>&1 | indent_reinitialize
+    echo | indent_reinitialize
+    curl -fs localhost:8008/reinitialize -XPOST 2>&1 | indent_reinitialize
   fi
 
   sleep 2
