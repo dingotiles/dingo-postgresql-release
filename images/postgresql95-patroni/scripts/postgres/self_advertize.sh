@@ -24,7 +24,7 @@ fi
 
 while true; do
   value=$( \
-    curl localhost:8008 | \
+    curl -sf localhost:8008 | \
     jq -c \
       --arg cell ${CELL_GUID} \
       --arg node ${NODE_ID} \
