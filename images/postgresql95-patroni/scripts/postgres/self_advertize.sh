@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set +x
+
 if [[ -z "${PATRONI_SCOPE}" ]]; then
   echo "self_advertize.sh: Requires \$PATRONI_SCOPE to write data to etcd"
   exit 0
@@ -29,7 +31,7 @@ while true; do
       '{cell_guid:$cell, node_id:$node, state:.state, role:.role}' \
     )
 
-  curl -s ${ETCD_HOST_PORT}/v2/keys/service/${PATRONI_SCOPE}/nodes/${NODE_ID}?ttl=30 \
+  curl -s ${ETCD_HOST_PORT}/v2/keys/service/${PATRONI_SCOPE}/nodes/${NODE_ID}?ttl=20 \
     -XPUT -d "value=${value}" >/dev/null
-  sleep 10
+  sleep 6
 done
