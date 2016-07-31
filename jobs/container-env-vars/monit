@@ -1,9 +1,5 @@
-check file docker_hostname
-  with path <%= p("broker.container_env_var_dir") %>/DOCKER_HOSTNAME
-  if not exist then
-    exec "/var/vcap/packages/bosh-helpers/monit_debugger docker_hostname /var/vcap/jobs/container-env-vars/bin/store_hostname <%= p("broker.container_env_var_dir") %>/DOCKER_HOSTNAME"
-
-check file cell_uuid
-  with path <%= p("broker.container_env_var_dir") %>/CELL_GUID
-  if not exist then
-    exec "/var/vcap/packages/bosh-helpers/monit_debugger cell_guid /var/vcap/jobs/container-env-vars/bin/generate_cell_guid <%= p("broker.container_env_var_dir") %>/CELL_GUID"
+check process container-env-vars
+  with pidfile /var/vcap/sys/run/container-env-vars/container-env-vars.pid
+  start program "/var/vcap/jobs/container-env-vars/bin/monit_debugger container-env-vars_ctl '/var/vcap/jobs/container-env-vars/bin/ctl start'"
+  stop program "/var/vcap/jobs/container-env-vars/bin/monit_debugger container-env-vars_ctl '/var/vcap/jobs/container-env-vars/bin/ctl stop'"
+  group vcap
