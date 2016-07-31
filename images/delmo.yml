@@ -50,7 +50,7 @@ tests:
   - {wait: two-nodes-running, timeout: 180}
   - assert:
     - cache-cluster-state
-  - wait: retrieve-dummy-value
+    - retrieve-dummy-value
 
 tasks:
 - name: two-nodes-running
