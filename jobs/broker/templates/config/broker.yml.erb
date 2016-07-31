@@ -23,6 +23,7 @@ etcd:
 callbacks:
   clusterdata_backup: {cmd: /var/vcap/jobs/broker/bin/backup_provisioned_service}
   clusterdata_restore: {cmd: /var/vcap/jobs/broker/bin/restore_provisioned_service}
+  clusterdata_find_by_name: {cmd: /var/vcap/jobs/broker/bin/find_by_name_provisioned_service}
 <% end %>
 
 <% if_p("cf.api_url", "cf.username", "cf.password") do |api_url, username, password| %>

@@ -10,6 +10,7 @@ templates:
   bin/monit_debugger: bin/monit_debugger
   bin/backup_provisioned_service: bin/backup_provisioned_service
   bin/restore_provisioned_service: bin/restore_provisioned_service
+  bin/find_by_name_provisioned_service: bin/find_by_name_provisioned_service
   config/broker.yml.erb: config/broker.yml
   config/backup-fog.yml.erb: config/backup-fog.yml
   data/properties.sh.erb: data/properties.sh
