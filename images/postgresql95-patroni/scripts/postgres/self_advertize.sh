@@ -31,7 +31,7 @@ while true; do
       '{cell_guid:$cell, node_id:$node, state:.state, role:.role}' \
     )
 
-  curl -s ${ETCD_HOST_PORT}/v2/keys/service/${PATRONI_SCOPE}/nodes/${NODE_ID}?ttl=20 \
+  curl -sf ${ETCD_HOST_PORT}/v2/keys/service/${PATRONI_SCOPE}/nodes/${NODE_ID}?ttl=20 \
     -XPUT -d "value=${value}" >/dev/null
   sleep 6
 done
