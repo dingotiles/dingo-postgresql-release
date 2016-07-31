@@ -42,6 +42,7 @@ tests:
   - exec:
     - cache-cluster-state
     - write-dummy-value
+    - flush-archives
   - stop: [patroni1, patroni2]
   - destroy: [patroni1, patroni2]
   - exec: [remove-cluster-from-etcd]
