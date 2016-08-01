@@ -26,7 +26,7 @@ case $1 in
     # delete old images that don't have any containers
     docker --host ${docker_host} images \
       | grep postgres \
-      | grep -v ${IMAGE_TAG} \ # incase its already on  the machine but not being used
+      | grep -v ${IMAGE_TAG} \ 
       | awk '{print $3}' \
       | xargs -n1 docker --host ${docker_host} rmi \
       >>$LOG_DIR/$JOB_NAME.log 2>&1
