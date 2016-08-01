@@ -9,10 +9,13 @@ packages:
 templates:
   bin/cf-containers-broker_ctl: bin/cf-containers-broker_ctl
   bin/job_properties.sh.erb: bin/job_properties.sh
+  bin/demote-cell.sh.erb: bin/drain
   config/settings.yml.erb: config/settings.yml
   config/unicorn.conf.rb.erb: config/unicorn.conf.rb
 
 properties:
+  broker.drain_endpoint:
+    description: "An endpoint to call in a drain script"
   broker.unicorn.worker_processes:
     description: "Unicorn worker processes. If the number of worker processes > 1 then you must disable the broker.allocate_docker_host_ports property"
     default: "1"

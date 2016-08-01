@@ -18,17 +18,21 @@ main() {
       shift
       cmd_status $@
       ;;
-    delete)
-      shift
-      cmd_delete $@
-      ;;
     create)
       shift
       cmd_create $@
       ;;
+    delete)
+      shift
+      cmd_delete $@
+      ;;
     purge)
       shift
       cmd_purge $@
+      ;;
+    demote-cell)
+      shift
+      cmd_demote_cell $@
       ;;
     ls)
       shift
@@ -194,7 +198,9 @@ cmd_ls() {
           leader='<none>'
         fi
 
-        cf_name=$(cat ${cf_cache}/service_instances | jq -r --arg id ${cluster_id} '.resources[] | select(contains({metadata: {guid: $id}})).entity.name' 2>/dev/null || echo '')
+        if [[ -f ${cf_cache}/service_instances ]]; then
+          cf_name=$(cat ${cf_cache}/service_instances | jq -r --arg id ${cluster_id} '.resources[] | select(contains({metadata: {guid: $id}})).entity.name' 2>/dev/null || echo '')
+        fi
         if [[ -z ${cf_name} ]]; then
           cf_name='<none>'
         fi
@@ -244,10 +250,20 @@ cmd_access() {
   done
 }
 
+cmd_demote_cell() {
+  local service_id="beb5973c-e1b2-11e5-a736-c7c0b526363d"
+  local plan_id="1545e30e-6dc3-11e5-826a-6c4008a663f0"
+  local cell_id=${1}
+  echo 'Please provide the broker password'
+  read -sp 'BROKER password> ' broker_password
+  echo
+  curl "${BROKER_USERNAME}:${broker_password}@${BROKER_ENDPOINT}/admin/cells/${cell_id}/demote" -i -XPOST
+}
+
 cmd_delete() {
-  service_id="beb5973c-e1b2-11e5-a736-c7c0b526363d"
-  plan_id="1545e30e-6dc3-11e5-826a-6c4008a663f0"
-  instance_id=${1}
+  local service_id="beb5973c-e1b2-11e5-a736-c7c0b526363d"
+  local plan_id="1545e30e-6dc3-11e5-826a-6c4008a663f0"
+  local instance_id=${1}
   echo "You are about to delete the cluster '${instance_id}'"
   echo "Enter password to confirm"
   read -sp 'BROKER password> ' broker_password
@@ -311,6 +327,7 @@ cmd_status() {
 }
 
 cmd_cells() {
+  echo 'Please provide the broker password'
   read -sp 'BROKER password> ' broker_password
   echo
   curl ${BROKER_USERNAME}:${broker_password}@${BROKER_ENDPOINT}/admin/cells \
