@@ -27,7 +27,7 @@ case $1 in
     docker --host ${docker_host} images \
       | grep postgres \
       | grep -v ${IMAGE_TAG} \ # incase its already on  the machine but not being used
-      | awk '{print$3}' \
+      | awk '{print $3}' \
       | xargs -n1 docker --host ${docker_host} rmi \
       >>$LOG_DIR/$JOB_NAME.log 2>&1
     set -e
