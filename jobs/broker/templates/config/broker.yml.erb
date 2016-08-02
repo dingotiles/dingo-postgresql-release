@@ -24,6 +24,12 @@ callbacks:
   clusterdata_backup: {cmd: /var/vcap/jobs/broker/bin/clusterdata_callback_backup.sh}
   clusterdata_restore: {cmd: /var/vcap/jobs/broker/bin/clusterdata_callback_restore.sh}
   clusterdata_find_by_name: {cmd: /var/vcap/jobs/broker/bin/clusterdata_callback_find_by_name.sh}
+  backups_copy: {cmd: /var/vcap/jobs/broker/bin/backups_copy.sh}
+<% end %>
+
+<% if_p("backups.database_storage.bucket_name") do |bucket_name| %>
+backups:
+  base_uri: s3://<%= bucket_name %>/backups
 <% end %>
 
 <% if_p("cf.api_url", "cf.username", "cf.password") do |api_url, username, password| %>
