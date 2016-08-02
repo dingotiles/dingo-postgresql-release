@@ -1,0 +1,8 @@
+---
+name: python
+meta:
+  source: https://www.python.org/downloads/
+  direct: https://www.python.org/ftp/python/2.7.8/Python-2.7.8.tgz
+dependencies: []
+files:
+- python/Python-2.7.8.tgz

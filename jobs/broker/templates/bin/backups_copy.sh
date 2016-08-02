@@ -24,6 +24,8 @@ region = <%= region %>
 EOF
 chmod 600 ~/.aws/config
 
+export LD_LIBRARY_PATH=/var/vcap/packages/python/lib
+export PATH=$PATH:/var/vcap/packages/python/bin:/var/vcap/packages/awscli/bin
 aws s3 cp $from_uri $to_uri --recursive
 
 <% end.else do %>

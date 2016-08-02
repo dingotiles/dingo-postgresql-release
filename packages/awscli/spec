@@ -1,0 +1,4 @@
+---
+name: awscli
+dependencies: [python]
+files: [awscli/awscli-bundle*.zip]
