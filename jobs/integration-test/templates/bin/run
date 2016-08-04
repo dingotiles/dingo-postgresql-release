@@ -32,14 +32,18 @@ echo Cannot run integration-test without cf.api_url
 exit 1
 <% end %>
 
-echo Confirm marketplace service
 cf marketplace -s ${service}
 
 for plan in ${plans[@]}; do
   name=DP-$(date +"%s" | rev)
-  cf-create-service $service $plan $name
+  service_key=${name}-creds
+  uri=$(cf-create-service $service $plan $name $service_key)
 
-  service_guid=$(cf service $name --guid)
+  echo $uri
+
+  test-storage $uri
+
+  cf delete-service-key $name $service_key -f
   cf delete-service $name -f
 done
 
