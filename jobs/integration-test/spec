@@ -3,6 +3,7 @@ name: integration-test
 packages: [jq, postgresql-9.4, cf-cli]
 templates:
   bin/run: bin/run
+  bin/cf-create-service: bin/cf-create-service
   helpers/ctl_setup.sh: helpers/ctl_setup.sh
   helpers/ctl_utils.sh: helpers/ctl_utils.sh
 properties:

@@ -37,27 +37,10 @@ cf marketplace -s ${service}
 
 for plan in ${plans[@]}; do
   name=DP-$(date +"%s" | rev)
-  cf create-service $service $plan $name
-  cf service $name
-
-  set +x
-  completed_message="Message: Scheduling Completed"
-  for ((n=0;n<180;n++)); do
-    message=$(cf service $name | grep Message:)
-    echo $message
-    if [[ "${message}" == "${completed_message}" ]]; then
-      break
-    fi
-    sleep 1
-  done
-  if [[ "${message}" != "${completed_message}" ]]; then
-    echo "Failed waiting for service: $status"
-    exit 1
-  fi
-  set -x
+  cf-create-service $service $plan $name
 
   service_guid=$(cf service $name --guid)
-  cf delete-service $name
+  cf delete-service $name -f
 done
 
 echo "Errand integration-test is complete"

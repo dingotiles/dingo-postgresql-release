@@ -1,0 +1,24 @@
+#!/bin/bash
+
+service=$1
+plan=$2
+name=$3
+
+cf create-service $service $plan $name
+cf service $name
+
+set +x
+completed_message="Message: Scheduling Completed"
+for ((n=0;n<180;n++)); do
+  message=$(cf service $name | grep Message:)
+  echo $message
+  if [[ "${message}" == "${completed_message}" ]]; then
+    break
+  fi
+  sleep 1
+done
+if [[ "${message}" != "${completed_message}" ]]; then
+  echo "Failed waiting for service: $status"
+  exit 1
+fi
+set -x
