@@ -27,6 +27,7 @@ instance_id=T-$(date +"%s" | rev)
 binding_id=B-$(date +"%s" | rev)
 
 for plan_id in ${plan_ids[@]}; do
+
   credentials=$(create-service $service_id $plan_id $instance_id $binding_id)
   uri=$(echo $credentials | jq -r ".credentials.uri")
 
@@ -42,6 +43,9 @@ for plan_id in ${plan_ids[@]}; do
   test-failure-recovery $service_id $plan_id $instance_id $binding_id $uri
   test-storage $uri
   test-replication $instance_id
+
+  # MOVE into integration-test errand that runs after broker-registration
+  test-clone-from-name $service_id $plan_id $instance_id $binding_id
 
   delete-service $service_id $plan_id $instance_id $binding_id
 done
