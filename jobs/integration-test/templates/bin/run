@@ -1,0 +1,63 @@
+#!/bin/bash
+
+set -e # exit immediately if a simple command exits with a non-zero status
+set -u # report the usage of uninitialized variables
+set -x # print commands
+
+# pipe stderr to stdout so it all reads chronologically
+exec 2>&1
+# Setup env vars and folders for the webapp_ctl script
+source /var/vcap/jobs/integration-test/helpers/ctl_setup.sh 'integration-test'
+export PATH=/var/vcap/jobs/integration-test/bin:$PATH
+
+# Force mtu of 1500 incase icmp is blocked by sg/acl prohibiting mtu discovery
+sudo ip link show | grep eth0 && sudo ip link set dev eth0 mtu 1500
+
+service=dingo-postgresql
+plans=(cluster)
+
+<% if_p("cf.api_url", "cf.username", "cf.password") do |api_url, username, password| %>
+echo Logging to Cloud Foundry
+
+set +x
+echo cf login -a <%= api_url %> -u <%= username %> -p [REDACTED] <%= p("cf.skip_ssl_validation") ? "--skip-ssl-validation" : "" %>
+cf login -a <%= api_url %> -u <%= username %> -p <%= password %> <%= p("cf.skip_ssl_validation") ? "--skip-ssl-validation" : "" %>
+set -x
+
+cf create-org system; cf target -o system
+cf create-space integration-test; cf target -s integration-test
+
+<% end.else do %>
+echo Cannot run integration-test without cf.api_url
+exit 1
+<% end %>
+
+echo Confirm marketplace service
+cf marketplace -s ${service}
+
+for plan in ${plans[@]}; do
+  name=DP-$(date +"%s" | rev)
+  cf create-service $service $plan $name
+  cf service $name
+
+  set +x
+  completed_message="Message: Scheduling Completed"
+  for ((n=0;n<180;n++)); do
+    message=$(cf service $name | grep Message:)
+    echo $message
+    if [[ "${message}" == "${completed_message}" ]]; then
+      break
+    fi
+    sleep 1
+  done
+  if [[ "${message}" != "${completed_message}" ]]; then
+    echo "Failed waiting for service: $status"
+    exit 1
+  fi
+  set -x
+
+  service_guid=$(cf service $name --guid)
+  cf delete-service $name
+done
+
+echo "Errand integration-test is complete"

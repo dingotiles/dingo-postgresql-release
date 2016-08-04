@@ -21,7 +21,7 @@ cf delete-service-broker -f testflight-dingo-pg
 cf create-service-broker testflight-dingo-pg starkandwayne starkandwayne http://${broker_ip}:${broker_port}
 
 cf enable-service-access dingo-postgresql
-cf marketplace
+cf marketplace -s dingo-postgresql
 
 cf create-service dingo-postgresql cluster dr-test
 echo 'Waiting for async provisioning to complete'

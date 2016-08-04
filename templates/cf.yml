@@ -15,7 +15,7 @@ jobs:
       username: (( meta.cf.username ))
       password: (( meta.cf.password ))
       skip_ssl_validation: (( meta.cf.skip_ssl_validation ))
-- name: sanity-test
+- name: integration-test
   properties:
     cf:
       api_url: (( meta.cf.api_url ))
