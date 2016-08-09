@@ -7,12 +7,15 @@ service=$1
 plan=$2
 name=$3
 service_key=$4
+shift; shift; shift; shift
 
 info() {
   echo "$@ " >&2
 }
 
-cf create-service $service $plan $name >&2
+set -x
+cf create-service $service $plan $name $@ >&2
+set +x
 cf service $name >&2
 
 set +x
@@ -26,12 +29,11 @@ for ((n=0;n<180;n++)); do
   sleep 1
 done
 if [[ "${message}" != "${completed_message}" ]]; then
-  info "Failed waiting for service: $status"
+  info "Failed waiting for service: $message"
   exit 1
 fi
 set -x
 
 cf create-service-key $name $service_key >&2
 service_key_guid=$(cf service-key $name $service_key --guid)
-uri=$(cf curl /v2/service_keys/${service_key_guid} | jq -r ".entity.credentials.uri")
-echo $uri
+cf curl /v2/service_keys/${service_key_guid} | jq -r ".entity.credentials"

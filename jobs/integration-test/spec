@@ -5,6 +5,7 @@ templates:
   bin/run: bin/run
   bin/cf-create-service: bin/cf-create-service
   bin/test-storage: bin/test-storage
+  bin/test-clone-from-latest-by-name: bin/test-clone-from-latest-by-name
   helpers/ctl_setup.sh: helpers/ctl_setup.sh
   helpers/ctl_utils.sh: helpers/ctl_utils.sh
 properties:

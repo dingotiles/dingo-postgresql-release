@@ -5,14 +5,15 @@ set -e
 set -x
 
 uri=$1
+testvalue=${2:-"test-storage"}
 
 echo Testing basic storage
 
-psql ${uri} -c 'DROP TABLE IF EXISTS sanitytest;'
-psql ${uri} -c 'CREATE TABLE sanitytest(value text);'
-psql ${uri} -c "INSERT INTO sanitytest VALUES ('storage-test');"
-psql ${uri} -c 'SELECT value FROM sanitytest;' | grep 'storage-test' || {
-  echo Could not store and retrieve value in cluster!
+psql ${uri} -c 'DROP TABLE IF EXISTS integrationtest;'
+psql ${uri} -c 'CREATE TABLE integrationtest(value text);'
+psql ${uri} -c "INSERT INTO integrationtest VALUES ('${testvalue}');"
+psql ${uri} -c 'SELECT value FROM integrationtest;' | grep ${testvalue} || {
+  echo "Could not store and retrieve value '${testvalue}' in cluster!"
   exit 1
 }
 

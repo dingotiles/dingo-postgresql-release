@@ -37,11 +37,21 @@ cf marketplace -s ${service}
 for plan in ${plans[@]}; do
   name=DP-$(date +"%s" | rev)
   service_key=${name}-creds
-  uri=$(cf-create-service $service $plan $name $service_key)
+  credentials=$(cf-create-service $service $plan $name $service_key)
 
+  echo $credentials
+  uri=$(echo $credentials | jq -r ".uri")
   echo $uri
 
-  test-storage $uri
+  expected_value_stored="stored-value-${name}"
+  test-storage $uri $expected_value_stored
+
+  # prepare DB for cloning; ensure latest changes are sent out to backup
+  superuser_uri=$(echo $credentials | jq -r ".superuser_uri")
+  psql ${superuser_uri} -c "select pg_switch_xlog();"
+  sleep 10
+
+  test-clone-from-latest-by-name $service $plan $name $expected_value_stored
 
   cf delete-service-key $name $service_key -f
   cf delete-service $name -f
