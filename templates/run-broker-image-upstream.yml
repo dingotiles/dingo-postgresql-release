@@ -20,6 +20,8 @@ meta:
     - {name: upstream-images, release: dingo-postgresql}
     # run registrator daemon
     - {name: registrator, release: dingo-postgresql}
+    # run cadvisor agent
+    - {name: cadvisor, release: dingo-postgresql}
     # create uuid for each broker/daemon
     - {name: container-env-vars, release: dingo-postgresql}
     # run service broker

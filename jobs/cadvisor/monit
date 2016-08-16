@@ -1,0 +1,5 @@
+check process cadvisor
+  with pidfile /var/vcap/sys/run/cadvisor/cadvisor.pid
+  start program "/var/vcap/jobs/cadvisor/bin/monit_debugger cadvisor_ctl '/var/vcap/jobs/cadvisor/bin/ctl start'"
+  stop program "/var/vcap/jobs/cadvisor/bin/monit_debugger cadvisor_ctl '/var/vcap/jobs/cadvisor/bin/ctl stop'"
+  group vcap

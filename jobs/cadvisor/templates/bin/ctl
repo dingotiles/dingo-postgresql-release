@@ -1,0 +1,57 @@
+#!/bin/bash
+
+set -e # exit immediately if a simple command exits with a non-zero status
+set -u # report the usage of uninitialized variables
+
+# Setup env vars and folders for the webapp_ctl script
+source /var/vcap/jobs/cadvisor/helpers/ctl_setup.sh 'cadvisor'
+
+export LANG=en_US.UTF-8
+
+case $1 in
+
+  start)
+    pid_guard $PIDFILE $JOB_NAME
+    echo $$ > $PIDFILE
+
+    cadvisor_image="google/cadvisor:v0.23.8 /bin/cadvisor" #Dockerfile.dev
+    docker_sock=/var/vcap/sys/run/docker/docker.sock
+    container_name=cadvisor
+
+    # Stop and remove previously Docker Container if exists
+    chpst -u ${DOCKER_USER}:${DOCKER_GROUP} docker -H unix://${docker_sock} stop ${container_name} || true
+    chpst -u ${DOCKER_USER}:${DOCKER_GROUP} docker -H unix://${docker_sock} rm ${container_name} || true
+
+    # wait for hostname to be updated
+    chpst -u ${DOCKER_USER}:${DOCKER_GROUP} docker \
+      --host unix://${docker_sock} \
+        run -d \
+          --name=${container_name} \
+          --volume=/:/rootfs:ro \
+          --volume=/var/run:/var/run:rw \
+          --volume=/sys:/sys:ro \
+          --volume=/var/lib/docker/:/var/lib/docker:ro \
+          --volume=${docker_sock}:/var/run/docker.sock \
+          --publish=8080:$CADVISOR_PORT \
+          --detach=true \
+          ${cadvisor_image} \
+            >>${LOG_DIR}/${output_label}.stdout.log \
+            2>>${LOG_DIR}/${output_label}.stderr.log
+
+    # Grab Container process pid
+    pid_process=$(chpst -u ${DOCKER_USER}:${DOCKER_GROUP} docker -H unix://${docker_sock} inspect -f '{{ .State.Pid }}' ${container_name})
+    echo $pid_process > ${PIDFILE}
+
+    ;;
+
+  stop)
+    kill_and_wait $PIDFILE
+
+    ;;
+  *)
+    echo "Usage: cadvisor_ctl {start|stop}"
+
+    ;;
+
+esac
+exit 0
