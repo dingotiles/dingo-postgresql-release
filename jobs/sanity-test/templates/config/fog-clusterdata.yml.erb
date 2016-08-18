@@ -7,7 +7,7 @@ default:
 <% if_p("backups.clusterdata.region") do |region| %>
   region: <%= region %>
 <% end %>
-<% if_p("backups.clusterdata.endpoint") do |endpoint| %>
+<% if_p("backups.clusterdata.s3_endpoint") do |endpoint| %>
   endpoint: <%= endpoint %>
 <% end %>
 <% end %>
