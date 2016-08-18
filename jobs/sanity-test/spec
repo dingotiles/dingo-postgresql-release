@@ -1,6 +1,10 @@
 ---
 name: sanity-test
-packages: [jq, postgresql-9.4]
+packages:
+- jq
+- postgresql-9.4
+- ruby
+- dingo-postgresql-fog-check
 templates:
   bin/run: bin/run
   bin/test-storage: bin/test-storage
@@ -10,6 +14,9 @@ templates:
   bin/create-service: bin/create-service
   bin/update-service: bin/update-service
   bin/delete-service: bin/delete-service
+  bin/fog-check: bin/fog-check
+  config/fog-clusterdata.yml.erb: config/fog-clusterdata.yml
+  config/fog-databasestorage.yml.erb: config/fog-databasestorage.yml
   helpers/ctl_setup.sh: helpers/ctl_setup.sh
   helpers/ctl_utils.sh: helpers/ctl_utils.sh
 properties:
@@ -24,15 +31,24 @@ properties:
   etcd.machines:
     description: hostnames for etcd servers
 
-  backups.backend:
-    description: The type of object store backend being used by service plans (only 's3' implemented at moment)
-    default: s3
-  backups.s3.aws_access_key:
+  backups.clusterdata.aws_access_key_id:
     description: Amazon S3 API access key
-  backups.s3.aws_secret_key:
+  backups.clusterdata.aws_secret_access_key:
     description: Amazon S3 API secret key
-  backups.s3.s3_bucket:
-    description: Amazon S3 bucket name
-  backups.s3.s3_endpoint:
+  backups.clusterdata.bucket_name:
+    description: Bucket name
+  backups.clusterdata.region:
+    description: Amazon S3 region endpoint
+  backups.clusterdata.endpoint:
     description: Amazon S3 API endpoint
-    default: s3.amazonaws.com
+
+  backups.database_storage.aws_access_key_id:
+    description: Amazon S3 API access key
+  backups.database_storage.aws_secret_access_key:
+    description: Amazon S3 API secret key
+  backups.database_storage.bucket_name:
+    description: Bucket name
+  backups.database_storage.region:
+    description: Amazon S3 region endpoint
+  backups.database_storage.endpoint:
+    description: Amazon S3 API endpoint

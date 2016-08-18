@@ -7,3 +7,6 @@
 [submodule "src/dingo-postgresql-broker"]
 	path = src/dingo-postgresql-broker
 	url = https://github.com/dingotiles/dingo-postgresql-broker.git
+[submodule "src/dingo-postgresql-fog-check"]
+	path = src/dingo-postgresql-fog-check
+	url = https://github.com/dingotiles/dingo-postgresql-fog-check

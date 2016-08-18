@@ -10,6 +10,8 @@ exec 2>&1
 source /var/vcap/jobs/sanity-test/helpers/ctl_setup.sh 'sanity-test'
 export PATH=/var/vcap/jobs/sanity-test/bin:$PATH
 
+fog-check
+
 # Force mtu of 1500 incase icmp is blocked by sg/acl prohibiting mtu discovery
 sudo ip link show | grep eth0 && sudo ip link set dev eth0 mtu 1500
 

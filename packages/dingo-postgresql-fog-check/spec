@@ -1,0 +1,4 @@
+---
+name: dingo-postgresql-fog-check
+dependencies: [ruby]
+files: [dingo-postgresql-fog-check/**/*]

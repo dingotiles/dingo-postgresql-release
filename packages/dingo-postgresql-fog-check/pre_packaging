@@ -1,0 +1,7 @@
+set -e # exit immediately if a simple command exits with a non-zero status
+set -u # report the usage of uninitialized variables
+
+cd ${BUILD_DIR}/dingo-postgresql-fog-check
+
+# Cache gems
+BUNDLE_WITHOUT=development:test bundle package --all

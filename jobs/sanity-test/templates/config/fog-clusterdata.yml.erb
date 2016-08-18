@@ -1,0 +1,13 @@
+<% if_p("backups.clusterdata.aws_access_key_id", "backups.clusterdata.aws_secret_access_key", "backups.clusterdata.bucket_name") do |aws_access_key_id, aws_secret_access_key, bucket_name| %>
+default:
+  provider: AWS
+  aws_access_key_id: <%= aws_access_key_id %>
+  aws_secret_access_key: <%= aws_secret_access_key %>
+  bucket_name: <%= bucket_name %>
+<% if_p("backups.clusterdata.region") do |region| %>
+  region: <%= region %>
+<% end %>
+<% if_p("backups.clusterdata.endpoint") do |endpoint| %>
+  endpoint: <%= endpoint %>
+<% end %>
+<% end %>
