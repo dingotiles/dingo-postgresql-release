@@ -9,6 +9,12 @@ version=$(cat version/number)
 echo v${version} > $NOTES/release-name
 
 cat > $NOTES/notes.md <<EOF
+## Improvements
+
+TODO
+
+## Upload to BOSH
+
 To upload BOSH releases:
 
 \`\`\`
