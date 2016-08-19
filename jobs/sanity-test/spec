@@ -1,16 +1,21 @@
 ---
 name: sanity-test
+<<<<<<< 8b333880754c220ef4d4044ea8aa674b75d0e5b3
 packages:
 - jq
 - postgresql-9.4
 - ruby
 - dingo-postgresql-fog-check
+=======
+packages: [jq, postgresql-9.4, cf-cli]
+>>>>>>> WIP - considering sanity-test performing cf commands
 templates:
   bin/run: bin/run
   bin/test-storage: bin/test-storage
   bin/test-replication: bin/test-replication
   bin/test-move: bin/test-move
   bin/test-failure-recovery: bin/test-failure-recovery
+  bin/test-clone-from-name: bin/test-clone-from-name
   bin/create-service: bin/create-service
   bin/update-service: bin/update-service
   bin/delete-service: bin/delete-service
@@ -52,3 +57,13 @@ properties:
     description: Amazon S3 region endpoint
   backups.database_storage.s3_endpoint:
     description: Amazon S3 API endpoint
+
+  cf.api_url:
+    description: URI for Cloud Foundry API to allow lookup of user-provided service names after provisioning
+  cf.username:
+    description: Username for Cloud Foundry API access allow lookup of user-provided service names after provisioning
+  cf.password:
+    description: Username for Cloud Foundry API access allow lookup of user-provided service names after provisioning
+  cf.skip_ssl_validation:
+    description: Set to true if Cloud Foundry API is using self-signed SSL certificate
+    default: false

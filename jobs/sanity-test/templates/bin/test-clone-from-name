@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# Unlike other sanity-test tests, this one actually provisions the service instance via CF
+# destroys the service instance, and then provisions it again using the backup
+
+set -e
+set -u
+set -x
+
+service_id=$1
+plan_id=$2
+instance_id=$3
+binding_id=$4
+
+<% if_p("cf.api_url", "cf.username", "cf.password") do |api_url, username, password| %>
+
+echo Testing clone-from service instance name
+
+set +x
+echo cf login -a <%= api_url %> -u <%= username %> -p [REDACTED] <%= p("cf.skip_ssl_validation") ? "--skip-ssl-validation" : "" %>
+cf login -a <%= api_url %> -u <%= username %> -p <%= password %> <%= p("cf.skip_ssl_validation") ? "--skip-ssl-validation" : "" %>
+set -x
+
+
+<% end.else do %>
+echo Skipping test-clone-from-name as cf.api_url is not configured.
+<% end %>

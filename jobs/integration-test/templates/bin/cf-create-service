@@ -1,0 +1,39 @@
+#!/bin/bash
+
+set -e # exit immediately if a simple command exits with a non-zero status
+set -u # report the usage of uninitialized variables
+
+service=$1
+plan=$2
+name=$3
+service_key=$4
+shift; shift; shift; shift
+
+info() {
+  echo "$@ " >&2
+}
+
+set -x
+cf create-service $service $plan $name $@ >&2
+set +x
+cf service $name >&2
+
+set +x
+completed_message="Message: Scheduling Completed"
+for ((n=0;n<180;n++)); do
+  message=$(cf service $name | grep Message:)
+  info $message
+  if [[ "${message}" == "${completed_message}" ]]; then
+    break
+  fi
+  sleep 1
+done
+if [[ "${message}" != "${completed_message}" ]]; then
+  info "Failed waiting for service: $message"
+  exit 1
+fi
+set -x
+
+cf create-service-key $name $service_key >&2
+service_key_guid=$(cf service-key $name $service_key --guid)
+cf curl /v2/service_keys/${service_key_guid} | jq -r ".entity.credentials"

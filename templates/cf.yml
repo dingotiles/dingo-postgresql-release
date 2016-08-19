@@ -1,0 +1,24 @@
+# Include this template to allow broker to lookup service instance names during provisioning
+# to allow `cf create-service ... -c {"clone-from":"old-name"}` parameter for recreation/cloning.
+meta:
+  cf:
+    api_url: (( param "please provide cf.api_url" ))
+    username: (( param "please provide cf.username" ))
+    password: (( param "please provide cf.password" ))
+    skip_ssl_validation: false
+
+jobs:
+- name: broker
+  properties:
+    cf:
+      api_url: (( meta.cf.api_url ))
+      username: (( meta.cf.username ))
+      password: (( meta.cf.password ))
+      skip_ssl_validation: (( meta.cf.skip_ssl_validation ))
+- name: integration-test
+  properties:
+    cf:
+      api_url: (( meta.cf.api_url ))
+      username: (( meta.cf.username ))
+      password: (( meta.cf.password ))
+      skip_ssl_validation: (( meta.cf.skip_ssl_validation ))

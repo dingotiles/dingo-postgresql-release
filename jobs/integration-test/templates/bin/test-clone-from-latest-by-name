@@ -1,0 +1,23 @@
+#!/bin/bash
+
+set -u
+set -e
+set -x
+
+service=$1
+plan=$2
+name=$3
+expected_value_stored=$4
+
+clone_name="clone-${name}"
+service_key=${clone_name}-creds
+credentials=$(cf-create-service $service $plan $clone_name $service_key -c "{\"clone-from\":\"${name}\"}")
+uri=$(echo $credentials | jq -r ".uri")
+
+psql ${uri} -c 'SELECT value FROM integrationtest;' | grep ${expected_value_stored} || {
+  echo "Could not store and retrieve value '${expected_value_stored}' from cloned cluster!"
+  exit 1
+}
+
+cf delete-service-key $clone_name $service_key -f
+cf delete-service $clone_name -f
