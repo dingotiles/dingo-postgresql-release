@@ -1,14 +1,9 @@
 ---
-name: sanity-test
-<<<<<<< 8b333880754c220ef4d4044ea8aa674b75d0e5b3
 packages:
 - jq
 - postgresql-9.4
 - ruby
 - dingo-postgresql-fog-check
-=======
-packages: [jq, postgresql-9.4, cf-cli]
->>>>>>> WIP - considering sanity-test performing cf commands
 templates:
   bin/run: bin/run
   bin/test-storage: bin/test-storage
