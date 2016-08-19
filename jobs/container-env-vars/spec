@@ -2,8 +2,9 @@
 name: container-env-vars
 packages: []
 templates:
-  bin/generate_cell_guid: bin/generate_cell_guid
-  bin/store_hostname.erb: bin/store_hostname
+  bin/ctl.erb: bin/ctl
+  helpers/ctl_setup.sh: helpers/ctl_setup.sh
+  helpers/ctl_utils.sh: helpers/ctl_utils.sh
   bin/monit_debugger: bin/monit_debugger
 properties:
   broker.container_env_var_dir:
