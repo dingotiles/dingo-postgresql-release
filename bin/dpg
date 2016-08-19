@@ -316,7 +316,7 @@ cmd_status() {
         database_available='true'
       fi
       member_id=$(basename $(echo $member | jq -r '.path'))
-      cell_id=$(echo $nodes | jq -r --arg id ${member_id} '.[] | select(.node_id == $id) .backend_id')
+      cell_id=$(echo $nodes | jq -r --arg id ${member_id} '.[] | select(.node_id == $id) .cell_guid')
       if [[ -z ${cell_id} ]]; then
         cell_id='<unknown>'
       fi
