@@ -84,6 +84,7 @@ meta:
     skip_ssl_validation: true
     skip_ssl_verification: true
     user: admin
+    username: admin
     password: admin
 properties:
   servicebroker:
