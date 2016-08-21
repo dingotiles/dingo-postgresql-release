@@ -53,18 +53,6 @@ jobs:
     properties:
       servicebroker:
         port: 8889 # FIXME: since haproxy isn't always running
-  - name: integration-test
-    instances: 1
-    lifecycle: errand
-    templates: [{name: integration-test, release: dingo-postgresql}]
-    resource_pool: router_z1
-    networks: [{name: router1}]
-    properties:
-      cf:
-        api_url:
-        username:
-        password:
-        skip_ssl_validation: false
   - name: disaster-recovery
     instances: 1
     lifecycle: errand

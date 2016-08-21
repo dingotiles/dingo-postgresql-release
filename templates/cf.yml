@@ -11,14 +11,21 @@ jobs:
 - name: broker
   properties:
     cf:
-      api_url: (( meta.cf.api_url ))
-      username: (( meta.cf.username ))
-      password: (( meta.cf.password ))
-      skip_ssl_validation: (( meta.cf.skip_ssl_validation ))
+      api_url: (( grab meta.cf.api_url ))
+      username: (( grab meta.cf.username ))
+      password: (( grab meta.cf.password ))
+      skip_ssl_validation: (( grab meta.cf.skip_ssl_validation ))
+- name: disaster-recovery
+  properties:
+    cf:
+      api_url: (( grab meta.cf.api_url ))
+      username: (( grab meta.cf.username ))
+      password: (( grab meta.cf.password ))
+      skip_ssl_validation: (( grab meta.cf.skip_ssl_validation ))
 - name: integration-test
   properties:
     cf:
-      api_url: (( meta.cf.api_url ))
-      username: (( meta.cf.username ))
-      password: (( meta.cf.password ))
-      skip_ssl_validation: (( meta.cf.skip_ssl_validation ))
+      api_url: (( grab meta.cf.api_url ))
+      username: (( grab meta.cf.username ))
+      password: (( grab meta.cf.password ))
+      skip_ssl_validation: (( grab meta.cf.skip_ssl_validation ))

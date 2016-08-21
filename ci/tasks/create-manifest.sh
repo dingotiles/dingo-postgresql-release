@@ -77,7 +77,7 @@ EOF
 
 cat > tmp/cf-disaster-recovery.yml <<EOF
 ---
-properties:
+meta:
   cf:
     api_url: https://api.test-cf.snw
     api_endpoint: api.test-cf.snw
@@ -85,6 +85,7 @@ properties:
     skip_ssl_verification: true
     user: admin
     password: admin
+properties:
   servicebroker:
     service_id: beb5973c-e1b2-11e5-a736-c7c0b526363d
 EOF
@@ -97,7 +98,8 @@ bosh target ${bosh_target}
 
 export DEPLOYMENT_NAME=${deployment_name}
 ./templates/make_manifest warden ${docker_image_source} ${services_template} \
-  templates/jobs-etcd.yml tmp/syslog.yml tmp/docker_image.yml tmp/backups.yml \
+  templates/jobs-etcd.yml templates/cf.yml templates/integration-test.yml \
+  tmp/syslog.yml tmp/docker_image.yml tmp/backups.yml \
   tmp/releases.yml tmp/cf-disaster-recovery.yml
 
 cp tmp/${DEPLOYMENT_NAME}*.yml ${manifest_dir}/manifest.yml
