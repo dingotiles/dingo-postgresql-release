@@ -11,7 +11,6 @@ templates:
   bin/test-replication: bin/test-replication
   bin/test-move: bin/test-move
   bin/test-failure-recovery: bin/test-failure-recovery
-  bin/test-clone-from-name: bin/test-clone-from-name
   bin/create-service: bin/create-service
   bin/update-service: bin/update-service
   bin/delete-service: bin/delete-service
