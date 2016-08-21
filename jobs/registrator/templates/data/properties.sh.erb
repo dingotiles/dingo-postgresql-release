@@ -35,5 +35,7 @@ export REGISTRATOR_BACKEND_URI="<%= p('registrator.backend_uri') %>"
   end
 %>
 
-export DOCKER_HOSTNAME="<%= index %>.<%= name %>.<%= spec.networks.methods(false).grep(/[^=]$/).first.to_s %>.<%= spec.deployment %>.<%= spec.dns_domain_name || "bosh" %>"
+# export DNS_DOMAIN_NAME=<%= (spec.dns_domain_name.nil? || spec.dns_domain_name == "") ? "bosh" : spec.dns_domain_name %>
+# export DOCKER_HOSTNAME="<%= index %>.<%= name %>.<%= spec.networks.methods(false).grep(/[^=]$/).first.to_s %>.<%= spec.deployment %>.$DNS_DOMAIN_NAME"
+export DOCKER_HOSTNAME="<%= discover_external_ip %>"
 export DOCKER_HOSTIP="<%= discover_external_ip %>"
