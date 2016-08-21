@@ -54,6 +54,11 @@ jobs:
         aws_secret_access_key: (( grab meta.backups.aws_secret_key ))
         bucket_name: (( grab meta.backups.clusterdata_bucket ))
         region: (( grab meta.backups.region ))
+      database_storage:
+        aws_access_key_id: (( grab meta.backups.aws_access_key ))
+        aws_secret_access_key: (( grab meta.backups.aws_secret_key ))
+        bucket_name: (( grab meta.backups.backups_bucket ))
+        region: (( grab meta.backups.region ))
 - name: sanity-test
   properties:
     backups:
