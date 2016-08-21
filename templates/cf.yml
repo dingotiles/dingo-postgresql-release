@@ -8,7 +8,7 @@ meta:
     skip_ssl_validation: false
 
 jobs:
-- name: broker
+- name: router
   properties:
     cf:
       api_url: (( grab meta.cf.api_url ))
