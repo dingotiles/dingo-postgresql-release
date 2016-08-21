@@ -98,7 +98,7 @@ bosh target ${bosh_target}
 
 export DEPLOYMENT_NAME=${deployment_name}
 ./templates/make_manifest warden ${docker_image_source} ${services_template} \
-  templates/jobs-etcd.yml templates/cf.yml templates/integration-test.yml \
+  templates/jobs-etcd.yml templates/integration-test.yml templates/cf.yml \
   tmp/syslog.yml tmp/docker_image.yml tmp/backups.yml \
   tmp/releases.yml tmp/cf-disaster-recovery.yml
 
