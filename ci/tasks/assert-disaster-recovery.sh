@@ -3,12 +3,9 @@
 set -x
 set -e
 
-cf login --skip-ssl-validation \
-  -a api.test-cf.snw \
-  -u admin \
-  -p admin \
-  -o dr-test \
-  -s dr-test
+cf api api.test-cf.snw --skip-ssl-validation
+cf auth admin admin
+cf t -o dr-test -s dr-test
 
 cf service-key dr-test dr-test-binding
 pg_uri=$(cf service-key dr-test dr-test-binding | grep '"uri"' | grep -o 'postgres://.*/postgres' | sed "s/@.*:/@${broker_ip}:/")

@@ -21,7 +21,8 @@ echo Logging to Cloud Foundry
 
 set +x
 echo cf login -a <%= api_url %> -u <%= username %> -p [REDACTED] <%= p("cf.skip_ssl_validation") ? "--skip-ssl-validation" : "" %>
-cf login -a <%= api_url %> -u <%= username %> -p <%= password %> <%= p("cf.skip_ssl_validation") ? "--skip-ssl-validation" : "" %>
+cf api <%= api_url %> <%= p("cf.skip_ssl_validation") ? "--skip-ssl-validation" : "" %>
+cf auth <%= username %> <%= password %>
 set -x
 
 cf create-org system; cf target -o system
