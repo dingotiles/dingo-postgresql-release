@@ -15,4 +15,7 @@ EOF
 
 bosh target ${bosh_target}
 
-bosh disks --orphaned | grep n/a | awk '{print $2}' | xargs -L1 bosh -n delete disk
+disks=$(bosh disks --orphaned | grep n/a)
+for disk in $disks; do
+  echo $disk | awk '{print $2}' | xargs -L1 bosh -n delete disk
+done
