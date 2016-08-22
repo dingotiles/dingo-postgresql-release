@@ -13,11 +13,14 @@ cf t -o dr-test -s dr-test
 cf create-org dr-test; cf target -o dr-test
 cf create-space dr-test; cf target -s dr-test
 
-cf purge-service-instance -f dr-test
-cf purge-service-offering -f testflight-dingo-pg
-cf delete-service-broker -f testflight-dingo-pg
+cf marketplace
+cf service-brokers
+cf service-access
 
-cf create-service-broker testflight-dingo-pg starkandwayne starkandwayne http://${broker_ip}:${broker_port}
+cf purge-service-offering -f dingo-postgresql
+cf delete-service-broker -f dingo-postgresql
+
+cf create-service-broker dingo-postgresql starkandwayne starkandwayne http://${broker_ip}:${broker_port}
 
 cf enable-service-access dingo-postgresql
 cf marketplace -s dingo-postgresql
