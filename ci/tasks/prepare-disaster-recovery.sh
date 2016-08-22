@@ -6,10 +6,9 @@ set -e
 echo Waiting a few seconds for the docker images to pull
 sleep 30
 
-cf login --skip-ssl-validation \
-  -a api.test-cf.snw \
-  -u admin \
-  -p admin \
+cf api api.test-cf.snw --skip-ssl-validation
+cf auth admin admin
+cf t -o dr-test -s dr-test
 
 cf create-org dr-test; cf target -o dr-test
 cf create-space dr-test; cf target -s dr-test
