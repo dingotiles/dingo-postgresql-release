@@ -92,19 +92,20 @@ jobs:
   - aggregate:
     - do:
       - {get: boshrelease-ci}
-      - task: delete-testflight
-        file: boshrelease-ci/ci/tasks/delete-testflight.yml
-        params:
-          deployment_name: dingo-postgresql-testflight
-          bosh_target: {{bosh-lite-target}}
-          bosh_username: {{bosh-lite-username}}
-          bosh_password: {{bosh-lite-password}}
-      - task: delete-orphaned-disks-testflight
-        file: boshrelease-ci/ci/tasks/delete-orphaned-disks-testflight.yml
-        params:
-          bosh_target: {{bosh-lite-target}}
-          bosh_username: {{bosh-lite-username}}
-          bosh_password: {{bosh-lite-password}}
+      - aggregate:
+        - task: delete-testflight
+          file: boshrelease-ci/ci/tasks/delete-testflight.yml
+          params:
+            deployment_name: dingo-postgresql-testflight
+            bosh_target: {{bosh-lite-target}}
+            bosh_username: {{bosh-lite-username}}
+            bosh_password: {{bosh-lite-password}}
+        - task: delete-orphaned-disks-testflight
+          file: boshrelease-ci/ci/tasks/delete-orphaned-disks-testflight.yml
+          params:
+            bosh_target: {{bosh-lite-target}}
+            bosh_username: {{bosh-lite-username}}
+            bosh_password: {{bosh-lite-password}}
     - {get: boshrelease, passed: [bosh-rc], trigger: true}
     - {get: version, passed: [bosh-rc], trigger: true}
     - {get: candidate-release, passed: [bosh-rc], trigger: true}
