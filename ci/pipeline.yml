@@ -144,15 +144,14 @@ jobs:
     - task: prepare-disaster-recovery
       file: boshrelease-ci/ci/tasks/prepare-disaster-recovery.yml
     - do:
-      - aggregate:
-        - put: lite-errand
-          params:
-            manifest: manifest/manifest.yml
-            errand: sanity-test
-        - put: lite-errand
-          params:
-            manifest: manifest/manifest.yml
-            errand: integration-test
+      - put: lite-errand
+        params:
+          manifest: manifest/manifest.yml
+          errand: integration-test
+      - put: lite-errand
+        params:
+          manifest: manifest/manifest.yml
+          errand: sanity-test
       - put: lite-errand
         params:
           manifest: manifest/manifest.yml
