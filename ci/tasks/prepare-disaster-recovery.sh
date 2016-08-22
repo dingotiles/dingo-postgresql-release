@@ -18,9 +18,9 @@ cf service-brokers
 cf service-access
 
 cf purge-service-offering -f dingo-postgresql
-cf delete-service-broker -f dingo-postgresql
+cf delete-service-broker -f testflight-dingo-pg
 
-cf create-service-broker dingo-postgresql starkandwayne starkandwayne http://${broker_ip}:${broker_port}
+cf create-service-broker testflight-dingo-pg starkandwayne starkandwayne http://${broker_ip}:${broker_port}
 
 cf enable-service-access dingo-postgresql
 cf marketplace -s dingo-postgresql
