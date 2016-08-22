@@ -4,7 +4,7 @@ DRAIN_ENDPOINT=<%= p('broker.drain_endpoint') %>
 CELL_GUID=<%= spec.address %>
 
 if [[ -n ${DRAIN_ENDPOINT} ]]; then
-  curl ${DRAIN_ENDPOINT}/admin/cells/${CELL_GUID}/demote -XPOST >/dev/null
+  curl -s ${DRAIN_ENDPOINT}/admin/cells/${CELL_GUID}/demote --connect-timeout 60 -XPOST >/dev/null || true
 fi
 
 # Drain script requires printing 0 to stdout followed by a newline
