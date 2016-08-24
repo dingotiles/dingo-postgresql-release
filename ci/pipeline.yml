@@ -156,8 +156,8 @@ jobs:
         params:
           manifest: manifest/manifest.yml
           errand: disaster-recovery
-      - task: assert-disaster-recovery
-        file: boshrelease-ci/ci/tasks/assert-disaster-recovery.yml
+  - task: assert-disaster-recovery
+    file: boshrelease-ci/ci/tasks/assert-disaster-recovery.yml
 
 # - name: bump-image-layers
 #   public: true
