@@ -189,7 +189,8 @@ For example, for [papertrail](https://papertrailapp.com) you can get your host:p
 Then append the file in your `make_manifest` command (from above) to build your BOSH deployment manifest.
 
 ```
-./templates/make_manifest warden upstream templates/services-cluster.yml templates/jobs-etcd.yml \
+./templates/make_manifest warden upstream \
+  templates/services-cluster-backup-s3.yml templates/jobs-etcd.yml tmp/backups.yml \
   tmp/syslog.yml
 bosh deploy
 ```
