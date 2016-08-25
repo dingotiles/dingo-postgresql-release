@@ -17,6 +17,7 @@ Important links:
 * [Support & Discussions](https://slack.dingotiles.com)
 * [Licensing](#licensing)
 * [Installation](#installation)
+* [How do I configure backups? Why is it mandatory?](#backups)
 * [User documentation](http://www.dingotiles.com/dingo-postgresql/usage-provision.html), under "User" sidebar
 * [Disaster recovery](http://www.dingotiles.com/dingo-postgresql/disaster-recovery.html)
 * [Admin features of service broker](https://github.com/dingotiles/dingo-postgresql-broker#recreate-service-api)
@@ -72,11 +73,11 @@ This section documents how to install/deploy Dingo PostgreSQL to BOSH.
 Deploying the OSS BOSH release requires:
 
 -	BOSH for target infrastructure, or bosh-lite
+- 2 (two) Amazon S3 buckets with AWS API credentials (see [backups](#backups) section for information)
 - `bosh` CLI to upload & deploy
 -	`spruce` CLI to merge YAML files, from http://spruce.cf/
 - `jq` & `curl` for the upload command & admin support scripts
 - Log management system, such as hosted service like [Papertrail](papertrailapp.com) or on-prem system like ELK (https://www.elastic.co/products or http://logsearch.io/)
-- Object storage service for backups, such as Amazon S3; with API credentials
 
 ### Upload required BOSH releases
 
@@ -92,11 +93,10 @@ Your BOSH will directly download and install the BOSH releases. They will not be
 
 To upload a specific release, see https://github.com/dingotiles/dingo-postgresql-release/releases for specific upload instructions.
 
-For example, if you are installing version `0.5.7`, then the following command will upload the specific releases that work together:
+For example, to upload the latest release and its associated dependency releases, then the following command will upload the specific releases that work together:
 
 ```
-version=0.5.7
-curl -s "https://api.github.com/repos/dingotiles/dingo-postgresql-release/releases/tags/v${version}" | jq -r ".assets[].browser_download_url"  | grep tgz | xargs -L1 bosh upload release --skip-if-exists
+curl -s "https://api.github.com/repos/dingotiles/dingo-postgresql-release/releases/latest" | jq -r ".assets[].browser_download_url"  | grep tgz | xargs -L1 bosh upload release --skip-if-exists
 ```
 
 ### Deployment to bosh-lite
@@ -111,12 +111,32 @@ cd dingo-postgresql-release
 git submodule update --init
 ```
 
-As the first step, to deploy the service without backups nor syslogs:
+Next, create a template containing your Amazon S3 buckets and AWS API credentials, `tmp/backups.yml`:
+
+```yaml
+---
+meta:
+  backups:
+    aws_access_key: KEY
+    aws_secret_key: SECRET
+    backups_bucket: our-dingo-postgresql-database-backups
+    clusterdata_bucket: our-dingo-postgresql-clusterdata-backups
+    s3_endpoint: s3-ap-southeast-1.amazonaws.com
+    region: ap-southeast-1
+```
+
+These buckets need to already exist. We do not want you to provide admin-level object store credentials that are capable of creating/destroyin buckets, so instead you will need to pre-create the buckets and wire up permissions for credentials to read/write to the buckets before usage.
+
+To deploy the service and test that provisioning, updates, backups and recovery is working correctly:
 
 ```
-./templates/make_manifest warden upstream templates/services-cluster.yml templates/jobs-etcd.yml
+./templates/make_manifest warden upstream \
+  templates/services-cluster-backup-s3.yml templates/jobs-etcd.yml tmp/backups.yml
 bosh deploy
+bosh run errand sanity-test
 ```
+
+The `sanity-test` errand is especially important for initial deployments - it will verify that your object storage credentials are valid, that the two buckets exist and are in the region/endpoint that you specified. It will also create/update/delete/recover some Dingo PostgreSQL clusters to confirm everything is working as expected. Fewer surprises later on!
 
 To register your new Dingo PostgreSQL service broker with your bosh-lite Cloud Foundry:
 
