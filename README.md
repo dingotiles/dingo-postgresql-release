@@ -17,7 +17,7 @@ Important links:
 * [Support & Discussions](https://slack.dingotiles.com)
 * [Licensing](#licensing)
 * [Installation](#installation)
-* [How do I configure backups? Why is it mandatory?](#backups)
+* [How do I configure backups? Why is it mandatory?](#streaming-backups)
 * [User documentation](http://www.dingotiles.com/dingo-postgresql/usage-provision.html), under "User" sidebar
 * [Disaster recovery](http://www.dingotiles.com/dingo-postgresql/disaster-recovery.html)
 * [Admin features of service broker](https://github.com/dingotiles/dingo-postgresql-broker#recreate-service-api)
@@ -195,63 +195,32 @@ Then append the file in your `make_manifest` command (from above) to build your 
 bosh deploy
 ```
 
-### Streaming backups to Amazon S3
+### Streaming backups
 
-A database without a disaster recovery playbook (backup and restore) is a cache. One of Dingo PostgreSQL important features is that it is easy for an operator to enable streaming backups for every service instance.
+A database without a disaster recovery playbook (backup and restore) is a cache. One of Dingo PostgreSQL important features is that it is easy for an operator to enable streaming backups for every service instance. We do not support/test/encourage running Dingo PostgreSQL without backups configured.
+
+We strongly recommend running the `sanity-test` errand immediately after each deployment of Dingo PostgreSQL - initial deployment, upgrades, configuration changes, etc. It includes tests that the backup & recovery systems are currently working.
+
+Dingo PostgreSQL service instances are pairs of PostgreSQL servers, running in Docker containers on separate host machines, that continuously replica leader changes to replicas, and to a remote object store.
+
+Dingo PostgreSQL provides administrator errand `disaster-recovery` to recreate every service instance from its continuous archives.
+
+Dingo PostgreSQL provides users with `cf create-service ... -c '{"clone-from":"NAME"}'` to recreate a lost database or clone an existing database into a new service instance.
+
+All this supported by the continuous archives.
 
 Each PostgreSQL master container can continuously stream its write-ahead logs (WAL) to Amazon S3. These can later be used to restore clusters (see [Disaster Recovery](#disaster-recovery) section below), and may also internally used to create new replica nodes.
 
-You will need two separate Amazon S3 buckets - one to store the streaming backups from every Dingo PostgreSQL service cluster (`meta.backups.backups_bucket` below), and one to backup the cluster data (routing, passwords, cluster sizing) for the event of a disaster recovery.
+In future, Dingo PostgreSQL can support alternate object store/backup storage systems. Please let us know of your interests. Fundamentally, support for alternates is driven by the [wal-e](https://github.com/wal-e/wal-e), [boto](https://github.com/boto/boto) and [fog](https://github.com/fog/fog) OSS projects; and us being able to perform CI upon the target systems.
 
-Create a YAML file with configuration (`tmp/backups.yml` in example command below):
+As above, you need two separate Amazon S3 buckets:
 
-```yaml
----
-meta:
-  backups:
-    aws_access_key: ACCESSKEY
-    aws_secret_key: SECRETKEY
-    backups_bucket: mycompany-dingo-postgresql-testflight-backups
-    clusterdata_bucket: mycompany-dingo-postgresql-testflight-clusterdata-backups
-    s3_endpoint: s3-ap-southeast-1.amazonaws.com
-    region: ap-southeast-1
-```
+- one to store the streaming backups from every Dingo PostgreSQL service cluster (`meta.backups.backups_bucket` below), and
+- one to backup the cluster data (routing, passwords, cluster sizing) for the event of a disaster recovery.
 
-Re-run the `make_manifest` command from above but with the following changes:
+**Why two buckets?**  You use two different buckets to isolate the storage of all database admin credentials from the same location where all the database backups are stored.
 
-* append this file
-* replace `templates/services-cluster.yml` with `templates/services-cluster-backup-s3.yml` template
-
-```
-./templates/make_manifest warden upstream templates/jobs-etcd.yml \
-  tmp/syslog.yml \
-  templates/services-cluster-backup-s3.yml tmp/backups.yml
-bosh deploy
-```
-
-Next:
-
-* update broker with new service plan information (`cluster-dev` changes to `cluster`)
-
-```
-cf update-service-broker dingo-postgresql starkandwayne starkandwayne http://10.244.21.2:8889
-```
-
-* create new service instance
-
-```
-cf create-service dingo-postgresql cluster pg-prod
-cf service pg-prod
-```
-
-* update pg-dev above to enable backups on existing cluster
-
-```
-cf update-service dingo-postgresql cluster pg-dev
-cf service pg-prod
-```
-
-To learn and explore how this configuration data is passed down into the Docker containers that run Patroni and PostgreSQL, see [image tutorial](https://github.com/dingotiles/dingo-postgresql-release/tree/master/images#backuprestore-from-aws).
+In the installation example above, you provided a single set of AWS credentials to access both buckets. **In production** we recommend two sets of AWS credentials - one per AWS user, each with access only to one bucket.
 
 ## Disaster recovery
 
