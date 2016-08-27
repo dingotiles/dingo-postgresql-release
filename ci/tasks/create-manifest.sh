@@ -66,16 +66,9 @@ meta:
     clusterdata_bucket: "${clusterdata_bucket}"
     s3_endpoint: "${s3_endpoint}"
     region: "${region}"
-  database_storage:
-    aws_access_key: "${aws_access_key}"
-    aws_secret_key: "${aws_secret_key}"
-    backups_bucket: "${backups_bucket}"
-    clusterdata_bucket: "${clusterdata_bucket}"
-    s3_endpoint: "${s3_endpoint}"
-    region: "${region}"
 EOF
 
-cat > tmp/cf-disaster-recovery.yml <<EOF
+cat > tmp/cf.yml <<EOF
 ---
 meta:
   cf:
@@ -89,7 +82,7 @@ properties:
   servicebroker:
     service_id: beb5973c-e1b2-11e5-a736-c7c0b526363d
 EOF
-cat tmp/cf-disaster-recovery.yml
+cat tmp/cf.yml
 
 services_template=templates/services-cluster-backup-s3.yml
 # services_template=templates/services-cluster.yml
@@ -100,7 +93,7 @@ export DEPLOYMENT_NAME=${deployment_name}
 ./templates/make_manifest warden ${docker_image_source} ${services_template} \
   templates/jobs-etcd.yml templates/integration-test.yml templates/cf.yml \
   tmp/syslog.yml tmp/docker_image.yml tmp/backups.yml \
-  tmp/releases.yml tmp/cf-disaster-recovery.yml
+  tmp/releases.yml tmp/cf.yml
 
 cp tmp/${DEPLOYMENT_NAME}*.yml ${manifest_dir}/manifest.yml
 
