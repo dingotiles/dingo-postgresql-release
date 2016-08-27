@@ -10,9 +10,9 @@ properties:
     default: []
 
   # OR, dynamically lookup Service Instance IDs from Cloud Foundry
-  cf.api_endpoint:
+  cf.api_url:
     description: 'Full URL of Cloud Foundry API'
-  cf.skip_ssl_verification:
+  cf.skip_ssl_validation:
     description: 'Set if target CF uses self-signed certificates'
   cf.user:
     description: 'Name of the Cloud Foundry user for who to perform disaster recovery'
