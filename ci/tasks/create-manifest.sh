@@ -80,7 +80,6 @@ cat > tmp/cf-disaster-recovery.yml <<EOF
 meta:
   cf:
     api_url: https://api.test-cf.snw
-    api_endpoint: api.test-cf.snw
     skip_ssl_validation: true
     skip_ssl_verification: true
     user: admin

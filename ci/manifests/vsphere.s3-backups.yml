@@ -78,6 +78,11 @@ jobs:
       public_port: 8888
       port: 8889
       router: {hostname: 10.58.111.57}
+    cf:
+      api_url: (( grab meta.cf.api_url ))
+      username: (( grab meta.cf.username ))
+      password: (( grab meta.cf.password ))
+      skip_ssl_validation: (( grab meta.cf.skip_ssl_validation ))
     backups:
       clusterdata:
         aws_access_key_id: (( grab meta.backups.aws_access_key ))
@@ -123,6 +128,11 @@ jobs:
     servicebroker:
       host: 10.58.111.57
       port: 8889
+    cf:
+      api_url: (( grab meta.cf.api_url ))
+      username: (( grab meta.cf.username ))
+      password: (( grab meta.cf.password ))
+      skip_ssl_validation: (( grab meta.cf.skip_ssl_validation ))
 - name: etcd
   instances: 1
   templates:

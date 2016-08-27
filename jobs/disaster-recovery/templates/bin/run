@@ -13,12 +13,12 @@ echo "<%= p('restore.service_instance_ids').inspect %>"
 restore_service_instance "<%= instance_id %>"
 <% end %>
 
-<% if_p('cf.api_endpoint', 'cf.user', 'cf.password') do |cf_api_endpoint, cf_user, cf_password| %>
+<% if_p('cf.api_url', 'cf.user', 'cf.password') do |cf_api_url, cf_user, cf_password| %>
 <% if_p('cf.skip_ssl_verification') do %>
 skip_ssl="--skip-ssl-validation "
 <% end %>
 cf login ${skip_ssl:-''} \
-  -a <%= p('cf.api_endpoint') %> \
+  -a <%= p('cf.cf_api_url') %> \
   -u <%= p('cf.user') %> \
   -p <%= p('cf.password') %>
 
