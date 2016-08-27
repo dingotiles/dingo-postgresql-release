@@ -140,22 +140,22 @@ jobs:
         - candidate-release/*.tgz
         - etcd/*.tgz
         - simple-remote-syslog/*.tgz
-  # - aggregate:
-  - task: prepare-disaster-recovery
-    file: boshrelease-ci/ci/tasks/prepare-disaster-recovery.yml
-  #   - do:
-  #     - put: lite-errand
-  #       params:
-  #         manifest: manifest/manifest.yml
-  #         errand: integration-test
-  #     - put: lite-errand
-  #       params:
-  #         manifest: manifest/manifest.yml
-  #         errand: sanity-test
-  - put: lite-errand
-    params:
-      manifest: manifest/manifest.yml
-      errand: disaster-recovery
+  - aggregate:
+    - task: prepare-disaster-recovery
+      file: boshrelease-ci/ci/tasks/prepare-disaster-recovery.yml
+    - do:
+      - put: lite-errand
+        params:
+          manifest: manifest/manifest.yml
+          errand: integration-test
+      - put: lite-errand
+        params:
+          manifest: manifest/manifest.yml
+          errand: sanity-test
+      - put: lite-errand
+        params:
+          manifest: manifest/manifest.yml
+          errand: disaster-recovery
   - task: assert-disaster-recovery
     file: boshrelease-ci/ci/tasks/assert-disaster-recovery.yml
 
