@@ -13,22 +13,16 @@ echo "<%= p('restore.service_instance_ids').inspect %>"
 restore_service_instance "<%= instance_id %>"
 <% end %>
 
-<% if_p('cf.api_url', 'cf.user', 'cf.password') do |cf_api_url, cf_user, cf_password| %>
-<% if_p('cf.skip_ssl_verification') do %>
-skip_ssl="--skip-ssl-validation "
-<% end %>
-cf login ${skip_ssl:-''} \
-  -a <%= p('cf.cf_api_url') %> \
-  -u <%= p('cf.user') %> \
-  -p <%= p('cf.password') %>
+<% if_p('servicebroker.service_id') do |service_id| %>
+cf api <%= p('cf.api_url') %> <%= p("cf.skip_ssl_validation") ? "--skip-ssl-validation" : "" %>
+cf auth <%= p('cf.user') %> <%= p('cf.password') %>
 
 service_guid=$(cf curl /v2/services | \
-  jq -r '.resources[] | select(.entity.unique_id == "<%= p("servicebroker.service_id") %>") | .metadata.guid')
+  jq -r '.resources[] | select(.entity.unique_id == "<%= service_id %>") | .metadata.guid')
 echo Looking up service instances for all plans for dingo-postgresql $service_guid
 cf curl /v2/services/${service_guid}/service_plans | \
   jq -r ".resources[].entity.service_instances_url" | \
   xargs -L1 cf curl | \
   jq -r ".resources[].metadata.guid" | \
   xargs -L1 restore_service_instance
-
 <% end %>
