@@ -3,6 +3,9 @@
 set -x
 set -e
 
+# To avoid 'WARNING: terminal is not fully functional'
+export PAGER=/bin/cat
+
 cf api api.test-cf.snw --skip-ssl-validation
 cf auth admin admin
 cf t -o dr-test -s dr-test

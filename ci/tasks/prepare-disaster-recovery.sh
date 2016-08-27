@@ -3,6 +3,9 @@
 set -x
 set -e
 
+# To avoid 'WARNING: terminal is not fully functional'
+export PAGER=/bin/cat
+
 echo Waiting a few seconds for the docker images to pull
 sleep 30
 
