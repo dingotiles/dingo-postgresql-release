@@ -7,6 +7,8 @@ packages:
 - dingo-postgresql-fog-check
 templates:
   bin/run: bin/run
+  bin/check-etcd: bin/check-etcd
+  bin/check-object-store: bin/check-object-store
   bin/test-storage: bin/test-storage
   bin/test-replication: bin/test-replication
   bin/test-move: bin/test-move
@@ -14,7 +16,6 @@ templates:
   bin/create-service: bin/create-service
   bin/update-service: bin/update-service
   bin/delete-service: bin/delete-service
-  bin/fog-check: bin/fog-check
   config/fog-clusterdata.yml.erb: config/fog-clusterdata.yml
   config/fog-databasestorage.yml.erb: config/fog-databasestorage.yml
   helpers/ctl_setup.sh: helpers/ctl_setup.sh

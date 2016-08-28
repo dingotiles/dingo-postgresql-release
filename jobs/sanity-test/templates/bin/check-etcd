@@ -1,0 +1,25 @@
+#!/bin/bash
+
+set -e
+
+indent() {
+  c="s/^/check-etcd> /"
+  case $(uname) in
+    Darwin) sed -l "$c";; # mac/bsd sed: -l buffers on line boundaries
+    *)      sed -u "$c";; # unix/gnu sed: -u unbuffered (arbitrary) chunks of data
+  esac
+}
+
+script() {
+  echo *
+  echo *
+  echo * Check etcd connectivity
+  echo *
+  echo *
+  set -x
+
+  export ETCD_CLUSTER=<%= p("etcd.machines").first %>:4001
+  curl ${ETCD_CLUSTER}/v2/keys
+}
+
+script 2>&1 | indent

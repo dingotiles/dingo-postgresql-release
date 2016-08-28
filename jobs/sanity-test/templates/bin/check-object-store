@@ -1,0 +1,28 @@
+#!/bin/bash
+
+set -e
+
+indent() {
+  c="s/^/check-object-store> /"
+  case $(uname) in
+    Darwin) sed -l "$c";; # mac/bsd sed: -l buffers on line boundaries
+    *)      sed -u "$c";; # unix/gnu sed: -u unbuffered (arbitrary) chunks of data
+  esac
+}
+
+script() {
+  echo *
+  echo *
+  echo * Check object storage credentials
+  echo *
+  echo *
+  set -x
+
+cat ${JOB_DIR}/config/fog-clusterdata.yml
+cat ${JOB_DIR}/config/fog-databasestorage.yml
+
+cd /var/vcap/packages/dingo-postgresql-fog-check
+bundle exec bin/dingo-postgresql-fog-check  ${JOB_DIR}/config/fog-clusterdata.yml ${JOB_DIR}/config/fog-databasestorage.yml
+}
+
+script 2>&1 | indent
