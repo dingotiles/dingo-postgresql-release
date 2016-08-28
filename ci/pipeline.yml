@@ -147,11 +147,11 @@ jobs:
       - put: lite-errand
         params:
           manifest: manifest/manifest.yml
-          errand: integration-test
+          errand: sanity-test
       - put: lite-errand
         params:
           manifest: manifest/manifest.yml
-          errand: sanity-test
+          errand: integration-test
       - put: lite-errand
         params:
           manifest: manifest/manifest.yml
