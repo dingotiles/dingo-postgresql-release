@@ -7,6 +7,15 @@ set -x
 uri=$1
 testvalue=${2:-"test-storage"}
 
+indent() {
+  c="s/^/test-storage> /"
+  case $(uname) in
+    Darwin) sed -l "$c";; # mac/bsd sed: -l buffers on line boundaries
+    *)      sed -u "$c";; # unix/gnu sed: -u unbuffered (arbitrary) chunks of data
+  esac
+}
+
+script() {
 echo Testing basic storage
 
 psql ${uri} -c 'DROP TABLE IF EXISTS integrationtest;'
@@ -22,3 +31,6 @@ pgbench -i ${uri}
 pgbench ${uri}
 
 echo Successfully stored data!
+}
+
+script 2>&1 indent

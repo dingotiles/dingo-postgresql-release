@@ -9,6 +9,16 @@ plan_id=$2
 instance_id=$3
 uri=$4
 
+indent() {
+  c="s/^/test-move> /"
+  case $(uname) in
+    Darwin) sed -l "$c";; # mac/bsd sed: -l buffers on line boundaries
+    *)      sed -u "$c";; # unix/gnu sed: -u unbuffered (arbitrary) chunks of data
+  esac
+}
+
+script() {
+
 echo Testing service move of containers to new cells
 
 psql ${uri} -c 'DROP TABLE IF EXISTS sanitytest'
@@ -42,3 +52,6 @@ psql ${uri} -c 'SELECT value FROM sanitytest;' | grep 'move-test' || {
   echo Could not retrieve value from cluster after it was moved!
   exit 1
 }
+}
+
+script 2>&1 indent

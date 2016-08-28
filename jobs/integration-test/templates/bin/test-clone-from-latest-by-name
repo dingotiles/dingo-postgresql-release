@@ -9,6 +9,15 @@ plan=$2
 name=$3
 expected_value_stored=$4
 
+indent() {
+  c="s/^/test-clone-from-latest-by-name> /"
+  case $(uname) in
+    Darwin) sed -l "$c";; # mac/bsd sed: -l buffers on line boundaries
+    *)      sed -u "$c";; # unix/gnu sed: -u unbuffered (arbitrary) chunks of data
+  esac
+}
+
+script() {
 clone_name="clone-${name}"
 service_key=${clone_name}-creds
 credentials=$(cf-create-service $service $plan $clone_name $service_key -c "{\"clone-from\":\"${name}\"}")
@@ -21,3 +30,6 @@ psql ${uri} -c 'SELECT value FROM integrationtest;' | grep ${expected_value_stor
 
 cf delete-service-key $clone_name $service_key -f
 cf delete-service $clone_name -f
+}
+
+script 2>&1 indent

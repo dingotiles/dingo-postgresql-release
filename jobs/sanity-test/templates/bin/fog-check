@@ -2,8 +2,21 @@
 
 set -e -x
 
+indent() {
+  c="s/^/fog-check> /"
+  case $(uname) in
+    Darwin) sed -l "$c";; # mac/bsd sed: -l buffers on line boundaries
+    *)      sed -u "$c";; # unix/gnu sed: -u unbuffered (arbitrary) chunks of data
+  esac
+}
+
+script() {
+
 cat ${JOB_DIR}/config/fog-clusterdata.yml
 cat ${JOB_DIR}/config/fog-databasestorage.yml
 
 cd /var/vcap/packages/dingo-postgresql-fog-check
 bundle exec bin/dingo-postgresql-fog-check  ${JOB_DIR}/config/fog-clusterdata.yml ${JOB_DIR}/config/fog-databasestorage.yml
+}
+
+script 2>&1 indent

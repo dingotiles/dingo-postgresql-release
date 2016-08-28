@@ -10,6 +10,16 @@ instance_id=$3
 binding_id=$4
 uri=$5
 
+indent() {
+  c="s/^/test-failure-recovery> /"
+  case $(uname) in
+    Darwin) sed -l "$c";; # mac/bsd sed: -l buffers on line boundaries
+    *)      sed -u "$c";; # unix/gnu sed: -u unbuffered (arbitrary) chunks of data
+  esac
+}
+
+script() {
+
 echo Testing database restoration
 set +x
 for ((n=0;n<120;n++)); do
@@ -76,3 +86,6 @@ psql ${uri} -c 'SELECT * FROM sanitytest;' | grep 'test-failure-recovery' || {
 }
 
 echo Database restored successfully!
+}
+
+script 2>&1 indent
