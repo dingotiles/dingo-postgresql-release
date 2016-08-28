@@ -84,4 +84,6 @@ builds:
     version: 0.9.2
   0a0db63b-51c6-4b7a-a8db-7abd30b97010:
     version: 0.9.3
+  79f6c77b-545a-4971-b11d-2a3d965969b1:
+    version: 0.10.0-rc.2
 format-version: '2'
