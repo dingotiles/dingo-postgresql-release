@@ -2,7 +2,6 @@
 
 set -e
 set -u
-set -x
 
 service_id=$1
 plan_id=$2
@@ -18,8 +17,12 @@ indent() {
 }
 
 script() {
-
-echo Testing service move of containers to new cells
+  echo *
+  echo *
+  echo * Testing service move of containers to new cells
+  echo *
+  echo *
+  set -x
 
 psql ${uri} -c 'DROP TABLE IF EXISTS sanitytest'
 psql ${uri} -c 'CREATE TABLE sanitytest(value text);'
@@ -54,4 +57,4 @@ psql ${uri} -c 'SELECT value FROM sanitytest;' | grep 'move-test' || {
 }
 }
 
-script 2>&1 indent
+script 2>&1 | indent

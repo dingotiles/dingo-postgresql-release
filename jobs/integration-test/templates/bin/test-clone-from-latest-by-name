@@ -2,7 +2,6 @@
 
 set -u
 set -e
-set -x
 
 service=$1
 plan=$2
@@ -18,6 +17,13 @@ indent() {
 }
 
 script() {
+  echo *
+  echo *
+  echo * Testing clone-from by name
+  echo *
+  echo *
+  set -x
+
 clone_name="clone-${name}"
 service_key=${clone_name}-creds
 credentials=$(cf-create-service $service $plan $clone_name $service_key -c "{\"clone-from\":\"${name}\"}")
@@ -32,4 +38,4 @@ cf delete-service-key $clone_name $service_key -f
 cf delete-service $clone_name -f
 }
 
-script 2>&1 indent
+script 2>&1 | indent

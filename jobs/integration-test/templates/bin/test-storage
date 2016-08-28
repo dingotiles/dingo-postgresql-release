@@ -2,7 +2,6 @@
 
 set -u
 set -e
-set -x
 
 uri=$1
 testvalue=${2:-"test-storage"}
@@ -16,7 +15,12 @@ indent() {
 }
 
 script() {
-echo Testing basic storage
+  echo *
+  echo *
+  echo * Testing basic storage
+  echo *
+  echo *
+  set -x
 
 psql ${uri} -c 'DROP TABLE IF EXISTS integrationtest;'
 psql ${uri} -c 'CREATE TABLE integrationtest(value text);'
@@ -33,4 +37,4 @@ pgbench ${uri}
 echo Successfully stored data!
 }
 
-script 2>&1 indent
+script 2>&1 | indent

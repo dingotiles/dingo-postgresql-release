@@ -2,7 +2,6 @@
 
 set -e
 set -u
-set -x
 
 service_id=$1
 plan_id=$2
@@ -19,9 +18,12 @@ indent() {
 }
 
 script() {
+  echo *
+  echo *
+  echo * Testing database restoration
+  echo *
+  echo *
 
-echo Testing database restoration
-set +x
 for ((n=0;n<120;n++)); do
   set -x
   backups_lines=$(curl -sf ${ETCD}/v2/keys/service/${instance_id}/wale-backup-list | jq -r .node.value | wc -l)
@@ -88,4 +90,4 @@ psql ${uri} -c 'SELECT * FROM sanitytest;' | grep 'test-failure-recovery' || {
 echo Database restored successfully!
 }
 
-script 2>&1 indent
+script 2>&1 | indent
