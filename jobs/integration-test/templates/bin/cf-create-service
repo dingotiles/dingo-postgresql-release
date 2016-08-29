@@ -21,7 +21,7 @@ cf service $name >&2
 
 set +x
 completed_message="Message: Scheduling Completed"
-for ((n=0;n<12;n++)); do
+for ((n=0;n<30;n++)); do
   message=$(cf service $name | grep Message:)
   info $message
   if [[ "${message}" == "${completed_message}" ]]; then
@@ -30,7 +30,7 @@ for ((n=0;n<12;n++)); do
   sleep 10
 done
 if [[ "${message}" != "${completed_message}" ]]; then
-  info "Failed waiting for service within 120s: $message"
+  info "Failed waiting for service within 300s: $message"
   exit 1
 fi
 set -x
