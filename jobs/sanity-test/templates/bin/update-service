@@ -36,11 +36,10 @@ update_instance() {
         curl ${BROKER_URI}/admin/service_instances/${instance_id} | jq .
         return
       fi
-      sleep 0
+      sleep 10
   done
 
   info final error state of cluster
-  set -x
   curl ${BROKER_URI}/admin/service_instances/${instance_id} | jq .
   echo "Couldn't update service instance with 300s"
   exit 1
