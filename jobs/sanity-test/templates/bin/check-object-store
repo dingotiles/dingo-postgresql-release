@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+set -o pipefail
 
 indent() {
   c="s/^/check-object-store> /"
@@ -11,11 +12,11 @@ indent() {
 }
 
 script() {
-  echo *
-  echo *
-  echo * Check object storage credentials
-  echo *
-  echo *
+  echo "*"
+  echo "*"
+  echo "* Check object storage credentials"
+  echo "*"
+  echo "*"
   set -x
 
 cat ${JOB_DIR}/config/fog-clusterdata.yml

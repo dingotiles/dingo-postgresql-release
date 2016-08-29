@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+set -o pipefail
 set -u
 
 service_id=$1
@@ -18,19 +19,19 @@ indent() {
 }
 
 script() {
-  echo *
-  echo *
-  echo * Testing database restoration
-  echo *
-  echo *
+  echo "*"
+  echo "*"
+  echo "* Testing database restoration"
+  echo "*"
+  echo "*"
 
-for ((n=0;n<120;n++)); do
+for ((n=0;n<12;n++)); do
   set -x
   backups_lines=$(curl -sf ${ETCD}/v2/keys/service/${instance_id}/wale-backup-list | jq -r .node.value | wc -l)
   set +x
   if [[ $backups_lines -lt 2 ]]; then
     echo "Waiting for first backups to be written $n"
-    sleep 1
+    sleep 10
   else
     break
   fi
@@ -54,6 +55,11 @@ psql ${uri} -c "select * from sanitytest;"
 echo Deleting service instance
 curl -sf ${BROKER_URI}/v2/service_instances/${instance_id}\?plan_id=${plan_id}\&service_id=${service_id} -XDELETE
 
+if [[ "$(curl -s ${ETCD}/v2/keys/service/${instance_id}/wale-backup-list | jq -r .node.value)" == "null" ]]; then
+  echo "ERROR: No backups available for ${instance_id} after deletion"
+  exit 1
+fi
+
 echo Display wal-e backup status
 curl -s ${ETCD}/v2/keys/service/${instance_id}/wale-backup-list | jq -r .node.value
 
@@ -64,28 +70,56 @@ echo waiting for the cluster to recover
 set +x
 sleep 30
 
+if [[ "$(curl -s ${ETCD}/v2/keys/service/${instance_id}/wale-backup-list | jq -r .node.value)" == "null" ]]; then
+  echo "ERROR: No backups available for ${instance_id} after recovery"
+  exit 1
+fi
 echo Display wal-e backup status
 curl -s ${ETCD}/v2/keys/service/${instance_id}/wale-backup-list | jq -r .node.value
 
-for ((n=0;n<120;n++)); do
-  set -x
+created_ok=false
+for ((n=0;n<30;n++)); do
   last_operation=$(curl ${BROKER_URI}/v2/service_instances/${instance_id}/last_operation)
-  set +x
+  echo $last_operation
   if echo ${last_operation} | grep 'succeeded' > /dev/null; then
-    set -x
+    info final successful state of cluster
+    curl ${BROKER_URI}/admin/service_instances/${instance_id} | jq .
+    created_ok=true
     break
   fi
-  sleep 1
+  sleep 10
 done
 
+if [[ "${created_ok}" == "false" ]]; then
+  echo "Couldn't recreate service instance with 300s"
+  exit 1
+fi
+
 echo "Waiting for haproxy to update and database to restore"
-sleep 31
+set -x
+
+running_ok=false
+for ((n=0;n<6;n++)); do
+  if [ $? -eq 0 ]; then
+    psql ${uri} -c "SELECT current_database();"
+    running_ok=true
+    break
+  fi
+  sleep 10
+done
+if [[ "${running_ok}" == "false" ]]; then
+  echo "Service instance was not running ok after 60s"
+  exit 1
+fi
 
 psql ${uri} -c "SELECT * from sanitytest;"
+
 psql ${uri} -c 'SELECT * FROM sanitytest;' | grep 'test-failure-recovery' || {
   echo Database did not restore
   exit 1
 }
+
+psql ${uri} -c "SELECT pg_is_in_recovery();"
 
 echo Database restored successfully!
 }

@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+set -o pipefail
 
 indent() {
   c="s/^/check-etcd> /"
@@ -11,11 +12,11 @@ indent() {
 }
 
 script() {
-  echo *
-  echo *
-  echo * Check etcd connectivity
-  echo *
-  echo *
+  echo "*"
+  echo "*"
+  echo "* Check etcd connectivity"
+  echo "*"
+  echo "*"
   set -x
 
   export ETCD_CLUSTER=<%= p("etcd.machines").first %>:4001

@@ -2,6 +2,7 @@
 
 set -u
 set -e
+set -o pipefail
 set -x
 
 info() {
@@ -26,23 +27,22 @@ update_instance() {
     exit 1
   }
   set +x
-  sleep 1
-  for ((n=0;n<300;n++)); do
-      set -x
+  sleep 10
+  for ((n=0;n<30;n++)); do
       last_operation=$(curl -s ${BROKER_URI}/v2/service_instances/${instance_id}/last_operation)
-      set +x
+      echo $last_operation
       if echo ${last_operation} | grep 'succeeded' > /dev/null; then
         info final successful state of cluster
         curl ${BROKER_URI}/admin/service_instances/${instance_id} | jq .
-          return
+        return
       fi
-      sleep 1
+      sleep 0
   done
-  set -x
 
   info final error state of cluster
+  set -x
   curl ${BROKER_URI}/admin/service_instances/${instance_id} | jq .
-  echo "Couldn't update service instance"
+  echo "Couldn't update service instance with 300s"
   exit 1
 }
 

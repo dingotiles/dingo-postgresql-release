@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+set -o pipefail
 set -u
 
 instance_id=$1
@@ -14,11 +15,11 @@ indent() {
 }
 
 script() {
-  echo *
-  echo *
-  echo * Testing replication
-  echo *
-  echo *
+  echo "*"
+  echo "*"
+  echo "* Testing replication"
+  echo "*"
+  echo "*"
   set -x
 
 leader_id=$(curl -s ${ETCD}/v2/keys/service/${instance_id}/leader | jq -r '.node.value')

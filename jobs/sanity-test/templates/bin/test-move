@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+set -o pipefail
 set -u
 
 service_id=$1
@@ -17,11 +18,11 @@ indent() {
 }
 
 script() {
-  echo *
-  echo *
-  echo * Testing service move of containers to new cells
-  echo *
-  echo *
+  echo "*"
+  echo "*"
+  echo "* Testing service move of containers to new cells"
+  echo "*"
+  echo "*"
   set -x
 
 psql ${uri} -c 'DROP TABLE IF EXISTS sanitytest'

@@ -2,7 +2,7 @@
 
 set -u
 set -e
-set -x
+set -o pipefail
 
 info() {
   echo "$@ " >&2
@@ -13,27 +13,26 @@ create_instance() {
   local plan_id=$2
   local instance_id=$3
   info creating service instance ${instance_id} for plan ${plan_id}
+  set -x
   curl ${BROKER_URI}/v2/service_instances/${instance_id} \
        -XPUT \
-       -d "{\"service_id\": \"${service_id}\", \"plan_id\": \"${plan_id}\"}" \
+       -d "{\"service_id\":\"${service_id}\",\"plan_id\":\"${plan_id}\"}" \
        >&2 || {
     echo "Couldn't create service instance"
     exit 1
   }
   set +x
-  sleep 5
-  for ((n=0;n<120;n++)); do
-      set -x
+  info "Waiting for service instance ${instance_id} to be ready..."
+  sleep 10
+  for ((n=0;n<12;n++)); do
       last_operation=$(curl -s ${BROKER_URI}/v2/service_instances/${instance_id}/last_operation)
-      set +x
-      if echo ${last_operation} | grep 'succeeded' > /dev/null; then
-          set -x
-          return
+      info "$last_operation"
+      if echo "${last_operation}" | grep 'succeeded' > /dev/null; then
+        return
       fi
-      sleep 1
+      sleep 10
   done
-  set -x
-  echo "Couldn't create service instance"
+  echo "Couldn't create service instance within 120s"
   exit 1
 }
 
@@ -43,6 +42,7 @@ create_binding() {
   local instance_id=$3
   local binding_id=$4
   info creating binding ${binding_id} for instance ${instance_id}
+  set -x
   curl -sf ${BROKER_URI}/v2/service_instances/${instance_id}/service_bindings/${binding_id} \
     -XPUT \
     -d "{\"service_id\": \"${service_id}\", \"plan_id\": \"${plan_id}\"}" || {

@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e # exit immediately if a simple command exits with a non-zero status
+set -o pipefail
 set -u # report the usage of uninitialized variables
 set -x # print commands
 

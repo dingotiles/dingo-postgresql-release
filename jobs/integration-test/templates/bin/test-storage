@@ -2,6 +2,7 @@
 
 set -u
 set -e
+set -o pipefail
 
 uri=$1
 testvalue=${2:-"test-storage"}
@@ -15,11 +16,11 @@ indent() {
 }
 
 script() {
-  echo *
-  echo *
-  echo * Testing basic storage
-  echo *
-  echo *
+  echo "*"
+  echo "*"
+  echo "* Testing basic storage"
+  echo "*"
+  echo "*"
   set -x
 
 psql ${uri} -c 'DROP TABLE IF EXISTS integrationtest;'
