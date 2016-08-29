@@ -15,7 +15,6 @@ outputs:
 params:
   aws_access_key:
   aws_secret_key:
-  s3_endpoint:
   region:
   backups_bucket:
   clusterdata_bucket:

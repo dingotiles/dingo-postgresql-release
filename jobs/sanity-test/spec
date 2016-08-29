@@ -39,9 +39,7 @@ properties:
   backups.clusterdata.bucket_name:
     description: Bucket name
   backups.clusterdata.region:
-    description: Amazon S3 region endpoint
-  backups.clusterdata.s3_endpoint:
-    description: Amazon S3 API endpoint
+    description: Amazon S3 region
 
   backups.database_storage.aws_access_key_id:
     description: Amazon S3 API access key
@@ -50,6 +48,4 @@ properties:
   backups.database_storage.bucket_name:
     description: Bucket name
   backups.database_storage.region:
-    description: Amazon S3 region endpoint
-  backups.database_storage.s3_endpoint:
-    description: Amazon S3 API endpoint
+    description: Amazon S3 region

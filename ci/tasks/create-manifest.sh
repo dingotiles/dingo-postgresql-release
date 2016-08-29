@@ -64,7 +64,6 @@ meta:
     aws_secret_key: "${aws_secret_key}"
     backups_bucket: "${backups_bucket}"
     clusterdata_bucket: "${clusterdata_bucket}"
-    s3_endpoint: "${s3_endpoint}"
     region: "${region}"
 EOF
 

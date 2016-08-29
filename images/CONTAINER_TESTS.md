@@ -15,7 +15,7 @@ cat .envrc # direnv
 export AWS_ACCESS_KEY_ID=<aws_access_key_id>
 export AWS_SECRET_ACCESS_KEY=<aws_secret_access_key>
 export WAL_S3_BUCKET=test-backups-bucket
-export WALE_S3_ENDPOINT=https+path://s3-eu-central-1.amazonaws.com
+export AWS_REGION=eu-central-1
 ```
 
 To execute the tests on a docker daemon running locally

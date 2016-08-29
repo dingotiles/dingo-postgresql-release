@@ -22,7 +22,7 @@ services:
       AWS_ACCESS_KEY_ID:
       AWS_SECRET_ACCESS_KEY:
       WAL_S3_BUCKET:
-      WALE_S3_ENDPOINT:
+      AWS_REGION:
       WALE_BACKUP_THRESHOLD_MEGABYTES: 10240
       WALE_BACKUP_THRESHOL_PERCENTAGE: 30
     depends_on: [registrator, etcd]
@@ -47,7 +47,7 @@ services:
       AWS_ACCESS_KEY_ID:
       AWS_SECRET_ACCESS_KEY:
       WAL_S3_BUCKET:
-      WALE_S3_ENDPOINT:
+      AWS_REGION:
       WALE_BACKUP_THRESHOLD_MEGABYTES: 10240
       WALE_BACKUP_THRESHOL_PERCENTAGE: 30
     depends_on: [registrator, etcd]
@@ -89,7 +89,7 @@ services:
       AWS_ACCESS_KEY_ID:
       AWS_SECRET_ACCESS_KEY:
       WAL_S3_BUCKET:
-      WALE_S3_ENDPOINT:
+      AWS_REGION:
 
 volumes:
   test_state:

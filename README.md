@@ -121,7 +121,6 @@ meta:
     aws_secret_key: SECRET
     backups_bucket: our-dingo-postgresql-database-backups
     clusterdata_bucket: our-dingo-postgresql-clusterdata-backups
-    s3_endpoint: s3-ap-southeast-1.amazonaws.com
     region: ap-southeast-1
 ```
 

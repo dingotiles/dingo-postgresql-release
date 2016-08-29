@@ -50,7 +50,7 @@ jobs:
       MACHINE_EXPORT_AWS_REGION: {{docker-machine-region}}
       MACHINE_EXPORT_AWS_BUCKET: {{docker-machine-bucket}}
       WAL_S3_BUCKET: {{backups-testflight-backups-bucket}}
-      WALE_S3_ENDPOINT: {{delmo-test-wale-s3-endpoint}}
+      AWS_REGION: {{delmo-test-wal-aws-region}}
       AWS_ACCESS_KEY_ID: {{dingotiles-aws-access}}
       AWS_SECRET_ACCESS_KEY: {{dingotiles-aws-secret}}
   - put: pg95-image-edge
@@ -127,7 +127,6 @@ jobs:
       aws_secret_key: {{dingotiles-aws-secret}}
       backups_bucket: {{backups-testflight-backups-bucket}}
       clusterdata_bucket: {{backups-testflight-clusterdata-bucket}}
-      s3_endpoint: {{backups-testflight-s3-endpoint}}
       region: {{backups-testflight-s3-region}}
       docker_image_image: "dingotiles/dingo-postgresql95"
       docker_image_tag: "edge"
@@ -203,7 +202,6 @@ jobs:
       aws_secret_key: {{dingotiles-aws-secret}}
       backups_bucket: {{backups-testflight-backups-bucket}}
       clusterdata_bucket: {{backups-testflight-clusterdata-bucket}}
-      s3_endpoint: {{backups-testflight-s3-endpoint}}
       region: {{backups-testflight-s3-region}}
       syslog_host: {{bosh-vsphere-syslog-host}}
       syslog_port: {{bosh-vsphere-syslog-port}}

@@ -528,8 +528,7 @@ AWS_ACCESS_KEY_ID=XXX
 AWS_SECRET_ACCESS_KEY=YYY
 
 WAL_S3_BUCKET=ZZZ-backups
-WALE_S3_ENDPOINT=https+path://s3.amazonaws.com:443
-#WALE_S3_ENDPOINT=https+path://s3-us-west-2.amazonaws.com:443
+AWS_REGION=us-east-1
 
 WALE_BACKUP_THRESHOLD_PERCENTAGE=30
 WALE_BACKUP_THRESHOLD_MEGABYTES=10240
@@ -642,8 +641,8 @@ Output might look like:
 ==> /data/wal-e/env/WALE_CMD <==
 envdir /data/wal-e/env wal-e
 
-==> /data/wal-e/env/WALE_S3_ENDPOINT <==
-https+path://s3-ap-southeast-1.amazonaws.com:443
+==> /data/wal-e/env/AWS_REGION <==
+ap-southeast-1
 ...
 ==> /data/wal-e/env/WAL_S3_BUCKET <==
 ZZZ-backups

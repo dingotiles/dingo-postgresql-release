@@ -7,7 +7,4 @@ default:
 <% if_p("backups.database_storage.region") do |region| %>
   region: <%= region %>
 <% end %>
-<% if_p("backups.database_storage.s3_endpoint") do |endpoint| %>
-  endpoint: <%= endpoint %>
-<% end %>
 <% end %>

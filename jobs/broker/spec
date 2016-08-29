@@ -56,9 +56,7 @@ properties:
   backups.clusterdata.bucket_name:
     description: Bucket name
   backups.clusterdata.region:
-    description: Amazon S3 region endpoint
-  backups.clusterdata.endpoint:
-    description: Amazon S3 API endpoint
+    description: Amazon S3 region
 
   backups.database_storage.aws_access_key_id:
     description: Amazon S3 API access key
@@ -67,7 +65,7 @@ properties:
   backups.database_storage.bucket_name:
     description: Bucket name
   backups.database_storage.region:
-    description: Amazon S3 region endpoint
+    description: Amazon S3 region
 
   cf.api_url:
     description: URI for Cloud Foundry API to allow lookup of user-provided service names after provisioning
