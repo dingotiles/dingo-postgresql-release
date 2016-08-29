@@ -1,7 +1,6 @@
 #!/bin/bash
 
-set -e
-set -o pipefail
+set -e -o pipefail
 set -u
 
 service_id=$1
@@ -98,6 +97,7 @@ echo "Waiting for haproxy to update and database to restore"
 set -x
 
 running_ok=false
+set +e +o pipefail
 for ((n=0;n<6;n++)); do
   if [ $? -eq 0 ]; then
     psql ${uri} -c "SELECT current_database();"
@@ -106,6 +106,7 @@ for ((n=0;n<6;n++)); do
   fi
   sleep 10
 done
+set -e -o pipefail
 if [[ "${running_ok}" == "false" ]]; then
   echo "Service instance was not running ok after 60s"
   exit 1
