@@ -17,7 +17,7 @@ indent() {
   esac
 }
 
-# script() {
+script() {
   echo "*"
   echo "*"
   echo "* Testing service move of containers to new cells"
@@ -61,7 +61,5 @@ psql ${uri} -c 'SELECT value FROM sanitytest;' | grep 'move-test' || {
   echo Could not retrieve value from cluster after it was moved!
   exit 1
 }
-# }
-# script
-
-# script 2>&1 | indent
+}
+script 2>&1 | indent
