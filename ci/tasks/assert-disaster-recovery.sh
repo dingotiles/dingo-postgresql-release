@@ -14,7 +14,7 @@ cf service-key dr-test dr-test-binding
 pg_uri=$(cf service-key dr-test dr-test-binding | grep '"uri"' | grep -o 'postgres://.*/postgres' | sed "s/@.*:/@${broker_ip}:/")
 
 set +x
-for ((n=0;n<180;n++)); do
+for ((n=0;n<30;n++)); do
     found='false'
     set -x
     table=$(psql ${pg_uri} -c 'SELECT * FROM disasterrecoverytest;' || true)
@@ -23,7 +23,7 @@ for ((n=0;n<180;n++)); do
         found='true'
         break
     fi
-    sleep 1
+    sleep 10
 done
 set -x
 
