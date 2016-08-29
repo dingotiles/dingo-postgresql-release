@@ -62,7 +62,7 @@ set +x
 echo Waiting for the cluster to recover
 created_ok=false
 for ((n=0;n<30;n++)); do
-  last_operation=$(curl ${BROKER_URI}/v2/service_instances/${instance_id}/last_operation)
+  last_operation=$(curl -s ${BROKER_URI}/v2/service_instances/${instance_id}/last_operation)
   echo $last_operation
   if echo ${last_operation} | grep 'succeeded' > /dev/null; then
     echo final successful state of cluster
@@ -80,8 +80,15 @@ fi
 
 set +x
 echo Display wal-e backup status
+for ((n=0;n<30;n++)); do
+  if [[ "$(curl -s ${ETCD}/v2/keys/service/${instance_id}/wale-backup-list | jq -r .node.value)" != "null" ]]; then
+    break
+  fi
+  print "."
+  sleep 10
+done
 if [[ "$(curl -s ${ETCD}/v2/keys/service/${instance_id}/wale-backup-list | jq -r .node.value)" == "null" ]]; then
-  echo "No backups available for ${instance_id} after recovery"
+  echo "No backups available for ${instance_id} after recovery after 300s"
   exit 1
 fi
 curl -s ${ETCD}/v2/keys/service/${instance_id}/wale-backup-list | jq -r .node.value
