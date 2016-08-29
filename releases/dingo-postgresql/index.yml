@@ -88,4 +88,6 @@ builds:
     version: 0.10.0-rc.2
   f96e87dd-ecd5-46a7-baa9-d51c5ceb56c1:
     version: 0.10.0-rc.16
+  129a799c-6d84-486c-8ccf-2a53e2a91dcd:
+    version: 0.10.0-rc.19
 format-version: '2'
