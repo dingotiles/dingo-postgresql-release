@@ -55,28 +55,11 @@ psql ${uri} -c "select * from sanitytest;"
 echo Deleting service instance
 curl -sf ${BROKER_URI}/v2/service_instances/${instance_id}\?plan_id=${plan_id}\&service_id=${service_id} -XDELETE
 
-if [[ "$(curl -s ${ETCD}/v2/keys/service/${instance_id}/wale-backup-list | jq -r .node.value)" == "null" ]]; then
-  echo "ERROR: No backups available for ${instance_id} after deletion"
-  exit 1
-fi
-
-echo Display wal-e backup status
-curl -s ${ETCD}/v2/keys/service/${instance_id}/wale-backup-list | jq -r .node.value
-
 echo Recreating service instance
 curl -sf ${BROKER_URI}/v2/service_instances/${instance_id} -XPUT -d '{}'
 
-echo waiting for the cluster to recover
 set +x
-sleep 30
-
-if [[ "$(curl -s ${ETCD}/v2/keys/service/${instance_id}/wale-backup-list | jq -r .node.value)" == "null" ]]; then
-  echo "ERROR: No backups available for ${instance_id} after recovery"
-  exit 1
-fi
-echo Display wal-e backup status
-curl -s ${ETCD}/v2/keys/service/${instance_id}/wale-backup-list | jq -r .node.value
-
+echo Waiting for the cluster to recover
 created_ok=false
 for ((n=0;n<30;n++)); do
   last_operation=$(curl ${BROKER_URI}/v2/service_instances/${instance_id}/last_operation)
@@ -94,6 +77,15 @@ if [[ "${created_ok}" == "false" ]]; then
   echo "Couldn't recreate service instance with 300s"
   exit 1
 fi
+
+set +x
+echo Display wal-e backup status
+if [[ "$(curl -s ${ETCD}/v2/keys/service/${instance_id}/wale-backup-list | jq -r .node.value)" == "null" ]]; then
+  echo "No backups available for ${instance_id} after recovery"
+  exit 1
+fi
+curl -s ${ETCD}/v2/keys/service/${instance_id}/wale-backup-list | jq -r .node.value
+
 
 echo "Waiting for haproxy to update and database to restore"
 set -x
