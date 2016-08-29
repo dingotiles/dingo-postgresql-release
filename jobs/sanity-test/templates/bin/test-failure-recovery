@@ -83,7 +83,7 @@ for ((n=0;n<30;n++)); do
   if [[ "$(curl -s ${ETCD}/v2/keys/service/${instance_id}/wale-backup-list | jq -r .node.value)" != "null" ]]; then
     break
   fi
-  print "."
+  printf "."
   sleep 10
 done
 if [[ "$(curl -s ${ETCD}/v2/keys/service/${instance_id}/wale-backup-list | jq -r .node.value)" == "null" ]]; then
