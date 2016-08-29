@@ -15,7 +15,7 @@ restore_service_instance "<%= instance_id %>"
 
 <% if_p('servicebroker.service_id') do |service_id| %>
 cf api <%= p('cf.api_url') %> <%= p("cf.skip_ssl_validation") ? "--skip-ssl-validation" : "" %>
-cf auth <%= p('cf.user') %> <%= p('cf.password') %>
+cf auth <%= p('cf.username') %> <%= p('cf.password') %>
 
 service_guid=$(cf curl /v2/services | \
   jq -r '.resources[] | select(.entity.unique_id == "<%= service_id %>") | .metadata.guid')

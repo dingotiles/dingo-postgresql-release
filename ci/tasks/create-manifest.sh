@@ -75,7 +75,6 @@ meta:
     api_url: https://api.test-cf.snw
     skip_ssl_validation: true
     skip_ssl_verification: true
-    user: admin
     username: admin
     password: admin
 properties:

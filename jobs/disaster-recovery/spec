@@ -14,7 +14,7 @@ properties:
     description: 'Full URL of Cloud Foundry API'
   cf.skip_ssl_validation:
     description: 'Set if target CF uses self-signed certificates'
-  cf.user:
+  cf.username:
     description: 'Name of the Cloud Foundry user for who to perform disaster recovery'
     default: admin
   cf.password:
