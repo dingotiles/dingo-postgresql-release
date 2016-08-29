@@ -48,7 +48,7 @@ fi
 
 echo Replicators have registered with leader
 
-psql ${leader_con} -c 'DROP TABLE IF EXISTS sanitytest'
+psql ${leader_con} -c 'DROP TABLE IF EXISTS sanitytest;'
 psql ${leader_con} -c 'CREATE TABLE sanitytest(value text);'
 psql ${leader_con} -c "INSERT INTO sanitytest VALUES ('replication-test');"
 

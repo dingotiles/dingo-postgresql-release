@@ -25,7 +25,7 @@ script() {
   echo "*"
   set -x
 
-psql ${uri} -c 'DROP TABLE IF EXISTS sanitytest'
+psql ${uri} -c 'DROP TABLE IF EXISTS sanitytest;'
 psql ${uri} -c 'CREATE TABLE sanitytest(value text);'
 psql ${uri} -c "INSERT INTO sanitytest VALUES ('move-test');"
 
