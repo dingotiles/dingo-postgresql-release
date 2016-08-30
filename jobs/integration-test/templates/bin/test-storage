@@ -6,7 +6,7 @@ set -o pipefail
 
 uri=$1
 
-source /var/vcap/jobs/sanity-test/helpers/test_helpers.sh
+source /var/vcap/jobs/integration-test/helpers/test_helpers.sh
 
 indent() {
   c="s/^/test-storage> /"
