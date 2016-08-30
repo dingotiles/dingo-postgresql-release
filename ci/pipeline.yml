@@ -316,8 +316,6 @@ jobs:
         params:
           repository: final-release-repo
           rebase: true
-      - task: license-finder-report
-        file: boshrelease-ci/ci/tasks/license-finder-report.yml
       - task: create-release-notes
         file: boshrelease-ci/ci/tasks/create-release-notes.yml
       - put: version
