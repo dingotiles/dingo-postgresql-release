@@ -35,13 +35,15 @@ psql ${uri} -c "INSERT INTO sanitytest VALUES ('move-test');"
 # Update service with "cells" set to other cells
 set +x
 available_cells_guids=$(curl -sf ${BROKER_URI}/admin/cells | jq -r ".[].guid" | sort)
+echo "available_cells_guids: $available_cells_guids"
 service_cells_guids=$(curl -sf ${BROKER_URI}/admin/service_instances/${instance_id} | jq -r ".nodes[].cell_guid" | sort)
+echo "service_cells_guids: $service_cells_guids"
 set +o pipefail # diff returns error; and we don't want to exit script
 alternate_cell_guids=$(diff <(echo $available_cells_guids | tr " " "\n") <(echo $service_cells_guids | tr " " "\n") | grep "<" | awk '{print $2}' | paste -sd "," -)
 set -o pipefail
 echo "alternate_cell_guids: $alternate_cell_guids"
 update_service_parameters=$(jq -n -c -M --arg guids "$alternate_cell_guids" '{"cells": ($guids|split(","))}')
-echo $update_service_parameters
+echo "cf update-service parameters: $update_service_parameters"
 set -x
 
 time update-service $service_id $plan_id $instance_id $update_service_parameters
