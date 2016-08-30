@@ -112,14 +112,26 @@ if [[ "${running_ok}" == "false" ]]; then
   exit 1
 fi
 
+for ((n=0;n<30;n++)); do
+  in_recovery=$(psql ${uri} -c "SELECT row_to_json(t1) FROM (SELECT pg_is_in_recovery()) t1;" -t | jq -r .pg_is_in_recovery)
+  if [[ "${in_recovery}" == "false" ]]; then
+    echo "Database finished recovering"
+    break
+  fi
+  echo "Database still recovering"
+  sleep 10
+fi
+if [[ "${in_recovery}" != "false" ]]; then
+  echo "Database failed to recover within 300s"
+  exit 1
+fi
+
 psql ${uri} -c "SELECT * from sanitytest;"
 
 psql ${uri} -c 'SELECT * FROM sanitytest;' | grep 'test-failure-recovery' || {
   echo Database did not restore
   exit 1
 }
-
-psql ${uri} -c "SELECT pg_is_in_recovery();"
 
 echo Database restored successfully!
 }
