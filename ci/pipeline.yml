@@ -67,6 +67,7 @@ jobs:
     - {get: boshrelease}
     - {get: boshrelease-trigger, trigger: true, params: {skip_download: true}}
     - {get: version, params: {pre: rc}}
+    - {get: pg95-image-edge, trigger: true, params: {skip_download: true}}
   - put: version
     params: {file: version/number}
 
@@ -109,7 +110,7 @@ jobs:
     - {get: boshrelease, passed: [bosh-rc], trigger: true}
     - {get: version, passed: [bosh-rc], trigger: true}
     - {get: candidate-release, passed: [bosh-rc], trigger: true}
-    - {get: pg95-image-edge, trigger: true, params: {skip_download: true}}
+    - {get: pg95-image-edge, params: {skip_download: true}}
     - {get: docker-image-registrator, trigger: true, params: {skip_download: true}}
     - {get: etcd}
     - {get: simple-remote-syslog}
