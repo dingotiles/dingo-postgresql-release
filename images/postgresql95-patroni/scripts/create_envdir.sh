@@ -6,6 +6,12 @@ if [[ "${WALE_ENV_DIR}X" == "X" || ! -d ${WALE_ENV_DIR} ]]; then
   exit 1
 fi
 
+# Ensure $WALE_S3_ENDPOINT not used in lieu of ${AWS_REGION} at the moment
+# TODO: in future, revisit this relationship
+if [[ "${AWS_REGION}X" != "X" ]]; then
+  unset WALE_S3_ENDPOINT
+fi
+
 rm -rf $WALE_ENV_DIR/*
 
 # only AWS currently supported
