@@ -3,6 +3,8 @@
 set -x
 set -e
 
+source boshrelease-ci/ci/helpers/database.sh
+
 # To avoid 'WARNING: terminal is not fully functional'
 export PAGER=/bin/cat
 
@@ -31,7 +33,8 @@ cf marketplace -s dingo-postgresql
 cf create-service dingo-postgresql cluster dr-test
 echo 'Waiting for async provisioning to complete'
 set +x
-sleep 5
+wait_for_database_recovery $pg_uri
+
 for ((n=0;n<120;n++)); do
     if cf service dr-test | grep 'create succeeded'; then
         break
