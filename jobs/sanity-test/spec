@@ -20,6 +20,7 @@ templates:
   config/fog-databasestorage.yml.erb: config/fog-databasestorage.yml
   helpers/ctl_setup.sh: helpers/ctl_setup.sh
   helpers/ctl_utils.sh: helpers/ctl_utils.sh
+  helpers/test_helpers.sh: helpers/test_helpers.sh
 properties:
   servicebroker.machines:
     description: hostnames for service broker servers

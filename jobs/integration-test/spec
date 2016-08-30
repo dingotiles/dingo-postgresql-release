@@ -8,6 +8,7 @@ templates:
   bin/test-clone-from-latest-by-name: bin/test-clone-from-latest-by-name
   helpers/ctl_setup.sh: helpers/ctl_setup.sh
   helpers/ctl_utils.sh: helpers/ctl_utils.sh
+  helpers/test_helpers.sh: helpers/test_helpers.sh
 properties:
   cf.api_url:
     description: URI for Cloud Foundry API to allow lookup of user-provided service names after provisioning

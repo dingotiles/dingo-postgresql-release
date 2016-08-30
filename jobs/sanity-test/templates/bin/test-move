@@ -9,6 +9,8 @@ plan_id=$2
 instance_id=$3
 uri=$4
 
+source /var/vcap/jobs/sanity-test/helpers/test_helpers.sh
+
 indent() {
   c="s/^/test-move> /"
   case $(uname) in
@@ -23,8 +25,9 @@ script() {
   echo "* Testing service move of containers to new cells"
   echo "*"
   echo "*"
-  set -x
 
+wait_for_database_recovery $uri
+set -x
 psql ${uri} -c 'DROP TABLE IF EXISTS sanitytest;'
 psql ${uri} -c 'CREATE TABLE sanitytest(value text);'
 psql ${uri} -c "INSERT INTO sanitytest VALUES ('move-test');"
@@ -48,8 +51,9 @@ set -x
 
 time update-service $service_id $plan_id $instance_id $update_service_parameters
 
-# even after "wait-for-leader" the connection might not be ready yet - for read or read/write
-sleep 30
+set +x
+wait_for_database_recovery $uri
+set -x
 
 final_service_cells_guids=$(curl -sf ${BROKER_URI}/admin/service_instances/${instance_id} | jq -r ".nodes[].cell_guid")
 if [[ "$service_cells_guids" == "$final_service_cells_guids" ]]; then

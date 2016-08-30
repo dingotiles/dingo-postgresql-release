@@ -5,7 +5,8 @@ set -e
 set -o pipefail
 
 uri=$1
-testvalue=${2:-"test-storage"}
+
+source /var/vcap/jobs/sanity-test/helpers/test_helpers.sh
 
 indent() {
   c="s/^/test-storage> /"
@@ -21,8 +22,11 @@ script() {
   echo "* Testing basic storage"
   echo "*"
   echo "*"
-  set -x
 
+testvalue=${2:-"test-storage"}
+
+wait_for_database_recovery $uri
+set -x
 psql ${uri} -c 'DROP TABLE IF EXISTS integrationtest;'
 psql ${uri} -c 'CREATE TABLE integrationtest(value text);'
 psql ${uri} -c "INSERT INTO integrationtest VALUES ('${testvalue}');"

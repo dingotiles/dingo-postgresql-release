@@ -9,6 +9,8 @@ plan=$2
 name=$3
 expected_value_stored=$4
 
+source /var/vcap/jobs/sanity-test/helpers/test_helpers.sh
+
 indent() {
   c="s/^/test-clone-from-latest-by-name> /"
   case $(uname) in
@@ -30,6 +32,9 @@ service_key=${clone_name}-creds
 credentials=$(cf-create-service $service $plan $clone_name $service_key -c "{\"clone-from\":\"${name}\"}")
 uri=$(echo $credentials | jq -r ".uri")
 
+set +x
+wait_for_database_recovery $uri
+set -x
 psql ${uri} -c 'SELECT value FROM integrationtest;' | grep ${expected_value_stored} || {
   echo "Could not store and retrieve value '${expected_value_stored}' from cloned cluster!"
   exit 1
