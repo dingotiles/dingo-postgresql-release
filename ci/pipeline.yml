@@ -230,16 +230,16 @@ jobs:
     - {get: simple-remote-syslog, passed: [deploy-vsphere]}
     - {get: version, passed: [deploy-vsphere], params: {bump: final}}
   - aggregate:
-    - do:
-      - {get: pg95-image-edge, passed: [deploy-vsphere], params: {save: true}}
-      - put: pg95-image-latest
-        params:
-          load_base: pg95-image-edge
-          load_file:       pg95-image-edge/image
-          load_repository: dingotiles/dingo-postgresql95
-          load_tag: edge
-          tag: version/number
-          tag_as_latest: true
+    # - do:
+    #   - {get: pg95-image-edge, passed: [deploy-vsphere], params: {save: true}}
+    #   - put: pg95-image-latest
+    #     params:
+    #       load_base: pg95-image-edge
+    #       load_file:       pg95-image-edge/image
+    #       load_repository: dingotiles/dingo-postgresql95
+    #       load_tag: edge
+    #       tag: version/number
+    #       tag_as_latest: true
 
     - do:
       - task: create-final-release
