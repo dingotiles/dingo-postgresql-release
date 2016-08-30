@@ -92,4 +92,6 @@ builds:
     version: 0.10.0-rc.19
   983553f8-fe06-4215-ba0d-7f96e0d42dc0:
     version: 0.10.0-rc.21
+  a601c4df-1047-4565-894d-5a7ecba06b4e:
+    version: 0.10.0-rc.24
 format-version: '2'
