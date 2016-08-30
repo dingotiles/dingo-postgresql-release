@@ -120,7 +120,7 @@ for ((n=0;n<30;n++)); do
   fi
   echo "Database still recovering"
   sleep 10
-fi
+done
 if [[ "${in_recovery}" != "false" ]]; then
   echo "Database failed to recover within 300s"
   exit 1
