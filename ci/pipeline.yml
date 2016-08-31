@@ -140,7 +140,8 @@ jobs:
         - candidate-release/*.tgz
         - etcd/*.tgz
         - simple-remote-syslog/*.tgz
-  - put: lite-errand-testflight
+  - put: sanity-test
+    resource: lite-errand-testflight
     params:
       manifest: manifest/manifest.yml
       errand: sanity-test
@@ -203,11 +204,13 @@ jobs:
     - task: prepare-disaster-recovery
       file: boshrelease-ci/ci/tasks/prepare-disaster-recovery.yml
     - do:
-      - put: lite-errand-integration
+      - put: disaster-recovery
+        resource: lite-errand-integration
         params:
           manifest: manifest/manifest.yml
           errand: integration-test
-      - put: lite-errand-integration
+      - put: disaster-recovery
+        resource: lite-errand-integration
         params:
           manifest: manifest/manifest.yml
           errand: disaster-recovery
@@ -269,7 +272,8 @@ jobs:
         - candidate-release/*.tgz
         - etcd/*.tgz
         - simple-remote-syslog/*.tgz
-  - put: vsphere-errand
+  - put: sanity-test
+    resource: vsphere-errand
     params:
       manifest: vsphere-manifest/manifest.yml
       errand: sanity-test
