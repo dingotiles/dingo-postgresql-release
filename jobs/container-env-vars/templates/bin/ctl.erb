@@ -45,7 +45,7 @@ case $1 in
     export DOCKER_HOSTNAME="<%= discover_external_ip %>"
     echo ${DOCKER_HOSTNAME} > ${env_var_dir}/DOCKER_HOSTNAME
 
-    CELL_GUID='<%= spec.address %>'
+    export CELL_GUID="<%= discover_external_ip %>"
     echo ${CELL_GUID} > ${env_var_dir}/CELL_GUID
 
     # do nothing forever
