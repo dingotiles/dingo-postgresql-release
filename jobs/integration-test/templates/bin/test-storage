@@ -5,6 +5,7 @@ set -e
 set -o pipefail
 
 uri=$1
+testvalue=${2:-"test-storage"}
 
 source /var/vcap/jobs/integration-test/helpers/test_helpers.sh
 
@@ -23,7 +24,6 @@ script() {
   echo "*"
   echo "*"
 
-testvalue=${2:-"test-storage"}
 
 wait_for_database_recovery $uri
 set -x
