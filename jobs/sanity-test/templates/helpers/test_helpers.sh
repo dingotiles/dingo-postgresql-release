@@ -22,7 +22,7 @@ wait_for_database() {
   fi
 
   for ((n=0;n<30;n++)); do
-    replicas=$(psql ${pg_uri} -c "select count(*) from pg_stat_replication;" -t | jq -r .)
+    replicas=$(psql ${uri} -c "select count(*) from pg_stat_replication;" -t | jq -r .)
     if [[ "$replicas" != "0" ]]; then
       echo "Now targetting leader with $replicas replicas"
       break
