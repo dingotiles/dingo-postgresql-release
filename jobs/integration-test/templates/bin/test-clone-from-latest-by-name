@@ -27,8 +27,6 @@ script() {
   echo "*"
   set -x
 
-display_wale_backup_status
-
 clone_name="clone-${name}"
 service_key=${clone_name}-creds
 credentials=$(cf-create-service $service $plan $clone_name $service_key -c "{\"clone-from\":\"${name}\"}")

@@ -21,14 +21,3 @@ wait_for_database_recovery() {
     exit 1
   fi
 }
-
-display_wale_backup_status() {
-  instance_id=$1
-  if [[ "${instance_id}X" == "X" ]]; then
-    echo "USAGE: display_wale_backup_status instance_id"
-    exit 1
-  fi
-
-  echo Display wal-e backup status
-  curl -s ${ETCD}/v2/keys/service/${instance_id}/wale-backup-list | jq -r .node.value
-}
