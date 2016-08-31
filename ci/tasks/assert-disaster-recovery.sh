@@ -13,7 +13,7 @@ cf auth admin admin
 cf t -o dr-test -s dr-test
 
 cf service-key dr-test dr-test-binding
-pg_uri=$(cf service-key dr-test dr-test-binding | grep '"uri"' | grep -o 'postgres://.*/postgres' | sed "s/@.*:/@${broker_ip}:/")
+pg_uri=$(cf service-key dr-test dr-test-binding | grep '"uri"' | grep -o 'postgres://.*/postgres' | sed "s/@.*:/@${router_ip}:/")
 
 set +x
 wait_for_database_recovery $pg_uri

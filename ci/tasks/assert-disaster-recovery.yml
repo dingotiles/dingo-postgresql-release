@@ -8,7 +8,7 @@ inputs:
 - name: boshrelease-ci
 
 params:
-  broker_ip: 10.58.111.45
+  router_ip: 10.58.111.47
 
 run:
   path: boshrelease-ci/ci/tasks/assert-disaster-recovery.sh
