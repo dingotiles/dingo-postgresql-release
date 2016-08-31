@@ -33,8 +33,6 @@ cf marketplace -s dingo-postgresql
 cf create-service dingo-postgresql cluster dr-test
 echo 'Waiting for async provisioning to complete'
 set +x
-wait_for_database_recovery $pg_uri
-
 for ((n=0;n<120;n++)); do
     if cf service dr-test | grep 'create succeeded'; then
         break
@@ -50,6 +48,7 @@ cf service-key dr-test dr-test-binding
 pg_uri=$(cf service-key dr-test dr-test-binding | grep '"uri"' | grep -o 'postgres://.*/postgres' | sed "s/@.*:/@${broker_ip}:/")
 superuser_uri=$(cf service-key dr-test dr-test-binding | grep '"superuser_uri"' | grep -o 'postgres://.*/postgres' | sed "s/@.*:/@${broker_ip}:/")
 
+wait_for_database_recovery $pg_uri
 psql ${pg_uri} -c 'CREATE TABLE disasterrecoverytest (value text);'
 psql ${pg_uri} -c "SELECT pg_is_in_recovery();"
 psql ${pg_uri} -c "INSERT INTO disasterrecoverytest VALUES ('dr-test');"
