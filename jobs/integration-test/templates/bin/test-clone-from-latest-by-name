@@ -27,6 +27,8 @@ script() {
   echo "*"
   set -x
 
+display_wale_backup_status
+
 clone_name="clone-${name}"
 service_key=${clone_name}-creds
 credentials=$(cf-create-service $service $plan $clone_name $service_key -c "{\"clone-from\":\"${name}\"}")
@@ -35,6 +37,7 @@ uri=$(echo $credentials | jq -r ".uri")
 set +x
 wait_for_database_recovery $uri
 set -x
+psql ${uri} -c 'SELECT * FROM integrationtest;'
 psql ${uri} -c 'SELECT value FROM integrationtest;' | grep ${expected_value_stored} || {
   echo "Could not store and retrieve value '${expected_value_stored}' from cloned cluster!"
   exit 1

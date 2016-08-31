@@ -41,9 +41,11 @@ for plan in ${plans[@]}; do
   service_key=${name}-creds
   credentials=$(cf-create-service $service $plan $name $service_key)
 
+  set +x
   echo $credentials
   uri=$(echo $credentials | jq -r ".uri")
   echo $uri
+  set -x
 
   expected_value_stored="stored-value-${name}"
   test-storage $uri $expected_value_stored
