@@ -140,7 +140,7 @@ jobs:
         - candidate-release/*.tgz
         - etcd/*.tgz
         - simple-remote-syslog/*.tgz
-  - put: lite-errand
+  - put: lite-errand-testflight
     params:
       manifest: manifest/manifest.yml
       errand: sanity-test
@@ -203,11 +203,11 @@ jobs:
     - task: prepare-disaster-recovery
       file: boshrelease-ci/ci/tasks/prepare-disaster-recovery.yml
     - do:
-      - put: lite-errand
+      - put: lite-errand-integration
         params:
           manifest: manifest/manifest.yml
           errand: integration-test
-      - put: lite-errand
+      - put: lite-errand-integration
         params:
           manifest: manifest/manifest.yml
           errand: disaster-recovery
@@ -609,7 +609,7 @@ resources:
 
 - name: lite-deployment-testflight
   type: bosh-deployment
-  source: &lite-defaults
+  source: &lite-testflight-defaults
     target: {{bosh-lite-testflight-target}}
     username: {{bosh-lite-username}}
     password: {{bosh-lite-password}}
@@ -617,15 +617,19 @@ resources:
 
 - name: lite-deployment-integration
   type: bosh-deployment
-  source: &lite-defaults
+  source: &lite-integration-defaults
     target: {{bosh-lite-integration-target}}
     username: {{bosh-lite-username}}
     password: {{bosh-lite-password}}
     deployment: dingo-postgresql-testflight
 
-- name: lite-errand
+- name: lite-errand-testflight
   type: bosh-errand
-  source: *lite-defaults
+  source: *lite-testflight-defaults
+
+- name: lite-errand-integration
+  type: bosh-errand
+  source: *lite-integration-defaults
 
 - name: vsphere-stemcell
   type: bosh-io-stemcell
