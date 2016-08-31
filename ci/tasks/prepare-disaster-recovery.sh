@@ -48,7 +48,9 @@ cf service-key dr-test dr-test-binding
 pg_uri=$(cf service-key dr-test dr-test-binding | grep '"uri"' | grep -o 'postgres://.*/postgres' | sed "s/@.*:/@${broker_ip}:/")
 superuser_uri=$(cf service-key dr-test dr-test-binding | grep '"superuser_uri"' | grep -o 'postgres://.*/postgres' | sed "s/@.*:/@${broker_ip}:/")
 
+set +x
 wait_for_database_recovery $pg_uri
+set -x
 psql ${pg_uri} -c 'CREATE TABLE disasterrecoverytest (value text);'
 psql ${pg_uri} -c "SELECT pg_is_in_recovery();"
 psql ${pg_uri} -c "INSERT INTO disasterrecoverytest VALUES ('dr-test');"
