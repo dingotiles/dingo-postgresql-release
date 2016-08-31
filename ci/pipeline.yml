@@ -1,7 +1,7 @@
 ---
 groups:
 - name: pipeline
-  jobs: [rc, bosh-rc, testflight, deploy-vsphere, shipit, shipit-rc, minor, major, patch]
+  jobs: [rc, bosh-rc, testflight, integration, deploy-vsphere, shipit, shipit-rc, minor, major, patch]
 - name: patroni-images
   jobs: [build-pg95-base-image, build-pg95-image, docker-machine-setup, test-images]
 - name: ci-image
@@ -88,7 +88,7 @@ jobs:
 
 - name: testflight
   public: true
-  serial: true
+  serial_groups: [bosh-lite-testflight]
   plan:
   - aggregate:
     - do:
@@ -98,13 +98,13 @@ jobs:
       #     file: boshrelease-ci/ci/tasks/delete-testflight.yml
       #     params:
       #       deployment_name: dingo-postgresql-testflight
-      #       bosh_target: {{bosh-lite-target}}
+      #       bosh_target: {{bosh-lite-testflight-target}}
       #       bosh_username: {{bosh-lite-username}}
       #       bosh_password: {{bosh-lite-password}}
       #   - task: delete-orphaned-disks-testflight
       #     file: boshrelease-ci/ci/tasks/delete-orphaned-disks-testflight.yml
       #     params:
-      #       bosh_target: {{bosh-lite-target}}
+      #       bosh_target: {{bosh-lite-testflight-target}}
       #       bosh_username: {{bosh-lite-username}}
       #       bosh_password: {{bosh-lite-password}}
     - {get: boshrelease, passed: [bosh-rc], trigger: true}
@@ -119,7 +119,7 @@ jobs:
     file: boshrelease-ci/ci/tasks/create-manifest.yml
     params:
       deployment_name: dingo-postgresql-testflight
-      bosh_target: {{bosh-lite-target}}
+      bosh_target: {{bosh-lite-testflight-target}}
       bosh_username: {{bosh-lite-username}}
       bosh_password: {{bosh-lite-password}}
       bosh_syslog_host: {{bosh-lite-syslog-host}}
@@ -132,7 +132,66 @@ jobs:
       docker_image_image: "dingotiles/dingo-postgresql95"
       docker_image_tag: "edge"
       docker_image_source: upstream
-  - put: lite-deployment
+  - put: lite-deployment-integration
+    params:
+      manifest: manifest/manifest.yml
+      stemcells: [lite-stemcell/*.tgz]
+      releases:
+        - candidate-release/*.tgz
+        - etcd/*.tgz
+        - simple-remote-syslog/*.tgz
+  - put: lite-errand
+    params:
+      manifest: manifest/manifest.yml
+      errand: sanity-test
+
+- name: integration
+  public: true
+  serial_groups: [bosh-lite-integration]
+  plan:
+  - aggregate:
+    - do:
+      - {get: boshrelease-ci}
+      - aggregate:
+        - task: delete-testflight
+          file: boshrelease-ci/ci/tasks/delete-testflight.yml
+          params:
+            deployment_name: dingo-postgresql-testflight
+            bosh_target: {{bosh-lite-integration-target}}
+            bosh_username: {{bosh-lite-username}}
+            bosh_password: {{bosh-lite-password}}
+        - task: delete-orphaned-disks-testflight
+          file: boshrelease-ci/ci/tasks/delete-orphaned-disks-testflight.yml
+          params:
+            bosh_target: {{bosh-lite-integration-target}}
+            bosh_username: {{bosh-lite-username}}
+            bosh_password: {{bosh-lite-password}}
+    - {get: boshrelease, passed: [testflight]}
+    - {get: version, passed: [testflight]}
+    - {get: pg95-image-edge, passed: [testflight], trigger: true, params: {skip_download: true}}
+    - {get: candidate-release, passed: [testflight], trigger: true}
+    - {get: etcd, passed: [testflight]}
+    - {get: simple-remote-syslog, passed: [testflight]}
+    - {get: docker-image-registrator, passed: [testflight], trigger: true, params: {skip_download: true}}
+    - {get: lite-stemcell, passed: [testflight]}
+  - task: create-lite-manifest
+    file: boshrelease-ci/ci/tasks/create-manifest.yml
+    params:
+      deployment_name: dingo-postgresql-testflight
+      bosh_target: {{bosh-lite-integration-target}}
+      bosh_username: {{bosh-lite-username}}
+      bosh_password: {{bosh-lite-password}}
+      bosh_syslog_host: {{bosh-lite-syslog-host}}
+      bosh_syslog_port: {{bosh-lite-syslog-port}}
+      aws_access_key: {{dingotiles-aws-access}}
+      aws_secret_key: {{dingotiles-aws-secret}}
+      backups_bucket: {{backups-testflight-backups-bucket}}
+      clusterdata_bucket: {{backups-testflight-clusterdata-bucket}}
+      region: {{backups-testflight-s3-region}}
+      docker_image_image: "dingotiles/dingo-postgresql95"
+      docker_image_tag: "edge"
+      docker_image_source: upstream
+  - put: lite-deployment-testflight
     params:
       manifest: manifest/manifest.yml
       stemcells: [lite-stemcell/*.tgz]
@@ -144,10 +203,6 @@ jobs:
     - task: prepare-disaster-recovery
       file: boshrelease-ci/ci/tasks/prepare-disaster-recovery.yml
     - do:
-      - put: lite-errand
-        params:
-          manifest: manifest/manifest.yml
-          errand: sanity-test
       - put: lite-errand
         params:
           manifest: manifest/manifest.yml
@@ -225,10 +280,10 @@ jobs:
   plan:
   - aggregate:
     - {get: boshrelease-ci}
-    - {get: boshrelease, passed: [deploy-vsphere]}
-    - {get: candidate-release, passed: [deploy-vsphere]}
-    - {get: etcd, passed: [deploy-vsphere]}
-    - {get: simple-remote-syslog, passed: [deploy-vsphere]}
+    - {get: boshrelease, passed: [integration, deploy-vsphere]}
+    - {get: candidate-release, passed: [integration, deploy-vsphere]}
+    - {get: etcd, passed: [integration, deploy-vsphere]}
+    - {get: simple-remote-syslog, passed: [integration, deploy-vsphere]}
     - {get: version, passed: [deploy-vsphere], params: {bump: final}}
   - aggregate:
     # - do:
@@ -289,11 +344,11 @@ jobs:
   plan:
   - aggregate:
     - {get: boshrelease-ci}
-    - {get: boshrelease, passed: [deploy-vsphere]}
-    - {get: candidate-release, passed: [deploy-vsphere]}
-    - {get: etcd, passed: [deploy-vsphere]}
-    - {get: simple-remote-syslog, passed: [deploy-vsphere]}
-    - {get: version, passed: [deploy-vsphere]}
+    - {get: boshrelease, passed: [integration, deploy-vsphere]}
+    - {get: candidate-release, passed: [integration, deploy-vsphere]}
+    - {get: etcd, passed: [integration, deploy-vsphere]}
+    - {get: simple-remote-syslog, passed: [integration, deploy-vsphere]}
+    - {get: version, passed: [integration, deploy-vsphere]}
   - aggregate:
     # - do:
     #   - {get: pg95-image-edge, passed: [deploy-vsphere], params: {save: true}}
@@ -552,10 +607,18 @@ resources:
   source:
     name: bosh-warden-boshlite-ubuntu-trusty-go_agent
 
-- name: lite-deployment
+- name: lite-deployment-testflight
   type: bosh-deployment
   source: &lite-defaults
-    target: {{bosh-lite-target}}
+    target: {{bosh-lite-testflight-target}}
+    username: {{bosh-lite-username}}
+    password: {{bosh-lite-password}}
+    deployment: dingo-postgresql-testflight
+
+- name: lite-deployment-integration
+  type: bosh-deployment
+  source: &lite-defaults
+    target: {{bosh-lite-integration-target}}
     username: {{bosh-lite-username}}
     password: {{bosh-lite-password}}
     deployment: dingo-postgresql-testflight
