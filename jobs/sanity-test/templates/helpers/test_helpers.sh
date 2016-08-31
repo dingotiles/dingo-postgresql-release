@@ -1,8 +1,8 @@
-wait_for_database_recovery() {
+wait_for_database() {
   set +e
   uri=$1
   if [[ "${uri}X" == "X" ]]; then
-    echo "USAGE: wait_for_database_recovery uri"
+    echo "USAGE: wait_for_database uri"
     exit 1
   fi
 
@@ -18,6 +18,20 @@ wait_for_database_recovery() {
   done
   if [[ "${in_recovery}" != "false" ]]; then
     echo "Data was still in recovery after 300s"
+    exit 1
+  fi
+
+  for ((n=0;n<30;n++)); do
+    replicas=$(psql ${pg_uri} -c "select count(*) from pg_stat_replication;" -t | jq -r .)
+    if [[ "$replicas" != "0" ]]; then
+      echo "Now targetting leader with $replicas replicas"
+      break
+    fi
+    echo "Currently targeting read-only replica or leader has no replicas yet"
+    sleep 5
+  done
+  if [[ "$replicas" == "0" ]]; then
+    echo "After 150s still targeting read-only replica or leader has no replicas yet"
     exit 1
   fi
 }

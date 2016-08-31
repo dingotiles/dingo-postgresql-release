@@ -114,7 +114,7 @@ if [[ "${running_ok}" == "false" ]]; then
 fi
 
 set +x
-wait_for_database_recovery $uri
+wait_for_database $uri
 set -x
 
 psql ${uri} -c "SELECT * from sanitytest;"

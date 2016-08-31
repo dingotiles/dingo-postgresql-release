@@ -25,7 +25,7 @@ script() {
   echo "*"
 
 
-wait_for_database_recovery $uri
+wait_for_database $uri
 set -x
 psql ${uri} -c 'DROP TABLE IF EXISTS integrationtest;'
 psql ${uri} -c 'CREATE TABLE integrationtest(value text);'

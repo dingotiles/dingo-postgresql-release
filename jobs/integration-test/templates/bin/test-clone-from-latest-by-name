@@ -33,7 +33,7 @@ credentials=$(cf-create-service $service $plan $clone_name $service_key -c "{\"c
 uri=$(echo $credentials | jq -r ".uri")
 
 set +x
-wait_for_database_recovery $uri
+wait_for_database $uri
 set -x
 psql ${uri} -c 'SELECT * FROM integrationtest;'
 psql ${uri} -c 'SELECT value FROM integrationtest;' | grep ${expected_value_stored} || {
