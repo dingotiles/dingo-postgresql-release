@@ -98,4 +98,6 @@ builds:
     version: 0.10.0-rc.32
   367f3986-d21a-411e-80f1-f0c3aabb43bc:
     version: 0.10.0-rc.37
+  5e07e7ef-b612-4d3c-85cc-493f35afff45:
+    version: 0.10.0
 format-version: '2'
