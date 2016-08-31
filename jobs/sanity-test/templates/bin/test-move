@@ -39,8 +39,15 @@ psql ${uri} -c "INSERT INTO sanitytest VALUES ('move-test');"
 set +x
 available_cells_guids=$(curl -sf ${BROKER_URI}/admin/cells | jq -r ".[].guid" | sort)
 echo "available_cells_guids: $available_cells_guids"
+
 service_cells_guids=$(curl -sf ${BROKER_URI}/admin/service_instances/${instance_id} | jq -r ".nodes[].cell_guid" | sort)
+if [[ "${service_cells_guids}X" == "X" ]]; then
+  echo "Error: /admin/service_instances/${instance_id} returned 0 .nodes[].cell_guid"
+  curl -sf ${BROKER_URI}/admin/service_instances/${instance_id} | jq -r "."
+  exit 1
+fi
 echo "service_cells_guids: $service_cells_guids"
+
 set +o pipefail # diff returns error; and we don't want to exit script
 alternate_cell_guids=$(diff <(echo $available_cells_guids | tr " " "\n") <(echo $service_cells_guids | tr " " "\n") | grep "<" | awk '{print $2}' | paste -sd "," -)
 set -o pipefail
