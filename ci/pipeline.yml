@@ -402,7 +402,6 @@ jobs:
           globs:
           - final-release-tarball/*.tgz
           - dependency-releases/*.tgz
-          - license-finder-reports/dingo-postgresql-release-license-report-*.csv
 
 - name: major
   public: true
