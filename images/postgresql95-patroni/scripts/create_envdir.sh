@@ -6,11 +6,16 @@ if [[ "${WALE_ENV_DIR}X" == "X" || ! -d ${WALE_ENV_DIR} ]]; then
   exit 1
 fi
 
-# Ensure $WALE_S3_ENDPOINT not used in lieu of ${AWS_REGION} at the moment
-# TODO: in future, revisit this relationship
+# Convert $AWS_REGION into $WALE_S3_ENDPOINT to avoid "Connection reset by peer" from
+# some regions (we experienced it in Tokyo) https://github.com/wal-e/wal-e/issues/167
 if [[ "${AWS_REGION}X" != "X" ]]; then
-  unset WALE_S3_ENDPOINT
+  if [[ "${AWS_REGION}" == "us-east-1" ]]; then
+    export WALE_S3_ENDPOINT="https+path://s3.amazonaws.com:443"
+  else
+    export WALE_S3_ENDPOINT="https+path://s3-${AWS_REGION}.amazonaws.com:443"
+  fi
 fi
+unset AWS_REGION
 
 rm -rf $WALE_ENV_DIR/*
 
