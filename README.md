@@ -14,6 +14,7 @@ The BOSH release is the basis for the Pivotal Network tile [Dingo PostgreSQL](ht
 
 Important links:
 
+* [App developer/user tutorial](#tutorial)
 * [Support & Discussions](https://slack.dingotiles.com)
 * [Licensing](#licensing)
 * [Installation](#installation)
@@ -53,6 +54,15 @@ Clustering between multiple nodes each PostgreSQL cluster is automatically coord
 If a cell/server is lost, then replicas on other cells are promoted to be the master of each cluster, and the front facing router automatically starts directly traffic to the new master.
 
 Refer to the [LEARNING_PATRONI](./LEARNING_PATRONI.md) guide for more information patroni.
+
+## Tutorial
+
+See [App developer/user tutorial](http://www.dingotiles.com/dingo-postgresql/tutorial.html) for a walk-thru of basic usage features:
+
+* Provisioning Dingo PostgreSQL database and binding to the sample Spring Music app
+* Cloning the database into a separate Dingo PostgreSQL database
+* Deleting a database
+* Restoring a database from backups
 
 ## Licensing
 
