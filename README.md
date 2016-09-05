@@ -57,7 +57,7 @@ Refer to the [LEARNING_PATRONI](./LEARNING_PATRONI.md) guide for more informatio
 
 ## Tutorial
 
-See [App developer/user tutorial](http://www.dingotiles.com/dingo-postgresql/tutorial.html) for a walk-thru of basic usage features:
+See [App developer/user tutorial](http://www.dingotiles.com/dingo-postgresql/usage-tutorial.html) for a walk-thru of basic usage features:
 
 * Provisioning Dingo PostgreSQL database and binding to the sample Spring Music app
 * Cloning the database into a separate Dingo PostgreSQL database
