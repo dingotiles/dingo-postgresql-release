@@ -59,7 +59,9 @@ Refer to the [LEARNING_PATRONI](./LEARNING_PATRONI.md) guide for more informatio
 
 See [App developer/user tutorial](http://www.dingotiles.com/dingo-postgresql/usage-tutorial.html) for a walk-thru of basic usage features:
 
+* Deploying sample Spring Music app to Cloud Foundry
 * Provisioning Dingo PostgreSQL database and binding to the sample Spring Music app
+* Interacting with Dingo PostgreSQL using service keys
 * Cloning the database into a separate Dingo PostgreSQL database
 * Deleting a database
 * Restoring a database from backups
