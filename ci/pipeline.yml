@@ -557,6 +557,22 @@ resources:
     private_key: {{github-private-key}}
     paths: [images/postgresql95-patroni-base]
 
+- name: boshrelease-pg96-image
+  type: git
+  source:
+    uri: git@github.com:dingotiles/dingo-postgresql-release.git
+    branch: {{pipeline-branch}}
+    private_key: {{github-private-key}}
+    paths: [images/postgresql96-patroni]
+
+- name: boshrelease-pg96-base-image
+  type: git
+  source:
+    uri: git@github.com:dingotiles/dingo-postgresql-release.git
+    branch: {{pipeline-branch}}
+    private_key: {{github-private-key}}
+    paths: [images/postgresql96-patroni-base]
+
 - name: version
   type: semver
   source:
@@ -628,15 +644,6 @@ resources:
     repository: dingotiles/dingo-postgresql95
     tag: "pre-test"
 
-- name: docker-image-registrator
-  type: docker-image
-  source:
-    email: {{docker-hub-email}}
-    username: {{docker-hub-username}}
-    password: {{docker-hub-password}}
-    repository: cfcommunity/registrator
-    tag: "latest"
-
 - name: docker-image-pg95-patroni-master
   type: docker-image
   source:
@@ -645,6 +652,60 @@ resources:
     password: {{docker-hub-password}}
     repository: dingotiles/dingo-postgresql95
     tag: "9.5-patroni-master"
+
+- name: pg96-base-image-latest
+  type: docker-image
+  source:
+    email: {{docker-hub-email}}
+    username: {{docker-hub-username}}
+    password: {{docker-hub-password}}
+    repository: dingotiles/dingo-postgresql96-base
+    tag: "latest"
+
+- name: pg96-image-latest
+  type: docker-image
+  source:
+    email: {{docker-hub-email}}
+    username: {{docker-hub-username}}
+    password: {{docker-hub-password}}
+    repository: dingotiles/dingo-postgresql96
+    tag: "latest"
+
+- name: pg96-image-edge
+  type: docker-image
+  source:
+    email: {{docker-hub-email}}
+    username: {{docker-hub-username}}
+    password: {{docker-hub-password}}
+    repository: dingotiles/dingo-postgresql96
+    tag: "edge"
+
+- name: pg96-image-pre-test
+  type: docker-image
+  source:
+    email: {{docker-hub-email}}
+    username: {{docker-hub-username}}
+    password: {{docker-hub-password}}
+    repository: dingotiles/dingo-postgresql96
+    tag: "pre-test"
+
+- name: docker-image-pg96-patroni-master
+  type: docker-image
+  source:
+    email: {{docker-hub-email}}
+    username: {{docker-hub-username}}
+    password: {{docker-hub-password}}
+    repository: dingotiles/dingo-postgresql95
+    tag: "9.6-patroni-master"
+
+- name: docker-image-registrator
+  type: docker-image
+  source:
+    email: {{docker-hub-email}}
+    username: {{docker-hub-username}}
+    password: {{docker-hub-password}}
+    repository: cfcommunity/registrator
+    tag: "latest"
 
 - name: docker-image-ci
   type: docker-image
