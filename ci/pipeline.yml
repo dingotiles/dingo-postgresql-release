@@ -65,7 +65,7 @@ jobs:
       build: dockerfile
 
 - name: test-95-image
-  serial: true
+  serial_groups: [delmo]
   plan:
   - aggregate:
     - {get: boshrelease-ci}
@@ -87,7 +87,7 @@ jobs:
       pull_tag: pre-test
 
 - name: test-96-image
-  serial: true
+  serial_groups: [delmo]
   plan:
   - aggregate:
     - {get: boshrelease-ci}
