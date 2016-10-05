@@ -350,6 +350,11 @@ cmd_superuser_uri() {
 
 cmd_wale_backup_list() {
   instance_id=${1:?USAGE: dpg wale-backup-list INSTANCE_ID}
+  wale_backup_list=$(cmd_raw /service/${instance_id}/wale-backup-list | jq -r .node.value)
+  if [[ "${wale_backup_list}" == "null" ]]; then
+    echo "Cluster data no longer cached in etcd; or invalid INSTANCE_ID" >&2
+    exit 1
+  fi
   cmd_raw /service/${instance_id}/wale-backup-list | jq -r .node.value
 }
 
