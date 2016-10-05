@@ -79,6 +79,13 @@ HOST_IP=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0
 echo $HOST_IP
 ```
 
+On Docker for Mac:
+
+```
+HOST_IP=$(ipconfig getifaddr en0)
+echo $HOST_IP
+```
+
 On `docker-machine`:
 
 ```
@@ -174,6 +181,7 @@ _docker rm -f john
 _docker run -d \
     --name john -p 40000:5432 \
     -e NAME=john \
+    -e NODE_ID=john \
     -e PATRONI_SCOPE=my_first_cluster \
     -e "ETCD_HOST_PORT=${ETCD_CLUSTER}" \
     -e "DOCKER_HOSTNAME=${HOST_IP}" \
@@ -304,7 +312,7 @@ etcd:
 ...
 ```
 
-Patroni runs an API on local port `:8008`. Currently it is only configured for local loopback access, and doesn't require additional authentication.
+Patroni runs an API on local port `:8008`. Currently it doesn't require additional authentication.
 
 To check Patroni's local status:
 
@@ -365,6 +373,7 @@ To run a second container that joins to the same cluster, binding to host port 4
 _docker rm -f paul
 _docker run -d --name paul -p 40001:5432 \
     -e NAME=paul \
+    -e NODE_ID=paul \
     -e PATRONI_SCOPE=my_first_cluster \
     -e "ETCD_HOST_PORT=${ETCD_CLUSTER}" \
     -e "DOCKER_HOSTNAME=${HOST_IP}" \
@@ -544,6 +553,7 @@ curl -v "${ETCD_CLUSTER}/v2/keys/service?dir=true&recursive=true" -X DELETE
 _docker run -d --name john -p 40000:5432 \
     --env-file=tmp/wal-e.env \
     -e NAME=john \
+    -e NODE_ID=john \
     -e PATRONI_SCOPE=my_first_cluster \
     -e "ETCD_HOST_PORT=${ETCD_CLUSTER}" \
     -e "DOCKER_HOSTNAME=${HOST_IP}" \
@@ -603,6 +613,7 @@ _docker rm -f paul
 _docker run -d --name paul -p 40001:5432 \
     --env-file=tmp/wal-e.env \
     -e NAME=paul \
+    -e NODE_ID=paul \
     -e PATRONI_SCOPE=my_first_cluster \
     -e "ETCD_HOST_PORT=${ETCD_CLUSTER}" \
     -e "DOCKER_HOSTNAME=${HOST_IP}" \
@@ -659,8 +670,3 @@ To fetch a backup:
 ```
 envdir /data/wal-e/env wal-e backup-fetch $(cat /data/wal-e/env/PG_DATA_DIR) LATEST
 ```
-
-Copyright
----------
-
-Copyright (c) 2015 Dr Nic Williams. See [LICENSE](https://github.com/drnic/dingo-postgresql-release/blob/master/LICENSE.md) for details.
