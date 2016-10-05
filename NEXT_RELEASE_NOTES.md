@@ -14,6 +14,39 @@ The spruce templates automatically add it to `router` job.
 It pre-configures `dpg` with cf, etcd, and service broker credentials;
 and makes `dpg` immediately runnable as `root` user.
 
+To add `dpg-cli` to `router` job (or any other), add to the job and provide properties:
+
+```yaml
+- name: router
+  instances: 1
+  templates:
+    - {name: remote-syslog, release: simple-remote-syslog}
+    - {name: broker, release: dingo-postgresql}
+    - {name: router, release: dingo-postgresql}
+    - {name: dpg-cli, release: dingo-postgresql}
+  properties:
+    servicebroker:
+      machines: [127.0.0.1]
+      port: 8889 # internally binding
+      username: starkandwayne
+      password: starkandwayne
+    cf:
+      api_url: ...
+      username: ...
+      password: ...
+      skip_ssl_validation: false
+    etcd:
+      machines: [...]
+```
+
+Then, after `bosh ssh router/0`, change to root user and try `dpg`:
+
+```
+bosh ssh router/0
+sudo su -
+dpg ls
+```
+
 To see help, run `dpg` without arguments.
 
 Example commands to test drive the support tool:
@@ -64,28 +97,3 @@ dpg delete my-first-cluster
 ```
 
 NOTE: `my-first-cluster` will be a long UUID/GUID for values provided by Cloud Foundry; and a value prefixed by `T-` when created by the `sanity-test` errand (which can be deleted if you see them).
-
-To add `dpg-cli` to `router` job (or any other), add to the job and provide properties:
-
-```yaml
-- name: router
-  instances: 1
-  templates:
-    - {name: remote-syslog, release: simple-remote-syslog}
-    - {name: broker, release: dingo-postgresql}
-    - {name: router, release: dingo-postgresql}
-    - {name: dpg-cli, release: dingo-postgresql}
-  properties:
-    servicebroker:
-      machines: [127.0.0.1]
-      port: 8889 # internally binding
-      username: starkandwayne
-      password: starkandwayne
-    cf:
-      api_url: ...
-      username: ...
-      password: ...
-      skip_ssl_validation: false
-    etcd:
-      machines: [...]
-```

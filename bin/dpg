@@ -141,7 +141,8 @@ load_current() {
       if [[ -f "${TARGET_DIR}/cf_skip_ssl_validation" ]]; then
         skip_ssl_validation='--skip-ssl-validation'
       fi
-      cf login -a ${CF_ENDPOINT} -u ${CF_USERNAME} -p ${cf_password} ${skip_ssl_validation}
+      cf api "${CF_ENDPOINT}" ${skip_ssl_validation}
+      cf auth "${CF_USERNAME}" "${cf_password}"
     fi
   fi
 }
@@ -238,7 +239,8 @@ cmd_target() {
   fi
 
   if [[ ! -z "${cf_password}" ]]; then
-    cf login -a ${cf_endpoint} -u ${cf_username} -p ${cf_password} ${skip_ssl_validation}
+    cf api "${cf_endpoint}" ${skip_ssl_validation}
+    cf auth "${cf_username}" "${cf_password}"
   fi
 }
 
