@@ -17,12 +17,25 @@ restore_service_instance "<%= instance_id %>"
 cf api <%= p('cf.api_url') %> <%= p("cf.skip_ssl_validation") ? "--skip-ssl-validation" : "" %>
 cf auth <%= p('cf.username') %> <%= p('cf.password') %>
 
-service_guid=$(cf curl /v2/services | \
-  jq -r '.resources[] | select(.entity.unique_id == "<%= service_id %>") | .metadata.guid')
-echo Looking up service instances for all plans for dingo-postgresql $service_guid
-cf curl /v2/services/${service_guid}/service_plans | \
-  jq -r ".resources[].entity.service_instances_url" | \
-  xargs -L1 cf curl | \
-  jq -r ".resources[].metadata.guid" | \
-  xargs -L1 restore_service_instance
+# many CFs might have < 50 services; but if you use buddy-broker you can generate many many services
+root_service_id="<%= service_id %>"
+next_url=/v2/services
+while [[ "${next_url}" != "null" ]]; do
+  echo Loading page of services ${next_url} >&2
+  services=$(cf curl "${next_url}" | jq -r ".resources[]" | jq -r "select(.entity.unique_id | test(\"^${root_service_id}\"))")
+  if [[ "${services}" != "null" ]]; then
+    service_guids=$(echo ${services} | jq -r ".metadata.guid")
+    for service_guid in $service_guids; do
+      service=$(cf curl /v2/services/${service_guid})
+      service_label=$(echo $service | jq -r ".entity.label")
+      echo Restoring all service instances for all plans for $service_label >&2
+      cf curl /v2/services/${service_guid}/service_plans | \
+        jq -r ".resources[].entity.service_instances_url" | \
+        xargs -L1 cf curl | \
+        jq -r ".resources[].metadata.guid" | \
+        xargs -L1 restore_service_instance
+    done
+  fi
+  next_url=$(cf curl "${next_url}" | jq -r -c ".next_url")
+done
 <% end %>
