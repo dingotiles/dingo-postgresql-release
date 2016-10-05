@@ -306,7 +306,7 @@ cmd_demote_cell() {
   echo "You are about to remote cell/server '${cell_guid}'"
   read -sp 'Press enter to continue> '
   echo
-  curl "${BROKER_USERNAME}:${broker_password}@${BROKER_ENDPOINT}/admin/cells/${cell_guid}/demote" -i -XPOST
+  curl "${BROKER_USERNAME}:${BROKER_PASSWORD}@${BROKER_ENDPOINT}/admin/cells/${cell_guid}/demote" -i -XPOST
 }
 
 cmd_delete() {
@@ -320,7 +320,7 @@ cmd_delete() {
   echo "You are about to delete the cluster '${instance_id}'"
   read -sp 'Press enter to continue> '
   echo
-  curl ${BROKER_USERNAME}:${broker_password}@${BROKER_ENDPOINT}/v2/service_instances/${instance_id}\?plan_id=${plan_id}\&service_id=${service_id} -XDELETE
+  curl ${BROKER_USERNAME}:${BROKER_PASSWORD}@${BROKER_ENDPOINT}/v2/service_instances/${instance_id}\?plan_id=${plan_id}\&service_id=${service_id} -XDELETE
 }
 
 cmd_create() {
@@ -332,7 +332,7 @@ cmd_create() {
     exit 1
   fi
   echo "You are about to create the cluster '${instance_id}'"
-  curl ${BROKER_USERNAME}:${broker_password}@${BROKER_ENDPOINT}/v2/service_instances/${instance_id} \
+  curl ${BROKER_USERNAME}:${BROKER_PASSWORD}@${BROKER_ENDPOINT}/v2/service_instances/${instance_id} \
     -XPUT \
     -d "{\"service_id\": \"${service_id}\", \"plan_id\": \"${plan_id}\"}"
 }
