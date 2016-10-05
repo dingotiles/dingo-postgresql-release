@@ -22,7 +22,7 @@ EOF
 To clean out the containers, ALL etcd data, and the S3 backups:
 
 ```
-env $(cat tmp/tutorial.env| xargs) ./images/tutorial/cleanup.sh; env $(cat tmp/tutorial-wale.env | xargs) ./images/tutorial/cleanup-s3.sh; ENV_FILE=tmp/tutorial-wale.env env $(cat tmp/tutorial.env| xargs) NODE_GUID=test-first ./images/tutorial/create.sh
+env $(cat tmp/tutorial.env| xargs) ./images/tutorial/cleanup.sh; env $(cat tmp/tutorial-wale.env | xargs) ./images/tutorial/s3-cleanup.sh; ENV_FILE=tmp/tutorial-wale.env env $(cat tmp/tutorial.env| xargs) NODE_GUID=test-first ./images/tutorial/create.sh
 ```
 
 This takes a few minutes until the basebackup is complete and new WAL segments archived:

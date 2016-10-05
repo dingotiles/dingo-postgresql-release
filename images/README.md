@@ -13,14 +13,15 @@ Check out the [CONTAINER_TESTS](./CONTAINER_TESTS.md) to play around with this s
 Linux:
 
 ```
-apt-get install jq
+apt-get install jq awscli
 ```
 
 Mac:
 
 ```
-brew install jq
+brew install jq awscli
 ```
+
 
 ### Docker command
 
@@ -187,7 +188,7 @@ _docker run -d \
     -e "ETCD_HOST_PORT=${ETCD_CLUSTER}" \
     -e "DOCKER_HOSTNAME=${HOST_IP}" \
     -e "ADMIN_USERNAME=${ADMIN_USERNAME}" \
-    -e "ADMIN_PASSWORD=${POSTGRES_PASSWORD}" \
+    -e "ADMIN_PASSWORD=${ADMIN_PASSWORD}" \
     ${POSTGRESQL_IMAGE}
 ```
 
@@ -298,7 +299,7 @@ psql (9.5.1)
 Type "help" for help.
 
 postgres=>
-$ psql postgres://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@${HOST_IP}:40000/postgres
+$ psql postgres://${ADMIN_USERNAME}:${ADMIN_PASSWORD}@${HOST_IP}:40000/postgres
 psql (9.5.1)
 Type "help" for help.
 
@@ -414,8 +415,8 @@ _docker run -d --name paul \
     -e PATRONI_SCOPE=my_first_cluster \
     -e "ETCD_HOST_PORT=${ETCD_CLUSTER}" \
     -e "DOCKER_HOSTNAME=${HOST_IP}" \
-    -e POSTGRES_USERNAME=${POSTGRES_USERNAME} \
-    -e POSTGRES_USERNAME=${POSTGRES_PASSWORD} \
+    -e "ADMIN_USERNAME=${ADMIN_USERNAME}" \
+    -e "ADMIN_PASSWORD=${ADMIN_PASSWORD}" \
     ${POSTGRESQL_IMAGE}
 ```
 
@@ -454,7 +455,7 @@ curl -s ${ETCD_CLUSTER}/v2/keys/service/my_first_cluster/members | jq -r ".node.
 Using the leader's `psql` URI from above, confirm that the leader has the replica registered:
 
 ```
-$ psql postgres://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@${HOST_IP}:40000/postgres -c 'select * from pg_stat_replication;'
+$ psql postgres://${ADMIN_USERNAME}:${ADMIN_PASSWORD}@${HOST_IP}:40000/postgres -c 'select * from pg_stat_replication;'
 pid | usesysid |  usename       | application_name | client_addr |...
  82 |    16384 | dvw7DJgqzFBJC8 | walreceiver      | 172.17.42.1 |...
 ```
@@ -563,7 +564,7 @@ To setup wal-e we need to pass in some environment variables to the Docker conta
 -	`WALE_BACKUP_THRESHOLD_MEGABYTES` - if WAL amount is above that - use fresh `pg_basebackup` from master, rather that fetch old base backup from S3
 -	`WALE_BACKUP_THRESHOLD_PERCENTAGE` - if WAL size exceeds a certain percentage of the latest backup size
 
-For example, create a local file `tmp/wal-e.env` which will be passed into `docker run`:
+For example, create a local file `tmp/tutorial-wale.env` which will be passed into `docker run`:
 
 ```
 AWS_ACCESS_KEY_ID=XXX
@@ -576,22 +577,25 @@ WALE_BACKUP_THRESHOLD_PERCENTAGE=30
 WALE_BACKUP_THRESHOLD_MEGABYTES=10240
 ```
 
-Now, when invoking `docker run` above, include this `/tmp/wal-e.env` file:
+Now, when invoking `docker run` above, include this `tmp/tutorial-wale.env` file:
 
 ```
-_docker rm -f john
-_docker rm -f paul
-curl -v "${ETCD_CLUSTER}/v2/keys/service?dir=true&recursive=true" -X DELETE
+_docker rm -f john; \
+_docker rm -f paul; \
+curl -v "${ETCD_CLUSTER}/v2/keys/service?dir=true&recursive=true" -X DELETE; \
+if [[ -f tmp/tutorial-wale.env ]]; then env $(cat tmp/tutorial-wale.env | xargs) ./images/tutorial/s3-cleanup.sh; fi
 
-_docker run -d --name john -p 40000:5432 \
-    --env-file=tmp/wal-e.env \
+_docker run -d \
+    --name john \
     -e NAME=john \
     -e NODE_ID=john \
+    -p 40000:5432 -p 50000:8008 \
     -e PATRONI_SCOPE=my_first_cluster \
     -e "ETCD_HOST_PORT=${ETCD_CLUSTER}" \
     -e "DOCKER_HOSTNAME=${HOST_IP}" \
-    -e "POSTGRES_USERNAME=${POSTGRES_USERNAME}" \
-    -e "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}" \
+    -e "ADMIN_USERNAME=${ADMIN_USERNAME}" \
+    -e "ADMIN_PASSWORD=${ADMIN_PASSWORD}" \
+    --env-file=tmp/tutorial-wale.env \
     ${POSTGRESQL_IMAGE}
 _docker logs -f john
 ```
@@ -622,8 +626,8 @@ wal_e.operator.backup INFO     MSG: start upload postgres version metadata
 To add some data to trigger the initial WAL pushes:
 
 ```
-pgbench -i postgres://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@${HOST_IP}:40000/postgres
-pgbench postgres://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@${HOST_IP}:40000/postgres -T 60
+pgbench -i postgres://${ADMIN_USERNAME}:${ADMIN_PASSWORD}@${HOST_IP}:40000/postgres
+pgbench postgres://${ADMIN_USERNAME}:${ADMIN_PASSWORD}@${HOST_IP}:40000/postgres -T 60
 _docker logs -f john
 ```
 
@@ -639,6 +643,12 @@ wal_e.worker.upload INFO     MSG: begin archiving a file
 LOG:  unexpected EOF on client connection with an open transaction
 ```
 
+To see the files that were created into the object store:
+
+```
+env $(cat tmp/tutorial-wale.env | xargs) ./images/tutorial/s3-contents.sh
+```
+
 Now run secondary `paul`:
 
 ```
@@ -650,8 +660,8 @@ _docker run -d --name paul -p 40001:5432 \
     -e PATRONI_SCOPE=my_first_cluster \
     -e "ETCD_HOST_PORT=${ETCD_CLUSTER}" \
     -e "DOCKER_HOSTNAME=${HOST_IP}" \
-    -e "POSTGRES_USERNAME=${POSTGRES_USERNAME}" \
-    -e "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}" \
+    -e "ADMIN_USERNAME=${ADMIN_USERNAME}" \
+    -e "ADMIN_PASSWORD=${ADMIN_PASSWORD}" \
     ${POSTGRESQL_IMAGE}
 _docker logs -f paul
 ```
