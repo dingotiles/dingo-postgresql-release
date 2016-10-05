@@ -286,7 +286,7 @@ cmd_ls() {
         state=$(cat ${etcd_cache} | jq -r --arg state ${state_path} '.node.nodes[].nodes[] | select(contains({key: $state})).value' 2>/dev/null)
         if [[ ! -z ${state} ]]; then
           if [[ ${cf_name} == '<none>' ]]; then
-            cf_name='<UNKNOWN>'
+            cf_name='<unknown>'
           fi
 
           cf_org_id=$(echo ${state} | jq -r '.organization_guid')
