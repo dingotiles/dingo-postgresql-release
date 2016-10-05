@@ -31,6 +31,7 @@ jobs:
       - {name: remote-syslog, release: simple-remote-syslog}
       - {name: broker, release: dingo-postgresql}
       - {name: router, release: dingo-postgresql}
+      - {name: dpg-cli, release: dingo-postgresql}
     resource_pool: router_z1
     networks: [{name: router1}]
     properties:

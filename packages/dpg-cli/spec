@@ -1,0 +1,4 @@
+---
+name: dpg-cli
+dependencies: []
+files: [dpg-cli/dpg]

@@ -138,7 +138,7 @@ load_current() {
     if [[ ! -f ~/.cf/config.json && -f ${TARGET_DIR}/cf_password ]]; then
       local cf_password=$(cat ${TARGET_DIR}/cf_password)
       skip_ssl_validation=
-      if [[ -f "${target_dir}/cf_skip_ssl_validation" ]]; then
+      if [[ -f "${TARGET_DIR}/cf_skip_ssl_validation" ]]; then
         skip_ssl_validation='--skip-ssl-validation'
       fi
       cf login -a ${CF_ENDPOINT} -u ${CF_USERNAME} -p ${cf_password} ${skip_ssl_validation}
@@ -418,7 +418,7 @@ cmd_status() {
 }
 
 cmd_cells() {
-  curl ${BROKER_USERNAME}:${BROKER_PASSWORD}@${BROKER_ENDPOINT}/admin/cells \
+  curl -s ${BROKER_USERNAME}:${BROKER_PASSWORD}@${BROKER_ENDPOINT}/admin/cells \
     | jq .
 }
 

@@ -1,0 +1,5 @@
+check process dpg-cli
+  with pidfile /var/vcap/sys/run/dpg-cli/dpg-cli.pid
+  start program "/var/vcap/jobs/dpg-cli/bin/monit_debugger dpg-cli_ctl '/var/vcap/jobs/dpg-cli/bin/ctl start'"
+  stop program "/var/vcap/jobs/dpg-cli/bin/monit_debugger dpg-cli_ctl '/var/vcap/jobs/dpg-cli/bin/ctl stop'"
+  group vcap
