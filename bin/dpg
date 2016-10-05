@@ -87,7 +87,7 @@ Commands:
                                   Optionally override $SERVICE_ID and $PLAN_ID.
 
     dpg superuser-uri INSTANCE_ID Return superuser URI to target service instance.
-                                  Usage: psql $(dpg superuser-uri INSTANCE_ID)
+                                  Usage: psql \$(dpg superuser-uri INSTANCE_ID)
 
     dpg wale-backup-list INST_ID  Display cached list of wal-e backup info from etcd.
 
