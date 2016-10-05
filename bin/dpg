@@ -311,11 +311,7 @@ cmd_grant_access_all() {
 }
 
 cmd_demote_cell() {
-  local cell_guid=${1}
-  if [[ "${cell_guid}X" == "X" ]]; then
-    echo "USAGE: dpg demote-cell CELL_GUID"
-    exit 1
-  fi
+  local cell_guid=${1:?USAGE: dpg demote-cell CELL_GUID}
   echo "You are about to remote cell/server '${cell_guid}'"
   read -sp 'Press enter to continue> '
   echo
@@ -325,11 +321,7 @@ cmd_demote_cell() {
 cmd_delete() {
   local service_id=${SERVICE_ID:-"beb5973c-e1b2-11e5-a736-c7c0b526363d"}
   local plan_id=${PLAN_ID:-"1545e30e-6dc3-11e5-826a-6c4008a663f0"}
-  local instance_id=${1}
-  if [[ "${instance_id}X" == "X" ]]; then
-    echo "USAGE: dpg delete INSTANCE_ID"
-    exit 1
-  fi
+  local instance_id=${1:?USAGE: dpg delete INSTANCE_ID}
   echo "You are about to delete the cluster '${instance_id}'"
   read -sp 'Press enter to continue> '
   echo
@@ -339,11 +331,7 @@ cmd_delete() {
 cmd_create() {
   local service_id=${SERVICE_ID:-"beb5973c-e1b2-11e5-a736-c7c0b526363d"}
   local plan_id=${PLAN_ID:-"1545e30e-6dc3-11e5-826a-6c4008a663f0"}
-  local instance_id=${1}
-  if [[ "${instance_id}X" == "X" ]]; then
-    echo "USAGE: dpg create INSTANCE_ID"
-    exit 1
-  fi
+  local instance_id=${1:?USAGE: dpg create INSTANCE_ID}
   echo "You are about to create the cluster '${instance_id}'"
   curl ${BROKER_USERNAME}:${BROKER_PASSWORD}@${BROKER_ENDPOINT}/v2/service_instances/${instance_id} \
     -XPUT \
