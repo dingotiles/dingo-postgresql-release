@@ -109,10 +109,12 @@ load_current() {
   if [[ ! -d ${DPG_DIR} ]]; then
     mkdir -p ${DPG_DIR}
   fi
+  chmod 700 ${DPG_DIR}
 
   if [[ -f ${DPG_DIR}/current ]]; then
     current_target=$(cat ${DPG_DIR}/current)
     export TARGET_DIR=${DPG_DIR}/${current_target}
+    chmod 600 ${TARGET_DIR}/*
     if [[ -f ${TARGET_DIR}/etcd_endpoint ]]; then
       export ETCD_ENDPOINT=$(cat ${TARGET_DIR}/etcd_endpoint)
     fi
