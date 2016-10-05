@@ -296,7 +296,7 @@ cmd_ls() {
   ) | column -t
 }
 
-cmd_grant_access_all() {
+cmd_grant_access_all_spaces() {
   cf curl /v2/organizations \
     | jq -r '.resources[].metadata.url' \
     | while read org_url; do
