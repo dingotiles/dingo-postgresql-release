@@ -114,7 +114,9 @@ load_current() {
   if [[ -f ${DPG_DIR}/current ]]; then
     current_target=$(cat ${DPG_DIR}/current)
     export TARGET_DIR=${DPG_DIR}/${current_target}
-    chmod 600 ${TARGET_DIR}/*
+    if [[ -d ${TARGET_DIR} ]]; then
+      chmod 600 ${TARGET_DIR}/*
+    fi
     if [[ -f ${TARGET_DIR}/etcd_endpoint ]]; then
       export ETCD_ENDPOINT=$(cat ${TARGET_DIR}/etcd_endpoint)
     fi
@@ -132,6 +134,14 @@ load_current() {
     fi
     if [[ -f ${TARGET_DIR}/cf_username ]]; then
       export CF_USERNAME=$(cat ${TARGET_DIR}/cf_username)
+    fi
+    if [[ ! -f ~/.cf/config.json && -f ${TARGET_DIR}/cf_password ]]; then
+      local cf_password=$(cat ${TARGET_DIR}/cf_password)
+      skip_ssl_validation=
+      if [[ -f "${target_dir}/cf_skip_ssl_validation" ]]; then
+        skip_ssl_validation='--skip-ssl-validation'
+      fi
+      cf login -a ${CF_ENDPOINT} -u ${CF_USERNAME} -p ${cf_password} ${skip_ssl_validation}
     fi
   fi
 }
@@ -205,25 +215,30 @@ cmd_target() {
   fi
 
   if [[ -f "${target_dir}/cf_endpoint" ]]; then
-    endpoint=$(cat ${target_dir}/cf_endpoint)
+    cf_endpoint=$(cat ${target_dir}/cf_endpoint)
   fi
-  if [[ -z ${endpoint} ]]; then
-    read -p 'CF endpoint> ' endpoint
-    echo ${endpoint} > ${target_dir}/cf_endpoint
+  if [[ -z ${cf_endpoint} ]]; then
+    read -p 'CF endpoint> ' cf_endpoint
+    echo ${cf_endpoint} > ${target_dir}/cf_endpoint
   fi
 
   if [[ -f "${target_dir}/cf_username" ]]; then
-    username=$(cat ${target_dir}/cf_username)
+    cf_username=$(cat ${target_dir}/cf_username)
   fi
-  if [[ -z ${username} ]]; then
-    read -p 'CF username> ' username
-    echo ${username} > ${target_dir}/cf_username
+  if [[ -z ${cf_username} ]]; then
+    read -p 'CF username> ' cf_username
+    echo ${cf_username} > ${target_dir}/cf_username
   fi
 
-  read -sp 'CF password> ' password
-  echo
-  if [[ ! -z "${password}" ]]; then
-    cf login -a ${endpoint} -u ${username} -p ${password} ${skip_ssl_validation}
+  if [[ -f "${target_dir}/cf_password" ]]; then
+    cf_password=$(cat ${target_dir}/cf_password)
+  else
+    read -sp 'CF password> ' cf_password
+    echo
+  fi
+
+  if [[ ! -z "${cf_password}" ]]; then
+    cf login -a ${cf_endpoint} -u ${cf_username} -p ${cf_password} ${skip_ssl_validation}
   fi
 }
 
