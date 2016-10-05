@@ -179,9 +179,10 @@ To run a container, binding to host port 40000:
 ```
 _docker rm -f john
 _docker run -d \
-    --name john -p 40000:5432 \
+    --name john \
     -e NAME=john \
     -e NODE_ID=john \
+    -p 40000:5432 -p 50000:8008 \
     -e PATRONI_SCOPE=my_first_cluster \
     -e "ETCD_HOST_PORT=${ETCD_CLUSTER}" \
     -e "DOCKER_HOSTNAME=${HOST_IP}" \
@@ -213,10 +214,10 @@ _docker logs registrator
 2015/11/23 16:04:45 added: 47d12377ffe2 192.168.99.100:john:5432
 ```
 
-Also confirm registrator is advertising into etcd:
+Next, confirm registrator is advertising the PostgreSQL port 5432 into etcd:
 
 ```
-curl -s ${ETCD_CLUSTER}/v2/keys/postgresql-patroni\?recursive=true | jq .
+curl -s ${ETCD_CLUSTER}/v2/keys/dingo-postgresql95-5432\?recursive=true | jq .
 ```
 
 Output may look like:
@@ -225,18 +226,46 @@ Output may look like:
 {
   "action": "get",
   "node": {
-    "key": "/postgresql-patroni",
+    "key": "/dingo-postgresql95-5432",
     "dir": true,
     "nodes": [
       {
-        "key": "/postgresql-patroni/192.168.99.100:john:5432",
-        "value": "192.168.99.100:40000",
-        "modifiedIndex": 47,
-        "createdIndex": 47
+        "key": "/dingo-postgresql95-5432/192.168.1.195:john:5432",
+        "value": "192.168.1.195:40000",
+        "modifiedIndex": 9,
+        "createdIndex": 9
       }
     ],
-    "modifiedIndex": 9,
-    "createdIndex": 9
+    "modifiedIndex": 7,
+    "createdIndex": 7
+  }
+}
+```
+
+Also, confirm registrator is advertising the Patroni API port 8008 into etcd:
+
+```
+curl -s ${ETCD_CLUSTER}/v2/keys/dingo-postgresql95-8008\?recursive=true | jq .
+```
+
+Output may look like:
+
+```
+{
+  "action": "get",
+  "node": {
+    "key": "/dingo-postgresql95-8008",
+    "dir": true,
+    "nodes": [
+      {
+        "key": "/dingo-postgresql95-8008/192.168.1.195:john:8008",
+        "value": "192.168.1.195:50000",
+        "modifiedIndex": 102,
+        "createdIndex": 102
+      }
+    ],
+    "modifiedIndex": 85,
+    "createdIndex": 85
   }
 }
 ```
@@ -251,13 +280,11 @@ The output may look like:
 
 ```
 {
-  "conn_url": "postgres://dvw7DJgqzFBJC8:jkT3TTNebfrh6C@10.244.21.6:40000/postgres",
-  "api_url": "http://127.0.0.1:8008/patroni",
-  "tags": {},
-  "conn_address": "192.168.99.100:40000",
-  "state": "running",
   "role": "master",
-  "xlog_location": 23758288
+  "state": "running",
+  "conn_url": "postgres://dvw7DJgqzFBJC8:jkT3TTNebfrh6C@192.168.1.195:40000/postgres",
+  "api_url": "http://192.168.1.195:50000/patroni",
+  "xlog_location": 24149848
 }
 ```
 
@@ -290,9 +317,9 @@ For example you can now see the version of packages installed in current contain
 
 ```
 # wal-e version
-0.8.1
+0.9.2
 # psql --version
-psql (PostgreSQL) 9.5.1
+psql (PostgreSQL) 9.5.3
 ```
 
 The patroni configuration file:
@@ -303,12 +330,13 @@ ttl: &ttl 30
 loop_wait: &loop_wait 10
 scope: &scope my_first_cluster
 restapi:
-  listen: 127.0.0.1:8008
-  connect_address: 127.0.0.1:8008
+  listen: 0.0.0.0:8008
+  connect_address: 192.168.1.195:50000
 etcd:
   scope: *scope
   ttl: *ttl
-  host: 192.168.99.100:4001
+  host: 192.168.1.195:4001
+postgresql:
 ...
 ```
 
@@ -324,18 +352,18 @@ The output might be:
 
 ```
 {
-  "server_version": 90501,
+  "database_system_identifier": "6338095900807987281",
+  "postmaster_start_time": "2016-10-05 21:29:10.489 UTC",
   "xlog": {
-    "location": 100664256
+    "location": 24149848
   },
-  "tags": {},
-  "postmaster_start_time": "2016-03-08 23:29:49.080 UTC",
   "patroni": {
-    "version": "0.76",
-    "scope": "my_first_cluster"
+    "scope": "my_first_cluster",
+    "version": "0.90"
   },
+  "state": "running",
   "role": "master",
-  "state": "running"
+  "server_version": 90503
 }
 ```
 
@@ -357,11 +385,19 @@ A replica container can request to failover:
 curl -X POST 127.0.0.1:8008/failover -d '{"leader": "pg_172_17_0_3"}'
 ```
 
-You can also run the above commands from the host machine/outside the container. For example, to restart PostgreSQL:
+You can also run the above commands from the host machine/outside the container using the `api_url` (was `http://192.168.1.195:50000/patroni` in example above). For example, to restart PostgreSQL:
 
 ```
-_docker exec -it john curl -XPOST localhost:8008/restart
+curl -XPOST http://192.168.1.195:50000/restart
 ```
+
+With output looking like:
+
+```
+restarted successfully
+```
+
+See [Patroni source code](https://github.com/zalando/patroni/blob/v0.90/patroni/api.py) for available APIs.
 
 ### Expand the cluster
 
@@ -371,9 +407,10 @@ To run a second container that joins to the same cluster, binding to host port 4
 
 ```
 _docker rm -f paul
-_docker run -d --name paul -p 40001:5432 \
+_docker run -d --name paul \
     -e NAME=paul \
     -e NODE_ID=paul \
+    -p 40001:5432 -p 50001:8008 \
     -e PATRONI_SCOPE=my_first_cluster \
     -e "ETCD_HOST_PORT=${ETCD_CLUSTER}" \
     -e "DOCKER_HOSTNAME=${HOST_IP}" \
@@ -399,26 +436,22 @@ Confirm the additional container has added itself to the etcd list of members:
 ```
 curl -s ${ETCD_CLUSTER}/v2/keys/service/my_first_cluster/members | jq -r ".node.nodes[].value" | jq .
 {
-  "conn_url": "postgres://dvw7DJgqzFBJC8:jkT3TTNebfrh6C@10.244.21.6:40000/postgres",
-  "api_url": "http://127.0.0.1:8008/patroni",
-  "tags": {},
-  "conn_address": "10.244.21.6:40000",
-  "state": "running",
   "role": "master",
+  "state": "running",
+  "conn_url": "postgres://dvw7DJgqzFBJC8:jkT3TTNebfrh6C@192.168.1.195:40000/postgres",
+  "api_url": "http://192.168.1.195:50000/patroni",
   "xlog_location": 50331744
 }
 {
-  "conn_url": "postgres://dvw7DJgqzFBJC8:jkT3TTNebfrh6C@10.244.21.6:40001/postgres",
-  "api_url": "http://127.0.0.1:8008/patroni",
-  "tags": {},
-  "conn_address": "10.244.21.6:40001",
-  "state": "running",
   "role": "replica",
+  "state": "running",
+  "conn_url": "postgres://dvw7DJgqzFBJC8:jkT3TTNebfrh6C@192.168.1.195:40001/postgres",
+  "api_url": "http://192.168.1.195:50001/patroni",
   "xlog_location": 50331744
 }
 ```
 
-Confirm that the master has the replica registered:
+Using the leader's `psql` URI from above, confirm that the leader has the replica registered:
 
 ```
 $ psql postgres://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@${HOST_IP}:40000/postgres -c 'select * from pg_stat_replication;'
@@ -505,8 +538,8 @@ Delete cluster
 --------------
 
 ```
-_docker rm -f john
-_docker rm -f paul
+_docker rm -f john; \
+_docker rm -f paul; \
 curl -v "${ETCD_CLUSTER}/v2/keys/service?dir=true&recursive=true" -X DELETE
 ```
 
