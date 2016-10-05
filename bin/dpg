@@ -10,9 +10,13 @@ main() {
       shift
       cmd_target $@
       ;;
-    access)
+    grant-access-all-spaces)
       shift
-      cmd_access $@
+      cmd_grant_access_all_spaces $@
+      ;;
+    ls)
+      shift
+      cmd_ls $@
       ;;
     status)
       shift
@@ -30,17 +34,13 @@ main() {
       shift
       cmd_purge $@
       ;;
-    demote-cell)
-      shift
-      cmd_demote_cell $@
-      ;;
-    ls)
-      shift
-      cmd_ls $@
-      ;;
     cells)
       shift
       cmd_cells $@
+      ;;
+    demote-cell)
+      shift
+      cmd_demote_cell $@
       ;;
     raw)
       shift
@@ -54,6 +54,42 @@ main() {
       cmd_help
       ;;
   esac
+}
+
+cmd_help() {
+	cat >&2 <<EOF
+USAGE: dpg <command> [arguments]
+
+Commands:
+
+    dpg target                    Print information about the current target.
+
+    dpg target NAME [--init] [-k] Set or configure the target.
+                                  --init will recreate the target settings.
+                                  -k will use --skip-ssl-validation when logging
+                                  in to Cloud Foundry.
+
+    dpg grant-access-all-spaces   Grant current admin user access to all CF spaces.
+
+    dpg ls                        List all clusters known to the current target.
+
+    dpg status INSTANCE_ID        Show status information of a given CLUSTER_ID.
+
+    dpg create NEW_INSTANCE_ID    Creates new service instance via broker api.
+                                  Optionally override $SERVICE_ID and $PLAN_ID.
+
+    dpg delete INSTANCE_ID        Delete a cluster via the broker api.
+
+    dpg purge INSTANCE_ID         Purge knowladge of a cluster from etcd.
+                                  Probably do not run this if cluster has not been deleted yet.
+
+    dpg cells                     Display available cells/servers.
+
+    dpg demote-cell CELL_GUID     Demote a cell/server.
+
+    dpg raw PATH JQ_FILTER        Query etcd PATH and pipe into jq applying the
+                                  given JQ_FILTER.
+EOF
 }
 
 load_current() {
@@ -245,7 +281,7 @@ cmd_ls() {
   ) | column -t
 }
 
-cmd_access() {
+cmd_grant_access_all() {
   cf curl /v2/organizations \
     | jq -r '.resources[].metadata.url' \
     | while read org_url; do
@@ -262,34 +298,40 @@ cmd_access() {
 }
 
 cmd_demote_cell() {
-  local service_id="beb5973c-e1b2-11e5-a736-c7c0b526363d"
-  local plan_id="1545e30e-6dc3-11e5-826a-6c4008a663f0"
-  local cell_id=${1}
-  echo 'Please provide the broker password'
-  read -sp 'BROKER password> ' broker_password
+  local cell_guid=${1}
+  if [[ "${cell_guid}X" == "X" ]]; then
+    echo "USAGE: dpg demote-cell CELL_GUID"
+    exit 1
+  fi
+  echo "You are about to remote cell/server '${cell_guid}'"
+  read -sp 'Press enter to continue> '
   echo
-  curl "${BROKER_USERNAME}:${broker_password}@${BROKER_ENDPOINT}/admin/cells/${cell_id}/demote" -i -XPOST
+  curl "${BROKER_USERNAME}:${broker_password}@${BROKER_ENDPOINT}/admin/cells/${cell_guid}/demote" -i -XPOST
 }
 
 cmd_delete() {
-  local service_id="beb5973c-e1b2-11e5-a736-c7c0b526363d"
-  local plan_id="1545e30e-6dc3-11e5-826a-6c4008a663f0"
+  local service_id=${SERVICE_ID:-"beb5973c-e1b2-11e5-a736-c7c0b526363d"}
+  local plan_id=${PLAN_ID:-"1545e30e-6dc3-11e5-826a-6c4008a663f0"}
   local instance_id=${1}
+  if [[ "${instance_id}X" == "X" ]]; then
+    echo "USAGE: dpg delete INSTANCE_ID"
+    exit 1
+  fi
   echo "You are about to delete the cluster '${instance_id}'"
-  echo "Enter password to confirm"
-  read -sp 'BROKER password> ' broker_password
+  read -sp 'Press enter to continue> '
   echo
   curl ${BROKER_USERNAME}:${broker_password}@${BROKER_ENDPOINT}/v2/service_instances/${instance_id}\?plan_id=${plan_id}\&service_id=${service_id} -XDELETE
 }
 
 cmd_create() {
-  service_id="beb5973c-e1b2-11e5-a736-c7c0b526363d"
-  plan_id="1545e30e-6dc3-11e5-826a-6c4008a663f0"
-  instance_id=${1}
-  echo "You are about to delete the cluster '${instance_id}'"
-  echo "Enter password to confirm"
-  read -sp 'BROKER password> ' broker_password
-  echo
+  local service_id=${SERVICE_ID:-"beb5973c-e1b2-11e5-a736-c7c0b526363d"}
+  local plan_id=${PLAN_ID:-"1545e30e-6dc3-11e5-826a-6c4008a663f0"}
+  local instance_id=${1}
+  if [[ "${instance_id}X" == "X" ]]; then
+    echo "USAGE: dpg create INSTANCE_ID"
+    exit 1
+  fi
+  echo "You are about to create the cluster '${instance_id}'"
   curl ${BROKER_USERNAME}:${broker_password}@${BROKER_ENDPOINT}/v2/service_instances/${instance_id} \
     -XPUT \
     -d "{\"service_id\": \"${service_id}\", \"plan_id\": \"${plan_id}\"}"
@@ -350,32 +392,6 @@ cmd_raw() {
   fi
 
   curl -s $ETCD_ENDPOINT/v2/keys${etcd_path} | jq -r $jq_filter
-}
-
-cmd_help() {
-	cat >&2 <<EOF
-USAGE: dpg <command> [arguments]
-
-Commands:
-
-    dpg target                    Print information about the current target.
-
-    dpg target NAME [--init] [-k] Set or configure the target.
-                                  --init will recreate the target settings.
-                                  -k will use --skip-ssl-validation when logging
-                                  in to Cloud Foundry.
-
-    dpg ls                        List all clusters known to the current target.
-
-    dpg status CLUSTER_ID         Show status information of a given CLUSTER_ID.
-
-    dpg delete CLUSTER_ID         Delete a cluster via the broker api.
-
-    dpg purge CLUSTER_ID          Purge knowladge of a cluster from etcd.
-
-    dpg raw PATH JQ_FILTER        Query etcd PATH and pipe into jq applying the
-                                  given JQ_FILTER.
-EOF
 }
 
 main $@
