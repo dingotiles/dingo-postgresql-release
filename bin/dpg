@@ -73,6 +73,9 @@ load_current() {
     if [[ -f ${TARGET_DIR}/broker_username ]]; then
       export BROKER_USERNAME=$(cat ${TARGET_DIR}/broker_username)
     fi
+    if [[ -f ${TARGET_DIR}/broker_password ]]; then
+      export BROKER_PASSWORD=$(cat ${TARGET_DIR}/broker_password)
+    fi
     if [[ -f ${TARGET_DIR}/cf_endpoint ]]; then
       export CF_ENDPOINT=$(cat ${TARGET_DIR}/cf_endpoint)
     fi
@@ -140,6 +143,14 @@ cmd_target() {
   if [[ -z ${broker_username} ]]; then
     read -p 'BROKER username> ' broker_username
     echo ${broker_username} > ${target_dir}/broker_username
+  fi
+
+  if [[ -f "${target_dir}/broker_password" ]]; then
+    broker_password=$(cat ${target_dir}/broker_password)
+  fi
+  if [[ -z ${broker_password} ]]; then
+    read -p 'BROKER password> ' broker_password
+    echo ${broker_password} > ${target_dir}/broker_password
   fi
 
   if [[ -f "${target_dir}/cf_endpoint" ]]; then
@@ -327,11 +338,8 @@ cmd_status() {
 }
 
 cmd_cells() {
-  echo 'Please provide the broker password'
-  read -sp 'BROKER password> ' broker_password
-  echo
-  curl ${BROKER_USERNAME}:${broker_password}@${BROKER_ENDPOINT}/admin/cells \
-    | jq
+  curl ${BROKER_USERNAME}:${BROKER_PASSWORD}@${BROKER_ENDPOINT}/admin/cells \
+    | jq .
 }
 
 cmd_raw() {
