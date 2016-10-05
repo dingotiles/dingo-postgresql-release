@@ -26,6 +26,10 @@ main() {
       shift
       cmd_create $@
       ;;
+    superuser-uri)
+      shift
+      cmd_superuser_uri $@
+      ;;
     delete)
       shift
       cmd_delete $@
@@ -77,6 +81,9 @@ Commands:
 
     dpg create NEW_INSTANCE_ID    Creates new service instance via broker api.
                                   Optionally override $SERVICE_ID and $PLAN_ID.
+
+    dpg superuser-uri INSTANCE_ID Return superuser URI to target service instance.
+                                  Usage: psql $(dpg superuser-uri INSTANCE_ID)
 
     dpg delete INSTANCE_ID        Delete a cluster via the broker api.
 
@@ -335,6 +342,20 @@ cmd_create() {
   curl ${BROKER_USERNAME}:${BROKER_PASSWORD}@${BROKER_ENDPOINT}/v2/service_instances/${instance_id} \
     -XPUT \
     -d "{\"service_id\": \"${service_id}\", \"plan_id\": \"${plan_id}\"}"
+}
+
+cmd_superuser_uri() {
+  local service_id=${SERVICE_ID:-"beb5973c-e1b2-11e5-a736-c7c0b526363d"}
+  local plan_id=${PLAN_ID:-"1545e30e-6dc3-11e5-826a-6c4008a663f0"}
+  local instance_id=${1}
+  if [[ "${instance_id}X" == "X" ]]; then
+    echo "USAGE: dpg superuser-uri INSTANCE_ID"
+    exit 1
+  fi
+  curl -s ${BROKER_USERNAME}:${BROKER_PASSWORD}@${BROKER_ENDPOINT}/v2/service_instances/${instance_id}/service_bindings/dummy \
+    -XPUT \
+    -d "{\"service_id\": \"${service_id}\", \"plan_id\": \"${plan_id}\"}" |
+    jq -r ".credentials.superuser_uri"
 }
 
 cmd_purge() {
