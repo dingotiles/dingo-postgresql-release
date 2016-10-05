@@ -36,3 +36,28 @@ To create or delete service instances without Cloud Foundry API/CLI:
 dpg create test
 dpg delete test
 ```
+
+To add `dpg-cli` to `router` job (or any other), add to the job and provide properties:
+
+```yaml
+- name: router
+  instances: 1
+  templates:
+    - {name: remote-syslog, release: simple-remote-syslog}
+    - {name: broker, release: dingo-postgresql}
+    - {name: router, release: dingo-postgresql}
+    - {name: dpg-cli, release: dingo-postgresql}
+  properties:
+    servicebroker:
+      machines: [127.0.0.1]
+      port: 8889 # internally binding
+      username: starkandwayne
+      password: starkandwayne
+    cf:
+      api_url: ...
+      username: ...
+      password: ...
+      skip_ssl_validation: false
+    etcd:
+      machines: [...]
+```
