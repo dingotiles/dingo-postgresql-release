@@ -52,6 +52,19 @@ tests:
     - cache-cluster-state
     - retrieve-dummy-value
 
+
+- name: restoration-point-in-time
+  before_startup: [purge-backups]
+  spec:
+  - wait: one-node-running
+  - stop: [patroni2]
+  - exec:
+    - cache-cluster-state
+    - store-values-over-time
+    - flush-archives
+    - restart-from-time
+    - assert-values-restored-from-timestamp
+
 tasks:
 - name: two-nodes-running
   command: /scripts/nodes-running 2
@@ -63,6 +76,12 @@ tasks:
   command: /scripts/cache-cluster-state
 - name: write-dummy-value
   command: /scripts/store-value testtable test-value
+- name: store-values-over-time
+  command: /scripts/store-values-over-time testtable value1 value2 value3
+- name: restart-from-time
+  command: /scripts/restart-from-time value2
+- name: assert-values-restored-from-timestamp
+  command: /scripts/assert-values-restored-from-timestamp testtable value1 value2
 - name: retrieve-dummy-value
   command: /scripts/retrieve-value testtable test-value
 - name: dummy-value-replicated

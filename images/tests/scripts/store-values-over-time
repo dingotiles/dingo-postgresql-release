@@ -1,0 +1,32 @@
+#!/bin/bash
+
+set -e
+
+if [[ -z ${TEST_DIR} ]];then
+  TEST_DIR=${TEST_VOLUME}/${DELMO_TEST_NAME}
+fi
+uri=$(cat ${TEST_DIR}/cluster-state.json | jq -r '.leader_uri')
+
+table_name=$1
+shift
+values=$@
+
+echo "Storing ${value} in ${table_name}..."
+
+psql ${uri} -c "DROP TABLE IF EXISTS ${table_name};"
+psql ${uri} -c "CREATE TABLE ${table_name}(value text, timestamp timestamp);"
+
+finalvalue=
+for value in $values; do
+  timestamp=$(date "+%Y-%m-%d %H:%M:%S")
+  psql ${uri} -c "INSERT INTO ${table_name} VALUES ('${value}', '${timestamp}');"
+  # etcdctl --endpoint "http://${DOCKER_HOST_IP}:4001" setdir /service/${PATRONI_SCOPE}/store-values-over-time
+  etcdctl --endpoint "http://${DOCKER_HOST_IP}:4001" set /service/${PATRONI_SCOPE}/store-values-over-time/${value} "${timestamp}"
+  finalvalue=$value
+  sleep 2
+done
+psql ${uri} -c "SELECT * FROM ${table_name};"
+psql ${uri} -c "SELECT value FROM ${table_name};" | grep "${finalvalue}" || {
+  echo Could not store and retrieve last value in cluster!
+  exit 1
+}

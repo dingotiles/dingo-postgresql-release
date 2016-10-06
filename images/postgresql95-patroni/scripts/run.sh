@@ -194,6 +194,7 @@ EOF
     no_master: 1
   recovery_conf:
     restore_command: ${restore_command}
+    # recovery_target_time: "2016-10-06 16:38:00"
 EOF
 fi
 
