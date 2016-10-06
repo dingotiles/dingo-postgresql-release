@@ -19,7 +19,7 @@ RUN DEBIAN_FRONTEND=noninteractive \
     && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN pip install pip --upgrade \
-      && pip install wal-e awscli --upgrade
+      && pip install wal-e==0.9.2 awscli --upgrade
 
 RUN wget -O /usr/local/bin/jq https://github.com/stedolan/jq/releases/download/jq-${JQ_VERSION}/jq-linux64 \
       && chmod +x /usr/local/bin/jq \
