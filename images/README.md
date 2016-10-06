@@ -650,6 +650,20 @@ my_fir-backup> name    	last_modified  	expanded_size_bytes    	wal_segment_back
 my_fir-backup> base_000000010000000000000002_00000040  	2016-10-06T00:04:24.000Z       		000000010000000000000002       	00000040
 ```
 
+
+The summary of backups is also cached into etcd.
+
+```
+curl -s ${ETCD_CLUSTER}/v2/keys/service/my_first_cluster/wale-backup-list | jq -r .node.value
+```
+
+The output will be like:
+
+```
+name   	last_modified  	expanded_size_bytes    	wal_segment_backup_start       	wal_segment_offset_backup_start	wal_segment_backup_stop	wal_segment_offset_backup_stop
+base_000000010000000000000002_00000040 	2016-10-06T00:04:24.000Z       		000000010000000000000002       	00000040
+```
+
 To see the files that were created into the object store:
 
 ```
@@ -721,6 +735,8 @@ my_fir-patroni> 2016-10-06 00:08:49,068 INFO: Lock owner: john; I am paul
 my_fir-patroni> 2016-10-06 00:08:49,069 INFO: does not have lock
 my_fir-patroni> 2016-10-06 00:08:49,070 INFO: no action.  i am a secondary and i am following a leader
 ```
+
+
 
 ### Debugging archives
 
