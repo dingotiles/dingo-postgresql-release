@@ -120,6 +120,7 @@ indent_startup() {
     export WALE_S3_PREFIX="s3://${WAL_S3_BUCKET}/backups/${PATRONI_SCOPE}/wal/"
     echo $WALE_S3_PREFIX > ${WALE_ENV_DIR}/WALE_S3_PREFIX
     echo $WALE_CMD > ${WALE_ENV_DIR}/WALE_CMD
+    echo $PG_DATA_DIR > ${WALE_ENV_DIR}/PG_DATA_DIR
 
     archive_mode="on"
     replica_methods="[wal_e,basebackup]"

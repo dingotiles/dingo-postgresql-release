@@ -664,6 +664,8 @@ name   	last_modified  	expanded_size_bytes    	wal_segment_backup_start       	
 base_000000010000000000000002_00000040 	2016-10-06T00:04:24.000Z       		000000010000000000000002       	00000040
 ```
 
+Also see below for running `wal-e backup-list` within a Docker container.
+
 To see the files that were created into the object store:
 
 ```
@@ -749,7 +751,7 @@ _docker exec -ti john bash
 Confirm the wal-e configuration values for wal-e:
 
 ```
-tail -f /data/wal-e/env/*
+tail /data/wal-e/env/*
 ```
 
 Output might look like:
@@ -767,9 +769,10 @@ Output might look like:
 ==> /data/wal-e/env/WALE_CMD <==
 envdir /data/wal-e/env wal-e
 
-==> /data/wal-e/env/AWS_REGION <==
-ap-southeast-1
+==> /data/wal-e/env/WALE_S3_ENDPOINT <==
+https+path://s3.amazonaws.com:443
 ...
+
 ==> /data/wal-e/env/WAL_S3_BUCKET <==
 ZZZ-backups
 ```
@@ -783,5 +786,15 @@ envdir /data/wal-e/env wal-e backup-list
 To fetch a backup:
 
 ```
-envdir /data/wal-e/env wal-e backup-fetch $(cat /data/wal-e/env/PG_DATA_DIR) LATEST
+export PG_DATA_DIR=${DATA_VOLUME}/postgres0
+envdir /data/wal-e/env wal-e backup-fetch ${PG_DATA_DIR} LATEST
+```
+
+If you attempt this whilst PostgreSQL is still running you will see:
+
+```
+wal_e.main   ERROR    MSG: attempting to overwrite a live data directory
+        DETAIL: Found a postmaster.pid lockfile, and aborting
+        HINT: Shut down postgres. If there is a stale lockfile, then remove it after being very sure postgres is not running.
+        STRUCTURED: time=2016-10-06T00:27:24.707657-00 pid=7294
 ```
