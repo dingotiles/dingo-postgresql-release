@@ -19,9 +19,7 @@ unset AWS_REGION
 
 rm -rf $WALE_ENV_DIR/*
 
-# only AWS currently supported
-# wal_env_var_prefixes=(WAL AWS SWIFT WABS)
-wal_env_var_prefixes=(WAL AWS)
+wal_env_var_prefixes=(WAL AWS SWIFT WABS)
 for prefix in ${wal_env_var_prefixes[@]}; do
   for env in $(env | grep "^${prefix}"); do
     env_var=($(echo $env | tr "=" "\n"))
