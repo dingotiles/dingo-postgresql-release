@@ -17,8 +17,8 @@ echo ${AWS_ACCESS_KEY_ID} > ${WALE_ENV_DIR}/AWS_ACCESS_KEY_ID
 echo ${WAL_S3_BUCKET} > ${WALE_ENV_DIR}/WAL_S3_BUCKET
 echo "s3://${WAL_S3_BUCKET}/backups/${PATRONI_SCOPE}/wal/" > ${WALE_ENV_DIR}/WALE_S3_PREFIX
 
-echo "Fetching basebackup from recovery point '${RECOVERY_POINT}' ..."
-envdir ${WALE_ENV_DIR} wal-e backup-fetch ${PG_DATA_DIR} ${RECOVERY_POINT}
+echo "Fetching basebackup from recovery point '${recovery_point}' ..."
+envdir ${WALE_ENV_DIR} wal-e backup-fetch ${PG_DATA_DIR} ${recovery_point}
 
 touch ${PG_DATA_DIR}/postgresql.conf
 cat <<EOF > ${PG_DATA_DIR}/pg_hba.conf
