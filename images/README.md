@@ -684,6 +684,22 @@ The output will initially look similar to:
 2016-10-06 10:04:15      88675 backups/my_first_cluster/wal/wal_005/000000010000000000000002.lzo
 ```
 
+As an aside, overtime, additional WAL segments will be uploaded:
+
+```
+2016-10-06 10:03:55         95 backups/my_first_cluster/wal/basebackups_005/base_000000010000000000000002_00000040/extended_version.txt
+2016-10-06 10:03:57    3936686 backups/my_first_cluster/wal/basebackups_005/base_000000010000000000000002_00000040/tar_partitions/part_00000000.tar.lzo
+2016-10-06 10:04:24        198 backups/my_first_cluster/wal/basebackups_005/base_000000010000000000000002_00000040_backup_stop_sentinel.json
+2016-10-06 10:03:49         20 backups/my_first_cluster/wal/sysids/sysid
+2016-10-06 10:03:54    2747914 backups/my_first_cluster/wal/wal_005/000000010000000000000001.lzo
+2016-10-06 10:04:21        282 backups/my_first_cluster/wal/wal_005/000000010000000000000002.00000028.backup.lzo
+2016-10-06 10:04:15      88675 backups/my_first_cluster/wal/wal_005/000000010000000000000002.lzo
+2016-10-06 10:14:15      88748 backups/my_first_cluster/wal/wal_005/000000010000000000000003.lzo
+2016-10-06 10:24:15      88733 backups/my_first_cluster/wal/wal_005/000000010000000000000004.lzo
+2016-10-06 10:34:15      88733 backups/my_first_cluster/wal/wal_005/000000010000000000000005.lzo
+2016-10-06 10:44:15      88733 backups/my_first_cluster/wal/wal_005/000000010000000000000006.lzo
+```
+
 Now run secondary `paul`:
 
 ```
@@ -779,14 +795,14 @@ ZZZ-backups
 
 To run `wal-e` commands, pass the `/data/wal-e/env` as an `envdir`:
 
-```
+```bash
 envdir /data/wal-e/env wal-e backup-list
 ```
 
 To fetch a backup:
 
-```
-export PG_DATA_DIR=${DATA_VOLUME}/postgres0
+```bash
+PG_DATA_DIR=${DATA_VOLUME}/postgres0
 envdir /data/wal-e/env wal-e backup-fetch ${PG_DATA_DIR} LATEST
 ```
 
@@ -797,4 +813,29 @@ wal_e.main   ERROR    MSG: attempting to overwrite a live data directory
         DETAIL: Found a postmaster.pid lockfile, and aborting
         HINT: Shut down postgres. If there is a stale lockfile, then remove it after being very sure postgres is not running.
         STRUCTURED: time=2016-10-06T00:27:24.707657-00 pid=7294
+```
+
+The easiest way to recover from backups/continuous archives is to allow Patroni to do it on restart. Shutdown PostgreSQL (Patroni will not restart it), delete the data directory contents, then restart Patroni:
+
+```bash
+PG_DATA_DIR=${DATA_VOLUME}/postgres0
+kill -SIGINT $(head -1 ${PG_DATA_DIR}/postmaster.pid)
+ps axwf # wait until postgresql finishes uploading WAL
+rm -rf ${PG_DATA_DIR}/*
+curl -XPOST localhost:8008/restart
+```
+
+* https://www.postgresql.org/docs/9.5/static/continuous-archiving.html#BACKUP-PITR-RECOVERY
+* http://www.slideshare.net/denishpatel/out-of-the-box-replication-in-postgres-94pg-con
+
+Pass `{"recovery_target_time": "2016-10-06 16:38:00"}` to recover to a specific POINT IN TIME.
+
+Repeat the above but provide parameters to `/restart` command:
+
+```bash
+timestamp=$(date "+%Y-%m-%d %H:%M:%S")
+echo $timestamp
+timestamp=$(_docker exec -ti john date "+%Y-%m-%d %H:%M:%S")
+echo $timestamp
+curl -XPOST localhost:8008/restart -d "{\"recovery_target_time\": \"${timestamp}\"}"
 ```
