@@ -4,8 +4,8 @@ set -e
 
 table_name=$1
 value=$2
+recovery_point=${3:-LATEST}
 
-RECOVERY_POINT=${RECOVERY_POINT:-LATEST}
 DATA_DIR=/data
 PG_DATA_DIR=${DATA_DIR}/postgres0
 WALE_ENV_DIR=${DATA_DIR}/wal-e/env

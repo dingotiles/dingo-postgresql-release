@@ -70,7 +70,7 @@ tasks:
 - name: flush-archives
   command: /scripts/switch-xlog
 - name: recreate-dummy-value-from-backups
-  command: /scripts/recover-value testtable test-value
+  command: /scripts/recover-value testtable test-value LATEST
 - name: purge-backups
   command: /scripts/purge-backups
 - name: leader-has-changed
