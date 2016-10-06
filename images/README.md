@@ -547,7 +547,7 @@ curl -v "${ETCD_CLUSTER}/v2/keys/service?dir=true&recursive=true" -X DELETE
 To delete the helper processes:
 
 ```
-_docker rm -f etcd
+_docker rm -f etcd; \
 _docker rm -f registrator
 ```
 
@@ -643,27 +643,83 @@ wal_e.worker.upload INFO     MSG: begin archiving a file
 LOG:  unexpected EOF on client connection with an open transaction
 ```
 
+A cluster is happy and healthy with correctly functioning base backups and continuous archives of WAL segments when you see the following in the logs:
+
+```
+my_fir-backup> name    	last_modified  	expanded_size_bytes    	wal_segment_backup_start       	wal_segment_offset_backup_start	wal_segment_backup_stop	wal_segment_offset_backup_stop
+my_fir-backup> base_000000010000000000000002_00000040  	2016-10-06T00:04:24.000Z       		000000010000000000000002       	00000040
+```
+
 To see the files that were created into the object store:
 
 ```
 env $(cat tmp/tutorial-wale.env | xargs) ./images/tutorial/s3-contents.sh
 ```
 
+The output will initially look similar to:
+
+```
+2016-10-06 10:03:55         95 backups/my_first_cluster/wal/basebackups_005/base_000000010000000000000002_00000040/extended_version.txt
+2016-10-06 10:03:57    3936686 backups/my_first_cluster/wal/basebackups_005/base_000000010000000000000002_00000040/tar_partitions/part_00000000.tar.lzo
+2016-10-06 10:04:24        198 backups/my_first_cluster/wal/basebackups_005/base_000000010000000000000002_00000040_backup_stop_sentinel.json
+2016-10-06 10:03:49         20 backups/my_first_cluster/wal/sysids/sysid
+2016-10-06 10:03:54    2747914 backups/my_first_cluster/wal/wal_005/000000010000000000000001.lzo
+2016-10-06 10:04:21        282 backups/my_first_cluster/wal/wal_005/000000010000000000000002.00000028.backup.lzo
+2016-10-06 10:04:15      88675 backups/my_first_cluster/wal/wal_005/000000010000000000000002.lzo
+```
+
 Now run secondary `paul`:
 
 ```
 _docker rm -f paul
-_docker run -d --name paul -p 40001:5432 \
-    --env-file=tmp/wal-e.env \
+_docker run -d --name paul \
     -e NAME=paul \
     -e NODE_ID=paul \
+    -p 40001:5432 -p 50001:8008 \
     -e PATRONI_SCOPE=my_first_cluster \
     -e "ETCD_HOST_PORT=${ETCD_CLUSTER}" \
     -e "DOCKER_HOSTNAME=${HOST_IP}" \
     -e "ADMIN_USERNAME=${ADMIN_USERNAME}" \
     -e "ADMIN_PASSWORD=${ADMIN_PASSWORD}" \
+    --env-file=tmp/tutorial-wale.env \
     ${POSTGRESQL_IMAGE}
 _docker logs -f paul
+```
+
+The logs for a replica will first look like there is an error:
+
+```
+my_fir-backup> psql: could not connect to server: No such file or directory
+my_fir-backup> 	Is the server running locally and accepting
+my_fir-backup> 	connections on Unix domain socket "/var/run/postgresql/.s.PGSQL.5432"?
+my_fir-reinitialize> Beginning restart-loop detection
+my_fir-patroni> 2016-10-06 00:07:54,455 INFO: Starting new HTTP connection (1): 172.20.10.4
+my_fir-patroni> 2016-10-06 00:07:54,505 INFO: trying to bootstrap from leader 'john'
+my_fir-patroni> wal_e.main   INFO     MSG: starting WAL-E
+my_fir-patroni>         DETAIL: The subcommand is "backup-list".
+my_fir-patroni>         STRUCTURED: time=2016-10-06T00:07:54.712768-00 pid=116
+my_fir-patroni> wal_e.main   INFO     MSG: starting WAL-E
+my_fir-patroni>         DETAIL: The subcommand is "backup-fetch".
+my_fir-patroni>         STRUCTURED: time=2016-10-06T00:07:56.411288-00 pid=120
+my_fir-patroni> pg_controldata: could not open file "/data/postgres0/global/pg_control" for reading: No such file or directory
+```
+
+Eventually it will download the base backup and WAL segments and resume replication from the leader `john`:
+
+```
+my_fir-patroni> 2016-10-06 00:08:46,889 INFO: bootstrapped from leader 'john'
+my_fir-patroni> lzop: <stdin>: not a lzop file
+my_fir-patroni> wal_e.blobstore.s3.s3_util WARNING  MSG: could no longer locate object while performing wal restore
+my_fir-patroni>         DETAIL: The absolute URI that could not be located is s3://dingo-postgresql-testflight-backups-us-east-1/backups/my_first_cluster/wal/wal_005/000000010000000000000003.lzo.
+my_fir-patroni>         HINT: This can be normal when Postgres is trying to detect what timelines are available during restoration.
+my_fir-patroni>         STRUCTURED: time=2016-10-06T00:08:48.542978-00 pid=309
+my_fir-patroni> wal_e.operator.backup INFO     MSG: complete wal restore
+my_fir-patroni>         STRUCTURED: time=2016-10-06T00:08:48.645090-00 pid=309 action=wal-fetch key=s3://dingo-postgresql-testflight-backups-us-east-1/backups/my_first_cluster/wal/wal_005/000000010000000000000003.lzo prefix=backups/my_first_cluster/wal/ seg=000000010000000000000003 state=complete
+my_fir-patroni> LOG:  started streaming WAL from primary at 0/3000000 on timeline 1
+my_fir-patroni> 2016-10-06 00:08:49,027 INFO: establishing a new patroni connection to the postgres cluster
+my_fir-patroni> 2016-10-06 00:08:49,068 INFO: Lock owner: john; I am paul
+my_fir-patroni> 2016-10-06 00:08:49,069 INFO: does not have lock
+my_fir-patroni> 2016-10-06 00:08:49,070 INFO: no action.  i am a secondary and i am following a leader
 ```
 
 ### Debugging archives
