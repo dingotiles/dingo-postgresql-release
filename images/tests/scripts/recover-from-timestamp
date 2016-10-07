@@ -1,0 +1,11 @@
+#!/bin/bash
+
+set -e
+
+table_name=$1
+timestamp_key=$2
+
+timestamp=$(etcdctl --endpoint "http://${DOCKER_HOST_IP}:4001" get /service/${PATRONI_SCOPE}/store-values-over-time/${timestamp_key})
+echo "Recovering from '${timestamp_key}' timestamp: ${timestamp}"
+
+etcdctl --endpoint "http://${DOCKER_HOST_IP}:4001" set /service/${PATRONI_SCOPE}/recovery_target_time "${timestamp}"

@@ -52,18 +52,21 @@ tests:
     - cache-cluster-state
     - retrieve-dummy-value
 
-
 - name: restoration-point-in-time
   before_startup: [purge-backups]
   spec:
   - wait: one-node-running
-  - stop: [patroni2]
+  - destroy: [patroni2]
   - exec:
     - cache-cluster-state
     - store-values-over-time
     - flush-archives
-    - restart-from-time
-    - assert-values-restored-from-timestamp
+  - stop: [patroni1]
+  - exec:
+    - recover-from-timestamp
+  - start: [patroni1]
+  - assert:
+    - assert-recovered-values
 
 tasks:
 - name: two-nodes-running
@@ -76,12 +79,6 @@ tasks:
   command: /scripts/cache-cluster-state
 - name: write-dummy-value
   command: /scripts/store-value testtable test-value
-- name: store-values-over-time
-  command: /scripts/store-values-over-time testtable value1 value2 value3
-- name: restart-from-time
-  command: /scripts/restart-from-time value2
-- name: assert-values-restored-from-timestamp
-  command: /scripts/assert-values-restored-from-timestamp testtable value1 value2
 - name: retrieve-dummy-value
   command: /scripts/retrieve-value testtable test-value
 - name: dummy-value-replicated
@@ -89,7 +86,13 @@ tasks:
 - name: flush-archives
   command: /scripts/switch-xlog
 - name: recreate-dummy-value-from-backups
-  command: /scripts/recover-value testtable test-value LATEST
+  command: /scripts/recover-value testtable test-value
+- name: store-values-over-time
+  command: /scripts/store-values-over-time testtable value1 value2 value3
+- name: recover-from-timestamp
+  command: /scripts/recover-from-timestamp testtable value2
+- name: assert-recovered-values
+  command: /scripts/assert-recovered-values testtable value1 value2
 - name: purge-backups
   command: /scripts/purge-backups
 - name: leader-has-changed

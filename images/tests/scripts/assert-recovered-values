@@ -1,0 +1,22 @@
+#!/bin/bash
+
+set -e
+
+if [[ -z ${TEST_DIR} ]];then
+  TEST_DIR=${TEST_VOLUME}/${DELMO_TEST_NAME}
+fi
+uri=$(cat ${TEST_DIR}/cluster-state.json | jq -r '.leader_uri')
+
+table_name=$1
+shift
+assert_values=$@
+expected_values_count=${#assert_values[@]}
+
+for assert_value in $assert_values; do
+  psql ${uri} -c "SELECT value FROM ${table_name};" | grep "${assert_value}" || {
+    echo Could not retrieve '${assert_value}' from restored leader
+    exit 1
+  }
+done
+
+echo "TODO: assert # rows = ${expected_values_count}"
