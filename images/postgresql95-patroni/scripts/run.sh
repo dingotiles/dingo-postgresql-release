@@ -126,6 +126,15 @@ indent_startup() {
     replica_methods="[wal_e,basebackup]"
     archive_command="$WALE_CMD wal-push \"%p\" -p 1"
     restore_command="$WALE_CMD wal-fetch \"%f\" \"%p\" -p 1"
+
+    # Assumes that first container to load /recovery_target_time will also be leader of cluster
+    # Only leader needs to configure recovery.conf recovery_target_time value if provided
+    recovery_target_time_path="${ETCD_HOST_PORT}/v2/keys/service/${PATRONI_SCOPE}/recovery_target_time"
+    recovery_target_time=$(curl -s ${recovery_target_time_path} | jq -r ".node.value")
+    if [[ "${recovery_target_time}" != "null" ]]; then
+      curl -s ${recovery_target_time_path} -XDELETE
+    fi
+
   else
     echo "Disabling wal-e archives"
     archive_mode="off"
@@ -195,6 +204,11 @@ EOF
   recovery_conf:
     restore_command: ${restore_command}
 EOF
+  if [[ "${recovery_target_time}" != "null" ]]; then
+    cat <<EOF >>/patroni/postgres.yml
+    recovery_target_time: "${recovery_target_time}"
+EOF
+  fi
 fi
 
   cat <<EOF >>/patroni/postgres.yml
