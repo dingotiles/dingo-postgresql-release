@@ -102,4 +102,6 @@ builds:
     version: 0.10.0
   080684f5-c1c2-4d30-9261-806888d6089c:
     version: 0.10.1-rc.14
+  a584b386-4ba0-4573-87c2-56a0e093f482:
+    version: 0.10.1-rc.15
 format-version: '2'
