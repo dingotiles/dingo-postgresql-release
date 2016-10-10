@@ -25,15 +25,15 @@ case $1 in
       echo "bosh" > ${DPG_DIR}/current
     fi
     mkdir -p ${BOSH_DPG_DIR}
-    echo <%= p("servicebroker.machines").first %>:<%= p("servicebroker.port") %> > ${BOSH_DPG_DIR}/broker_endpoint
-    echo <%= p("servicebroker.username") %> > ${BOSH_DPG_DIR}/broker_username
-    echo <%= p("servicebroker.password") %> > ${BOSH_DPG_DIR}/broker_password
+    echo "<%= p('servicebroker.machines').first %>:<%= p('servicebroker.port') %>" > ${BOSH_DPG_DIR}/broker_endpoint
+    echo "<%= p('servicebroker.username') %>" > ${BOSH_DPG_DIR}/broker_username
+    echo "<%= p('servicebroker.password') %>" > ${BOSH_DPG_DIR}/broker_password
 
-    echo <%= p("etcd.machines").first %>:4001 > ${BOSH_DPG_DIR}/etcd_endpoint
+    echo "<%= p('etcd.machines').first %>:4001" > ${BOSH_DPG_DIR}/etcd_endpoint
 
-    echo <%= p("cf.api_url") %> > ${BOSH_DPG_DIR}/cf_endpoint
-    echo <%= p("cf.username") %> > ${BOSH_DPG_DIR}/cf_username
-    echo <%= p("cf.password") %> > ${BOSH_DPG_DIR}/cf_password
+    echo "<%= p('cf.api_url') %>" > ${BOSH_DPG_DIR}/cf_endpoint
+    echo "<%= p('cf.username') %>" > ${BOSH_DPG_DIR}/cf_username
+    echo "<%= p('cf.password') %>" > ${BOSH_DPG_DIR}/cf_password
     <% if p("cf.skip_ssl_validation") %>
     touch ${BOSH_DPG_DIR}/cf_skip_ssl_validation
     <% else %>
