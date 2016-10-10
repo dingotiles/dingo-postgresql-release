@@ -100,4 +100,6 @@ builds:
     version: 0.10.0-rc.37
   5e07e7ef-b612-4d3c-85cc-493f35afff45:
     version: 0.10.0
+  080684f5-c1c2-4d30-9261-806888d6089c:
+    version: 0.10.1-rc.14
 format-version: '2'
