@@ -106,4 +106,6 @@ builds:
     version: 0.10.1-rc.15
   4b35805e-c7db-427c-835b-2f0b22e0b665:
     version: 0.10.1-rc.16
+  915eef9a-5010-4862-91d7-8ef78ac9427b:
+    version: 0.10.1-rc.17
 format-version: '2'
