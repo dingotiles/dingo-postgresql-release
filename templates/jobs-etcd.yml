@@ -25,6 +25,7 @@ jobs:
       etcd:
         peer_require_ssl: false
         require_ssl: false
+        disable_network_diagnostics: true
 
 properties:
   etcd:
