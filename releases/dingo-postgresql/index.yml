@@ -108,4 +108,6 @@ builds:
     version: 0.10.1-rc.16
   915eef9a-5010-4862-91d7-8ef78ac9427b:
     version: 0.10.1-rc.17
+  4a618cea-f54f-4fba-8db6-50ca39d2a636:
+    version: 0.10.1
 format-version: '2'
