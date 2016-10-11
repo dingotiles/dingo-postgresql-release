@@ -29,3 +29,6 @@ jobs:
       username: (( grab meta.cf.username ))
       password: (( grab meta.cf.password ))
       skip_ssl_validation: (( grab meta.cf.skip_ssl_validation ))
+      integration_test:
+        organization: system
+        space: dingo-postgresql-integration-test

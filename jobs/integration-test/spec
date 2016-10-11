@@ -19,3 +19,10 @@ properties:
   cf.skip_ssl_validation:
     description: Set to true if Cloud Foundry API is using self-signed SSL certificate
     default: false
+
+  cf.integration_test.organization:
+    description: Organization to use for Cloud Foundry integration test
+    default: system
+  cf.integration_test.space:
+    description: Organization to use for Cloud Foundry integration test
+    default: dingo-postgresql-integration-test
