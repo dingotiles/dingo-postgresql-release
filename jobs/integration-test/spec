@@ -26,3 +26,6 @@ properties:
   cf.integration_test.space:
     description: Organization to use for Cloud Foundry integration test
     default: dingo-postgresql-integration-test
+  cf.integration_test.service_name:
+    description: Service name to use for Cloud Foundry integration test
+    default: dingo-postgresql

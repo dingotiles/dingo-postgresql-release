@@ -14,7 +14,7 @@ export PATH=/var/vcap/jobs/integration-test/bin:$PATH
 # Force mtu of 1500 incase icmp is blocked by sg/acl prohibiting mtu discovery
 sudo ip link show | grep eth0 && sudo ip link set dev eth0 mtu 1500
 
-service=dingo-postgresql
+service=<%= p("cf.integration_test.service_name") %>
 plans=(cluster)
 
 <% if_p("cf.api_url", "cf.username", "cf.password") do |api_url, username, password| %>
