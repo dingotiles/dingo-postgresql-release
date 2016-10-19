@@ -34,7 +34,10 @@ releases:
   version: ${simple_remote_syslog_version}
 EOF
 
-cat > tmp/syslog.yml <<EOF
+if [[ "${enable_syslog}X" == "X" ]]; then
+  touch tmp/syslog.yml
+else
+  cat > tmp/syslog.yml <<EOF
 properties:
   remote_syslog:
     address: ${bosh_syslog_host}
@@ -48,6 +51,7 @@ properties:
   haproxy:
     syslog: (( concat properties.remote_syslog.address ":" properties.remote_syslog.port ))
 EOF
+fi
 
 cat > tmp/docker_image.yml <<EOF
 meta:

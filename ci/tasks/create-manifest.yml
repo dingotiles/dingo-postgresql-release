@@ -28,6 +28,7 @@ params:
   region:
   backups_bucket:
   clusterdata_bucket:
+  enable_syslog:
 
 run:
   path: boshrelease-ci/ci/tasks/create-manifest.sh

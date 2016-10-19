@@ -20,6 +20,7 @@ params:
   clusterdata_bucket:
   syslog_host:
   syslog_port:
+  enable_syslog:
 
 run:
   path: ./boshrelease-ci/ci/tasks/setup-vsphere-manifest.sh

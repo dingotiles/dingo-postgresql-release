@@ -17,7 +17,10 @@ meta:
     region: "${region}"
 EOF
 
-cat > tmp/syslog.yml <<EOF
+if [[ "${enable_syslog}X" == "X" ]]; then
+  touch tmp/syslog.yml
+else
+  cat > tmp/syslog.yml <<EOF
 properties:
   remote_syslog:
     address: ${syslog_host}
@@ -26,11 +29,12 @@ properties:
   docker:
     log_driver: syslog
     log_options:
-    - syslog-address=udp://${syslog_host}:${syslog_port}
+    - (( concat "syslog-address=udp://" properties.remote_syslog.address ":" properties.remote_syslog.port ))
     - tag="{{.Name}}"
   haproxy:
-    syslog: ${syslog_host}:${syslog_port}
+    syslog: (( concat properties.remote_syslog.address ":" properties.remote_syslog.port ))
 EOF
+fi
 
 cat > tmp/release_version.yml <<EOF
 ---
