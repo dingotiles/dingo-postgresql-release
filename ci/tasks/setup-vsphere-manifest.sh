@@ -18,7 +18,7 @@ meta:
 EOF
 
 if [[ "${enable_syslog}X" == "X" ]]; then
-  touch tmp/syslog.yml
+  echo "--- {}" > tmp/syslog.yml
 else
   cat > tmp/syslog.yml <<EOF
 properties:
