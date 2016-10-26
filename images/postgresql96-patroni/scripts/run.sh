@@ -157,6 +157,9 @@ postgresql:
   maximum_lag_on_failover: 1048576 # 1 megabyte in bytes
   use_slots: False
   pgpass: /tmp/pgpass
+  initdb:
+  - encoding: UTF8
+
   # pg_rewind:
   #   username: postgres
   #   password: starkandwayne
