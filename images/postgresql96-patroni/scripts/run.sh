@@ -159,6 +159,7 @@ postgresql:
   pgpass: /tmp/pgpass
   initdb:
   - encoding: UTF8
+  - locale: en_US.UTF-8
 
   # pg_rewind:
   #   username: postgres
