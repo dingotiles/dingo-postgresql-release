@@ -1,63 +1,64 @@
 #!/bin/bash
 
 set -e
-DPG_DIR=~/.dpg
+
+DPG_DIR="$HOME/.dpg"
 
 main() {
   load_current
   case "${1:-help}" in
-    target)
+    (target)
       shift
-      cmd_target $@
+      cmd_target "$@"
       ;;
-    grant-access-all-spaces)
+    (grant-access-all-spaces)
       shift
-      cmd_grant_access_all_spaces $@
+      cmd_grant_access_all_spaces "$@"
       ;;
-    ls)
+    (ls)
       shift
-      cmd_ls $@
+      cmd_ls "$@"
       ;;
-    status)
+    (status)
       shift
-      cmd_status $@
+      cmd_status "$@"
       ;;
-    create)
+    (create)
       shift
-      cmd_create $@
+      cmd_create "$@"
       ;;
-    superuser-psql)
+    (superuser-psql)
       shift
-      cmd_superuser_psql $@
+      cmd_superuser_psql "$@"
       ;;
-    wale-backup-list)
+    (wale-backup-list)
       shift
-      cmd_wale_backup_list $@
+      cmd_wale_backup_list "$@"
       ;;
-    delete)
+    (delete)
       shift
-      cmd_delete $@
+      cmd_delete "$@"
       ;;
-    purge)
+    (purge)
       shift
-      cmd_purge $@
+      cmd_purge "$@"
       ;;
-    cells)
+    (cells)
       shift
-      cmd_cells $@
+      cmd_cells "$@"
       ;;
-    demote-cell)
+    (demote-cell)
       shift
-      cmd_demote_cell $@
+      cmd_demote_cell "$@"
       ;;
-    raw)
+    (raw)
       shift
-      cmd_raw $@
+      cmd_raw "$@"
       ;;
-    help)
+    (help)
       cmd_help
       ;;
-    *)
+    (*)
       echo "Unknown command ${1}" >&2
       cmd_help
       ;;
@@ -77,28 +78,33 @@ Commands:
                                   -k will use --skip-ssl-validation when logging
                                   in to Cloud Foundry.
 
-    dpg grant-access-all-spaces   Grant current admin user access to all CF spaces.
+    dpg grant-access-all-spaces   Grant configured cf operations/admin user 
+                                  access to all CF spaces.
 
     dpg ls                        List all clusters known to the current target.
+                                  (clusters are sets of docker contianers)
+ 
+    dpg status CLUSTER_ID         Show role & replication status information of 
+                                  the given CLUSTER_ID.
 
-    dpg status INSTANCE_ID        Show status information of a given CLUSTER_ID.
-
-    dpg create NEW_INSTANCE_ID    Creates new service instance via broker api.
-                                  Optionally override $SERVICE_ID and $PLAN_ID.
+    dpg create NEW_CLUSTER_ID     Creates new service instance via broker api.
+                                  Optionally override \$SERVICE_ID and \$PLAN_ID.
 
     dpg superuser-psql INST_ID    Runs psql with .credentials.superuser_uri
                                   for the service instance.
 
-    dpg wale-backup-list INST_ID  Display cached list of wal-e backup info from etcd.
+    dpg wale-backup-list INST_ID  Display cached list of wal-e backup info 
+                                  ( from etcd. )
 
-    dpg delete INSTANCE_ID        Delete a cluster via the broker api.
+    dpg delete CLUSTER_ID         Delete a cluster via the broker api.
 
-    dpg purge INSTANCE_ID         Purge knowladge of a cluster from etcd.
-                                  Probably do not run this if cluster has not been deleted yet.
+    dpg purge CLUSTER_ID          Purge knowladge of a cluster from etcd.
+                                  ( Be sure to delete the cluster before using )
 
-    dpg cells                     Display available cells/servers.
+    dpg cells                     Display available cells (servers).
 
-    dpg demote-cell CELL_GUID     Demote a cell/server.
+    dpg demote-cell CELL_GUID     Demote a cell/server 
+                                  ( removes masters from CELL_GUID (IP Addr) )
 
     dpg raw PATH JQ_FILTER        Query etcd PATH and pipe into jq applying the
                                   given JQ_FILTER.
@@ -106,37 +112,39 @@ EOF
 }
 
 load_current() {
-  if [[ ! -d ${DPG_DIR} ]]; then
-    mkdir -p ${DPG_DIR}
-  fi
-  chmod 700 ${DPG_DIR}
+  mkdir -p "${DPG_DIR}"
+  chmod 700 "${DPG_DIR}"
 
-  if [[ -f ${DPG_DIR}/current ]]; then
-    current_target=$(cat ${DPG_DIR}/current)
+  if [[ -f "${DPG_DIR}/current" ]]; then
+    current_target=$(cat "${DPG_DIR}/current")
     export TARGET_DIR=${DPG_DIR}/${current_target}
     if [[ -d ${TARGET_DIR} ]]; then
-      chmod 600 ${TARGET_DIR}/*
+      chmod 600 "${TARGET_DIR}"/*
     fi
     if [[ -f ${TARGET_DIR}/etcd_endpoint ]]; then
-      export ETCD_ENDPOINT=$(cat ${TARGET_DIR}/etcd_endpoint)
+      ETCD_ENDPOINT=$(cat "${TARGET_DIR}/etcd_endpoint")
     fi
     if [[ -f ${TARGET_DIR}/broker_endpoint ]]; then
-      export BROKER_ENDPOINT=$(cat ${TARGET_DIR}/broker_endpoint)
+      BROKER_ENDPOINT=$(cat "${TARGET_DIR}/broker_endpoint")
     fi
     if [[ -f ${TARGET_DIR}/broker_username ]]; then
-      export BROKER_USERNAME=$(cat ${TARGET_DIR}/broker_username)
+      BROKER_USERNAME=$(cat "${TARGET_DIR}/broker_username")
     fi
     if [[ -f ${TARGET_DIR}/broker_password ]]; then
-      export BROKER_PASSWORD=$(cat ${TARGET_DIR}/broker_password)
+      BROKER_PASSWORD=$(cat "${TARGET_DIR}/broker_password")
     fi
     if [[ -f ${TARGET_DIR}/cf_endpoint ]]; then
-      export CF_ENDPOINT=$(cat ${TARGET_DIR}/cf_endpoint)
+      CF_ENDPOINT=$(cat "${TARGET_DIR}/cf_endpoint")
     fi
     if [[ -f ${TARGET_DIR}/cf_username ]]; then
-      export CF_USERNAME=$(cat ${TARGET_DIR}/cf_username)
+      CF_USERNAME=$(cat "${TARGET_DIR}/cf_username")
     fi
+
+    export BROKER_ENDPOINT BROKER_PASSWORD BROKER_USERNAME CF_ENDPOINT CF_USERNAME ETCD_ENDPOINT
+
     if [[ ! -f ~/.cf/config.json && -f ${TARGET_DIR}/cf_password ]]; then
-      local cf_password=$(cat ${TARGET_DIR}/cf_password)
+      local cf_password
+      cf_password=$(cat "${TARGET_DIR}/cf_password")
       skip_ssl_validation=
       if [[ -f "${TARGET_DIR}/cf_skip_ssl_validation" ]]; then
         skip_ssl_validation='--skip-ssl-validation'
@@ -145,96 +153,97 @@ load_current() {
       cf auth "${CF_USERNAME}" "${cf_password}"
     fi
   fi
+
+  brokerURL="${BROKER_USERNAME}:${BROKER_PASSWORD}@${BROKER_ENDPOINT}"
 }
 
 cmd_target() {
-	local target_name=${1}
-  if [[ -z ${target_name} ]]; then
-    echo "Target set to: '$(cat ${DPG_DIR}/current)'"
+	local target_name="${1}"
+  if [[ -z "${target_name}" ]]; then
+    echo "Target set to: '$(cat "${DPG_DIR}/current")'"
     echo
-    echo ETCD_ENDPOINT=${ETCD_ENDPOINT}
-    echo BROKER_ENDPOINT=${BROKER_ENDPOINT}
-    echo CF_ENDPOINT=${CF_ENDPOINT}
+    echo ETCD_ENDPOINT="${ETCD_ENDPOINT}"
+    echo BROKER_ENDPOINT="${BROKER_ENDPOINT}"
+    echo CF_ENDPOINT="${CF_ENDPOINT}"
     return
   fi
 
-  echo ${target_name} > ${DPG_DIR}/current
+  echo "${target_name}" > "${DPG_DIR}/current"
   shift
   target_dir="${DPG_DIR}/${target_name}"
-  while [[ $# -gt 0 ]]
+
+  while (( $# > 0 ))
   do
     key="${1}"
 
     case ${key} in
-      -k|--skip-ssl-validation)
+      (-k|--skip-ssl-validation)
         skip_ssl_validation='--skip-ssl-validation'
         shift # past argument
         ;;
-      --init)
-        rm -rf ${target_dir}/*
+      (--init)
+        rm -rf "${target_dir:?${HOME}/.dpg}"/*
         shift # past argument
         ;;
-      *)
+      (*)
         # unknown option
         ;;
     esac
   done
-  if [[ ! -d ${target_dir} ]]; then
-    mkdir -p ${target_dir}
-  fi
+  mkdir -p "${target_dir}"
 
   if [[ -f "${target_dir}/etcd_endpoint" ]]; then
-    etcd_endpoint=$(cat ${target_dir}/etcd_endpoint)
+    etcd_endpoint=$(cat "${target_dir}/etcd_endpoint")
   fi
   if [[ -z ${etcd_endpoint} ]]; then
-    read -p 'ETCD endpoint> ' etcd_endpoint
-    echo ${etcd_endpoint} > ${target_dir}/etcd_endpoint
+    read -r -p 'ETCD endpoint> ' etcd_endpoint
+    echo "${etcd_endpoint}" > "${target_dir}/etcd_endpoint"
   fi
 
   if [[ -f "${target_dir}/broker_endpoint" ]]; then
-    broker_endpoint=$(cat ${target_dir}/broker_endpoint)
+    broker_endpoint=$(cat "${target_dir}/broker_endpoint")
   fi
   if [[ -z ${broker_endpoint} ]]; then
-    read -p 'BROKER endpoint> ' broker_endpoint
-    echo ${broker_endpoint} > ${target_dir}/broker_endpoint
+    read -r -p 'BROKER endpoint> ' broker_endpoint
+    echo "${broker_endpoint}" > "${target_dir}/broker_endpoint"
   fi
 
   if [[ -f "${target_dir}/broker_username" ]]; then
-    broker_username=$(cat ${target_dir}/broker_username)
+    broker_username=$(cat "${target_dir}/broker_username")
   fi
   if [[ -z ${broker_username} ]]; then
-    read -p 'BROKER username> ' broker_username
-    echo ${broker_username} > ${target_dir}/broker_username
+    read -r -p 'BROKER username> ' broker_username
+    echo "${broker_username}" > "${target_dir}/broker_username"
   fi
 
   if [[ -f "${target_dir}/broker_password" ]]; then
-    broker_password=$(cat ${target_dir}/broker_password)
+    broker_password=$(cat "${target_dir}/broker_password")
   fi
   if [[ -z ${broker_password} ]]; then
-    read -p 'BROKER password> ' broker_password
-    echo ${broker_password} > ${target_dir}/broker_password
+    read -r -p 'BROKER password> ' broker_password
+    echo "${broker_password}" > "${target_dir}/broker_password"
   fi
 
   if [[ -f "${target_dir}/cf_endpoint" ]]; then
-    cf_endpoint=$(cat ${target_dir}/cf_endpoint)
+    cf_endpoint=$(cat "${target_dir}/cf_endpoint")
   fi
   if [[ -z ${cf_endpoint} ]]; then
-    read -p 'CF endpoint> ' cf_endpoint
-    echo ${cf_endpoint} > ${target_dir}/cf_endpoint
+    read -r -p 'CF endpoint> ' cf_endpoint
+    echo "${cf_endpoint}" > "${target_dir}/cf_endpoint"
   fi
 
   if [[ -f "${target_dir}/cf_username" ]]; then
-    cf_username=$(cat ${target_dir}/cf_username)
+    cf_username=$(cat "${target_dir}/cf_username")
   fi
-  if [[ -z ${cf_username} ]]; then
-    read -p 'CF username> ' cf_username
-    echo ${cf_username} > ${target_dir}/cf_username
+  if [[ -z "${cf_username}" ]]; then
+    read -r -p 'CF username> ' cf_username
+    echo "${cf_username}" > "${target_dir}/cf_username"
   fi
 
   if [[ -f "${target_dir}/cf_password" ]]; then
-    cf_password=$(cat ${target_dir}/cf_password)
+    cf_password=$(cat "${target_dir}/cf_password")
   else
-    read -sp 'CF password> ' cf_password
+    read -r -sp 'CF password> ' cf_password
     echo
   fi
 
@@ -245,195 +254,194 @@ cmd_target() {
 }
 
 cmd_ls() {
-  cf_cache=${TARGET_DIR}/cf_cache
-  rm -rf ${cf_cache}
-  mkdir -p ${cf_cache}
+  cf_cache="${TARGET_DIR}/cf_cache"
+  rm -rf "${cf_cache}"
+  mkdir -p "${cf_cache}"
   if [[ ! -z ${CF_ENDPOINT} ]];then
-    cf curl /v2/service_instances > ${cf_cache}/service_instances || touch ${cf_cache}/service_instances
-    cf curl /v2/spaces > ${cf_cache}/spaces || touch ${cf_cache}/spaces
-    cf curl /v2/organizations > ${cf_cache}/organizations || touch ${cf_cache}/organizations
+    cf curl /v2/service_instances > "${cf_cache}/service_instances" || touch "${cf_cache}/service_instances"
+    cf curl /v2/spaces > "${cf_cache}/spaces" || touch "${cf_cache}/spaces"
+    cf curl /v2/organizations > "${cf_cache}/organizations" || touch "${cf_cache}/organizations"
   fi
 
-  etcd_cache=${TARGET_DIR}/etcd_cache
+  etcd_cache="${TARGET_DIR}/etcd_cache"
   if [[ ! -z ${ETCD_ENDPOINT} ]]; then
-    curl -s ${ETCD_ENDPOINT}/v2/keys/service\?recursive=true > ${etcd_cache}
+    curl -s "${ETCD_ENDPOINT}/v2/keys/service?recursive=true" > "${etcd_cache}"
   else
     echo "Need ETCD_ENDPOINT for 'dpg ls'"
   fi
 
-  (
+  column -t < <(
     echo cluster-id members leader cf-name cf-org cf-space
-    if [[ ! -z ${ETCD_ENDPOINT} ]] && cat ${etcd_cache} | jq '.node.nodes[]' >/dev/null 2>&1 ; then
-      cat ${etcd_cache} | jq -r '.node.nodes[].key' \
-        | while read cluster_path; do
-        cluster_id=$(basename ${cluster_path})
+    if [[ ! -z ${ETCD_ENDPOINT} ]] && (jq '.node.nodes[]' < "${etcd_cache}" >/dev/null 2>&1 ) ; then
+      while read -r cluster_path; do
+        cluster_id=$(basename "${cluster_path}")
 
-        members_path=${cluster_path}/members
-        members=$(cat ${etcd_cache} | jq --arg members ${members_path} '.node.nodes[].nodes[] | select(contains({key: $members})).nodes[].key' 2>/dev/null | wc -l)
+        members_path="${cluster_path}/members"
+        _f=".node.nodes[].nodes[] | select(contains({key: \$members})).nodes[].key"
+        members=$(jq --arg members "${members_path}" "$_f" < "${etcd_cache}" 2>/dev/null | wc -l)
 
-        leader_path=${cluster_path}/leader
-        leader=$(cat ${etcd_cache} | jq -r --arg leader ${leader_path} '.node.nodes[].nodes[] | select(contains({key: $leader})).value' 2>/dev/null)
-        if [[ -z ${leader} ]]; then
+        leader_path="${cluster_path}/leader"
+        _f=".node.nodes[].nodes[] | select(contains({key: \$leader})).value"
+        leader=$(jq -r --arg leader "${leader_path}" "$_f" < "${etcd_cache}" 2>/dev/null)
+        if [[ -z "${leader}" ]]; then
           leader='<none>'
         fi
 
-        if [[ -f ${cf_cache}/service_instances ]]; then
-          cf_name=$(cat ${cf_cache}/service_instances | jq -r --arg id ${cluster_id} '.resources[] | select(contains({metadata: {guid: $id}})).entity.name' 2>/dev/null || echo '')
+        if [[ -f "${cf_cache}/service_instances" ]]; then
+          _f=".resources[] | select(contains({metadata: {guid: \$id}})).entity.name"
+          cf_name=$(jq -r --arg id "${cluster_id}" "$_f" < "${cf_cache}/service_instances" 2>/dev/null || echo '')
         fi
         if [[ -z ${cf_name} ]]; then
           cf_name='<none>'
         fi
 
-        state_path=${cluster_path}/state
-        state=$(cat ${etcd_cache} | jq -r --arg state ${state_path} '.node.nodes[].nodes[] | select(contains({key: $state})).value' 2>/dev/null)
-        if [[ ! -z ${state} ]]; then
+        state_path="${cluster_path}/state"
+        _f=".node.nodes[].nodes[] | select(contains({key: \$state})).value"
+        state=$(jq -r --arg state "${state_path}" "$_f" < "${etcd_cache}" 2>/dev/null)
+        if [[ ! -z "${state}" ]]; then
           if [[ ${cf_name} == '<none>' ]]; then
             cf_name='<unknown>'
           fi
 
-          cf_org_id=$(echo ${state} | jq -r '.organization_guid')
+          cf_org_id=$(jq -r '.organization_guid' <<<"${state}")
           cf_org_name='<unknown>'
           if [[ ! -z ${cf_org_id} ]]; then
-            cf_org_name=$(cat ${cf_cache}/organizations | jq -r --arg id ${cf_org_id} '.resources[] | select(contains({metadata: {guid: $id}})).entity.name')
+            _f=".resources[] | select(contains({metadata: {guid: \$id}})).entity.name"
+            cf_org_name=$(jq -r --arg id "${cf_org_id}" "$_f" < "${cf_cache}/organizations" )
           fi
 
           cf_space_name='<unknown>'
-          cf_space_id=$(echo ${state} | jq -r '.space_guid')
-          if [[ ! -z ${cf_space_id} ]]; then
-            cf_space_name=$(cat ${cf_cache}/spaces | jq -r --arg id ${cf_space_id} '.resources[] | select(contains({metadata: {guid: $id}})).entity.name')
+          cf_space_id=$(jq -r '.space_guid' <<<"${state}")
+          if [[ ! -z "${cf_space_id}" ]]; then
+            _f=".resources[] | select(contains({metadata: {guid: \$id}})).entity.name"
+            cf_space_name=$( jq -r --arg id "${cf_space_id}" "$_f" < "${cf_cache}/spaces" )
           fi
         else
           cf_org_name=''
           cf_space_name=''
         fi
 
-        echo ${cluster_id} ${initialized} ${members} ${leader} ${cf_name} ${cf_org_name} ${cf_space_name}
-      done
+        echo "${cluster_id}" "${members}" "${leader}" "${cf_name}" "${cf_org_name}" "${cf_space_name}"
+      done < <( jq -r '.node.nodes[].key' < "${etcd_cache}" )
     fi
-  ) | column -t
+  )
 }
 
 cmd_grant_access_all_spaces() {
-  cf curl /v2/organizations \
-    | jq -r '.resources[].metadata.url' \
-    | while read org_url; do
-      org_data=$(cf curl ${org_url})
-      org=$(echo ${org_data} | jq -r '.entity.name')
-      spaces_url=$(echo ${org_data} | jq -r '.entity.spaces_url')
-      cf curl ${spaces_url} \
-        | jq -r '.resources[].entity.name' \
-        | while read space; do
-      cf set-space-role ${CF_USERNAME} ${org} ${space} SpaceManager
-      cf set-space-role ${CF_USERNAME} ${org} ${space} SpaceDeveloper
-    done
-  done
+  while read -r orgURL; do
+    org_data=$(cf curl "${orgURL}")
+    org=$(jq -r '.entity.name' <<<"${org_data}" )
+    spaces_url=$(jq -r '.entity.spaces_url' <<<"${org_data}" )
+    while read -r space; do
+      cf set-space-role "${CF_USERNAME}" "${org}" "${space}" SpaceManager
+      cf set-space-role "${CF_USERNAME}" "${org}" "${space}" SpaceDeveloper
+    done < <( cf curl "${spaces_url}" | jq -r '.resources[].entity.name' )
+  done < <(cf curl /v2/organizations | jq -r '.resources[].metadata.url')
 }
 
 cmd_demote_cell() {
-  local cell_guid=${1:?USAGE: dpg demote-cell CELL_GUID}
-  echo "You are about to remote cell/server '${cell_guid}'"
-  read -sp 'Press enter to continue> '
+  local cell_guid="${1:?USAGE: dpg demote-cell CELL_GUID}"
+  echo "You are about to demote cell/server '${cell_guid}'."
+  read -r -sp 'Press enter to continue> '
   echo
-  curl "${BROKER_USERNAME}:${BROKER_PASSWORD}@${BROKER_ENDPOINT}/admin/cells/${cell_guid}/demote" -i -XPOST
+  curl "${brokerURL}/admin/cells/${cell_guid}/demote" -i -XPOST
 }
 
 cmd_delete() {
-  local service_id=${SERVICE_ID:-"beb5973c-e1b2-11e5-a736-c7c0b526363d"}
-  local plan_id=${PLAN_ID:-"1545e30e-6dc3-11e5-826a-6c4008a663f0"}
-  local instance_id=${1:?USAGE: dpg delete INSTANCE_ID}
+  local service_id="${SERVICE_ID:-"beb5973c-e1b2-11e5-a736-c7c0b526363d"}"
+  local plan_id="${PLAN_ID:-"1545e30e-6dc3-11e5-826a-6c4008a663f0"}"
+  local instance_id="${1:?USAGE: dpg delete CLUSTER_ID}"
   echo "You are about to delete the cluster '${instance_id}'"
-  read -sp 'Press enter to continue> '
+  read -r -sp 'Press enter to continue> '
   echo
-  curl ${BROKER_USERNAME}:${BROKER_PASSWORD}@${BROKER_ENDPOINT}/v2/service_instances/${instance_id}\?plan_id=${plan_id}\&service_id=${service_id} -XDELETE
+  curl "${brokerURL}/v2/service_instances/${instance_id}?plan_id=${plan_id}&service_id=${service_id}" -XDELETE
 }
 
 cmd_create() {
-  local service_id=${SERVICE_ID:-"beb5973c-e1b2-11e5-a736-c7c0b526363d"}
-  local plan_id=${PLAN_ID:-"1545e30e-6dc3-11e5-826a-6c4008a663f0"}
-  local instance_id=${1:?USAGE: dpg create INSTANCE_ID}
-  echo "You are about to create the cluster '${instance_id}'"
-  curl ${BROKER_USERNAME}:${BROKER_PASSWORD}@${BROKER_ENDPOINT}/v2/service_instances/${instance_id} \
-    -XPUT \
+  local service_id="${SERVICE_ID:-"beb5973c-e1b2-11e5-a736-c7c0b526363d"}"
+  local plan_id="${PLAN_ID:-"1545e30e-6dc3-11e5-826a-6c4008a663f0"}"
+  local instance_id="${1:?USAGE: dpg create CLUSTER_ID}"
+  echo "You are about to create the cluster '${instance_id}'."
+  read -r -sp 'Press enter to continue> '
+  echo
+  curl "${brokerURL}/v2/service_instances/${instance_id}" -XPUT \
     -d "{\"service_id\": \"${service_id}\", \"plan_id\": \"${plan_id}\"}"
 }
 
 cmd_superuser_psql() {
   local service_id=${SERVICE_ID:-"beb5973c-e1b2-11e5-a736-c7c0b526363d"}
   local plan_id=${PLAN_ID:-"1545e30e-6dc3-11e5-826a-6c4008a663f0"}
-  local instance_id=${1:?USAGE: dpg superuser-uri INSTANCE_ID}
+  local instance_id=${1:?USAGE: dpg superuser-uri CLUSTER_ID}
   shift
-  superuser_uri=$(curl -s ${BROKER_USERNAME}:${BROKER_PASSWORD}@${BROKER_ENDPOINT}/v2/service_instances/${instance_id}/service_bindings/dummy \
+  superuser_uri=$(
+  curl -s "${brokerURL}/v2/service_instances/${instance_id}/service_bindings/dummy" \
     -XPUT \
     -d "{\"service_id\": \"${service_id}\", \"plan_id\": \"${plan_id}\"}" |
-    jq -r ".credentials.superuser_uri")
-  psql ${superuser_uri} $@
+    jq -r ".credentials.superuser_uri"
+    )
+  psql "${superuser_uri}" "$@"
 }
 
 cmd_wale_backup_list() {
-  instance_id=${1:?USAGE: dpg wale-backup-list INSTANCE_ID}
-  wale_backup_list=$(cmd_raw /service/${instance_id}/wale-backup-list | jq -r .node.value)
+  instance_id=${1:?USAGE: dpg wale-backup-list CLUSTER_ID}
+  wale_backup_list=$(cmd_raw "/service/${instance_id}/wale-backup-list" | jq -r .node.value)
   if [[ "${wale_backup_list}" == "null" ]]; then
-    echo "Cluster data no longer cached in etcd; or invalid INSTANCE_ID" >&2
+    echo "Cluster data no longer cached in etcd; or invalid CLUSTER_ID" >&2
     exit 1
   fi
-  cmd_raw /service/${instance_id}/wale-backup-list | jq -r .node.value
+  cmd_raw "/service/${instance_id}/wale-backup-list" | jq -r .node.value
 }
 
 cmd_purge() {
-  instance_id=${1:?USAGE: dpg purge INSTANCE_ID}
+  instance_id="${1:?USAGE: dpg purge CLUSTER_ID}"
   echo "You are about to purge the cluster '${instance_id}' from ETCD"
-  read -p 'Are you sure? (yes)> ' answer
+  read -r -p 'Are you sure? (yes)> ' answer
   echo
-  if [[ ${answer} == 'yes' ]]; then
-    curl ${ETCD_ENDPOINT}/v2/keys/service/${instance_id}\?recursive=true -XDELETE
+  if [[ "${answer}" == 'yes' ]]; then
+    curl "${ETCD_ENDPOINT}/v2/keys/service/${instance_id}?recursive=true" -XDELETE
   fi
 }
 
 cmd_status() {
-  instance_id=${1:?USAGE: dpg status INSTANCE_ID}
-
-  cluster_path=/service/${instance_id}
-  members_path=${cluster_path}/members
-  state_path=${cluster_path}/state
-  nodes=$(curl -s $ETCD_ENDPOINT/v2/keys${state_path} | jq -r '.node.value' | jq '.nodes')
+  instance_id="${1:?USAGE: dpg status CLUSTER_ID}"
+  cluster_path="/service/${instance_id}"
+  members_path="${cluster_path}/members"
+  state_path="${cluster_path}/state"
+  nodes=$(curl -s "$ETCD_ENDPOINT/v2/keys${state_path}" | jq -r '.node.value' | jq '.nodes')
 
   echo "Status of cluster '${instance_id}'"
   echo
-  (
+  column -t < <(
     echo Member Cell Role State Available
-    curl -s $ETCD_ENDPOINT/v2/keys${members_path}\?recursive=true \
-      | jq -r '.node.nodes[] | {path: .key, role: .value | fromjson .role, state: .value | fromjson .state, url: .value | fromjson .conn_url } | tojson' \
-      | while read member; do
+    _fm='.node.nodes[] | {path: .key, role: .value | fromjson .role, state: .value | fromjson .state, url: .value | fromjson .conn_url } | tojson'
+    _url="${ETCD_ENDPOINT}/v2/keys${members_path}?recursive=true"
 
+    while read -r member; do
       database_available='false'
-      conn=$(echo $member | jq -r '.url')
-      if psql $conn -c 'SELECT current_database()' 2>/dev/null | grep '1 row' >/dev/null; then
+      psqlUrl=$(jq -r '.url' <<<"$member" )
+      if psql "$psqlUrl" -c 'SELECT current_database()' 2>/dev/null | grep '1 row' >/dev/null; then
         database_available='true'
       fi
-      member_id=$(basename $(echo $member | jq -r '.path'))
-      cell_id=$(echo $nodes | jq -r --arg id ${member_id} '.[] | select(.node_id == $id) .cell_guid')
-      if [[ -z ${cell_id} ]]; then
-        cell_id='<unknown>'
-      fi
+      member_id="$(basename "$(jq -r '.path' <<<"$member")")"
+      _f=".[] | select(.node_id == \$id) .cell_guid"
+      cell_id=$(jq -r --arg id "${member_id}" "$_f" <<<"$nodes" )
 
-      echo ${member_id} ${cell_id} $(echo $member | jq -r '.role') $(echo $member | jq -r '.state') $database_available
-    done
-  ) | column -t
+      echo "${member_id}" "${cell_id:-'<unknown>'}" "$(jq -r '.role' <<<"$member" )" "$(jq -r '.state' <<<"$member" )" "$database_available"
+
+    done < <( curl -s "$_url" | jq -r "$_fm" )
+  )
 }
 
 cmd_cells() {
-  curl -s ${BROKER_USERNAME}:${BROKER_PASSWORD}@${BROKER_ENDPOINT}/admin/cells \
-    | jq .
+  jq . < <(curl -s "${brokerURL}/admin/cells" )
 }
 
 cmd_raw() {
-  local etcd_path=${1}
-  local jq_filter=${2}
-  if [[ -z ${jq_filter} ]]; then
-    jq_filter='.'
-  fi
-
-  curl -s $ETCD_ENDPOINT/v2/keys${etcd_path} | jq -r $jq_filter
+  local etcd_path="${1}"
+  local jq_filter="${2:-'.'}"
+  jq -r "$jq_filter" < <( curl -s "${ETCD_ENDPOINT}/v2/keys${etcd_path}" )
 }
 
-main $@
+main "$@"
+
+exit $?
