@@ -583,15 +583,6 @@ resources:
     file: version
     private_key: {{github-private-key}}
 
-- name: license-report
-  type: s3
-  source:
-    bucket: dingo-postgresql-releases
-    regexp: dingo-postgresql-release-license-report-(.*).csv
-    access_key_id: {{dingotiles-aws-access}}
-    secret_access_key: {{dingotiles-aws-secret}}
-    region_name: {{dingotiles-aws-region}}
-
 - name: candidate-release
   type: s3
   source:
@@ -617,15 +608,6 @@ resources:
     repository: dingotiles/dingo-postgresql95-base
     tag: "latest"
 
-- name: pg95-image-latest
-  type: docker-image
-  source:
-    email: {{docker-hub-email}}
-    username: {{docker-hub-username}}
-    password: {{docker-hub-password}}
-    repository: dingotiles/dingo-postgresql95
-    tag: "latest"
-
 - name: pg95-image-edge
   type: docker-image
   source:
@@ -644,15 +626,6 @@ resources:
     repository: dingotiles/dingo-postgresql95
     tag: "pre-test"
 
-- name: docker-image-pg95-patroni-master
-  type: docker-image
-  source:
-    email: {{docker-hub-email}}
-    username: {{docker-hub-username}}
-    password: {{docker-hub-password}}
-    repository: dingotiles/dingo-postgresql95
-    tag: "9.5-patroni-master"
-
 - name: pg96-base-image-latest
   type: docker-image
   source:
@@ -660,15 +633,6 @@ resources:
     username: {{docker-hub-username}}
     password: {{docker-hub-password}}
     repository: dingotiles/dingo-postgresql96-base
-    tag: "latest"
-
-- name: pg96-image-latest
-  type: docker-image
-  source:
-    email: {{docker-hub-email}}
-    username: {{docker-hub-username}}
-    password: {{docker-hub-password}}
-    repository: dingotiles/dingo-postgresql96
     tag: "latest"
 
 - name: pg96-image-edge
@@ -688,15 +652,6 @@ resources:
     password: {{docker-hub-password}}
     repository: dingotiles/dingo-postgresql96
     tag: "pre-test"
-
-- name: docker-image-pg96-patroni-master
-  type: docker-image
-  source:
-    email: {{docker-hub-email}}
-    username: {{docker-hub-username}}
-    password: {{docker-hub-password}}
-    repository: dingotiles/dingo-postgresql95
-    tag: "9.6-patroni-master"
 
 - name: docker-image-registrator
   type: docker-image
