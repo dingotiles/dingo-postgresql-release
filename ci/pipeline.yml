@@ -503,6 +503,7 @@ jobs:
       AWS_BUCKET: {{docker-machine-bucket}}
       AWS_VPC_ID: {{docker-machine-vpc-id}}
       AWS_SUBNET_ID: {{docker-machine-subnet-id}}
+      AWS_AZ_ZONE: {{docker-machine-az-zone}}
 
 resources:
 - name: boshrelease

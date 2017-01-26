@@ -12,6 +12,7 @@ params:
   AWS_BUCKET:
   AWS_VPC_ID:
   AWS_SUBNET_ID:
+  AWS_AZ_ZONE:
   AWS_INSTANCE_TYPE: t2.large
   AWS_SECURITY_GROUP: docker-machine
   MACHINE_NAME: dingo-postgresql-pipeline
