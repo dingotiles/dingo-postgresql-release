@@ -2,7 +2,7 @@
 platform: linux
 image_resource:
   type: docker-image
-  source: {repository: bodymindarts/docker-machine-setup}
+  source: {repository: dingotiles/delmo-docker-machine-setup}
 
 
 params:
@@ -10,6 +10,8 @@ params:
   AWS_SECRET_ACCESS_KEY:
   AWS_DEFAULT_REGION:
   AWS_BUCKET:
+  AWS_VPC_ID:
+  AWS_SUBNET_ID:
   AWS_INSTANCE_TYPE: t2.large
   AWS_SECURITY_GROUP: docker-machine
   MACHINE_NAME: dingo-postgresql-pipeline
