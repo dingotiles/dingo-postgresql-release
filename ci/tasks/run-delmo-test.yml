@@ -12,7 +12,7 @@ params:
   MACHINE_EXPORT_AWS_SECRET_ACCESS_KEY:
   MACHINE_EXPORT_AWS_REGION:
   MACHINE_EXPORT_AWS_BUCKET:
-  MACHINE_NAME: dingo-postgresql-pipeline
+  MACHINE_NAME: delmo-dingo-postgresql-pipeline
   WAL_S3_BUCKET:
   AWS_REGION:
   AWS_ACCESS_KEY_ID:
