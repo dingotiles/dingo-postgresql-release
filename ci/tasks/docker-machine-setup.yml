@@ -13,7 +13,7 @@ params:
   AWS_SUBNET_ID:
   AWS_ZONE:
   AWS_INSTANCE_TYPE: t2.large
-  AWS_SECURITY_GROUP: docker-machine
+  AWS_SECURITY_GROUP:
   AWS_ROOT_SIZE: 40
   AWS_VOLUME_TYPE: gp2
   MACHINE_NAME: delmo-dingo-postgresql-pipeline
