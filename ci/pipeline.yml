@@ -504,6 +504,7 @@ jobs:
       AWS_SUBNET_ID: {{docker-machine-subnet-id}}
       AWS_ZONE: {{docker-machine-az-zone}}
       AWS_BUCKET: {{docker-machine-bucket}}
+      AWS_AMI: ami-fd6e3bea
 
 resources:
 - name: boshrelease
