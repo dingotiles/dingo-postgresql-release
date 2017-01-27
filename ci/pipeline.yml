@@ -492,6 +492,7 @@ jobs:
 
 - name: docker-machine-setup
   serial: true
+  serial_groups: [delmo]
   plan:
   - get: boshrelease-ci
   - task: docker-machine-setup
