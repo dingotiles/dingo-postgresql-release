@@ -20,4 +20,4 @@ params:
 
 run:
   path: /entrypoint.sh
-  args: [delmo, --only-build-task, -f, boshrelease-ci/images/delmo.yml, -m, dingo-postgresql-pipeline]
+  args: [delmo, --only-build-task, -f, boshrelease-ci/images/delmo.yml, -m, delmo-dingo-postgresql-pipeline]
