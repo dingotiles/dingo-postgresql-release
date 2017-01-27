@@ -17,7 +17,6 @@ params:
   AWS_ROOT_SIZE: 40
   AWS_VOLUME_TYPE: gp2
   MACHINE_NAME: delmo-dingo-postgresql-pipeline
-  OPEN_TCP_PORTS: 2300-6000
   AWS_BUCKET:
 
 run:
