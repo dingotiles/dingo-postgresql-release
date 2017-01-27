@@ -13,7 +13,7 @@ fi
 ETCD_CLUSTER=${HOST_IP}:4001
 
 docker rm -f etcd
-docker run -d -p 4001:4001 -p 2380:2380 -p 2379:2379 --name etcd quay.io/coreos/etcd:v2.2.5 \
+docker run -d -p 4001:4001 -p 2380:2380 -p 2379:2379 --name etcd quay.io/coreos/etcd:v2.3.7 \
     -name etcd0 \
     -advertise-client-urls "http://${HOST_IP}:2379,http://${HOST_IP}:4001" \
     -listen-client-urls http://0.0.0.0:2379,http://0.0.0.0:4001 \

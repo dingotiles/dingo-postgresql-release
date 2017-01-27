@@ -34,7 +34,7 @@ In case you don't have etcd installed: `brew install etcd`
 ```
 ETCD_CLUSTER=localhost:2379
 curl -s ${ETCD_CLUSTER}/version
-{"etcdserver":"2.2.5","etcdcluster":"2.2.0"}
+{"etcdserver":"2.3.7","etcdcluster":"2.2.0"}
 cusl -s ${ETCD_CLUSTER}/v2/keys
 {"action":"get","node":{"dir":true}}
 ```
