@@ -2,7 +2,7 @@
 platform: linux
 image_resource:
   type: docker-image
-  source: { repository: bodymindarts/delmo-concourse }
+  source: { repository: dingotiles/delmo-concourse }
 
 inputs:
 - name: boshrelease-ci
