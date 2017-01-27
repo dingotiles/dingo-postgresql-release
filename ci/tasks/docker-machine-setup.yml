@@ -9,14 +9,16 @@ params:
   AWS_ACCESS_KEY_ID:
   AWS_SECRET_ACCESS_KEY:
   AWS_DEFAULT_REGION:
-  AWS_BUCKET:
   AWS_VPC_ID:
   AWS_SUBNET_ID:
-  AWS_AZ_ZONE:
+  AWS_ZONE:
   AWS_INSTANCE_TYPE: t2.large
   AWS_SECURITY_GROUP: docker-machine
-  MACHINE_NAME: dingo-postgresql-pipeline
+  AWS_ROOT_SIZE: 40
+  AWS_VOLUME_TYPE: gp2
+  MACHINE_NAME: delmo-dingo-postgresql-pipeline
   OPEN_TCP_PORTS: 2300-6000
+  AWS_BUCKET:
 
 run:
   path: /setup-aws

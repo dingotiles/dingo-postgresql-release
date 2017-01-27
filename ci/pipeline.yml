@@ -500,10 +500,10 @@ jobs:
       AWS_ACCESS_KEY_ID: {{docker-machine-access-key-id}}
       AWS_SECRET_ACCESS_KEY: {{docker-machine-secret-access-key}}
       AWS_DEFAULT_REGION: {{docker-machine-region}}
-      AWS_BUCKET: {{docker-machine-bucket}}
       AWS_VPC_ID: {{docker-machine-vpc-id}}
       AWS_SUBNET_ID: {{docker-machine-subnet-id}}
-      AWS_AZ_ZONE: {{docker-machine-az-zone}}
+      AWS_ZONE: {{docker-machine-az-zone}}
+      AWS_BUCKET: {{docker-machine-bucket}}
 
 resources:
 - name: boshrelease
