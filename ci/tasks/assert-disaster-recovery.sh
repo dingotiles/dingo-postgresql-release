@@ -10,7 +10,8 @@ export PAGER=/bin/cat
 
 cf api api.test-cf.snw --skip-ssl-validation
 cf auth admin admin
-cf t -o dr-test -s dr-test
+cf create-org dr-test; cf target -o dr-test
+cf create-space dr-test; cf target -s dr-test
 
 cf service-key dr-test dr-test-binding
 pg_uri=$(cf service-key dr-test dr-test-binding | grep '"uri"' | grep -o 'postgres://.*/postgres' | sed "s/@.*:/@${router_ip}:/")

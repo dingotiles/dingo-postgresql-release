@@ -13,7 +13,6 @@ sleep 30
 
 cf api api.test-cf.snw --skip-ssl-validation
 cf auth admin admin
-cf t -o dr-test -s dr-test
 
 cf create-org dr-test; cf target -o dr-test
 cf create-space dr-test; cf target -s dr-test
