@@ -18,6 +18,20 @@ compilation:
   workers: 2
 # 10.58.111.54 - 10.58.111.54
 jobs:
+- name: etcd
+  instances: 1
+  templates:
+  - name: remote-syslog
+    release: simple-remote-syslog
+  - name: etcd
+    release: etcd
+  resource_pool: router_z1
+  networks: [{name: patroni1, static_ips: [10.58.111.59]}]
+  persistent_disk: 10240
+  properties:
+    etcd:
+      peer_require_ssl: false
+      require_ssl: false
 - name: cell_z1
   instances: 2
   networks: [{name: patroni1, static_ips: [10.58.111.55, 10.58.111.58]}]
@@ -113,20 +127,6 @@ jobs:
         aws_secret_access_key: (( grab meta.backups.aws_secret_key ))
         bucket_name: (( grab meta.backups.clusterdata_bucket ))
         region: (( grab meta.backups.region ))
-- name: etcd
-  instances: 1
-  templates:
-  - name: remote-syslog
-    release: simple-remote-syslog
-  - name: etcd
-    release: etcd
-  resource_pool: router_z1
-  networks: [{name: patroni1, static_ips: [10.58.111.59]}]
-  persistent_disk: 10240
-  properties:
-    etcd:
-      peer_require_ssl: false
-      require_ssl: false
 networks:
 - name: patroni1
   type: manual
