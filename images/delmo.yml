@@ -16,7 +16,7 @@ tests:
     - retrieve-dummy-value
     - dummy-value-replicated
   - exec: [flush-archives]
-  - assert: [recreate-dummy-value-from-backups]
+  - {assert: [recreate-dummy-value-from-backups], timeout: 180}
 
 - name: failover
   before_startup: [purge-backups]
