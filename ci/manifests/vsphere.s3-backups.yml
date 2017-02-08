@@ -192,11 +192,6 @@ properties:
           tag: pre-test
           persistent_volumes: [/data]
           environment:
-          - ETCD_HOST_PORT=10.58.111.59:4001
-          - (( concat "AWS_ACCESS_KEY_ID=" meta.backups.aws_access_key ))
-          - (( concat "AWS_SECRET_ACCESS_KEY=" meta.backups.aws_secret_key ))
-          - (( concat "WAL_S3_BUCKET=" meta.backups.backups_bucket ))
-          - (( concat "AWS_REGION=" meta.backups.region ))
           - "WALE_BACKUP_THRESHOLD_PERCENTAGE=30"
           - "WALE_BACKUP_THRESHOLD_MEGABYTES=10240"
   servicebroker:

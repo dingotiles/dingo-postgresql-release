@@ -1,8 +1,8 @@
 ---
 meta:
   docker_image:
-    image: "dingotiles/dingo-postgresql"
-    tag: "pre-test"
+    image: dingotiles/dingo-postgresql
+    tag: pre-test
 
   broker:
     services:
@@ -37,11 +37,6 @@ meta:
               persistent_volumes:
                 - '/data'
               environment:
-                - (( concat "ETCD_HOST_PORT=" meta.etcd.host ":4001" ))
-                - (( concat "AWS_ACCESS_KEY_ID=" meta.backups.aws_access_key ))
-                - (( concat "AWS_SECRET_ACCESS_KEY=" meta.backups.aws_secret_key ))
-                - (( concat "WAL_S3_BUCKET=" meta.backups.backups_bucket ))
-                - (( concat "AWS_REGION=" meta.backups.region ))
                 - "WALE_BACKUP_THRESHOLD_PERCENTAGE=30"
                 - "WALE_BACKUP_THRESHOLD_MEGABYTES=10240"
 
