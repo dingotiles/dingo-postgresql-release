@@ -1,8 +1,8 @@
 ---
 meta:
   docker_image:
-    image: "dingotiles/dingo-postgresql95"
-    tag: "edge"
+    image: "dingotiles/dingo-postgresql"
+    tag: "pre-test"
 
   broker:
     services:

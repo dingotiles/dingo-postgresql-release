@@ -1,6 +1,0 @@
-#!/bin/bash
-
-set -x
-
-etcdctl --endpoint "http://${DOCKER_HOST_IP}:4001" ls --recursive /service/${PATRONI_SCOPE}
-etcdctl --endpoint "http://${DOCKER_HOST_IP}:4001" rm --recursive /service/${PATRONI_SCOPE} || echo "failed? but ok..."
