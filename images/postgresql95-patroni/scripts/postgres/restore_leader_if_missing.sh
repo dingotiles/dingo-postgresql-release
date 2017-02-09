@@ -58,6 +58,10 @@ indent_restore_leader() {
     echo "local database exists; no additional preparation required to restart container"
     exit 0
   fi
+
+  echo wal-e backup-list
+  $WALE_CMD backup-list
+
   BACKUPS_LINES=$($WALE_CMD backup-list 2>/dev/null|wc -l)
   if [[ $BACKUPS_LINES -lt 2 ]]; then
     echo "new cluster, no existing backup to restore"
