@@ -75,11 +75,11 @@ cat > tmp/cf.yml <<EOF
 ---
 meta:
   cf:
-    api_url: https://api.test-cf.snw
+    api_url: https://api.system.test-cf.snw
     skip_ssl_validation: true
     skip_ssl_verification: true
     username: admin
-    password: admin
+    password: A8tb4yRlQ3BmKmc1TQSCgiN7rAQXiQ73PkeoyI1qGTHq8y523kPZWjGyedjal6kx
 properties:
   servicebroker:
     service_id: beb5973c-e1b2-11e5-a736-c7c0b526363d
