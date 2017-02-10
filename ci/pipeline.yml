@@ -218,7 +218,7 @@ jobs:
           task: show-broker-logs
           file: boshrelease-ci/ci/tasks/show-broker-logs.yml
           params:
-            bosh_target: {{bosh-lite-testflight-target}}
+            bosh_target: {{bosh-lite-integration-target}}
             bosh_username: {{bosh-lite-username}}
             bosh_password: {{bosh-lite-password}}
       - put: disaster-recovery
