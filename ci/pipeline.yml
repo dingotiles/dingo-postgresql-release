@@ -36,34 +36,6 @@ jobs:
     params:
       build: dockerfile
 
-# - name: build-pg96-base-image
-#   public: true
-#   serial: true
-#   plan:
-#   - aggregate:
-#     - {get: boshrelease}
-#     - {get: boshrelease-pg96-base-image, trigger: true, params: {submodules: none}}
-#   - put: pg96-base-image-latest
-#     params:
-#       build: boshrelease/images/postgresql96-patroni-base
-#
-# - name: build-pg96-image
-#   public: true
-#   serial: true
-#   plan:
-#   - aggregate:
-#     - {get: boshrelease-ci}
-#     - {get: boshrelease, resource: boshrelease-pg96-image, trigger: true, params: {submodules: none}}
-#     - {get: patroni, resource: patroni, trigger: true}
-#     - {get: pg96-base-image-latest, passed: [build-pg96-base-image], trigger: true, params: {skip_download: true}}
-#   - task: prepare-dockerfile
-#     file: boshrelease-ci/ci/tasks/prepare-dockerfile.yml
-#     params:
-#       dockerfile_root: boshrelease/images/postgresql96-patroni
-#   - put: pg96-image-pre-test
-#     params:
-#       build: dockerfile
-
 - name: test-95-image
   serial_groups: [delmo]
   plan:
@@ -85,28 +57,6 @@ jobs:
     params:
       pull_repository: dingotiles/dingo-postgresql95
       pull_tag: pre-test
-
-# - name: test-96-image
-#   serial_groups: [delmo]
-#   plan:
-#   - aggregate:
-#     - {get: boshrelease-ci}
-#     - {get: pg96-image-pre-test, passed: [build-pg96-image], trigger: true, params: {skip_download: true}}
-#   - task: run-delmo-test
-#     file: boshrelease-ci/ci/tasks/run-delmo-test.yml
-#     params:
-#       MACHINE_EXPORT_AWS_ACCESS_KEY_ID: {{docker-machine-access-key-id}}
-#       MACHINE_EXPORT_AWS_SECRET_ACCESS_KEY: {{docker-machine-secret-access-key}}
-#       MACHINE_EXPORT_AWS_REGION: {{docker-machine-region}}
-#       MACHINE_EXPORT_AWS_BUCKET: {{docker-machine-bucket}}
-#       WAL_S3_BUCKET: {{backups-testflight-backups-bucket}}
-#       AWS_REGION: {{delmo-test-wal-aws-region}}
-#       AWS_ACCESS_KEY_ID: {{dingotiles-aws-access}}
-#       AWS_SECRET_ACCESS_KEY: {{dingotiles-aws-secret}}
-#   - put: pg96-image-edge
-#     params:
-#       pull_repository: dingotiles/dingo-postgresql96
-#       pull_tag: pre-test
 
 - name: rc
   public: true
@@ -562,22 +512,6 @@ resources:
     private_key: {{github-private-key}}
     paths: [images/postgresql95-patroni-base]
 
-# - name: boshrelease-pg96-image
-#   type: git
-#   source:
-#     uri: git@github.com:dingotiles/dingo-postgresql-release.git
-#     branch: {{pipeline-branch}}
-#     private_key: {{github-private-key}}
-#     paths: [images/postgresql96-patroni]
-#
-# - name: boshrelease-pg96-base-image
-#   type: git
-#   source:
-#     uri: git@github.com:dingotiles/dingo-postgresql-release.git
-#     branch: {{pipeline-branch}}
-#     private_key: {{github-private-key}}
-#     paths: [images/postgresql96-patroni-base]
-
 - name: version
   type: semver
   source:
@@ -630,33 +564,6 @@ resources:
     password: {{docker-hub-password}}
     repository: dingotiles/dingo-postgresql95
     tag: "pre-test"
-
-# - name: pg96-base-image-latest
-#   type: docker-image
-#   source:
-#     email: {{docker-hub-email}}
-#     username: {{docker-hub-username}}
-#     password: {{docker-hub-password}}
-#     repository: dingotiles/dingo-postgresql96-base
-#     tag: "latest"
-#
-# - name: pg96-image-edge
-#   type: docker-image
-#   source:
-#     email: {{docker-hub-email}}
-#     username: {{docker-hub-username}}
-#     password: {{docker-hub-password}}
-#     repository: dingotiles/dingo-postgresql96
-#     tag: "edge"
-#
-# - name: pg96-image-pre-test
-#   type: docker-image
-#   source:
-#     email: {{docker-hub-email}}
-#     username: {{docker-hub-username}}
-#     password: {{docker-hub-password}}
-#     repository: dingotiles/dingo-postgresql96
-#     tag: "pre-test"
 
 - name: docker-image-registrator
   type: docker-image
