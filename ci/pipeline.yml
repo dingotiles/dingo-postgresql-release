@@ -144,13 +144,13 @@ jobs:
     params:
       manifest: manifest/manifest.yml
       errand: sanity-test
-      on_failure:
-        task: show-broker-logs
-        file: boshrelease-ci/ci/tasks/show-broker-logs.yml
-        params:
-          bosh_target: {{bosh-lite-testflight-target}}
-          bosh_username: {{bosh-lite-username}}
-          bosh_password: {{bosh-lite-password}}
+    on_failure:
+      task: show-broker-logs
+      file: boshrelease-ci/ci/tasks/show-broker-logs.yml
+      params:
+        bosh_target: {{bosh-lite-testflight-target}}
+        bosh_username: {{bosh-lite-username}}
+        bosh_password: {{bosh-lite-password}}
 - name: integration
   public: true
   serial_groups: [bosh-lite-integration]
@@ -214,13 +214,13 @@ jobs:
         params:
           manifest: manifest/manifest.yml
           errand: integration-test
-          on_failure:
-            task: show-broker-logs
-            file: boshrelease-ci/ci/tasks/show-broker-logs.yml
-            params:
-              bosh_target: {{bosh-lite-testflight-target}}
-              bosh_username: {{bosh-lite-username}}
-              bosh_password: {{bosh-lite-password}}
+        on_failure:
+          task: show-broker-logs
+          file: boshrelease-ci/ci/tasks/show-broker-logs.yml
+          params:
+            bosh_target: {{bosh-lite-testflight-target}}
+            bosh_username: {{bosh-lite-username}}
+            bosh_password: {{bosh-lite-password}}
       - put: disaster-recovery
         resource: lite-errand-integration
         params:
