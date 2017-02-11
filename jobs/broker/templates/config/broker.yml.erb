@@ -19,6 +19,16 @@ cells:
 etcd:
   machines: <%= p("etcd.machines").map {|h| "http://#{h}:4001"} %>
 
+archives:
+<% if_p("backups.database_storage.aws_access_key_id") do %>
+  method: s3
+  s3:
+    aws_access_key_id: <%= p("backups.database_storage.aws_access_key_id") %>
+    aws_secret_access_id: <%= p("backups.database_storage.aws_secret_access_key") %>
+    s3_bucket: <%= p("backups.database_storage.bucket_name") %>
+    aws_region: <%= p("backups.database_storage.region") %>
+<% end %>
+
 <% if_p("backups.clusterdata.aws_access_key_id") do |aws_access_key_id| %>
 callbacks:
   clusterdata_backup: {cmd: /var/vcap/jobs/broker/bin/clusterdata_callback_backup.sh}
