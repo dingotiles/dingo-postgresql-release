@@ -110,4 +110,6 @@ builds:
     version: 0.10.1-rc.17
   4a618cea-f54f-4fba-8db6-50ca39d2a636:
     version: 0.10.1
+  fb5fc012-5a81-4280-a6ee-2493e115b28a:
+    version: 0.10.2
 format-version: '2'
