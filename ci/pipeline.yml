@@ -226,6 +226,13 @@ jobs:
         params:
           manifest: manifest/manifest.yml
           errand: disaster-recovery
+        on_failure:
+          task: show-broker-logs
+          file: boshrelease-ci/ci/tasks/show-broker-logs.yml
+          params:
+            bosh_target: {{bosh-lite-integration-target}}
+            bosh_username: {{bosh-lite-username}}
+            bosh_password: {{bosh-lite-password}}
   - task: assert-disaster-recovery
     file: boshrelease-ci/ci/tasks/assert-disaster-recovery.yml
 
