@@ -23,7 +23,11 @@ script() {
   set -x
 
 leader_id=$(curl -s ${ETCD}/v2/keys/service/${instance_id}/leader | jq -r '.node.value')
-leader_con=$(curl -s ${ETCD}/v2/keys/service/${instance_id}/members/${leader_id} | jq -r '.node.value' | jq -r '.conn_url')
+leader_conn_without_creds=$(curl -s ${ETCD}/v2/keys/service/${instance_id}/members/${leader_id} | jq -r '.node.value' | jq -r '.conn_url')
+username=$(curl -s ${ETCD}/v2/keys/service/${instance_id}/state | jq -r '.node.value' | jq -r '.superuser_credentials.username')
+password=$(curl -s ${ETCD}/v2/keys/service/${instance_id}/state | jq -r '.node.value' | jq -r '.superuser_credentials.password')
+
+leader_conn=$(echo $leader_conn_without_creds | sed -e "s%postgres://%postgres://$username:$password@%")
 
 set +x
 replicators_found=''
@@ -31,10 +35,10 @@ for ((n=0;n<120;n++)); do
 
   # experiment with row_to_json of pg_stat_replication
   echo pg_stat_replication as JSON:
-  psql ${leader_con} -c "SELECT row_to_json(t1) FROM (SELECT * FROM pg_stat_replication) t1;" -t | jq -r .
+  psql ${leader_conn} -c "SELECT row_to_json(t1) FROM (SELECT * FROM pg_stat_replication) t1;" -t | jq -r .
 
   set -x
-  replication_table=$(psql ${leader_con} -c 'select * from pg_stat_replication;')
+  replication_table=$(psql ${leader_conn} -c 'select * from pg_stat_replication;')
   set +x
   if echo ${replication_table} | grep '0 rows'; then
     replicators_found='false'
@@ -53,9 +57,9 @@ fi
 
 echo Replicators have registered with leader
 
-psql ${leader_con} -c 'DROP TABLE IF EXISTS sanitytest;'
-psql ${leader_con} -c 'CREATE TABLE sanitytest(value text);'
-psql ${leader_con} -c "INSERT INTO sanitytest VALUES ('replication-test');"
+psql ${leader_conn} -c 'DROP TABLE IF EXISTS sanitytest;'
+psql ${leader_conn} -c 'CREATE TABLE sanitytest(value text);'
+psql ${leader_conn} -c "INSERT INTO sanitytest VALUES ('replication-test');"
 
 curl -s ${ETCD}/v2/keys/service/${instance_id}/members | \
   jq -r '.node.nodes[].value' | \
@@ -74,9 +78,9 @@ curl -s ${ETCD}/v2/keys/service/${instance_id}/members | \
       replicating='false'
       # experiment with row_to_json of pg_stat_replication
       echo pg_stat_replication as JSON:
-      psql ${leader_con} -c "SELECT row_to_json(t1) FROM (SELECT * FROM pg_stat_replication) t1;" -t | jq -r .
+      psql ${leader_conn} -c "SELECT row_to_json(t1) FROM (SELECT * FROM pg_stat_replication) t1;" -t | jq -r .
 
-      psql ${leader_con} -c 'select * from pg_stat_replication;'
+      psql ${leader_conn} -c 'select * from pg_stat_replication;'
       sleep 2
     fi
   done
