@@ -33,7 +33,7 @@ case $1 in
     set -e
 
     # pull current image
-    docker --host $docker_host pull dingotiles/dingo-postgresql95:${IMAGE_TAG} \
+    docker --host $docker_host pull ${IMAGE_NAME}:${IMAGE_TAG} \
       >>$LOG_DIR/$JOB_NAME.log 2>&1
 
     # do nothing forever
