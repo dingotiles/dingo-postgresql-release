@@ -26,5 +26,12 @@ properties:
     description: broker process runs on this port
     default: 8889
 
+  servicebroker.username:
+    description: Basic auth username for broker
+    default: starkandwayne
+  servicebroker.password:
+    description: Basic auth password for broker
+    default: starkandwayne
+
   haproxy.syslog:
     description: Endpoint for sending haproxy logs

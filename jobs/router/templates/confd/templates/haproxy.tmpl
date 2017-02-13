@@ -5,6 +5,11 @@ global
 	log-send-hostname
 <% end %>
 
+listen stats *:1936
+    stats enable
+    stats uri /stats/
+    stats auth <%= p("servicebroker.username") %>:<%= p("servicebroker.password") %>
+
 defaults
 	log	global
 	mode	tcp
