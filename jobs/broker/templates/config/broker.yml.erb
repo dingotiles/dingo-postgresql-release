@@ -3,7 +3,7 @@ broker:
   username: <%= p("servicebroker.username") %>
   password: <%= p("servicebroker.password") %>
   port: <%= p("servicebroker.port") %>
-  bind_host: <%= p("servicebroker.router.hostname") %>
+  router_host: <%= p("servicebroker.router.hostname") %>
 
 cells:
 <% p("servicebroker.backends.machines").each do |az, machines| %>
