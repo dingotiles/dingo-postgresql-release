@@ -37,7 +37,7 @@ meta:
               persistent_volumes:
                 - '/data'
               environment:
-                - "DINGO_API_URI=http://(( grab jobs.router.networks.router1.static_ips.[0] )):8889/agent"
+                - (( concat "DINGO_API_URI=http://" properties.servicebroker.username ":" properties.servicebroker.password "@" jobs.router.networks.router1.static_ips.[0] ":8889/agent" ))
                 - "WALE_BACKUP_THRESHOLD_PERCENTAGE=30"
                 - "WALE_BACKUP_THRESHOLD_MEGABYTES=10240"
 
