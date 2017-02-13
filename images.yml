@@ -1,6 +1,3 @@
 - image: dingotiles/dingo-postgresql
   tag: "latest"
   job: embedded-images
-- image: cfcommunity/registrator
-  tag: "latest"
-  job: registrator

@@ -45,8 +45,6 @@ jobs:
     release: dingo-postgresql
   - name: upstream-images
     release: dingo-postgresql
-  - name: registrator
-    release: dingo-postgresql
   - name: container-env-vars
     release: dingo-postgresql
   - name: cf-containers-broker
@@ -63,8 +61,6 @@ jobs:
   - name: remote-syslog
     release: simple-remote-syslog
   - name: docker
-    release: dingo-postgresql
-  - name: registrator
     release: dingo-postgresql
   - name: upstream-images
     release: dingo-postgresql
@@ -154,8 +150,6 @@ properties:
     tag: "edge"
   etcd:
     machines: [10.58.111.59]
-  registrator:
-    backend_uri: etcd://10.58.111.59:4001
   broker:
     drain_endpoint: starkandwayne:starkandwayne@10.58.111.57:8888
     cookie_secret: e7247dae-a252-4393-afa3-2219c1c02efd

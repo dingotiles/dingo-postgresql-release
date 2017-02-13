@@ -2,8 +2,6 @@
 meta:
   etcd:
     host: (( grab jobs.etcd.networks.router1.static_ips.[0] ))
-  registrator:
-    backend_uri: (( concat "etcd://" meta.etcd.host ":4001" ))
 
 releases:
   - name: etcd

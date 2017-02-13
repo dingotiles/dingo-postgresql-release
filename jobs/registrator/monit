@@ -1,5 +1,0 @@
-check process registrator
-  with pidfile /var/vcap/sys/run/registrator/registrator.pid
-  start program "/var/vcap/jobs/registrator/bin/monit_debugger registrator_ctl '/var/vcap/jobs/registrator/bin/ctl start'"
-  stop program "/var/vcap/jobs/registrator/bin/monit_debugger registrator_ctl '/var/vcap/jobs/registrator/bin/ctl stop'"
-  group vcap

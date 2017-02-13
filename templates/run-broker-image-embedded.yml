@@ -18,9 +18,7 @@ meta:
     - {name: docker, release: dingo-postgresql}
     # warm docker image cache from bosh package
     - {name: embedded-images, release: dingo-postgresql}
-    # run registrator daemon
-    - {name: registrator, release: dingo-postgresql}
-    # create uuid for each broker/daemon
+    # run setup env vars for all containers on this cell
     - {name: container-env-vars, release: dingo-postgresql}
     # run service broker
     - {name: cf-containers-broker, release: dingo-postgresql}
@@ -28,9 +26,6 @@ meta:
 properties:
   cf:
     api_url: (( grab meta.cfcontainersbroker.cc_api_uri ))
-
-  registrator:
-    backend_uri: (( grab meta.registrator.backend_uri))
 
   broker:
     protocol: (( grab meta.cfcontainersbroker.protocol ))
