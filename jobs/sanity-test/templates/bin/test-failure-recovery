@@ -64,9 +64,13 @@ curl -sf ${BROKER_URI}/v2/service_instances/${instance_id} -XPUT -d '{}'
 set +x
 echo Waiting for the cluster to recover
 created_ok=false
-for ((n=0;n<30;n++)); do
+for ((n=0;n<18;n++)); do
   last_operation=$(curl -s ${BROKER_URI}/v2/service_instances/${instance_id}/last_operation)
   echo $last_operation
+  if echo ${last_operation} | grep 'failed' > /dev/null; then
+    echo "Broker has decided that recreating the cluster has failed"
+    exit 1
+  fi
   if echo ${last_operation} | grep 'succeeded' > /dev/null; then
     echo final successful state of cluster
     curl ${BROKER_URI}/admin/service_instances/${instance_id} | jq .
@@ -77,7 +81,7 @@ for ((n=0;n<30;n++)); do
 done
 
 if [[ "${created_ok}" == "false" ]]; then
-  echo "Couldn't recreate service instance with 300s"
+  echo "Couldn't recreate service instance with 180s"
   exit 1
 fi
 
