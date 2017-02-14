@@ -10,6 +10,7 @@ plan_id=$2
 instance_id=$3
 binding_id=$4
 uri=$5
+superuser_uri=$6
 
 indent() {
   c="s/^/test-failure-recovery> /"
@@ -51,6 +52,8 @@ psql ${uri} -c 'CREATE TABLE sanitytest(value text);'
 psql ${uri} -c "INSERT INTO sanitytest VALUES ('test-failure-recovery');"
 
 psql ${uri} -c "select * from sanitytest;"
+
+psql ${superuser_uri} -c "select pg_switch_xlog();"
 
 echo Deleting service instance
 curl -sf ${BROKER_URI}/v2/service_instances/${instance_id}\?plan_id=${plan_id}\&service_id=${service_id} -XDELETE

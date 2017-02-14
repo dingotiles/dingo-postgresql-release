@@ -32,6 +32,7 @@ for plan_id in ${plan_ids[@]}; do
 
   credentials=$(create-service $service_id $plan_id $instance_id $binding_id)
   uri=$(echo $credentials | jq -r ".credentials.uri")
+  superuser_uri=$(echo $credentials | jq -r ".credentials.superuser_uri")
 
   echo Giving confd some time
   sleep 10
@@ -44,7 +45,7 @@ for plan_id in ${plan_ids[@]}; do
   # test-move $service_id $plan_id $instance_id $uri
   # test-storage $uri
 
-  test-failure-recovery $service_id $plan_id $instance_id $binding_id $uri
+  test-failure-recovery $service_id $plan_id $instance_id $binding_id $uri $superuser_uri
   test-storage $uri
 
   # TODO: currently testing 1-node clusters; so do not wait for replicas
