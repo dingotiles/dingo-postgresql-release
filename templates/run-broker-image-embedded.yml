@@ -16,14 +16,18 @@ meta:
     - {name: remote-syslog, release: simple-remote-syslog}
     # run docker daemon
     - {name: docker, release: dingo-postgresql}
-    # warm docker image cache from bosh package
-    - {name: embedded-images, release: dingo-postgresql}
+    # warm docker image cache from dingo-postgresql-image-boshrelease
+    - {name: images, release: dingo-postgresql-image}
     # run registrator daemon
     - {name: registrator, release: dingo-postgresql}
     # create uuid for each broker/daemon
     - {name: container-env-vars, release: dingo-postgresql}
     # run service broker
     - {name: cf-containers-broker, release: dingo-postgresql}
+
+releases:
+- name: dingo-postgresql-image
+  version: latest
 
 properties:
   cf:
