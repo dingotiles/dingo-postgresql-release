@@ -20,21 +20,21 @@ RUN cd \
 
 # install required gems
 RUN gem install bundler --no-rdoc --no-ri \
-      && gem install bosh_cli -v 1.3177.0 --no-rdoc --no-ri \
+      && gem install bosh_cli --no-rdoc --no-ri \
       && gem install license_finder --no-ri --no-rdoc
 
 # Install Go
 RUN \
   mkdir -p /goroot && \
-  curl https://storage.googleapis.com/golang/go1.6.2.linux-amd64.tar.gz | tar xvzf - -C /goroot --strip-components=1
+  curl https://storage.googleapis.com/golang/go1.8.linux-amd64.tar.gz | tar xvzf - -C /goroot --strip-components=1
 
 # Set environment variables.
 ENV GOROOT /goroot
 ENV GOPATH /gopath
 ENV PATH $GOROOT/bin:$GOPATH/bin:$PATH
 
-ADD https://github.com/geofffranks/spruce/releases/download/v1.8.1/spruce-linux-amd64 /usr/bin/spruce
+ADD https://github.com/geofffranks/spruce/releases/download/v1.8.13/spruce-linux-amd64 /usr/bin/spruce
 RUN chmod 755 /usr/bin/spruce
 
-ADD https://cli.run.pivotal.io/stable?release=linux64-binary&version=6.22.1 /tmp/cf.tgz
+ADD https://cli.run.pivotal.io/stable?release=linux64-binary&version=6.25.0 /tmp/cf.tgz
 RUN tar xzf /tmp/cf.tgz -C /usr/bin && rm /tmp/cf.tgz
