@@ -1,0 +1,98 @@
+name: dingo-postgresql
+
+instance_groups:
+- name: etcd
+  azs: [z1, z2, z3]
+  instances: 1
+  persistent_disk_type: 5GB
+  vm_type: m3.medium
+  vm_extensions:
+  - 10GB_ephemeral_disk
+  stemcell: default
+  update:
+    serial: true
+    max_in_flight: 1
+  networks: {name: private}
+  jobs:
+  - name: etcd
+    release: etcd
+    properties:
+      etcd:
+        cluster: [{name: etcd, instances: 1}]
+        peer_require_ssl: false
+        require_ssl: false
+
+- name: cell
+  azs: [z1, z2]
+  instances: 4
+  persistent_disk_type: 50GB
+  vm_type: m3.medium
+  vm_extensions:
+  - 10GB_ephemeral_disk
+  stemcell: default
+  update:
+    serial: true
+    max_in_flight: 1
+  networks: {name: private}
+  jobs:
+  # ship all the logs
+  - {name: remote-syslog, release: simple-remote-syslog}
+  # run docker daemon
+  - {name: docker, release: dingo-postgresql}
+  # docker images will be pulled down
+  - {name: upstream-images, release: dingo-postgresql}
+  # run registrator daemon
+  - {name: registrator, release: dingo-postgresql}
+  # create uuid for each broker/daemon
+  - {name: container-env-vars, release: dingo-postgresql}
+  # run service broker
+  - {name: cf-containers-broker, release: dingo-postgresql}
+
+- name: router
+  azs: [z1, z2, z3]
+  instances: 1
+  networks: {name: public}
+  properties: {}
+  jobs:
+    - {name: remote-syslog, release: simple-remote-syslog}
+    - {name: broker, release: dingo-postgresql}
+    - {name: router, release: dingo-postgresql}
+    - {name: dpg-cli, release: dingo-postgresql}
+
+- name: sanity-test
+  instances: 1
+  lifecycle: errand
+  networks: {name: private}
+  jobs:
+  - {name: sanity-test, release: dingo-postgresql}
+- name: integration-test
+  instances: 1
+  lifecycle: errand
+  networks: {name: private}
+  jobs:
+  - {name: integration-test, release: dingo-postgresql}
+- name: disaster-recovery
+  instances: 1
+  lifecycle: errand
+  networks: {name: private}
+  jobs:
+  - {name: disaster-recovery, release: dingo-postgresql}
+
+variables:
+- name: dingo_broker_password
+  type: password
+- name: cf_containers_broker_password
+  type: password
+
+stemcells:
+- alias: default
+  os: ubuntu-trusty
+  version: "3363.12"
+
+releases:
+- name: dingo-postgresql
+  version: 0.10.2
+- name: simple-remote-syslog
+  version: 2.2.1
+- name: etcd
+  version: 95.1
