@@ -9,14 +9,12 @@ inputs:
 - name: etcd
 - name: simple-remote-syslog
 - name: candidate-release
+- name: director-state
 
 outputs:
 - name: manifest
 
 params:
-  bosh_target:
-  bosh_username: admin
-  bosh_password: admin
   bosh_syslog_host:
   bosh_syslog_port:
   deployment_name:

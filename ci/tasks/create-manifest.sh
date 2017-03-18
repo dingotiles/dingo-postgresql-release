@@ -10,16 +10,22 @@ dingo_postgresql_version=$(cat candidate-release/version)
 etcd_version=$(cat etcd/version)
 simple_remote_syslog_version=$(cat simple-remote-syslog/version)
 
+export BOSH_ENVIRONMENT=`bosh-cli int director-state/director-creds.yml --path /internal_ip`
+export BOSH_CA_CERT="$(bosh-cli int director-state/director-creds.yml --path /director_ssl/ca)"
+export BOSH_CLIENT=admin
+export BOSH_CLIENT_SECRET=`bosh-cli int director-state/director-creds.yml --path /admin_password`
+
 cat > ~/.bosh_config <<EOF
 ---
 aliases:
   target:
-    bosh-lite: ${bosh_target}
+    bosh-lite: ${BOSH_ENVIRONMENT}
 auth:
-  ${bosh_target}:
-    username: ${bosh_username}
-    password: ${bosh_password}
+  ${BOSH_ENVIRONMENT}:
+    username: ${BOSH_CLIENT}
+    password: ${BOSH_CLIENT_SECRET}
 EOF
+bosh target ${BOSH_ENVIRONMENT}
 
 cd boshrelease-ci
 mkdir -p tmp
@@ -88,8 +94,6 @@ cat tmp/cf.yml
 
 services_template=templates/services-cluster-backup-s3.yml
 # services_template=templates/services-cluster.yml
-
-bosh target ${bosh_target}
 
 export DEPLOYMENT_NAME=${deployment_name}
 ./templates/make_manifest warden ${docker_image_source} ${services_template} \
