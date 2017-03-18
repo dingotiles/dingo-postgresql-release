@@ -1,12 +1,15 @@
 #!/bin/bash
 
+set -e
+
 : ${VAULT_PREFIX:?required}
 : ${VAULT_ADDR:?required}
 
 # safe -k target ci ${VAULT_TARGET:?required}
 # echo ${GITHUB_TOKEN:?required} | safe auth github
 
-vault auth -method=github token=${GITHUB_TOKEN:?required}
+echo "Logging in to Vault..."
+vault auth -method=github token=${GITHUB_TOKEN:?required} > /dev/null
 
 cat > director-creds.spruce.yml <<YAML
 ---
@@ -16,4 +19,5 @@ director_ssl:
   ca: (( vault "$VAULT_PREFIX" "/certs:rootCA.pem" ))
 YAML
 
+echo "Creating director-state/director-creds.yml"
 spruce merge director-creds.spruce.yml > director-state/director-creds.yml
