@@ -7,6 +7,11 @@ templates:
   data/properties.sh.erb: data/properties.sh
   helpers/ctl_setup.sh: helpers/ctl_setup.sh
   helpers/ctl_utils.sh: helpers/ctl_utils.sh
+
+consumes:
+- name: etcd
+  type: etcd
+
 properties:
   docker.user:
     description: User which will own the Docker services
@@ -15,4 +20,4 @@ properties:
     description: Group which will own the Docker services
     default: vcap
   registrator.backend_uri:
-    description: protocol://host:port to consul/etcd/skydns2 for registrator updates
+    description: (if not using links) protocol://host:port to consul/etcd/skydns2 for registrator updates

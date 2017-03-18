@@ -19,26 +19,33 @@ templates:
   data/properties.sh.erb: data/properties.sh
   helpers/ctl_setup.sh: helpers/ctl_setup.sh
   helpers/ctl_utils.sh: helpers/ctl_utils.sh
+
+consumes:
+- name: etcd
+  type: etcd
+- name: cell
+  type: cell
+
 properties:
   etcd.machines:
-    description: hostnames for etcd servers
+    description: (if not using links) hostnames for etcd servers
 
   servicebroker.username:
     description: Basic auth username for broker
     default: starkandwayne
   servicebroker.password:
     description: Basic auth password for broker
-    default: starkandwayne
+    type: password
 
   servicebroker.port:
     description: Bind port for inbound API requests
     default: 8889
 
   servicebroker.router.hostname:
-    description: "Hostname to advertise in binding credentials for routers"
+    description: "Hostname to advertise in binding credentials for routers (defaults to host IP)"
 
   servicebroker.backends.machines:
-    description: "Hash of {z1: backend broker hostnames:port (NOTE: also becomes permanent GUID at the moment)}"
+    description: "(if not using links) Hash of {z1: backend broker hostnames:port (NOTE: also becomes permanent GUID at the moment)}"
   servicebroker.backends.username:
     description: basic auth username to access each HTTP cf-container-broker backend
     default: containers

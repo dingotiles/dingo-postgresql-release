@@ -18,4 +18,5 @@ blobs/*
 tmp
 my*.yml
 credentials.yml
+creds.yml
 .envrc

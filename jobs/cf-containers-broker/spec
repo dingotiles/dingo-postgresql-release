@@ -2,9 +2,13 @@
 name: cf-containers-broker
 
 packages:
-  - bosh-helpers
-  - cf-containers-broker
-  - ruby
+- bosh-helpers
+- cf-containers-broker
+- ruby
+
+provides:
+- name: cell_api
+  type: cell_api
 
 templates:
   bin/cf-containers-broker_ctl: bin/cf-containers-broker_ctl

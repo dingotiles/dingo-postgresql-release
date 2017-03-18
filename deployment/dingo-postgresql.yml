@@ -34,6 +34,52 @@ instance_groups:
     serial: true
     max_in_flight: 1
   networks: {name: private}
+  properties:
+    registrator:
+      backend_uri: (( grab meta.registrator.backend_uri))
+
+    broker:
+      protocol: http
+      ssl_enabled: false
+      port: 80
+      username: cell_broker
+      password: ((cell_broker_password))
+      cookie_secret: ((cell_cookie_secret))
+      max_containers: ((cell_max_containers))
+      fetch_images: true
+      update_containers: true
+      services:
+      - name: dingo-postgresql
+        id: beb5973c-e1b2-11e5-a736-c7c0b526363d
+        bindable: true
+        description: Dedicated PostgreSQL 9.5
+        tags: [postgresql, postgresql95, sql]
+        plans:
+        - name: cluster
+          id: 1545e30e-6dc3-11e5-826a-6c4008a663f0
+          description: Dedicated, highly-available cluster that is continously archived
+          free: true
+          metadata:
+            bullets:
+            - PostgreSQL 9.5
+            - Dedicated secure containers
+            - Highly-available cluster across availability zones
+            - Continuously archived for potential disaster recovery
+            displayname: Cluster
+          container:
+            backend: docker
+            image: dingotiles/dingo-postgresql
+            tag: v0.10.2
+            environment:
+            # - ETCD_HOST_PORT=10.58.111.59:4001
+            - AWS_ACCESS_KEY_ID=((backups_database_storage_aws_access_key_id))
+            - AWS_SECRET_ACCESS_KEY=((backups_clusterdata_aws_secret_access_key))
+            - WAL_S3_BUCKET=((backups_database_storage_bucket_name))
+            - AWS_REGION=((backups_database_storage_region))
+            - WALE_BACKUP_THRESHOLD_PERCENTAGE=30
+            - WALE_BACKUP_THRESHOLD_MEGABYTES=10240
+            persistent_volumes:
+            - /data
   jobs:
   # ship all the logs
   - {name: remote-syslog, release: simple-remote-syslog}
@@ -52,7 +98,27 @@ instance_groups:
   azs: [z1, z2, z3]
   instances: 1
   networks: {name: public}
-  properties: {}
+  properties:
+    servicebroker:
+      username: cell_broker
+      password: ((cell_broker_password))
+
+    backups:
+      clusterdata:
+        bucket_name: ((backups_clusterdata_bucket_name))
+        region: ((backups_clusterdata_region))
+        aws_access_key_id: ((backups_clusterdata_aws_access_key_id))
+        aws_secret_access_key: ((backups_clusterdata_aws_secret_access_key))
+      database_storage:
+        bucket_name: ((backups_database_storage_bucket_name))
+        region: ((backups_database_storage_region))
+        aws_access_key_id: ((backups_database_storage_aws_access_key_id))
+        aws_secret_access_key: ((backups_database_storage_aws_secret_access_key))
+    cf:
+      api_url: https://api.((cf_system_domain))
+      username: ((cf_admin_username))
+      password: ((cf_admin_password))
+      skip_ssl_validation: ((cf_skip_ssl_validation))
   jobs:
     - {name: remote-syslog, release: simple-remote-syslog}
     - {name: broker, release: dingo-postgresql}
@@ -63,6 +129,18 @@ instance_groups:
   instances: 1
   lifecycle: errand
   networks: {name: private}
+  properties:
+    backups:
+      clusterdata:
+        bucket_name: ((backups_clusterdata_bucket_name))
+        region: ((backups_clusterdata_region))
+        aws_access_key_id: ((backups_clusterdata_aws_access_key_id))
+        aws_secret_access_key: ((backups_clusterdata_aws_secret_access_key))
+      database_storage:
+        bucket_name: ((backups_database_storage_bucket_name))
+        region: ((backups_database_storage_region))
+        aws_access_key_id: ((backups_database_storage_aws_access_key_id))
+        aws_secret_access_key: ((backups_database_storage_aws_secret_access_key))
   jobs:
   - {name: sanity-test, release: dingo-postgresql}
 - name: integration-test
@@ -81,7 +159,9 @@ instance_groups:
 variables:
 - name: dingo_broker_password
   type: password
-- name: cf_containers_broker_password
+- name: cell_broker_password
+  type: password
+- name: cell_cookie_secret
   type: password
 
 stemcells:

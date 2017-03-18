@@ -15,7 +15,11 @@ export DOCKER_USER="<%= p('docker.user') %>"
 # Group which will own the Docker services
 export DOCKER_GROUP="<%= p('docker.group') %>"
 
-export REGISTRATOR_BACKEND_URI="<%= p('registrator.backend_uri') %>"
+<% if_p('registrator.backend_uri') do |backend_uri| %>
+export REGISTRATOR_BACKEND_URI="<%= backend_uri %>"
+<% end.else do %>
+export REGISTRATOR_BACKEND_URI="etcd://<%= links("etcd").instances.first %>:4001"
+<% end %>
 
 <%
   require 'json'

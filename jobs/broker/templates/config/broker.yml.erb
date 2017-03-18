@@ -3,10 +3,30 @@ broker:
   username: <%= p("servicebroker.username") %>
   password: <%= p("servicebroker.password") %>
   port: <%= p("servicebroker.port") %>
-  bind_host: <%= p("servicebroker.router.hostname") %>
+  <% if_p("servicebroker.router.hostname") do |router_hostname| %>
+  bind_host: <%= router_hostname %>
+  <% end.else do
+      require 'json'
+
+      def discover_external_ip
+        networks = spec.networks.marshal_dump
+        _, network = networks.find do |_name, network_spec|
+          network_spec.default
+        end
+        if !network
+          _, network = networks.first
+        end
+        if !network
+          raise "Could not determine IP via network spec: #{networks}"
+        end
+        network.ip
+      end
+   %>
+  bind_host: <%= discover_external_ip %>
+  <% end %>
 
 cells:
-<% p("servicebroker.backends.machines").each do |az, machines| %>
+<% if_p("servicebroker.backends.machines").each do |az, machines| %>
   <% machines.each do |machine| %>
 - guid: <%= machine %>
   availability_zone: <%= az %>
@@ -14,10 +34,28 @@ cells:
   username: "<%= p('servicebroker.backends.username') %>"
   password: "<%= p('servicebroker.backends.password') %>"
   <% end %>
+<% end.else do %>
+<% link("cell").instances.each do |instance| %>
+- guid: <%= instance.id %>
+  availability_zone: <%= instance.az %>
+  uri: <%= machine %>
+  username: "<%= p('servicebroker.backends.username') %>"
+  password: "<%= p('servicebroker.backends.password') %>"
+<% end %>
 <% end %>
 
+<%
+  if_p("etcd.machines") do |etcd_machines|
+    etcd_endpoints = etcd_machines.map do |instance|
+      "http://#{instance}:4001/"
+    end
+  end
+  etcd_endpoints ||= link("etcd").instances.map do |instance|
+    "http://#{instance.address}:4001/"
+  end
+%>
 etcd:
-  machines: <%= p("etcd.machines").map {|h| "http://#{h}:4001"} %>
+  machines: <%= etcd_endpoints.to_json %>
 
 <% if_p("backups.clusterdata.aws_access_key_id") do |aws_access_key_id| %>
 callbacks:
