@@ -39,6 +39,10 @@ RUN chmod 755 /usr/bin/spruce
 ADD https://cli.run.pivotal.io/stable?release=linux64-binary&version=6.25.0 /tmp/cf.tgz
 RUN tar xzf /tmp/cf.tgz -C /usr/bin && rm /tmp/cf.tgz
 
+ENV VAULT_VERSION 0.6.5
+RUN wget -qO /tmp/vault.zip https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_linux_amd64.zip && \
+      unzip -d /bin /tmp/vault.zip && rm /tmp/vault.zip && chmod 755 /bin/vault
+
 RUN wget https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-0.0.147-linux-amd64 -O /bin/bosh2 && \
       echo "533342d7663c3e5dc731769e157608c74dd9eccb  /bin/bosh2" | sha1sum -c - && \
       chmod +x /bin/bosh2
