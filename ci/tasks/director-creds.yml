@@ -3,14 +3,13 @@ platform: linux
 
 image_resource:
   type: docker-image
-  source:
-    repository: cfcommunity/monkeys-ci
+  source: {repository: dingotiles/dingo-postgresql-release-pipeline}
 
 inputs:
-  - name: monkeys
+- name: boshrelease-ci
 
 outputs:
-  - name: director-state
+- name: director-state
 
 params:
   GITHUB_TOKEN:
@@ -19,4 +18,4 @@ params:
   VAULT_SKIP_VERIFY: 1
 
 run:
-  path: monkeys/ci/tasks/director-creds.sh
+  path: boshrelease-ci/ci/tasks/director-creds.sh

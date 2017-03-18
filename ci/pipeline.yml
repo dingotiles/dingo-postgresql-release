@@ -115,7 +115,7 @@ jobs:
     - {get: simple-remote-syslog}
     - {get: lite-stemcell}
   - task: director-creds
-    file: monkeys/ci/tasks/director-creds.yml
+    file: boshrelease-ci/ci/tasks/director-creds.yml
     params:
       VAULT_ADDR: {{vault-addr}}
       VAULT_SKIP_VERIFY: 1
