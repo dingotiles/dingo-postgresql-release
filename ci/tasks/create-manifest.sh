@@ -18,9 +18,9 @@ cat > ~/.bosh_config <<EOF
 ---
 aliases:
   target:
-    bosh-lite: "${BOSH_ENVIRONMENT}"
+    bosh-lite: "https://${BOSH_ENVIRONMENT}:25555"
 auth:
-  ${BOSH_ENVIRONMENT}:
+  https://${BOSH_ENVIRONMENT}:25555:
     username: "${BOSH_CLIENT}"
     password: "${BOSH_CLIENT_SECRET}"
 EOF
