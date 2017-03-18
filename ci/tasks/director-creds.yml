@@ -1,0 +1,22 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: cfcommunity/monkeys-ci
+
+inputs:
+  - name: monkeys
+
+outputs:
+  - name: director-state
+
+params:
+  GITHUB_TOKEN:
+  VAULT_PREFIX:
+  VAULT_ADDR:
+  VAULT_SKIP_VERIFY: 1
+
+run:
+  path: monkeys/ci/tasks/director-creds.sh
