@@ -125,9 +125,6 @@ jobs:
     file: boshrelease-ci/ci/tasks/create-manifest.yml
     params:
       deployment_name: dingo-postgresql-testflight
-      bosh_target: {{bosh-lite-testflight-target}}
-      bosh_username: {{bosh-lite-username}}
-      bosh_password: {{bosh-lite-password}}
       bosh_syslog_host: {{bosh-lite-syslog-host}}
       bosh_syslog_port: {{bosh-lite-syslog-port}}
       aws_access_key: {{dingotiles-aws-access}}

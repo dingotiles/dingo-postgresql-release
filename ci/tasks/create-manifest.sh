@@ -10,10 +10,10 @@ dingo_postgresql_version=$(cat candidate-release/version)
 etcd_version=$(cat etcd/version)
 simple_remote_syslog_version=$(cat simple-remote-syslog/version)
 
-export BOSH_ENVIRONMENT=`bosh-cli int director-state/director-creds.yml --path /internal_ip`
-export BOSH_CA_CERT="$(bosh-cli int director-state/director-creds.yml --path /director_ssl/ca)"
+export BOSH_ENVIRONMENT=`bosh2 int director-state/director-creds.yml --path /internal_ip`
+export BOSH_CA_CERT="$(bosh2 int director-state/director-creds.yml --path /director_ssl/ca)"
 export BOSH_CLIENT=admin
-export BOSH_CLIENT_SECRET=`bosh-cli int director-state/director-creds.yml --path /admin_password`
+export BOSH_CLIENT_SECRET=`bosh2 int director-state/director-creds.yml --path /admin_password`
 
 cat > ~/.bosh_config <<EOF
 ---
