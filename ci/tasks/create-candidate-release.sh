@@ -16,5 +16,4 @@ cd boshrelease
 # rake images:package
 # rake jobs:update_spec
 
-bosh -n create release --with-tarball --force --name $RELEASE_NAME --version "$VERSION"
-mv dev_releases/$RELEASE_NAME/$RELEASE_NAME-*.tgz "$OUTPUT"
+bosh2 -n create-release --tarball=$OUTPUT/$RELEASE_NAME-$VERSION.tgz --force --name $RELEASE_NAME --version "$VERSION"
