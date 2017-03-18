@@ -1,7 +1,6 @@
 #!/bin/bash
 
 set -e
-set -x
 
 release_name=${release_name:-"dingo-postgresql"}
 manifest_dir=$PWD/manifest
@@ -19,13 +18,15 @@ cat > ~/.bosh_config <<EOF
 ---
 aliases:
   target:
-    bosh-lite: ${BOSH_ENVIRONMENT}
+    bosh-lite: "${BOSH_ENVIRONMENT}"
 auth:
   ${BOSH_ENVIRONMENT}:
-    username: ${BOSH_CLIENT}
-    password: ${BOSH_CLIENT_SECRET}
+    username: "${BOSH_CLIENT}"
+    password: "${BOSH_CLIENT_SECRET}"
 EOF
-bosh target ${BOSH_ENVIRONMENT}
+
+set -x
+bosh target bosh-lite
 
 cd boshrelease-ci
 mkdir -p tmp
