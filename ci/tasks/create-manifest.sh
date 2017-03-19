@@ -24,7 +24,6 @@ auth:
     username: "${BOSH_CLIENT}"
     password: "${BOSH_CLIENT_SECRET}"
 EOF
-cat ~/.bosh_config
 set -x
 bosh target bosh-lite
 
