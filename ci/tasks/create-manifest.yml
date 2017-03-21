@@ -19,8 +19,8 @@ params:
   bosh_syslog_port:
   deployment_name:
   docker_image_source: upstream
-  docker_image_image: "dingotiles/dingo-postgresql95"
-  docker_image_tag: "9.5"
+  docker_image_image: dingotiles/dingo-postgresql95
+  docker_image_tag:
   aws_access_key:
   aws_secret_key:
   region:

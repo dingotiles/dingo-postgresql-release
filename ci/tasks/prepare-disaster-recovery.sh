@@ -1,7 +1,6 @@
 #!/bin/bash
 
 set -x
-set -e
 
 source boshrelease-ci/ci/helpers/database.sh
 
@@ -15,7 +14,10 @@ cf api api.system.test-cf.snw --skip-ssl-validation
 cf auth admin A8tb4yRlQ3BmKmc1TQSCgiN7rAQXiQ73PkeoyI1qGTHq8y523kPZWjGyedjal6kx
 
 cf create-org dr-test; cf target -o dr-test
-cf create-space dr-test; cf target -s dr-test
+cf create-space dr-test
+
+set -e
+cf target -s dr-test
 
 cf marketplace
 cf service-brokers

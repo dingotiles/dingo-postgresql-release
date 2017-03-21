@@ -26,8 +26,12 @@ cf api "<%= api_url %>" <%= p("cf.skip_ssl_validation") ? "--skip-ssl-validation
 cf auth "<%= username %>" "<%= password %>"
 set -x
 
+set +e
 cf create-org <%= p("cf.integration_test.organization") %>; cf target -o <%= p("cf.integration_test.organization") %>
-cf create-space <%= p("cf.integration_test.space") %>; cf target -s <%= p("cf.integration_test.space") %>
+cf create-space <%= p("cf.integration_test.space") %>
+
+set -e
+cf target -s <%= p("cf.integration_test.space") %>
 
 <% end.else do %>
 echo Cannot run integration-test without cf.api_url
