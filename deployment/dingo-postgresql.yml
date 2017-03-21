@@ -4,157 +4,26 @@ instance_groups:
 - name: etcd
   azs: [z1, z2, z3]
   instances: 1
-  persistent_disk_type: 5GB
-  vm_type: m3.medium
-  vm_extensions:
-  - 10GB_ephemeral_disk
+  persistent_disk_type: default
+  vm_type: default
   stemcell: default
-  update:
-    serial: true
-    max_in_flight: 1
-  networks: {name: private}
+  update: {serial: true, max_in_flight: 1}
+  networks: [{name: private}]
   jobs:
   - name: etcd
     release: etcd
     properties:
       etcd:
-        cluster: [{name: etcd, instances: 1}]
         peer_require_ssl: false
         require_ssl: false
+        heartbeat_interval_in_milliseconds: 50
 
-- name: cell
-  azs: [z1, z2]
-  instances: 4
-  persistent_disk_type: 50GB
-  vm_type: m3.medium
-  vm_extensions:
-  - 10GB_ephemeral_disk
-  stemcell: default
-  update:
-    serial: true
-    max_in_flight: 1
-  networks: {name: private}
-  properties:
-    registrator:
-      backend_uri: (( grab meta.registrator.backend_uri))
-
-    broker:
-      protocol: http
-      ssl_enabled: false
-      port: 80
-      username: cell_broker
-      password: ((cell_broker_password))
-      cookie_secret: ((cell_cookie_secret))
-      max_containers: ((cell_max_containers))
-      fetch_images: true
-      update_containers: true
-      services:
-      - name: dingo-postgresql
-        id: beb5973c-e1b2-11e5-a736-c7c0b526363d
-        bindable: true
-        description: Dedicated PostgreSQL 9.5
-        tags: [postgresql, postgresql95, sql]
-        plans:
-        - name: cluster
-          id: 1545e30e-6dc3-11e5-826a-6c4008a663f0
-          description: Dedicated, highly-available cluster that is continously archived
-          free: true
-          metadata:
-            bullets:
-            - PostgreSQL 9.5
-            - Dedicated secure containers
-            - Highly-available cluster across availability zones
-            - Continuously archived for potential disaster recovery
-            displayname: Cluster
-          container:
-            backend: docker
-            image: dingotiles/dingo-postgresql
-            tag: v0.10.2
-            environment:
-            # - ETCD_HOST_PORT=10.58.111.59:4001
-            - AWS_ACCESS_KEY_ID=((backups_database_storage_aws_access_key_id))
-            - AWS_SECRET_ACCESS_KEY=((backups_clusterdata_aws_secret_access_key))
-            - WAL_S3_BUCKET=((backups_database_storage_bucket_name))
-            - AWS_REGION=((backups_database_storage_region))
-            - WALE_BACKUP_THRESHOLD_PERCENTAGE=30
-            - WALE_BACKUP_THRESHOLD_MEGABYTES=10240
-            persistent_volumes:
-            - /data
-  jobs:
-  # ship all the logs
-  - {name: remote-syslog, release: simple-remote-syslog}
-  # run docker daemon
-  - {name: docker, release: dingo-postgresql}
-  # docker images will be pulled down
-  - {name: upstream-images, release: dingo-postgresql}
-  # run registrator daemon
-  - {name: registrator, release: dingo-postgresql}
-  # create uuid for each broker/daemon
-  - {name: container-env-vars, release: dingo-postgresql}
-  # run service broker
-  - {name: cf-containers-broker, release: dingo-postgresql}
-
-- name: router
-  azs: [z1, z2, z3]
-  instances: 1
-  networks: {name: public}
-  properties:
-    servicebroker:
-      username: cell_broker
-      password: ((cell_broker_password))
-
-    backups:
-      clusterdata:
-        bucket_name: ((backups_clusterdata_bucket_name))
-        region: ((backups_clusterdata_region))
-        aws_access_key_id: ((backups_clusterdata_aws_access_key_id))
-        aws_secret_access_key: ((backups_clusterdata_aws_secret_access_key))
-      database_storage:
-        bucket_name: ((backups_database_storage_bucket_name))
-        region: ((backups_database_storage_region))
-        aws_access_key_id: ((backups_database_storage_aws_access_key_id))
-        aws_secret_access_key: ((backups_database_storage_aws_secret_access_key))
-    cf:
-      api_url: https://api.((cf_system_domain))
-      username: ((cf_admin_username))
-      password: ((cf_admin_password))
-      skip_ssl_validation: ((cf_skip_ssl_validation))
-  jobs:
-    - {name: remote-syslog, release: simple-remote-syslog}
-    - {name: broker, release: dingo-postgresql}
-    - {name: router, release: dingo-postgresql}
-    - {name: dpg-cli, release: dingo-postgresql}
-
-- name: sanity-test
-  instances: 1
-  lifecycle: errand
-  networks: {name: private}
-  properties:
-    backups:
-      clusterdata:
-        bucket_name: ((backups_clusterdata_bucket_name))
-        region: ((backups_clusterdata_region))
-        aws_access_key_id: ((backups_clusterdata_aws_access_key_id))
-        aws_secret_access_key: ((backups_clusterdata_aws_secret_access_key))
-      database_storage:
-        bucket_name: ((backups_database_storage_bucket_name))
-        region: ((backups_database_storage_region))
-        aws_access_key_id: ((backups_database_storage_aws_access_key_id))
-        aws_secret_access_key: ((backups_database_storage_aws_secret_access_key))
-  jobs:
-  - {name: sanity-test, release: dingo-postgresql}
-- name: integration-test
-  instances: 1
-  lifecycle: errand
-  networks: {name: private}
-  jobs:
-  - {name: integration-test, release: dingo-postgresql}
-- name: disaster-recovery
-  instances: 1
-  lifecycle: errand
-  networks: {name: private}
-  jobs:
-  - {name: disaster-recovery, release: dingo-postgresql}
+update:
+  canaries: 0
+  max_in_flight: 1
+  serial: true
+  canary_watch_time: 1000-60000
+  update_watch_time: 1000-60000
 
 variables:
 - name: dingo_broker_password
@@ -171,8 +40,12 @@ stemcells:
 
 releases:
 - name: dingo-postgresql
-  version: 0.10.2
+  version: latest
 - name: simple-remote-syslog
   version: 2.2.1
+  url: https://bosh.io/d/github.com/cloudfoundry-community/simple-remote-syslog-boshrelease?v=2.2.1
+  sha1: 17f8fbd534599920e7e86ca87fcceabe63cf2a71
 - name: etcd
-  version: 95.1
+  version: 95.2
+  url: https://github.com/dingotiles/etcd2-boshrelease/releases/download/v95.2/etcd-95.2.tgz
+  sha1: 1b449036b25e302ab1a56965a6861dc1b4ed9516

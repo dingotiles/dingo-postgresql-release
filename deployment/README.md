@@ -2,9 +2,14 @@
 
 This folder includes a base deployment manifest for any BOSH that has a cloud-config installed. These instructions assume the use of the new `bosh2` CLI.
 
+From the root folder:
+
 ```
-export BOSH_ENVIRONMENT=name-of-bosh-with-cloud-config
-bosh2 -d dingo-postgresql deploy deployment/dingo-postgresql.yml --var-errs --vars-store=creds.yml
+export BOSH_ENVIRONMENT=${BOSH_ENVIRONMENT:?required}
+export BOSH_DEPLOYMENT=dingo-postgresql
+
+bosh2 int deployment/dingo-postgresql.yml --var-errs --vars-store=tmp/creds.yml
+bosh2 deploy deployment/dingo-postgresql.yml --vars-store=tmp/creds.yml
 ```
 
 This will fail; but will show you all the required input variables/parameters.
