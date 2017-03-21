@@ -124,6 +124,17 @@ instance_groups:
     - name: dpg-cli
       release: dingo-postgresql
 
+- name: sanity-test
+  azs: [z1, z2, z3]
+  instances: 1
+  lifecycle: errand
+  vm_type: default
+  stemcell: default
+  networks: [{name: private}]
+  jobs:
+  - name: sanity-test
+    release: dingo-postgresql
+
 update:
   canaries: 0
   max_in_flight: 1

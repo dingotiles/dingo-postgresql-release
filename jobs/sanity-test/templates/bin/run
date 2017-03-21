@@ -18,16 +18,33 @@ check-etcd
 sudo ip link show | grep eth0 && sudo ip link set dev eth0 mtu 1500
 
 <%
-	servicebroker_machines = nil
-	if_p("servicebroker.machines") do |machines|
+	servicebroker_machines = servicebroker_username = servicebroker_password = nil
+	if_p("servicebroker.machines", "servicebroker.username", "servicebroker.password", "servicebroker.port") do |machines, username, password, port|
 		servicebroker_machines = machines
+		servicebroker_username = username
+		servicebroker_password = password
+		servicebroker_port = port
 	end
 	unless servicebroker_machines
-		servicebroker_machines = link("servicebroker").instances.map(&:address)
+		broker = link("servicebroker")
+		servicebroker_machines = broker.instances.map(&:address)
+		servicebroker_username = broker.p("servicebroker.username")
+		servicebroker_password = broker.p("servicebroker.password")
+		servicebroker_port 		 = broker.p("servicebroker.port")
 	end
 -%>
-export BROKER_URI=http://<%= p("servicebroker.username") %>:<%= p("servicebroker.password") %>@<%= servicebroker_machines.first %>:<%= p("servicebroker.port") %>
-export ETCD=<%= p("etcd.machines").first %>:4001
+export BROKER_URI=http://<%= servicebroker_username %>:<%= servicebroker_password %>@<%= servicebroker_machines.first %>:<%= servicebroker_port %>
+
+<%
+	etcd_machine = nil
+	if_p("etcd.machines") do |machines|
+		etcd_machine = machines.first
+	end
+	unless etcd_machine
+		etcd_machine = link("etcd").instances.first.address
+	end
+-%>
+export ETCD=<%= etcd_machine %>:4001
 
 echo Confirm broker access
 curl -v ${BROKER_URI}/v2/catalog

@@ -21,32 +21,39 @@ templates:
   helpers/ctl_setup.sh: helpers/ctl_setup.sh
   helpers/ctl_utils.sh: helpers/ctl_utils.sh
   helpers/test_helpers.sh: helpers/test_helpers.sh
+
+consumes:
+- name: servicebroker
+  type: servicebroker
+- name: etcd
+  type: etcd_service
+
 properties:
   servicebroker.machines:
-    description: hostnames for service broker servers
+    description: (if not using links) hostnames for service broker servers
   servicebroker.port:
-    description: port for service brokers to connect to
+    description: (if not using links) port for service brokers to connect to
   servicebroker.username:
-    description: username for service brokers to connect to
+    description: (if not using links) username for service brokers to connect to
   servicebroker.password:
-    description: password for service brokers to connect to
+    description: (if not using links) password for service brokers to connect to
   etcd.machines:
-    description: hostnames for etcd servers
+    description: (if not using links) hostnames for etcd servers
 
   backups.clusterdata.aws_access_key_id:
-    description: Amazon S3 API access key
+    description: (if not using links) Amazon S3 API access key
   backups.clusterdata.aws_secret_access_key:
-    description: Amazon S3 API secret key
+    description: (if not using links) Amazon S3 API secret key
   backups.clusterdata.bucket_name:
-    description: Bucket name
+    description: (if not using links) Bucket name
   backups.clusterdata.region:
-    description: Amazon S3 region
+    description: (if not using links) Amazon S3 region
 
   backups.database_storage.aws_access_key_id:
-    description: Amazon S3 API access key
+    description: (if not using links) Amazon S3 API access key
   backups.database_storage.aws_secret_access_key:
-    description: Amazon S3 API secret key
+    description: (if not using links) Amazon S3 API secret key
   backups.database_storage.bucket_name:
-    description: Bucket name
+    description: (if not using links) Bucket name
   backups.database_storage.region:
-    description: Amazon S3 region
+    description: (if not using links) Amazon S3 region

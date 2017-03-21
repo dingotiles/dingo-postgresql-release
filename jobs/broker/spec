@@ -32,6 +32,14 @@ provides:
   - cf.username
   - cf.password
   - cf.skip_ssl_validation
+  - backups.clusterdata.aws_access_key_id
+  - backups.clusterdata.aws_secret_access_key
+  - backups.clusterdata.bucket_name
+  - backups.clusterdata.region
+  - backups.database_storage.aws_access_key_id
+  - backups.database_storage.aws_secret_access_key
+  - backups.database_storage.bucket_name
+  - backups.database_storage.region
 
 consumes:
 - name: etcd
@@ -40,9 +48,6 @@ consumes:
   type: cf-containers-broker
 
 properties:
-  etcd.machines:
-    description: (if not using links) hostnames for etcd servers
-
   servicebroker.username:
     description: Basic auth username for broker
     default: starkandwayne
@@ -56,18 +61,6 @@ properties:
 
   servicebroker.router.hostname:
     description: "Hostname to advertise in binding credentials for routers (defaults to host IP)"
-
-  servicebroker.backends.machines:
-    description: "(if not using links) Hash of {z1: backend broker hostnames:port (NOTE: also becomes permanent GUID at the moment)}"
-  servicebroker.backends.username:
-    description: basic auth username to access each HTTP cf-container-broker backend
-    default: containers
-  servicebroker.backends.password:
-    description: basic auth password to access each HTTP cf-container-broker backend
-    default: containers
-
-  servicebroker.services:
-    description: (if not using links) The CF service broker catalog of services/plans
 
   backups.clusterdata.aws_access_key_id:
     description: Amazon S3 API access key
@@ -96,3 +89,17 @@ properties:
   cf.skip_ssl_validation:
     description: Set to true if Cloud Foundry API is using self-signed SSL certificate
     default: false
+
+  servicebroker.backends.machines:
+    description: "(if not using links) Hash of {z1: backend broker hostnames:port (NOTE: also becomes permanent GUID at the moment)}"
+  servicebroker.backends.username:
+    description: (if not using links) basic auth username to access each HTTP cf-container-broker backend
+    default: containers
+  servicebroker.backends.password:
+    description: (if not using links) basic auth password to access each HTTP cf-container-broker backend
+
+  servicebroker.services:
+    description: (if not using links) The CF service broker catalog of services/plans
+
+  etcd.machines:
+    description: (if not using links) hostnames for etcd servers

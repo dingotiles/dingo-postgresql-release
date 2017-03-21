@@ -19,7 +19,16 @@ script() {
   echo "*"
   set -x
 
-  export ETCD_CLUSTER=<%= p("etcd.machines").first %>:4001
+  <%
+    etcd_machine = nil
+    if_p("etcd.machines") do |machines|
+      etcd_machine = machines.first
+    end
+    unless etcd_machine
+      etcd_machine = link("etcd").instances.first.address
+    end
+  -%>
+  export ETCD_CLUSTER=${ETCD_CLUSTER:-<%= etcd_machine %>:4001}
   curl ${ETCD_CLUSTER}/v2/keys
 }
 
