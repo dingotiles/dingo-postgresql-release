@@ -13,9 +13,15 @@ echo "<%= p('restore.service_instance_ids').inspect %>"
 restore_service_instance "<%= instance_id %>"
 <% end %>
 
-<% if_p('servicebroker.service_id') do |service_id| %>
-cf api <%= p('cf.api_url') %> <%= p("cf.skip_ssl_validation") ? "--skip-ssl-validation" : "" %>
-cf auth <%= p('cf.username') %> <%= p('cf.password') %>
+<% if_p('servicebroker.service_id') do |service_id| -%>
+<%
+  lookup = Kernel
+  if_link("servicebroker") do |servicebroker|
+    lookup = servicebroker
+  end
+-%>
+cf api <%= lookup.p('cf.api_url') %> <%= lookup.p("cf.skip_ssl_validation") ? "--skip-ssl-validation" : "" %>
+cf auth <%= lookup.p('cf.username') %> <%= lookup.p('cf.password') %>
 
 # many CFs might have < 50 services; but if you use buddy-broker you can generate many many services
 root_service_id="<%= service_id %>"

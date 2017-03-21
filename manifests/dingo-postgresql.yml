@@ -125,14 +125,36 @@ instance_groups:
       release: dingo-postgresql
 
 - name: sanity-test
-  azs: [z1, z2, z3]
   instances: 1
   lifecycle: errand
+  azs: [z1, z2, z3]
   vm_type: default
   stemcell: default
   networks: [{name: private}]
   jobs:
   - name: sanity-test
+    release: dingo-postgresql
+
+- name: integration-test
+  instances: 1
+  lifecycle: errand
+  azs: [z1, z2, z3]
+  vm_type: default
+  stemcell: default
+  networks: [{name: private}]
+  jobs:
+  - name: integration-test
+    release: dingo-postgresql
+
+- name: disaster-recovery
+  instances: 1
+  lifecycle: errand
+  azs: [z1, z2, z3]
+  vm_type: default
+  stemcell: default
+  networks: [{name: private}]
+  jobs:
+  - name: disaster-recovery
     release: dingo-postgresql
 
 update:

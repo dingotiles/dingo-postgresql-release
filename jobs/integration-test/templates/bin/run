@@ -17,12 +17,19 @@ sudo ip link show | grep eth0 && sudo ip link set dev eth0 mtu 1500
 service=<%= p("cf.integration_test.service_name") %>
 plans=(cluster)
 
-<% if_p("cf.api_url", "cf.username", "cf.password") do |api_url, username, password| %>
+<%
+  lookup = Kernel
+  if_link("servicebroker") do |servicebroker|
+    lookup = servicebroker
+  end
+-%>
+
+<% lookup.if_p("cf.api_url", "cf.username", "cf.password") do |api_url, username, password| -%>
 echo Logging into Cloud Foundry
 
 set +x
-echo cf login -a <%= api_url %> -u <%= username %> -p [REDACTED] <%= p("cf.skip_ssl_validation") ? "--skip-ssl-validation" : "" %>
-cf api "<%= api_url %>" <%= p("cf.skip_ssl_validation") ? "--skip-ssl-validation" : "" %>
+echo cf login -a <%= api_url %> -u <%= username %> -p [REDACTED] <%= lookup.p("cf.skip_ssl_validation") ? "--skip-ssl-validation" : "" %>
+cf api "<%= api_url %>" <%= lookup.p("cf.skip_ssl_validation") ? "--skip-ssl-validation" : "" %>
 cf auth "<%= username %>" "<%= password %>"
 set -x
 

@@ -3,11 +3,17 @@
 set -u
 set -x
 
-servicebroker=<%= p("servicebroker.host") %>
-<% if_p("servicebroker.port") do |port| %>
+<%
+  lookup = Kernel
+  if_link("servicebroker") do |servicebroker|
+    lookup = servicebroker
+  end
+-%>
+servicebroker=<%= lookup.p("servicebroker.host") %>
+<% lookup.if_p("servicebroker.port") do |port| %>
 servicebroker="${servicebroker}:<%= port %>"
 <% end %>
-servicebroker_auth="<%= p('servicebroker.username') %>:<%= p('servicebroker.password') %>"
+servicebroker_auth="<%= lookup.p('servicebroker.username') %>:<%= lookup.p('servicebroker.password') %>"
 
 instance_id=$1
 echo deleting ${instance_id}

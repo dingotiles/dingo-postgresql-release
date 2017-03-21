@@ -4,30 +4,36 @@ packages: [cf-cli, jq]
 templates:
   bin/run: bin/run
   bin/restore_service_instance: bin/restore_service_instance
+
+consumes:
+- name: servicebroker
+  type: servicebroker
+
 properties:
   restore.service_instance_ids:
     description: Fixed list of Service Instance IDs to restore instead of looking them up from Cloud Foundry
     default: []
 
   # OR, dynamically lookup Service Instance IDs from Cloud Foundry
+  servicebroker.service_id:
+    description: If dynamically looking up Instance IDs from Cloud Foundry
+
   cf.api_url:
-    description: 'Full URL of Cloud Foundry API'
+    description: '(if not using links) Full URL of Cloud Foundry API'
   cf.skip_ssl_validation:
-    description: 'Set if target CF uses self-signed certificates'
+    description: '(if not using links) Set if target CF uses self-signed certificates'
   cf.username:
-    description: 'Name of the Cloud Foundry user for who to perform disaster recovery'
+    description: '(if not using links) Name of the Cloud Foundry user for who to perform disaster recovery'
     default: admin
   cf.password:
-    description: 'Password of the Cloud Foundry user'
-  servicebroker.service_id:
-    description: If dynamically looking up Instane IDs from Cloud Foundry
+    description: '(if not using links) Password of the Cloud Foundry user'
 
   # Target service broker
   servicebroker.host:
-    description: Host for service broker
+    description: (if not using links) Host for service broker
   servicebroker.port:
-    description: Port for service broker
+    description: (if not using links) Port for service broker
   servicebroker.username:
-    description: Basic auth username for service broker
+    description: (if not using links) Basic auth username for service broker
   servicebroker.password:
-    description: Basic auth password for service broker
+    description: (if not using links) Basic auth password for service broker

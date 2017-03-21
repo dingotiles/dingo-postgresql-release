@@ -27,27 +27,26 @@ case $1 in
     mkdir -p ${BOSH_DPG_DIR}
 
     <%
+      lookup = Kernel
+      if_link("servicebroker") do |servicebroker|
+        lookup = servicebroker
+      end
+
+      servicebroker_port     = lookup.p("servicebroker.port")
+      servicebroker_username = lookup.p("servicebroker.username")
+      servicebroker_password = lookup.p("servicebroker.password")
+      cf_endpoint            = lookup.p("cf.api_url")
+      cf_username            = lookup.p("cf.username")
+      cf_password            = lookup.p("cf.password")
+      cf_skip_ssl_validation = lookup.p("cf.skip_ssl_validation")
+
       servicebroker_machines = servicebroker_port = servicebroker_username = servicebroker_password = nil
       if_p("servicebroker.machines", "servicebroker.port", "servicebroker.username", "servicebroker.password") do |machines, port, username, password|
         servicebroker_machines = machines
-        servicebroker_port = port
-        servicebroker_username = username
-        servicebroker_password = password
-        cf_endpoint = p("cf.api_url")
-        cf_username = p("cf.username")
-        cf_password = p("cf.password")
-        cf_skip_ssl_validation = p("cf.skip_ssl_validation")
       end
       unless servicebroker_machines
         servicebroker = link("servicebroker")
         servicebroker_machines = servicebroker.instances.map(&:address)
-        servicebroker_port = servicebroker.p("servicebroker.port")
-        servicebroker_username = servicebroker.p("servicebroker.username")
-        servicebroker_password = servicebroker.p("servicebroker.password")
-        cf_endpoint = servicebroker.p("cf.api_url")
-        cf_username = servicebroker.p("cf.username")
-        cf_password = servicebroker.p("cf.password")
-        cf_skip_ssl_validation = servicebroker.p("cf.skip_ssl_validation")
       end
     -%>
     echo "<%= servicebroker_machines.first %>:<%= servicebroker_port %>" > ${BOSH_DPG_DIR}/broker_endpoint
