@@ -12,11 +12,82 @@ instance_groups:
   jobs:
   - name: etcd
     release: etcd
+    provides:
+      etcd:
+        as: etcd_server
     properties:
       etcd:
         peer_require_ssl: false
         require_ssl: false
         heartbeat_interval_in_milliseconds: 50
+
+- name: cell
+  azs: [z1, z2]
+  instances: 4
+  persistent_disk_type: default
+  vm_type: default
+  stemcell: default
+  update: {serial: true, max_in_flight: 1}
+  networks: [{name: private}]
+  properties:
+    broker:
+      protocol: http
+      ssl_enabled: false
+      port: 80
+      username: cell_broker
+      password: ((cell_broker_password))
+      cookie_secret: ((cell_cookie_secret))
+      max_containers: ((cell_max_containers))
+      fetch_images: true
+      update_containers: true
+      services:
+      - name: dingo-postgresql
+        id: beb5973c-e1b2-11e5-a736-c7c0b526363d
+        bindable: true
+        description: Dedicated PostgreSQL 9.5
+        tags: [postgresql, postgresql95, sql]
+        plans:
+        - name: cluster
+          id: 1545e30e-6dc3-11e5-826a-6c4008a663f0
+          description: Dedicated, highly-available cluster that is continously archived
+          free: true
+          metadata:
+            bullets:
+            - PostgreSQL 9.5
+            - Dedicated secure containers
+            - Highly-available cluster across availability zones
+            - Continuously archived for potential disaster recovery
+            displayname: Cluster
+          container:
+            backend: docker
+            image: dingotiles/dingo-postgresql
+            tag: v0.10.2
+            environment:
+            # - ETCD_HOST_PORT=10.58.111.59:4001
+            - AWS_ACCESS_KEY_ID=((backups_database_storage_aws_access_key_id))
+            - AWS_SECRET_ACCESS_KEY=((backups_clusterdata_aws_secret_access_key))
+            - WAL_S3_BUCKET=((backups_database_storage_bucket_name))
+            - AWS_REGION=((backups_database_storage_region))
+            - WALE_BACKUP_THRESHOLD_PERCENTAGE=30
+            - WALE_BACKUP_THRESHOLD_MEGABYTES=10240
+            persistent_volumes:
+            - /data
+  jobs:
+  # ship all the logs
+  - {name: remote-syslog, release: simple-remote-syslog}
+  # run docker daemon
+  - {name: docker, release: dingo-postgresql}
+  # docker images will be pulled down
+  - {name: upstream-images, release: dingo-postgresql}
+  # run registrator daemon
+  - name: registrator
+    release: dingo-postgresql
+    consumes:
+      etcd: {from: etcd_server}
+  # create uuid for each broker/daemon
+  - {name: container-env-vars, release: dingo-postgresql}
+  # run service broker
+  - {name: cf-containers-broker, release: dingo-postgresql}
 
 update:
   canaries: 0

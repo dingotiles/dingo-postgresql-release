@@ -22,7 +22,7 @@ templates:
 
 consumes:
 - name: etcd
-  type: etcd
+  type: etcd_service
 - name: cell
   type: cell
 
