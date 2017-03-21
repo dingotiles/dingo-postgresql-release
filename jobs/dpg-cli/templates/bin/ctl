@@ -49,7 +49,7 @@ case $1 in
         cf_password = servicebroker.p("cf.password")
         cf_skip_ssl_validation = servicebroker.p("cf.skip_ssl_validation")
       end
-    %>
+    -%>
     echo "<%= servicebroker_machines.first %>:<%= servicebroker_port %>" > ${BOSH_DPG_DIR}/broker_endpoint
     echo "<%= servicebroker_username %>" > ${BOSH_DPG_DIR}/broker_username
     echo "<%= servicebroker_password %>" > ${BOSH_DPG_DIR}/broker_password
@@ -60,7 +60,7 @@ case $1 in
         etcd_machine = machines.first
       end
       etcd_machine ||= link("etcd").instances.first.address
-    %>
+    -%>
     echo "<%= etcd_machine %>:4001" > ${BOSH_DPG_DIR}/etcd_endpoint
 
     echo "<%= cf_endpoint %>" > ${BOSH_DPG_DIR}/cf_endpoint

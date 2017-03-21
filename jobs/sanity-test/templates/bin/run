@@ -25,7 +25,7 @@ sudo ip link show | grep eth0 && sudo ip link set dev eth0 mtu 1500
 	unless servicebroker_machines
 		servicebroker_machines = link("servicebroker").instances.map(&:address)
 	end
-%>
+-%>
 export BROKER_URI=http://<%= p("servicebroker.username") %>:<%= p("servicebroker.password") %>@<%= servicebroker_machines.first %>:<%= p("servicebroker.port") %>
 export ETCD=<%= p("etcd.machines").first %>:4001
 

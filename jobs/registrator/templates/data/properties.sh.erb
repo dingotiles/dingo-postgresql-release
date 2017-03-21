@@ -21,7 +21,7 @@ export DOCKER_GROUP="<%= p('docker.group') %>"
     registrator_backend_uri = backend_uri
   end
   registrator_backend_uri ||= "etcd://#{link('etcd').instances.first.address}:4001"
-%>
+-%>
 export REGISTRATOR_BACKEND_URI="<%= registrator_backend_uri %>"
 
 <%
@@ -40,8 +40,7 @@ export REGISTRATOR_BACKEND_URI="<%= registrator_backend_uri %>"
     end
     network.ip
   end
-%>
-
+-%>
 # export DNS_DOMAIN_NAME=<%= (spec.dns_domain_name.nil? || spec.dns_domain_name == "") ? "bosh" : spec.dns_domain_name %>
 # export DOCKER_HOSTNAME="<%= index %>.<%= name %>.<%= spec.networks.methods(false).grep(/[^=]$/).first.to_s %>.<%= spec.deployment %>.$DNS_DOMAIN_NAME"
 export DOCKER_HOSTNAME="<%= discover_external_ip %>"

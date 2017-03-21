@@ -25,7 +25,7 @@ case $1 in
       unless etcd_machine
         etcd_machine = link("etcd").instances.first.address
       end
-    %>
+    -%>
     export ETCD_CLUSTER=${ETCD_CLUSTER:-<%= etcd_machine %>:4001}
 
     # Ensure keys looked up by confd are always available; else confd gets upset

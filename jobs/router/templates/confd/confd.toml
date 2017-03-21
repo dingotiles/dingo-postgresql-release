@@ -6,8 +6,7 @@
   unless etcd_machines
     etcd_machines = link("etcd").instances.map(&:address)
   end
-%>
-
+-%>
 backend = "etcd"
 nodes = <%= etcd_machines.map {|h| "#{h}:4001"} %>
 scheme = "http"

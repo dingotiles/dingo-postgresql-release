@@ -23,8 +23,7 @@ defaults
 	unless servicebroker_machines
 		servicebroker_machines = link("servicebroker").instances.map(&:address)
 	end
-%>
-
+-%>
 listen servicebroker
 	bind :<%= p("servicebroker.public_port") %>
 <% servicebroker_machines.each_with_index do |broker, i| %>

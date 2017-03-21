@@ -13,7 +13,7 @@
     port     = broker.p("servicebroker.port")
     "http://#{username}:#{password}@#{host}:#{port}"
   end
-%>
+-%>
 DRAIN_ENDPOINT=<%= broker_endpoint %>
 
 <%
@@ -32,7 +32,7 @@ DRAIN_ENDPOINT=<%= broker_endpoint %>
     end
     network.ip
   end
-%>
+-%>
 CELL_GUID=<%= discover_external_ip %>
 
 if [[ -n ${DRAIN_ENDPOINT} ]]; then

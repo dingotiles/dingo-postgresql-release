@@ -24,7 +24,7 @@ broker:
       network.ip
     end
     bind_host ||= discover_external_ip
-  %>
+  -%>
   bind_host: <%= bind_host %>
 
 cells:
@@ -58,12 +58,11 @@ cells:
   end
 -%>
 <% backends.each do |backend| -%>
-- guid: <%= backend["guid"] %>
-  availability_zone: <%= backend["az"] %>
-  uri: <%= backend["uri"] %>
-  username: <%= backend["username"] %>
-  password: "<%= backend["password"] %>"
-  property-input: <%= backend["property-input"] %>
+- guid: <%= backend[:guid] %>
+  availability_zone: <%= backend[:az] %>
+  uri: <%= backend[:uri] %>
+  username: <%= backend[:username] %>
+  password: "<%= backend[:password] %>"
 <% end -%>
 
 <%
@@ -76,7 +75,7 @@ cells:
   etcd_endpoints ||= link("etcd").instances.map do |instance|
     "http://#{instance.address}:4001/"
   end
-%>
+-%>
 etcd:
   machines: <%= etcd_endpoints.to_json %>
 
@@ -107,6 +106,6 @@ cf:
     services = s
   end
   services ||= link("cf-containers-broker").p('broker.services')
-%>
+-%>
 catalog:
   services: <%= JSON.pretty_generate(services) %>
