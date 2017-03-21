@@ -48,7 +48,7 @@ case $1 in
     echo ${CELL_GUID} > ${env_var_dir}/CELL_GUID
 
     <% if_link("etcd") do |etcd| %>
-    export ETCD_HOST_PORT=<%= etcd.instances.first.address %>:4000
+    export ETCD_HOST_PORT=<%= etcd.instances.first.address %>:4001
     echo ${ETCD_HOST_PORT} > ${env_var_dir}/ETCD_HOST_PORT
     <% end %>
 
