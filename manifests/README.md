@@ -8,8 +8,8 @@ From the root folder:
 export BOSH_ENVIRONMENT=${BOSH_ENVIRONMENT:?required}
 export BOSH_DEPLOYMENT=dingo-postgresql
 
-bosh2 int deployment/dingo-postgresql.yml --var-errs --vars-store=tmp/creds.yml
-bosh2 deploy deployment/dingo-postgresql.yml --vars-store=tmp/creds.yml
+bosh2 int manifests/dingo-postgresql.yml --var-errs --vars-store=tmp/creds.yml
+bosh2 deploy manifests/dingo-postgresql.yml --vars-store=tmp/creds.yml
 ```
 
 This will fail; but will show you all the required input variables/parameters.
@@ -42,14 +42,14 @@ safe set secret/dingo-postgresql/demo/aws/database_storage aws_access_key_id=...
 You can fetch these into an input YAML file via `spruce merge`:
 
 ```
-VAULT_PREFIX=secret/dingo-postgresql/demo spruce merge deployment/spruce-vault-secrets.yml
+VAULT_PREFIX=secret/dingo-postgresql/demo spruce merge manifests/spruce-vault-secrets.yml
 ```
 
 This allows you to pass these secrets directly to the `bosh2` command with the `-l` flag:
 
 ```
 VAULT_PREFIX=secret/dingo-postgresql/demo
-bosh2 -d dingo-postgresql deploy deployment/dingo-postgresql.yml \
+bosh2 -d dingo-postgresql deploy manifests/dingo-postgresql.yml \
   --var-errs --vars-store=creds.yml \
-  -l <(spruce merge deployment/spruce-vault-secrets.yml)
+  -l <(spruce merge manifests/spruce-vault-secrets.yml)
 ```
