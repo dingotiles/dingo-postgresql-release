@@ -60,10 +60,9 @@ instance_groups:
             displayname: Cluster
           container:
             backend: docker
-            image: dingotiles/dingo-postgresql
-            tag: v0.10.2
+            image: dingotiles/dingo-postgresql95
+            tag: latest
             environment:
-            # - ETCD_HOST_PORT=10.58.111.59:4001
             - AWS_ACCESS_KEY_ID=((backups_database_storage_aws_access_key_id))
             - AWS_SECRET_ACCESS_KEY=((backups_clusterdata_aws_secret_access_key))
             - WAL_S3_BUCKET=((backups_database_storage_bucket_name))

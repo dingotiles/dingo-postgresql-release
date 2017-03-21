@@ -1,6 +1,9 @@
 #!/bin/bash
 
-DRAIN_ENDPOINT=<%= p('broker.drain_endpoint') %>
+# TODO: implement $DRAIN_ENDPOINT for links
+<% if_p('broker.drain_endpoint') do |broker_endpoint| %>
+DRAIN_ENDPOINT=<%= broker_endpoint %>
+<% end %>
 <%
   require 'json'
 

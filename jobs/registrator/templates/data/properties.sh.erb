@@ -20,7 +20,7 @@ export DOCKER_GROUP="<%= p('docker.group') %>"
   if_p('registrator.backend_uri') do |backend_uri|
     registrator_backend_uri = backend_uri
   end
-  registrator_backend_uri ||= "etcd://#{link('etcd').instances.first}:4001"
+  registrator_backend_uri ||= "etcd://#{link('etcd').instances.first.address}:4001"
 %>
 export REGISTRATOR_BACKEND_URI="<%= registrator_backend_uri %>"
 

@@ -35,10 +35,6 @@ properties:
   broker.session_expiry:
     description: "Session expiry time of the session"
     default: "86400"
-  broker.external_ip:
-    description: "External IP address used to register the broker"
-  broker.host:
-    description: "Host used to register the broker"
   broker.ssl_enabled:
     description: "Determines use of https in dashboard url and in callback uri for calls to UAA"
     default: false
@@ -65,16 +61,6 @@ properties:
   broker.container_env_var_dir:
     description: Directory of files that will become environment variables for all containers
     default: /var/vcap/store/cf-containers-broker/envdir
-
-  nats.user:
-    description: "Username for broker to connect to NATS"
-  nats.password:
-    description: "Password for broker to connect to NATS"
-  nats.port:
-    description: "IP port of Cloud Foundry NATS server"
-    default: 4222
-  nats.machines:
-    description: "Array of IPs of each NATS cluster member"
 
   env.http_proxy:
     description: "HTTP proxy"
