@@ -31,9 +31,6 @@ instance_groups:
   update: {serial: true, max_in_flight: 1}
   properties:
     broker:
-      protocol: http
-      ssl_enabled: false
-      port: 80
       username: cell_broker
       password: ((cell_broker_password))
       cookie_secret: ((cell_cookie_secret))
@@ -94,33 +91,38 @@ instance_groups:
   instances: 1
   vm_type: default
   stemcell: default
-  networks: [{name: public}]
-  properties:
-    servicebroker:
-      username: cell_broker
-      password: ((cell_broker_password))
-
-    backups:
-      clusterdata:
-        bucket_name: ((backups_clusterdata_bucket_name))
-        region: ((backups_clusterdata_region))
-        aws_access_key_id: ((backups_clusterdata_aws_access_key_id))
-        aws_secret_access_key: ((backups_clusterdata_aws_secret_access_key))
-      database_storage:
-        bucket_name: ((backups_database_storage_bucket_name))
-        region: ((backups_database_storage_region))
-        aws_access_key_id: ((backups_database_storage_aws_access_key_id))
-        aws_secret_access_key: ((backups_database_storage_aws_secret_access_key))
-    cf:
-      api_url: https://api.((cf_system_domain))
-      username: ((cf_admin_username))
-      password: ((cf_admin_password))
-      skip_ssl_validation: ((cf_skip_ssl_validation))
+  networks:
+  - name: public
+    static_ips: [10.244.0.2]
   jobs:
-    - {name: remote-syslog, release: simple-remote-syslog}
-    - {name: broker, release: dingo-postgresql}
-    - {name: router, release: dingo-postgresql}
-    - {name: dpg-cli, release: dingo-postgresql}
+    - name: remote-syslog
+      release: simple-remote-syslog
+    - name: broker
+      release: dingo-postgresql
+      properties:
+        servicebroker:
+          username: cell_broker
+          password: ((cell_broker_password))
+        backups:
+          clusterdata:
+            bucket_name: ((backups_clusterdata_bucket_name))
+            region: ((backups_clusterdata_region))
+            aws_access_key_id: ((backups_clusterdata_aws_access_key_id))
+            aws_secret_access_key: ((backups_clusterdata_aws_secret_access_key))
+          database_storage:
+            bucket_name: ((backups_database_storage_bucket_name))
+            region: ((backups_database_storage_region))
+            aws_access_key_id: ((backups_database_storage_aws_access_key_id))
+            aws_secret_access_key: ((backups_database_storage_aws_secret_access_key))
+        cf:
+          api_url: https://api.((cf_system_domain))
+          username: ((cf_admin_username))
+          password: ((cf_admin_password))
+          skip_ssl_validation: ((cf_skip_ssl_validation))
+    - name: router
+      release: dingo-postgresql
+    - name: dpg-cli
+      release: dingo-postgresql
 
 update:
   canaries: 0

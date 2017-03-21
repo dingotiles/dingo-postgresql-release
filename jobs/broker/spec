@@ -28,6 +28,10 @@ provides:
   - servicebroker.password
   - servicebroker.port
   - servicebroker.router.hostname
+  - cf.api_url
+  - cf.username
+  - cf.password
+  - cf.skip_ssl_validation
 
 consumes:
 - name: etcd

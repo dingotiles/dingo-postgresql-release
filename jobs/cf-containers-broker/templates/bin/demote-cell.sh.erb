@@ -1,9 +1,21 @@
 #!/bin/bash
 
-# TODO: implement $DRAIN_ENDPOINT for links
-<% if_p('broker.drain_endpoint') do |broker_endpoint| %>
+<%
+  broker_endpoint = nil
+  if_p('broker.drain_endpoint') do |endpoint|
+    broker_endpoint = endpoint
+  end
+  broker_endpoint ||= begin
+    broker   = link("servicebroker")
+    host     = broker.instances.first.address
+    username = broker.p("servicebroker.username")
+    password = broker.p("servicebroker.password")
+    port     = broker.p("servicebroker.port")
+    "http://#{username}:#{password}@#{host}:#{port}"
+  end
+%>
 DRAIN_ENDPOINT=<%= broker_endpoint %>
-<% end %>
+
 <%
   require 'json'
 

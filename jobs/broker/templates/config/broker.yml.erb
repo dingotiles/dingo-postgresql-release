@@ -24,8 +24,8 @@ broker:
       network.ip
     end
     bind_host ||= discover_external_ip
-   %>
-   bind_host: <%= bind_host %>
+  %>
+  bind_host: <%= bind_host %>
 
 cells:
 <%
@@ -33,22 +33,38 @@ cells:
   if_p("servicebroker.backends.machines") do |az_and_machines|
     az, machines = az_and_machines
     machines.each do |machine|
-      backends << {"guid": machine, "az": az, "uri": machine}
+      backends << {
+        "guid": machine,
+        "az": az,
+        "uri": machine,
+        "username": p('servicebroker.backends.username'),
+        "password": p('servicebroker.backends.password'),
+        "property-input": "old-style",
+      }
     end
   end
   if backends.size == 0
-    link("cf-containers-broker").instances.each do |instance|
-      backends << {"guid": instance.id, "az": instance.az, "uri": instance.address}
+    cells = link("cf-containers-broker")
+    cells.instances.each do |instance|
+      backends << {
+        "guid": instance.id,
+        "az": instance.az,
+        "uri": instance.address,
+        "username": cells.p('broker.username'),
+        "password": cells.p('broker.password'),
+        "property-input": "links",
+      }
     end
   end
-%>
-<% backends.each do |backend| %>
+-%>
+<% backends.each do |backend| -%>
 - guid: <%= backend["guid"] %>
   availability_zone: <%= backend["az"] %>
   uri: <%= backend["uri"] %>
-  username: "<%= p('servicebroker.backends.username') %>"
-  password: "<%= p('servicebroker.backends.password') %>"
-<% end %>
+  username: <%= backend["username"] %>
+  password: "<%= backend["password"] %>"
+  property-input: <%= backend["property-input"] %>
+<% end -%>
 
 <%
   etcd_endpoints = nil

@@ -15,6 +15,10 @@ provides:
   - broker.password
   - broker.unicorn.port
 
+consumes:
+- name: servicebroker
+  type: servicebroker
+
 templates:
   bin/cf-containers-broker_ctl: bin/cf-containers-broker_ctl
   bin/job_properties.sh.erb: bin/job_properties.sh
@@ -23,20 +27,22 @@ templates:
   config/unicorn.conf.rb.erb: config/unicorn.conf.rb
 
 properties:
-  broker.drain_endpoint:
-    description: "An endpoint to call in a drain script"
-  broker.unicorn.worker_processes:
-    description: "Unicorn worker processes. If the number of worker processes > 1 then you must disable the broker.allocate_docker_host_ports property"
-    default: "1"
-  broker.unicorn.port:
-    description: "Unicorn listen port"
-    default: "80"
   broker.username:
     description: "Broker's basic auth username"
   broker.password:
     description: "Broker's basic auth password"
   broker.cookie_secret:
     description: "A unique secret key, used to sign sessions"
+
+  broker.drain_endpoint:
+    description: "(unless using links) An endpoint to call in a drain script"
+
+  broker.unicorn.worker_processes:
+    description: "Unicorn worker processes. If the number of worker processes > 1 then you must disable the broker.allocate_docker_host_ports property"
+    default: "1"
+  broker.unicorn.port:
+    description: "Unicorn listen port"
+    default: "80"
   broker.session_expiry:
     description: "Session expiry time of the session"
     default: "86400"

@@ -10,18 +10,19 @@ networks:
 - name: public
   type: manual
   subnets:
-  - range: 10.244.0.0/17
+  - range: 10.244.0.0/19
     gateway: 10.244.0.1
     azs: [z1, z2, z3]
     dns: [8.8.8.8]
     reserved: []
+    static: [10.244.0.2-10.244.0.255]
     cloud_properties:
       name: random
 - name: private
   type: manual
   subnets:
-  - range: 10.244.128.0/17
-    gateway: 10.244.128.1
+  - range: 10.244.32.0/19
+    gateway: 10.244.32.1
     azs: [z1, z2, z3]
     dns: [8.8.8.8]
     reserved: []
