@@ -1,0 +1,25 @@
+---
+platform: linux
+image_resource:
+  type: docker-image
+  source: {repository: dingotiles/dingo-postgresql-release-pipeline}
+
+inputs:
+- name: boshrelease-ci
+- name: etcd
+- name: simple-remote-syslog
+- name: candidate-release
+- name: director-state
+
+params:
+  aws_access_key:
+  aws_secret_key:
+  backups_bucket:
+  clusterdata_bucket:
+  region:
+  docker_image_image:
+  docker_image_tag:
+  docker_image_source:
+
+run:
+  path: boshrelease-ci/ci/tasks/bosh2-deploy.sh

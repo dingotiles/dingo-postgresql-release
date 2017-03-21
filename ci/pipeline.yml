@@ -1,7 +1,7 @@
 ---
 groups:
 - name: pipeline
-  jobs: [rc, bosh-rc, testflight, integration, deploy-vsphere, shipit, shipit-rc, minor, major, patch]
+  jobs: [rc, bosh-rc, testflight, testflight-cc, integration, deploy-vsphere, shipit, shipit-rc, minor, major, patch]
 - name: patroni-images
   jobs: [build-pg95-base-image, build-pg95-image, docker-machine-setup, test-95-image]
 - name: ci-image
@@ -90,22 +90,7 @@ jobs:
   serial_groups: [bosh-lite-testflight]
   plan:
   - aggregate:
-    - do:
-      - {get: boshrelease-ci}
-      # - aggregate:
-      #   - task: delete-testflight
-      #     file: boshrelease-ci/ci/tasks/delete-testflight.yml
-      #     params:
-      #       deployment_name: dingo-postgresql-testflight
-      #       bosh_target: {{bosh-lite-testflight-target}}
-      #       bosh_username: {{bosh-lite-username}}
-      #       bosh_password: {{bosh-lite-password}}
-      #   - task: delete-orphaned-disks-testflight
-      #     file: boshrelease-ci/ci/tasks/delete-orphaned-disks-testflight.yml
-      #     params:
-      #       bosh_target: {{bosh-lite-testflight-target}}
-      #       bosh_username: {{bosh-lite-username}}
-      #       bosh_password: {{bosh-lite-password}}
+    - {get: boshrelease-ci}
     - {get: boshrelease, passed: [bosh-rc], trigger: true}
     - {get: version, passed: [bosh-rc], trigger: true}
     - {get: candidate-release, passed: [bosh-rc], trigger: true}
@@ -132,8 +117,8 @@ jobs:
       backups_bucket: {{backups-testflight-backups-bucket}}
       clusterdata_bucket: {{backups-testflight-clusterdata-bucket}}
       region: {{backups-testflight-s3-region}}
-      docker_image_image: "dingotiles/dingo-postgresql95"
-      docker_image_tag: "edge"
+      docker_image_image: dingotiles/dingo-postgresql95
+      docker_image_tag: edge
       docker_image_source: upstream
   - put: lite-deployment-testflight
     params:
@@ -155,6 +140,40 @@ jobs:
         bosh_target: {{bosh-lite-testflight-target}}
         bosh_username: {{bosh-lite-username}}
         bosh_password: {{bosh-lite-password}}
+
+- name: testflight-bosh2
+  public: true
+  serial_groups: [bosh-lite-testflight-bosh2]
+  plan:
+  - aggregate:
+    - {get: boshrelease-ci}
+    - {get: boshrelease, passed: [bosh-rc], trigger: true}
+    - {get: version, passed: [bosh-rc], trigger: true}
+    - {get: candidate-release, passed: [bosh-rc], trigger: true}
+    - {get: pg95-image-edge, params: {skip_download: true}}
+    - {get: docker-image-registrator, trigger: true, params: {skip_download: true}}
+    - {get: etcd}
+    - {get: simple-remote-syslog}
+    - {get: lite-stemcell}
+  - task: director-creds
+    file: boshrelease-ci/ci/tasks/director-creds.yml
+    params:
+      VAULT_ADDR: {{vault-addr}}
+      VAULT_SKIP_VERIFY: 1
+      VAULT_PREFIX: {{bosh-lite-testflight-bosh2-vault-prefix}}
+      GITHUB_TOKEN: {{github-release-access-token}}
+  - task: bosh2-deploy
+    file: boshrelease-ci/ci/tasks/bosh2-deploy.yml
+    params:
+      aws_access_key: {{dingotiles-aws-access}}
+      aws_secret_key: {{dingotiles-aws-secret}}
+      backups_bucket: {{backups-testflight-backups-bucket}}
+      clusterdata_bucket: {{backups-testflight-clusterdata-bucket}}
+      region: {{backups-testflight-s3-region}}
+      docker_image_image: dingotiles/dingo-postgresql95
+      docker_image_tag: edge
+      docker_image_source: upstream
+
 - name: integration
   public: true
   serial_groups: [bosh-lite-integration]
