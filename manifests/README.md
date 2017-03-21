@@ -48,8 +48,13 @@ VAULT_PREFIX=secret/dingo-postgresql/demo spruce merge manifests/spruce-vault-se
 This allows you to pass these secrets directly to the `bosh2` command with the `-l` flag:
 
 ```
-VAULT_PREFIX=secret/dingo-postgresql/demo
-bosh2 -d dingo-postgresql deploy manifests/dingo-postgresql.yml \
-  --var-errs --vars-store=creds.yml \
+export VAULT_PREFIX=secret/dingo-postgresql/demo
+bosh2 int manifests/dingo-postgresql.yml \
+  --vars-store=tmp/creds.yml \
+  -l tmp/vars.yml \
+  -l <(spruce merge manifests/spruce-vault-secrets.yml)
+bosh2 deploy manifests/dingo-postgresql.yml \
+  --vars-store=tmp/creds.yml \
+  -l tmp/vars.yml \
   -l <(spruce merge manifests/spruce-vault-secrets.yml)
 ```

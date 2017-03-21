@@ -1,0 +1,18 @@
+---
+- type: replace
+  path: /releases/name=dingo-postgresql
+  value:
+    name: dingo-postgresql
+    version: latest
+
+- type: replace
+  path: /releases/name=simple-remote-syslog
+  value:
+    name: simple-remote-syslog
+    version: latest
+
+- type: replace
+  path: /releases/name=etcd
+  value:
+    name: etcd
+    version: latest

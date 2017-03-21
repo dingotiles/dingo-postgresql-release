@@ -7,8 +7,13 @@ packages:
 - ruby
 
 provides:
-- name: cell_api
-  type: cell_api
+- name: cf-containers-broker
+  type: cf-containers-broker
+  properties:
+  - broker.services
+  - broker.username
+  - broker.password
+  - broker.unicorn.port
 
 templates:
   bin/cf-containers-broker_ctl: bin/cf-containers-broker_ctl

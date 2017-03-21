@@ -20,11 +20,20 @@ templates:
   helpers/ctl_setup.sh: helpers/ctl_setup.sh
   helpers/ctl_utils.sh: helpers/ctl_utils.sh
 
+provides:
+- name: servicebroker
+  type: servicebroker
+  properties:
+  - servicebroker.username
+  - servicebroker.password
+  - servicebroker.port
+  - servicebroker.router.hostname
+
 consumes:
 - name: etcd
   type: etcd_service
-- name: cell
-  type: cell
+- name: cf-containers-broker
+  type: cf-containers-broker
 
 properties:
   etcd.machines:
@@ -54,7 +63,7 @@ properties:
     default: containers
 
   servicebroker.services:
-    description: The CF service broker catalog of services/plans
+    description: (if not using links) The CF service broker catalog of services/plans
 
   backups.clusterdata.aws_access_key_id:
     description: Amazon S3 API access key

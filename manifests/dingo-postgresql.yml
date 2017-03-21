@@ -27,8 +27,8 @@ instance_groups:
   persistent_disk_type: default
   vm_type: default
   stemcell: default
-  update: {serial: true, max_in_flight: 1}
   networks: [{name: private}]
+  update: {serial: true, max_in_flight: 1}
   properties:
     broker:
       protocol: http
@@ -40,7 +40,7 @@ instance_groups:
       max_containers: ((cell_max_containers))
       fetch_images: true
       update_containers: true
-      services:
+      services: # define at cf-containers-broker + provide via link properties
       - name: dingo-postgresql
         id: beb5973c-e1b2-11e5-a736-c7c0b526363d
         bindable: true
@@ -86,7 +86,41 @@ instance_groups:
   # create uuid for each broker/daemon
   - {name: container-env-vars, release: dingo-postgresql}
   # run service broker
-  - {name: cf-containers-broker, release: dingo-postgresql}
+  - name: cf-containers-broker
+    release: dingo-postgresql
+
+- name: router
+  azs: [z1, z2, z3]
+  instances: 1
+  vm_type: default
+  stemcell: default
+  networks: [{name: public}]
+  properties:
+    servicebroker:
+      username: cell_broker
+      password: ((cell_broker_password))
+
+    backups:
+      clusterdata:
+        bucket_name: ((backups_clusterdata_bucket_name))
+        region: ((backups_clusterdata_region))
+        aws_access_key_id: ((backups_clusterdata_aws_access_key_id))
+        aws_secret_access_key: ((backups_clusterdata_aws_secret_access_key))
+      database_storage:
+        bucket_name: ((backups_database_storage_bucket_name))
+        region: ((backups_database_storage_region))
+        aws_access_key_id: ((backups_database_storage_aws_access_key_id))
+        aws_secret_access_key: ((backups_database_storage_aws_secret_access_key))
+    cf:
+      api_url: https://api.((cf_system_domain))
+      username: ((cf_admin_username))
+      password: ((cf_admin_password))
+      skip_ssl_validation: ((cf_skip_ssl_validation))
+  jobs:
+    - {name: remote-syslog, release: simple-remote-syslog}
+    - {name: broker, release: dingo-postgresql}
+    - {name: router, release: dingo-postgresql}
+    - {name: dpg-cli, release: dingo-postgresql}
 
 update:
   canaries: 0

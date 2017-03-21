@@ -17,7 +17,16 @@ check-etcd
 # Force mtu of 1500 incase icmp is blocked by sg/acl prohibiting mtu discovery
 sudo ip link show | grep eth0 && sudo ip link set dev eth0 mtu 1500
 
-export BROKER_URI=http://<%= p("servicebroker.username") %>:<%= p("servicebroker.password") %>@<%= p("servicebroker.machines").first %>:<%= p("servicebroker.port") %>
+<%
+	servicebroker_machines = nil
+	if_p("servicebroker.machines") do |machines|
+		servicebroker_machines = machines
+	end
+	unless servicebroker_machines
+		servicebroker_machines = link("servicebroker").instances.map(&:address)
+	end
+%>
+export BROKER_URI=http://<%= p("servicebroker.username") %>:<%= p("servicebroker.password") %>@<%= servicebroker_machines.first %>:<%= p("servicebroker.port") %>
 export ETCD=<%= p("etcd.machines").first %>:4001
 
 echo Confirm broker access

@@ -1,5 +1,15 @@
+<%
+  etcd_machines = nil
+  if_p("etcd.machines") do |machines|
+    etcd_machine = machines
+  end
+  unless etcd_machines
+    etcd_machines = link("etcd").instances.map(&:address)
+  end
+%>
+
 backend = "etcd"
-nodes = <%= p("etcd.machines").map {|h| "#{h}:4001"} %>
+nodes = <%= etcd_machines.map {|h| "#{h}:4001"} %>
 scheme = "http"
 prefix = "/"
 watch = true

@@ -13,12 +13,13 @@ templates:
   confd/confd.toml: confd/confd.toml
   confd/conf.d/router.toml: confd/conf.d/router.toml
   confd/templates/haproxy.tmpl: confd/templates/haproxy.tmpl
+
 properties:
   etcd.machines:
-    description: hostnames for etcd servers
+    description: (if not using links) hostnames for etcd servers
 
   servicebroker.machines:
-    description: hostnames for broker servers
+    description: (if not using links) hostnames for broker servers
   servicebroker.public_port:
     description: port to expose broker to router users
     default: 8888
