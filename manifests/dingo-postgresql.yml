@@ -23,6 +23,9 @@ instance_groups:
 
 - name: cell
   azs: [z1, z2]
+  migrated_from:
+  - {name: cell_z1, az: z1}
+  - {name: cell_z2, az: z2}
   instances: 4
   persistent_disk_type: default
   vm_type: default
