@@ -31,8 +31,8 @@ instance_groups:
   update: {serial: true, max_in_flight: 1}
   properties:
     broker:
-      username: cell_broker
-      password: ((cell_broker_password))
+      username: cellbroker
+      password: ((cellbroker_password))
       cookie_secret: ((cell_cookie_secret))
       max_containers: ((cell_max_containers))
       fetch_images: true
@@ -58,7 +58,7 @@ instance_groups:
           container:
             backend: docker
             image: dingotiles/dingo-postgresql95
-            tag: latest
+            tag: 0.10.2
             environment:
             - AWS_ACCESS_KEY_ID=((backups_database_storage_aws_access_key_id))
             - AWS_SECRET_ACCESS_KEY=((backups_clusterdata_aws_secret_access_key))
@@ -101,8 +101,8 @@ instance_groups:
       release: dingo-postgresql
       properties:
         servicebroker:
-          username: cell_broker
-          password: ((cell_broker_password))
+          username: servicebroker
+          password: ((servicebroker_password))
         backups:
           clusterdata:
             bucket_name: ((backups_clusterdata_bucket_name))
@@ -165,9 +165,9 @@ update:
   update_watch_time: 1000-60000
 
 variables:
-- name: dingo_broker_password
+- name: servicebroker_password
   type: password
-- name: cell_broker_password
+- name: cellbroker_password
   type: password
 - name: cell_cookie_secret
   type: password
