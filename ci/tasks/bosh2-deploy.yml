@@ -15,6 +15,7 @@ outputs:
 - name: manifest
 
 params:
+  delete_deployment_first: false
   deployment_name:
   deployment_router_static_ip:
   router_public_ip:

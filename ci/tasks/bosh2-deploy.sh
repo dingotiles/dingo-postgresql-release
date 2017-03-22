@@ -8,6 +8,11 @@ export BOSH_ENVIRONMENT=`bosh2 int director-state/director-creds.yml --path /int
 export BOSH_CA_CERT="$(bosh2 int director-state/director-creds.yml --path /director_ssl/ca)"
 export BOSH_CLIENT=admin
 export BOSH_CLIENT_SECRET=`bosh2 int director-state/director-creds.yml --path /admin_password`
+export BOSH_DEPLOYMENT=$deployment_name
+
+if [[ "${delete_deployment_first:-false}" != "false" ]]; then
+  bosh2 -n delete-deployment
+fi
 
 cd boshrelease-ci
 mkdir -p tmp
@@ -66,7 +71,6 @@ bosh2 int manifests/dingo-postgresql.yml \
   --var-errs \
     > $manifest_dir/manifest.yml
 
-export BOSH_DEPLOYMENT=$deployment_name
 bosh2 -n deploy $manifest_dir/manifest.yml
 
 # running errands with bosh1 until bosh2 run-errand is readable
