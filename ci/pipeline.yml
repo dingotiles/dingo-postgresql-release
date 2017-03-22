@@ -165,6 +165,7 @@ jobs:
   - task: bosh2-deploy
     file: boshrelease-ci/ci/tasks/bosh2-deploy.yml
     params:
+      deployment_name: dingo-postgresql-testflight-bosh2
       aws_access_key: {{dingotiles-aws-access}}
       aws_secret_key: {{dingotiles-aws-secret}}
       backups_bucket: {{backups-testflight-backups-bucket}}

@@ -37,15 +37,23 @@ cat > tmp/docker_image_tag.yml <<YAML
   value: ${docker_image_tag:?required}
 YAML
 
+cat > tmp/deployment_name.yml <<YAML
+---
+- type: replace
+  path: /name
+  value: ${deployment_name:?required}
+YAML
+
 set -x
 bosh2 int manifests/dingo-postgresql.yml \
-  -o           tmp/docker_image_tag.yml \
+  -o           tmp/docker_image_tag.yml  \
+  -o           tmp/deployment_name.yml   \
   --vars-store tmp/creds.yml \
-  --vars-file  tmp/vars.yml \
+  --vars-file  tmp/vars.yml  \
   --var-errs \
     > $manifest_dir/manifest.yml
 
-export BOSH_DEPLOYMENT=$(bosh2 int $manifest_dir/manifest.yml --path /name)
+export BOSH_DEPLOYMENT=$deployment_name
 bosh2 -n deploy $manifest_dir/manifest.yml
 
 # running errands with bosh1 until bosh2 run-errand is readable
