@@ -8,23 +8,34 @@ export PATH=$PATH:/var/vcap/packages/cf-cli/bin
 export PATH=$PATH:/var/vcap/packages/jq/bin
 export PATH=$PATH:/var/vcap/jobs/disaster-recovery/bin
 
-echo "<%= p('restore.service_instance_ids').inspect %>"
-<% p('restore.service_instance_ids').each do |instance_id| %>
-restore_service_instance "<%= instance_id %>"
-<% end %>
-
-<% if_p('servicebroker.service_id') do |service_id| -%>
 <%
-  lookup = Kernel
+  # TODO: specific consumes: {name: cf} rather that getting from 'servicebroker'
+  cf = Kernel
   if_link("servicebroker") do |servicebroker|
-    lookup = servicebroker
+    cf = servicebroker
   end
+
+  restore_service_id = nil
+  if_p('servicebroker.service_id') do |service_id| -%>
+    performing_task="servicebroker.service_id"
+    restore_service_id = service_id
+  end
+  unless restore_service_id
+    if_link("cf-containers-broker") do |broker|
+      performing_task="link(cf-containers-broker)"
+      services ||= broker.p('broker.services')
+      p services
+      restore_service_id = services.first[:id]
+    end
+  end
+  if restore_service_id
 -%>
-cf api <%= lookup.p('cf.api_url') %> <%= lookup.p("cf.skip_ssl_validation") ? "--skip-ssl-validation" : "" %>
-cf auth <%= lookup.p('cf.username') %> <%= lookup.p('cf.password') %>
+performing_task=<%= performing_task %>
+cf api <%= cf.p('cf.api_url') %> <%= cf.p("cf.skip_ssl_validation") ? "--skip-ssl-validation" : "" %>
+cf auth <%= cf.p('cf.username') %> <%= cf.p('cf.password') %>
 
 # many CFs might have < 50 services; but if you use buddy-broker you can generate many many services
-root_service_id="<%= service_id %>"
+root_service_id="<%= restore_service_id %>"
 next_url=/v2/services
 while [[ "${next_url}" != "null" ]]; do
   echo Loading page of services ${next_url} >&2
@@ -44,4 +55,13 @@ while [[ "${next_url}" != "null" ]]; do
   fi
   next_url=$(cf curl "${next_url}" | jq -r -c ".next_url")
 done
-<% end %>
+<% end -%>
+
+<% end -%>
+
+if [[ "${performing_task:-X}" == "X" ]]; then
+  echo "ERROR: disaster-recovery task was not configured correctly, missing either:"
+  echo "* bosh director with links to auto-discover service_id"
+  echo "* servicebroker.service_id"
+  exit 1
+fi
