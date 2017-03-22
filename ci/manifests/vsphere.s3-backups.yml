@@ -86,6 +86,8 @@ jobs:
   properties:
     servicebroker:
       backends:
+        username: containers
+        password: containers
         machines:
           z1: [10.58.111.55, 10.58.111.58]
           z2: [10.58.111.56, 10.58.111.60]
