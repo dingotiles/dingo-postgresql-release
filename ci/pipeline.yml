@@ -632,6 +632,7 @@ resources:
     access_token: {{github-release-access-token}}
     user: dingotiles
     repository: dingo-postgresql-release
+    drafts: true
 
 - name: boshrelease-trigger
   type: git
