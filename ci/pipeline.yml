@@ -443,11 +443,11 @@ jobs:
   plan:
   - aggregate:
     - {get: boshrelease-ci}
-    - {get: boshrelease, passed: [integration, deploy-vsphere]}
-    - {get: candidate-release, passed: [integration, deploy-vsphere]}
-    - {get: etcd, passed: [integration, deploy-vsphere]}
-    - {get: simple-remote-syslog, passed: [integration, deploy-vsphere]}
-    - {get: version, passed: [deploy-vsphere], params: {bump: final}}
+    - {get: boshrelease, passed: [integration, integration-bosh2, deploy-vsphere]}
+    - {get: candidate-release, passed: [integration, integration-bosh2, deploy-vsphere]}
+    - {get: etcd, passed: [integration, integration-bosh2, deploy-vsphere]}
+    - {get: simple-remote-syslog, passed: [integration, integration-bosh2, deploy-vsphere]}
+    - {get: version, passed: [integration, integration-bosh2, deploy-vsphere], params: {bump: final}}
   - aggregate:
     # - do:
     #   - {get: pg95-image-edge, passed: [deploy-vsphere], params: {save: true}}
@@ -507,11 +507,11 @@ jobs:
   plan:
   - aggregate:
     - {get: boshrelease-ci}
-    - {get: boshrelease, passed: [integration, deploy-vsphere]}
-    - {get: candidate-release, passed: [integration, deploy-vsphere]}
-    - {get: etcd, passed: [integration, deploy-vsphere]}
-    - {get: simple-remote-syslog, passed: [integration, deploy-vsphere]}
-    - {get: version, passed: [integration, deploy-vsphere]}
+    - {get: boshrelease, passed: [integration, integration-bosh2, deploy-vsphere]}
+    - {get: candidate-release, passed: [integration, integration-bosh2, deploy-vsphere]}
+    - {get: etcd, passed: [integration, integration-bosh2, deploy-vsphere]}
+    - {get: simple-remote-syslog, passed: [integration, integration-bosh2, deploy-vsphere]}
+    - {get: version, passed: [integration, integration-bosh2, deploy-vsphere]}
   - aggregate:
     # - do:
     #   - {get: pg95-image-edge, passed: [deploy-vsphere], params: {save: true}}

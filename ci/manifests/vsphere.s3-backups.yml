@@ -80,6 +80,7 @@ jobs:
     release: simple-remote-syslog
   - name: broker
     release: dingo-postgresql
+    consumes: { cf-containers-broker: nil }
   - name: router
     release: dingo-postgresql
   properties:
