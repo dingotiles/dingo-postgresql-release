@@ -167,6 +167,7 @@ jobs:
     params:
       deployment_name: dingo-postgresql-testflight-bosh2
       deployment_router_static_ip: 10.244.0.20
+      router_public_ip: 10.244.0.20
       aws_access_key: {{dingotiles-aws-access}}
       aws_secret_key: {{dingotiles-aws-secret}}
       backups_bucket: {{backups-testflight-backups-bucket}}
@@ -327,6 +328,7 @@ jobs:
       params:
         broker_host: 10.58.111.49
         broker_port: 8821
+        router_public_ip: 10.58.111.49
         cf_system_domain: {{testflight-bosh2-cf_system_domain}}
         cf_admin_password: {{testflight-bosh2-cf_admin_password}}
         cf_admin_username: {{testflight-bosh2-cf_admin_username}}
@@ -358,6 +360,12 @@ jobs:
         #     bosh_password: {{bosh-lite-password}}
   - task: assert-disaster-recovery
     file: boshrelease-ci/ci/tasks/assert-disaster-recovery.yml
+    params:
+      router_public_ip: 10.58.111.49
+      cf_system_domain: {{testflight-bosh2-cf_system_domain}}
+      cf_admin_password: {{testflight-bosh2-cf_admin_password}}
+      cf_admin_username: {{testflight-bosh2-cf_admin_username}}
+      cf_skip_ssl_validation: {{testflight-bosh2-cf_skip_ssl_validation}}
     # on_failure:
     #   task: show-broker-logs
     #   file: boshrelease-ci/ci/tasks/show-broker-logs.yml

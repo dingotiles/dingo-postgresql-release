@@ -8,7 +8,7 @@ inputs:
 - name: boshrelease-ci
 
 params:
-  router_ip:
+  router_public_ip:
 
   cf_system_domain:
   cf_admin_password:

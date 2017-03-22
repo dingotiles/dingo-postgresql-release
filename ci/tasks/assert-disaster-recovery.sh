@@ -21,7 +21,7 @@ set -e
 cf target -s dr-test
 
 cf service-key dr-test dr-test-binding
-pg_uri=$(cf service-key dr-test dr-test-binding | grep '"uri"' | grep -o 'postgres://.*/postgres' | sed "s/@.*:/@${router_ip}:/")
+pg_uri=$(cf service-key dr-test dr-test-binding | grep '"uri"' | grep -o 'postgres://.*/postgres' | sed "s/@.*:/@${router_public_ip:?required}:/")
 
 set +x
 wait_for_database $pg_uri

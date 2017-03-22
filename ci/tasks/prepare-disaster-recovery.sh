@@ -57,8 +57,8 @@ instance_id=$(cf curl /v2/service_instances | jq -r '.resources[0].metadata.guid
 
 cf create-service-key dr-test dr-test-binding
 cf service-key dr-test dr-test-binding
-pg_uri=$(cf service-key dr-test dr-test-binding | grep '"uri"' | grep -o 'postgres://.*/postgres' | sed "s/@.*:/@${broker_ip}:/")
-superuser_uri=$(cf service-key dr-test dr-test-binding | grep '"superuser_uri"' | grep -o 'postgres://.*/postgres' | sed "s/@.*:/@${broker_ip}:/")
+pg_uri=$(cf service-key dr-test dr-test-binding | grep '"uri"' | grep -o 'postgres://.*/postgres' | sed "s/@.*:/@${router_public_ip:?required}:/")
+superuser_uri=$(cf service-key dr-test dr-test-binding | grep '"superuser_uri"' | grep -o 'postgres://.*/postgres' | sed "s/@.*:/@${router_public_ip}:/")
 
 set +x
 wait_for_database $pg_uri
