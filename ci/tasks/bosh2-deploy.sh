@@ -3,15 +3,16 @@
 set -e
 
 manifest_dir=$(pwd)/manifest
-cd boshrelease-ci
-mkdir -p tmp
 
 export BOSH_ENVIRONMENT=`bosh2 int director-state/director-creds.yml --path /internal_ip`
 export BOSH_CA_CERT="$(bosh2 int director-state/director-creds.yml --path /director_ssl/ca)"
 export BOSH_CLIENT=admin
 export BOSH_CLIENT_SECRET=`bosh2 int director-state/director-creds.yml --path /admin_password`
 
-cat > tmp/var.yml <<YAML
+cd boshrelease-ci
+mkdir -p tmp
+
+cat > tmp/vars.yml <<YAML
 backups_clusterdata_aws_access_key_id: ${aws_access_key:?required}
 backups_clusterdata_aws_secret_access_key: ${aws_secret_key:?required}
 backups_database_storage_aws_access_key_id: $aws_access_key
@@ -40,7 +41,8 @@ bosh2 int manifests/dingo-postgresql.yml \
   -o           tmp/docker_image_tag.yml \
   --vars-store tmp/creds.yml \
   --vars-file  tmp/vars.yml \
-  --var-errs > $manifest_dir/manifest.yml
+  --var-errs \
+    > $manifest_dir/manifest.yml
 
 bosh2 -n deploy $manifest_dir/manifest.yml
 
