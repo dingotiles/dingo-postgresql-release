@@ -32,6 +32,10 @@ instance_groups:
       - name: broker
         release: dingo-postgresql
         consumes: { cf-containers-broker: nil }
+        properties:
+          servicebroker:
+            username: (( grab properties.servicebroker.username ))
+            password: (( grab properties.servicebroker.username ))
       - {name: router, release: dingo-postgresql}
       - {name: dpg-cli, release: dingo-postgresql}
     resource_pool: router_z1
