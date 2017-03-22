@@ -44,6 +44,8 @@ jobs:
         router:
           hostname: (( param "please provide public hostname for routers" ))
         backends:
+          username: (( grab meta.cfcontainersbroker.username ))
+          password: (( grab meta.cfcontainersbroker.password ))
           machines:
             z1: (( param "please provide array of z1 service broker hostnames/ips" ))
             z2: (( param "please provide array of z2 service broker hostnames/ips" ))
