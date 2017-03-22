@@ -166,6 +166,7 @@ jobs:
     file: boshrelease-ci/ci/tasks/bosh2-deploy.yml
     params:
       deployment_name: dingo-postgresql-testflight-bosh2
+      deployment_router_ip: 10.244.0.20
       aws_access_key: {{dingotiles-aws-access}}
       aws_secret_key: {{dingotiles-aws-secret}}
       backups_bucket: {{backups-testflight-backups-bucket}}

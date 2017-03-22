@@ -16,6 +16,7 @@ outputs:
 
 params:
   deployment_name:
+  deployment_router_ip:
   aws_access_key:
   aws_secret_key:
   backups_bucket:

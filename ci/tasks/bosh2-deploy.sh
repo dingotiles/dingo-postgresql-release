@@ -37,17 +37,21 @@ cat > tmp/docker_image_tag.yml <<YAML
   value: ${docker_image_tag:?required}
 YAML
 
-cat > tmp/deployment_name.yml <<YAML
+cat > tmp/deployment.yml <<YAML
 ---
 - type: replace
   path: /name
   value: ${deployment_name:?required}
+
+- type: replace
+  path: /instance_groups/name=router/networks/name=public/static_ips/0
+  value: ${deployment_router_ip:?required}
 YAML
 
 set -x
 bosh2 int manifests/dingo-postgresql.yml \
   -o           tmp/docker_image_tag.yml  \
-  -o           tmp/deployment_name.yml   \
+  -o           tmp/deployment.yml   \
   --vars-store tmp/creds.yml \
   --vars-file  tmp/vars.yml  \
   --var-errs \
@@ -70,5 +74,5 @@ auth:
 EOF
   set -x
   bosh target bosh-lite
-  bosh -d manifest/manifest.yml run errand ${test_errand}
+  bosh -d $manifest_dir/manifest.yml run errand ${test_errand}
 fi
