@@ -61,7 +61,10 @@ instance_groups:
   - name: disaster-recovery
     instances: 1
     lifecycle: errand
-    jobs: [{name: disaster-recovery, release: dingo-postgresql}]
+    jobs:
+    - name: disaster-recovery
+      release: dingo-postgresql
+      consumes: { cf-containers-broker: nil }
     resource_pool: router_z1
     networks: [{name: patroni1}]
 

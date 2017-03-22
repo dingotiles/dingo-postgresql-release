@@ -69,6 +69,7 @@ psql ${pg_uri} -c "SELECT pg_is_in_recovery();"
 psql ${pg_uri} -c "INSERT INTO disasterrecoverytest VALUES ('dr-test');"
 psql ${pg_uri} -c 'SELECT * FROM disasterrecoverytest;'
 
+# TODO: why not use cf commands?
 echo Deleting instance
 curl -sf ${broker_url?:required}/v2/service_instances/${instance_id}\?plan_id=${plan_id}\&service_id=${service_id} \
      -XDELETE

@@ -107,7 +107,7 @@ jobs:
       VAULT_PREFIX: {{bosh-lite-testflight-vault-prefix}}
       GITHUB_TOKEN: {{github-release-access-token}}
   - task: create-lite-manifest
-    file: boshrelease-ci/ci/tasks/create-manifest.yml
+    file: boshrelease-ci/ci/tasks/create-manifest-bosh1.yml
     params:
       deployment_name: dingo-postgresql-testflight
       bosh_syslog_host: {{bosh-lite-syslog-host}}
@@ -218,7 +218,7 @@ jobs:
       VAULT_PREFIX: {{bosh-lite-integration-vault-prefix}}
       GITHUB_TOKEN: {{github-release-access-token}}
   - task: create-lite-manifest
-    file: boshrelease-ci/ci/tasks/create-manifest.yml
+    file: boshrelease-ci/ci/tasks/create-manifest-bosh1.yml
     params:
       deployment_name: dingo-postgresql-testflight
       bosh_target: {{bosh-lite-integration-target}}
