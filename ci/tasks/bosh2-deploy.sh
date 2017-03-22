@@ -29,7 +29,7 @@ cf_admin_password: ${cf_admin_password:?required}
 cf_admin_username: ${cf_admin_username:?required}
 cf_skip_ssl_validation: ${cf_skip_ssl_validation:-false}
 
-router_public_ip: ${router_public_ip}
+router_public_ip: ${router_public_ip:?required}
 YAML
 
 cat > tmp/docker_image_tag.yml <<YAML
