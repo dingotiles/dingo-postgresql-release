@@ -3,9 +3,7 @@
   if_p("etcd.machines") do |machines|
     etcd_machines = machines
   end
-  unless etcd_machines
-    etcd_machines = link("etcd").instances.map(&:address)
-  end
+  etcd_machines ||= link("etcd").instances.map(&:address)
 -%>
 backend = "etcd"
 nodes = <%= etcd_machines.map {|h| "#{h}:4001"} %>
