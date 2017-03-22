@@ -6,6 +6,7 @@ image_resource:
 
 inputs:
 - name: boshrelease-ci
+- name: manifest
 
 params:
   broker_host:
