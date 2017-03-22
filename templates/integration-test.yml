@@ -1,8 +1,8 @@
-jobs:
+instance_groups:
 - name: integration-test
   instances: 1
   lifecycle: errand
-  templates: [{name: integration-test, release: dingo-postgresql}]
+  jobs: [{name: integration-test, release: dingo-postgresql}]
   resource_pool: router_z1
   networks: [{name: router1}]
   properties:

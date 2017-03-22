@@ -8,10 +8,10 @@ releases:
 - name: simple-remote-syslog
   version: latest
 
-jobs:
+instance_groups:
   - name: cell_z1
     instances: 2
-    templates: (( grab meta.job_templates.patroni ))
+    jobs: (( grab meta.job_templates.patroni ))
     resource_pool: cell_z1
     networks: [{name: patroni1}]
     persistent_disk: 10240
@@ -19,7 +19,7 @@ jobs:
       zone: z1
   - name: cell_z2
     instances: 2
-    templates: (( grab meta.job_templates.patroni ))
+    jobs: (( grab meta.job_templates.patroni ))
     resource_pool: cell_z2
     networks: [{name: patroni2}]
     persistent_disk: 10240
@@ -27,7 +27,7 @@ jobs:
       zone: z2
   - name: router
     instances: 1
-    templates:
+    jobs:
       - {name: remote-syslog, release: simple-remote-syslog}
       - name: broker
         release: dingo-postgresql
@@ -52,7 +52,7 @@ jobs:
   - name: sanity-test
     instances: 1
     lifecycle: errand
-    templates: [{name: sanity-test, release: dingo-postgresql}]
+    jobs: [{name: sanity-test, release: dingo-postgresql}]
     resource_pool: router_z1
     networks: [{name: router1}]
     properties:
@@ -61,7 +61,7 @@ jobs:
   - name: disaster-recovery
     instances: 1
     lifecycle: errand
-    templates: [{name: disaster-recovery, release: dingo-postgresql}]
+    jobs: [{name: disaster-recovery, release: dingo-postgresql}]
     resource_pool: router_z1
     networks: [{name: patroni1}]
 

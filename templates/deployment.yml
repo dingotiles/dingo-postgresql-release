@@ -7,7 +7,7 @@ director_uuid: (( param "please provide director_uuid" ))
 
 networks: (( param "please provide networks" ))
 
-jobs: (( param "please provide jobs" ))
+instance_groups: (( param "please provide instance groups" ))
 
 properties: {}
 

@@ -17,10 +17,10 @@ compilation:
     cpu: 4
   workers: 2
 # 10.58.111.54 - 10.58.111.54
-jobs:
+instance_groups:
 - name: etcd
   instances: 1
-  templates:
+  jobs:
   - name: remote-syslog
     release: simple-remote-syslog
   - name: etcd
@@ -38,7 +38,7 @@ jobs:
   persistent_disk: 10240
   properties: {zone: z1}
   resource_pool: cell_z1
-  templates:
+  jobs:
   - name: remote-syslog
     release: simple-remote-syslog
   - name: docker
@@ -59,7 +59,7 @@ jobs:
   persistent_disk: 10240
   properties: {zone: z2}
   resource_pool: cell_z2
-  templates:
+  jobs:
   - name: remote-syslog
     release: simple-remote-syslog
   - name: docker
@@ -75,7 +75,7 @@ jobs:
   properties:
     release_version: (( grab meta.release_version ))
 - name: router
-  templates:
+  jobs:
   - name: remote-syslog
     release: simple-remote-syslog
   - name: broker
@@ -112,7 +112,7 @@ jobs:
 - name: sanity-test
   instances: 1
   lifecycle: errand
-  templates: [{name: sanity-test, release: dingo-postgresql}]
+  jobs: [{name: sanity-test, release: dingo-postgresql}]
   networks: [{name: patroni1}]
   resource_pool: router_z1
   properties:

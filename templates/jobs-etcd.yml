@@ -1,7 +1,7 @@
 ---
 meta:
   etcd:
-    host: (( grab jobs.etcd.networks.router1.static_ips.[0] ))
+    host: (( grab instance_groups.etcd.networks.router1.static_ips.[0] ))
   registrator:
     backend_uri: (( concat "etcd://" meta.etcd.host ":4001" ))
 
@@ -9,11 +9,11 @@ releases:
   - name: etcd
     version: latest
 
-jobs:
+instance_groups:
   - ((prepend))
   - name: etcd
     instances: 1
-    templates:
+    jobs:
       - {name: remote-syslog, release: simple-remote-syslog}
       - {name: etcd, release: etcd}
     resource_pool: router_z1
@@ -29,4 +29,4 @@ jobs:
 
 properties:
   etcd:
-    machines: (( grab jobs.etcd.networks.router1.static_ips ))
+    machines: (( grab instance_groups.etcd.networks.router1.static_ips ))

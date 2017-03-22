@@ -7,7 +7,7 @@ meta:
     password: (( param "please provide cf.password" ))
     skip_ssl_validation: false
 
-jobs:
+instance_groups:
 - name: router
   properties:
     cf:

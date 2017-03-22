@@ -45,7 +45,7 @@ meta:
                 - "WALE_BACKUP_THRESHOLD_PERCENTAGE=30"
                 - "WALE_BACKUP_THRESHOLD_MEGABYTES=10240"
 
-jobs:
+instance_groups:
 - name: router
   properties:
     backups:
