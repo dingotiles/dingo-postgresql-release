@@ -1,7 +1,7 @@
 <%
   etcd_machines = nil
   if_p("etcd.machines") do |machines|
-    etcd_machine = machines
+    etcd_machines = machines
   end
   unless etcd_machines
     etcd_machines = link("etcd").instances.map(&:address)
