@@ -57,6 +57,7 @@ instance_id=$(cf curl /v2/service_instances | jq -r '.resources[0].metadata.guid
 
 cf create-service-key dr-test dr-test-binding
 cf service-key dr-test dr-test-binding
+# TODO: OMG this is an ugly way to get the values out
 pg_uri=$(cf service-key dr-test dr-test-binding | grep '"uri"' | grep -o 'postgres://.*/postgres' | sed "s/@.*:/@${router_public_ip:?required}:/")
 superuser_uri=$(cf service-key dr-test dr-test-binding | grep '"superuser_uri"' | grep -o 'postgres://.*/postgres' | sed "s/@.*:/@${router_public_ip}:/")
 

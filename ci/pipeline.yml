@@ -294,6 +294,7 @@ jobs:
     - {get: version, passed: [testflight-bosh2]}
     - {get: pg95-image-edge, passed: [testflight-bosh2], trigger: true, params: {skip_download: true}}
     - {get: candidate-release, passed: [testflight-bosh2], trigger: true}
+    # TODO: currently am using etcd2-boshrelease with its links support on .49
     - {get: etcd, passed: [testflight-bosh2]}
     - {get: simple-remote-syslog, passed: [testflight-bosh2]}
     - {get: docker-image-registrator, passed: [testflight-bosh2], trigger: true, params: {skip_download: true}}
