@@ -28,8 +28,10 @@ case $1 in
 
     <%
       lookup = Kernel
+      servicebroker_machine = nil
       if_link("servicebroker") do |servicebroker|
         lookup = servicebroker
+        servicebroker_machine = servicebroker.instances.first.address
       end
 
       servicebroker_port     = lookup.p("servicebroker.port")
@@ -40,16 +42,9 @@ case $1 in
       cf_password            = lookup.p("cf.password")
       cf_skip_ssl_validation = lookup.p("cf.skip_ssl_validation")
 
-      servicebroker_machines = servicebroker_port = servicebroker_username = servicebroker_password = nil
-      if_p("servicebroker.machines", "servicebroker.port", "servicebroker.username", "servicebroker.password") do |machines, port, username, password|
-        servicebroker_machines = machines
-      end
-      unless servicebroker_machines
-        servicebroker = link("servicebroker")
-        servicebroker_machines = servicebroker.instances.map(&:address)
-      end
+      servicebroker_machine ||= p("servicebroker.machines").first
     -%>
-    echo "<%= servicebroker_machines.first %>:<%= servicebroker_port %>" > ${BOSH_DPG_DIR}/broker_endpoint
+    echo "<%= servicebroker_machine %>:<%= servicebroker_port %>" > ${BOSH_DPG_DIR}/broker_endpoint
     echo "<%= servicebroker_username %>" > ${BOSH_DPG_DIR}/broker_username
     echo "<%= servicebroker_password %>" > ${BOSH_DPG_DIR}/broker_password
 
