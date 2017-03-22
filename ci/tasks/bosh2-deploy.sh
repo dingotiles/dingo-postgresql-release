@@ -2,6 +2,7 @@
 
 set -e
 
+manifest_dir=$(pwd)/manifest
 cd boshrelease-ci
 mkdir -p tmp
 
@@ -39,9 +40,9 @@ bosh2 int manifests/dingo-postgresql.yml \
   -o           tmp/docker_image_tag.yml \
   --vars-store tmp/creds.yml \
   --vars-file  tmp/vars.yml \
-  --var-errs > manifest/manifest.yml
+  --var-errs > $manifest_dir/manifest.yml
 
-bosh2 -n deploy manifest/manifest.yml
+bosh2 -n deploy $manifest_dir/manifest.yml
 
 # running errands with bosh1 until bosh2 run-errand is readable
 if [[ "${test_errand:-X}" != "X" ]]; then
