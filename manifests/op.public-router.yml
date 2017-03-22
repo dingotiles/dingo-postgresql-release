@@ -1,0 +1,4 @@
+---
+- type: replace
+  path: /instance_groups/name=router/jobs/name=broker/properties/servicebroker/router?/hostname
+  value: ((router_public_ip))

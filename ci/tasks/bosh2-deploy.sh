@@ -28,6 +28,8 @@ cf_system_domain: ${cf_system_domain:?required}
 cf_admin_password: ${cf_admin_password:?required}
 cf_admin_username: ${cf_admin_username:?required}
 cf_skip_ssl_validation: ${cf_skip_ssl_validation:-false}
+
+router_public_ip: ${router_public_ip}
 YAML
 
 cat > tmp/docker_image_tag.yml <<YAML
@@ -46,7 +48,7 @@ cat > tmp/deployment.yml <<YAML
 
 - type: replace
   path: /instance_groups/name=router/networks/name=public/static_ips/0
-  value: ${deployment_router_ip:?required}
+  value: ${deployment_router_static_ip:?required}
 
 # for bosh1 run errand
 - type: replace
@@ -56,6 +58,7 @@ YAML
 
 set -x
 bosh2 int manifests/dingo-postgresql.yml \
+  -o           manifests/op.public-router.yml   \
   -o           tmp/docker_image_tag.yml  \
   -o           tmp/deployment.yml   \
   --vars-store tmp/creds.yml \

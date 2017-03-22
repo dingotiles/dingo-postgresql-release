@@ -14,6 +14,10 @@ templates:
   confd/conf.d/router.toml: confd/conf.d/router.toml
   confd/templates/haproxy.tmpl: confd/templates/haproxy.tmpl
 
+consumes:
+- name: etcd
+  type: etcd_service
+
 properties:
   etcd.machines:
     description: (if not using links) hostnames for etcd servers
