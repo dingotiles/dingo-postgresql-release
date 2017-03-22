@@ -5,6 +5,8 @@ production:
   cookie_secret: "<%= p('broker.cookie_secret') %>"
   session_expiry: <%= p('broker.session_expiry') %>
 
+  external_host: <%= spec.address %>
+
   ssl_enabled: <%= p('broker.ssl_enabled') %>
   skip_ssl_validation: <%= p('broker.skip_ssl_validation') %>
 
