@@ -5,19 +5,27 @@ set -x
 
 <%
   lookup = Kernel
-  if_link("servicebroker") do |servicebroker|
-    lookup = servicebroker
+  servicebroker_host = nil
+  if_link("servicebroker") do |broker|
+    lookup = broker
+    lookup.if_p("servicebroker.router.hostname") do |hostname|
+      servicebroker_host = hostname
+    end
+    servicebroker_host ||= broker.instances.first.address
+  end
+  servicebroker_host ||= p("servicebroker.host")
+
+  lookup.if_p("servicebroker.port") do |port|
+    servicebroker_host = "#{servicebroker_host}:#{port}"
   end
 -%>
-servicebroker=<%= lookup.p("servicebroker.host") %>
-<% lookup.if_p("servicebroker.port") do |port| %>
-servicebroker="${servicebroker}:<%= port %>"
-<% end %>
+
+servicebroker_host=<%= servicebroker_host %>
 servicebroker_auth="<%= lookup.p('servicebroker.username') %>:<%= lookup.p('servicebroker.password') %>"
 
 instance_id=$1
 echo deleting ${instance_id}
-curl -u ${servicebroker_auth} ${servicebroker}/v2/service_instances/${instance_id}\?plan_id=unknown\&service_id=unknown -XDELETE
+curl -u ${servicebroker_auth} ${servicebroker_host}/v2/service_instances/${instance_id}\?plan_id=unknown\&service_id=unknown -XDELETE
 
 echo restoring ${instance_id}
-curl -u ${servicebroker_auth} ${servicebroker}/v2/service_instances/${instance_id} -XPUT -d '{}'
+curl -u ${servicebroker_auth} ${servicebroker_host}/v2/service_instances/${instance_id} -XPUT -d '{}'
