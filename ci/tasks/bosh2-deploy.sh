@@ -37,6 +37,7 @@ cat > tmp/docker_image_tag.yml <<YAML
   value: ${docker_image_tag:?required}
 YAML
 
+director_uuid=$(bosh2 env --json | jq -r ".Tables[0].Rows[1][1]")
 cat > tmp/deployment.yml <<YAML
 ---
 - type: replace
@@ -46,6 +47,11 @@ cat > tmp/deployment.yml <<YAML
 - type: replace
   path: /instance_groups/name=router/networks/name=public/static_ips/0
   value: ${deployment_router_ip:?required}
+
+# for bosh1 run errand
+- type: replace
+  path: /director_uuid?
+  value: ${director_uuid:?missing}
 YAML
 
 set -x
