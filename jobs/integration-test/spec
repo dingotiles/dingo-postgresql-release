@@ -13,6 +13,7 @@ templates:
 consumes:
 - name: servicebroker
   type: servicebroker
+  optional: true
 
 properties:
   cf.integration_test.organization:

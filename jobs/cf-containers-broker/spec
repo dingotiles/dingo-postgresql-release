@@ -18,6 +18,7 @@ provides:
 consumes:
 - name: servicebroker
   type: servicebroker
+  optional: true
 
 templates:
   bin/cf-containers-broker_ctl: bin/cf-containers-broker_ctl

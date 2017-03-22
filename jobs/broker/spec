@@ -44,8 +44,10 @@ provides:
 consumes:
 - name: etcd
   type: etcd_service
+  optional: true
 - name: cf-containers-broker
   type: cf-containers-broker
+  optional: true
 
 properties:
   servicebroker.username:

@@ -309,8 +309,6 @@ jobs:
     params:
       deployment_name: dingo-postgresql-integration-bosh2
       deployment_router_ip: 10.244.0.21
-      broker_host: 10.58.111.49
-      broker_port: 8821
       aws_access_key: {{dingotiles-aws-access}}
       aws_secret_key: {{dingotiles-aws-secret}}
       backups_bucket: {{backups-testflight-backups-bucket}}
@@ -326,6 +324,8 @@ jobs:
     - task: prepare-disaster-recovery
       file: boshrelease-ci/ci/tasks/prepare-disaster-recovery.yml
       params:
+        broker_host: 10.58.111.49
+        broker_port: 8821
         cf_system_domain: {{testflight-bosh2-cf_system_domain}}
         cf_admin_password: {{testflight-bosh2-cf_admin_password}}
         cf_admin_username: {{testflight-bosh2-cf_admin_username}}
