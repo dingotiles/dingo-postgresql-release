@@ -37,7 +37,7 @@ cat > tmp/docker_image_tag.yml <<YAML
   value: ${docker_image_tag:?required}
 YAML
 
-director_uuid=$(bosh2 env --json | jq -r ".Tables[0].Rows[1][1]")
+director_uuid=$(bosh2 env | grep UUID | cut -f2)
 cat > tmp/deployment.yml <<YAML
 ---
 - type: replace

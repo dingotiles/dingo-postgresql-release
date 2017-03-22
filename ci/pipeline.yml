@@ -309,6 +309,8 @@ jobs:
     params:
       deployment_name: dingo-postgresql-integration-bosh2
       deployment_router_ip: 10.244.0.21
+      broker_host: 10.58.111.49
+      broker_port: 8821
       aws_access_key: {{dingotiles-aws-access}}
       aws_secret_key: {{dingotiles-aws-secret}}
       backups_bucket: {{backups-testflight-backups-bucket}}

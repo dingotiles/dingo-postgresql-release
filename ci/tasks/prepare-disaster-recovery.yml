@@ -8,9 +8,9 @@ inputs:
 - name: boshrelease-ci
 
 params:
-  broker_ip: 10.58.111.47
+  broker_host:
   broker_port: 8888
-  BROKER_URI: http://starkandwayne:starkandwayne@10.58.111.47:8888
+
   plan_id: 1545e30e-6dc3-11e5-826a-6c4008a663f0
   service_id: beb5973c-e1b2-11e5-a736-c7c0b526363d
 

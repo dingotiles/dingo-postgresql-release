@@ -31,7 +31,13 @@ cf service-access
 cf purge-service-offering -f dingo-postgresql
 cf delete-service-broker -f testflight-dingo-pg
 
-cf create-service-broker testflight-dingo-pg starkandwayne starkandwayne http://${broker_ip}:${broker_port}
+broker_host=${broker_host:?required}
+broker_port=${broker_port:?required}
+broker_username=$(bosh2 int manifest/manifest.yml --path /instance_groups/name=router/jobs/name=broker/properties/servicebroker/username)
+broker_password=$(bosh2 int manifest/manifest.yml --path /instance_groups/name=router/jobs/name=broker/properties/servicebroker/password)
+broker_url=http://${broker_username}:${broker_password}@${broker_host}:${broker_port}
+
+cf create-service-broker testflight-dingo-pg ${broker_username} ${broker_password} http://${broker_host}:${broker_port}
 
 cf enable-service-access dingo-postgresql
 cf marketplace -s dingo-postgresql
@@ -63,5 +69,5 @@ psql ${pg_uri} -c "INSERT INTO disasterrecoverytest VALUES ('dr-test');"
 psql ${pg_uri} -c 'SELECT * FROM disasterrecoverytest;'
 
 echo Deleting instance
-curl -sf ${BROKER_URI}/v2/service_instances/${instance_id}\?plan_id=${plan_id}\&service_id=${service_id} \
+curl -sf ${broker_url?:required}/v2/service_instances/${instance_id}\?plan_id=${plan_id}\&service_id=${service_id} \
      -XDELETE

@@ -50,10 +50,9 @@ consumes:
 properties:
   servicebroker.username:
     description: Basic auth username for broker
-    default: starkandwayne
+    default: broker
   servicebroker.password:
     description: Basic auth password for broker
-    type: password
 
   servicebroker.port:
     description: Bind port for inbound API requests
