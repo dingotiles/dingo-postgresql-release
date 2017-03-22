@@ -1,7 +1,7 @@
 ---
 groups:
 - name: pipeline
-  jobs: [rc, bosh-rc, testflight, testflight-cc, integration, deploy-vsphere, shipit, shipit-rc, minor, major, patch]
+  jobs: [rc, bosh-rc, testflight, testflight-bosh2, integration, deploy-vsphere, shipit, shipit-rc, minor, major, patch]
 - name: patroni-images
   jobs: [build-pg95-base-image, build-pg95-image, docker-machine-setup, test-95-image]
 - name: ci-image
