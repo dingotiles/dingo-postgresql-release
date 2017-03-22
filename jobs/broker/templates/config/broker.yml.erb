@@ -30,16 +30,17 @@ broker:
 <%
   backends = []
   if_p("servicebroker.backends.machines") do |az_and_machines|
-    az, machines = az_and_machines
-    machines.each do |machine|
-      backends << {
-        "guid": machine,
-        "az": az,
-        "uri": machine,
-        "username": p('servicebroker.backends.username'),
-        "password": p('servicebroker.backends.password'),
-        "property-input": "old-style",
-      }
+    az_and_machines.each do |az, machines|
+      machines.each do |machine|
+        backends << {
+          "guid": machine,
+          "az": az.to_s,
+          "uri": machine,
+          "username": p('servicebroker.backends.username'),
+          "password": p('servicebroker.backends.password'),
+          "property-input": "old-style",
+        }
+      end
     end
   end
   if backends.size == 0
