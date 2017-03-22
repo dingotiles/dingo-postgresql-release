@@ -11,15 +11,23 @@ inputs:
 - name: candidate-release
 - name: director-state
 
+outputs:
+- name: manifest
+
 params:
   aws_access_key:
   aws_secret_key:
   backups_bucket:
   clusterdata_bucket:
   region:
-  docker_image_image:
+  docker_image_image: dingotiles/dingo-postgresql95
   docker_image_tag:
-  docker_image_source:
+  docker_image_source: upstream
+  cf_system_domain:
+  cf_admin_username: admin
+  cf_admin_password:
+  cf_skip_ssl_validation: false
+  test_errand:
 
 run:
   path: boshrelease-ci/ci/tasks/bosh2-deploy.sh

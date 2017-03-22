@@ -172,7 +172,7 @@ jobs:
       region: {{backups-testflight-s3-region}}
       docker_image_image: dingotiles/dingo-postgresql95
       docker_image_tag: edge
-      docker_image_source: upstream
+      test_errand: sanity-test
 
 - name: integration
   public: true
