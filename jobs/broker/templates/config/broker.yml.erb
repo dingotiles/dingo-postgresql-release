@@ -46,7 +46,7 @@ broker:
     cells = link("cf-containers-broker")
     cells.instances.each do |instance|
       backends << {
-        "guid": instance.id,
+        "guid": instance.address,
         "az": instance.az,
         "uri": instance.address,
         "username": cells.p('broker.username'),
