@@ -10,8 +10,13 @@ export PAGER=/bin/cat
 echo Waiting a few seconds for the docker images to pull
 sleep 30
 
-cf api api.system.test-cf.snw --skip-ssl-validation
-cf auth admin A8tb4yRlQ3BmKmc1TQSCgiN7rAQXiQ73PkeoyI1qGTHq8y523kPZWjGyedjal6kx
+: ${cf_system_domain:?required}
+: ${cf_admin_username:?required}
+: ${cf_admin_password:?required}
+: ${cf_skip_ssl_validation:?required}
+
+cf api api.$cf_system_domain --skip-ssl-validation
+cf auth $cf_admin_username $cf_admin_password
 
 cf create-org dr-test; cf target -o dr-test
 cf create-space dr-test
