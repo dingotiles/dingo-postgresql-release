@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e -x
+set -e
 
 cd boshrelease-ci
 mkdir -p tmp
@@ -28,9 +28,15 @@ cf_admin_username: ${cf_admin_username:?required}
 cf_skip_ssl_validation: ${cf_skip_ssl_validation:-false}
 YAML
 
-: ${docker_image_tag:?required}
+cat > tmp/docker_image_tag.yml <<YAML
+---
+- type: replace
+  path: /instance_groups/name=cell/properties/broker/services/name=dingo-postgresql/plans/name=cluster/container/tag
+  value: ${docker_image_tag:?required}
+YAML
 
 bosh2 int manifests/dingo-postgresql.yml \
+  -o           tmp/docker_image_tag.yml \
   --vars-store tmp/creds.yml \
   --vars-file  tmp/vars.yml \
   --var-errs > manifest/manifest.yml

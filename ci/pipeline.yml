@@ -172,6 +172,10 @@ jobs:
       region: {{backups-testflight-s3-region}}
       docker_image_image: dingotiles/dingo-postgresql95
       docker_image_tag: edge
+      cf_system_domain: {{testflight-bosh2-cf_system_domain}}
+      cf_admin_password: {{testflight-bosh2-cf_admin_password}}
+      cf_admin_username: {{testflight-bosh2-cf_admin_username}}
+      cf_skip_ssl_validation: {{testflight-bosh2-cf_skip_ssl_validation}}
       test_errand: sanity-test
 
 - name: integration
