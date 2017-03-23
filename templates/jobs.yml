@@ -33,6 +33,8 @@ instance_groups:
           username: (( grab meta.broker.username ))
           password: (( grab meta.broker.password ))
           advertised_hostname: (( param "please provide public hostname for routers" ))
+          etcd:
+            machines: (( grab properties.etcd.machines ))
         consumes:
           cell: {from: cell_az1}
           cell_z2: {from: cell_az2}
