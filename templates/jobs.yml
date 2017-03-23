@@ -57,9 +57,6 @@ instance_groups:
     jobs:
     - name: disaster-recovery
       release: dingo-postgresql
-      consumes:
-        cf-containers-broker:
-          from: cell
     resource_pool: router_z1
     networks: [{name: patroni1}]
 

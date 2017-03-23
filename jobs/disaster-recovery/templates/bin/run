@@ -9,8 +9,7 @@ export PATH=$PATH:/var/vcap/packages/jq/bin
 export PATH=$PATH:/var/vcap/jobs/disaster-recovery/bin
 
 <%
-  cell = link("cf-containers-broker")
-  services cell.p('services')
+  services = link("servicebroker").p('services')
   p services
   restore_service_id = services.first[:id]
 

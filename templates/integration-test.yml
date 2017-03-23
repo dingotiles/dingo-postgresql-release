@@ -2,12 +2,8 @@ instance_groups:
 - name: integration-test
   instances: 1
   lifecycle: errand
-  jobs: [{name: integration-test, release: dingo-postgresql}]
   resource_pool: router_z1
   networks: [{name: router1}]
-  properties:
-    cf:
-      api_url: (( grab properties.cf.api_url ))
-      username: (( grab properties.cf.username ))
-      password: (( grab properties.cf.password ))
-      skip_ssl_validation: false
+  jobs:
+  - name: integration-test
+    release: dingo-postgresql

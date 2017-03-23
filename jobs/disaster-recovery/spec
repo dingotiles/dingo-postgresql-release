@@ -8,7 +8,5 @@ templates:
 consumes:
 - name: servicebroker
   type: servicebroker
-- name: cf-containers-broker
-  type: cf-containers-broker
 
 properties: {}
