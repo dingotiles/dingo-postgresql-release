@@ -20,5 +20,6 @@ properties:
   docker.group:
     description: Group which will own the Docker services
     default: vcap
-  registrator.backend_uri:
-    description: (if not using links) protocol://host:port to consul/etcd/skydns2 for registrator updates
+
+  etcd.machines:
+    description: (if not using links) hostnames for etcd servers

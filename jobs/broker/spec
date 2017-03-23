@@ -46,8 +46,11 @@ consumes:
 - name: etcd
   type: etcd_service
   optional: true
-- name: cf-containers-broker
+- name: cell
   type: cf-containers-broker
+- name: cell_z2
+  type: cf-containers-broker
+  optional: true
 
 properties:
   username:

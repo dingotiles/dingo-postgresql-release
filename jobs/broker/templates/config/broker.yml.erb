@@ -29,26 +29,34 @@ broker:
 
 cells:
 <%
-  cells = link("cf-containers-broker")
+  cells = link("cell")
   cells.instances.map do |instance|
 -%>
 - guid: <%= instance.address %>
-  availability_zone: <%= instance.az %>
   uri: <%= instance.address %>
+  availability_zone: <%= instance.az || "z1" %>
   username: <%= cells.p('username') %>
   password: <%= cells.p('password') %>
 <% end -%>
+<%
+  if_link("cell_z2") do |cells|
+    cells.instances.map do |instance|
+-%>
+- guid: <%= instance.address %>
+  uri: <%= instance.address %>
+  availability_zone: z2
+  username: <%= cells.p('username') %>
+  password: <%= cells.p('password') %>
+<% end; end -%>
 
 <%
-  etcd_endpoints = nil
-  if_p("etcd.machines") do |etcd_machines|
-    etcd_endpoints = etcd_machines.map do |instance|
-      "http://#{instance}:4001/"
-    end
+  etcd_machine = nil
+  if_p("etcd.machines") do |machines|
+    etcd_machine = machines.first
   end
-  etcd_endpoints ||= link("etcd").instances.map do |instance|
-    "http://#{instance.address}:4001/"
-  end
+  etcd_machine ||= link("etcd").instances.first.address
+
+  etcd_endpoints = ["http://#{etcd_machine}:4001"]
 -%>
 etcd:
   machines: <%= etcd_endpoints.to_json %>

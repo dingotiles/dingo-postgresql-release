@@ -25,6 +25,12 @@ meta:
     # run service broker
     - {name: cf-containers-broker, release: dingo-postgresql}
 
+instance_groups:
+  - name: cell_z1
+    jobs: (( grab meta.job_templates.patroni ))
+  - name: cell_z2
+    jobs: (( grab meta.job_templates.patroni ))
+
 releases:
 - name: dingo-postgresql-image
   version: latest

@@ -10,7 +10,6 @@ export PATH=$PATH:/var/vcap/jobs/disaster-recovery/bin
 
 <%
   services = link("servicebroker").p('services')
-  p services
   restore_service_id = services.first[:id]
 
   # TODO: specific consumes: {name: cf} rather that getting from 'servicebroker'

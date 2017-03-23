@@ -10,8 +10,9 @@ meta:
     ssl_enabled: true
     max_containers: 20
 
-  job_templates:
-    patroni:
+instance_groups:
+  - name: cell_z1
+    jobs:
     # ship all the logs
     - {name: remote-syslog, release: simple-remote-syslog}
     # run docker daemon
@@ -23,30 +24,57 @@ meta:
     # create uuid for each broker/daemon
     - {name: container-env-vars, release: dingo-postgresql}
     # run service broker
-    - {name: cf-containers-broker, release: dingo-postgresql}
+    - name: cf-containers-broker
+      release: dingo-postgresql
+      provides:
+        cf-containers-broker: {as: cell_z1}
+      properties:
+        zone: z1
+        protocol: (( grab meta.cfcontainersbroker.protocol ))
+        ssl_enabled: (( grab meta.cfcontainersbroker.ssl_enabled ))
+        host: (( grab meta.cfcontainersbroker.external_host ))
+        port: 80
+        username: (( grab meta.cfcontainersbroker.username ))
+        password: (( grab meta.cfcontainersbroker.password ))
+        cookie_secret: (( grab meta.cfcontainersbroker.cookie_secret ))
+        max_containers: (( grab meta.cfcontainersbroker.max_containers ))
+        fetch_images: true
+        update_containers: true
+        upstream_images:
+          tag: (( grab meta.docker_image.tag ))
+  - name: cell_z2
+    jobs:
+    # ship all the logs
+    - {name: remote-syslog, release: simple-remote-syslog}
+    # run docker daemon
+    - {name: docker, release: dingo-postgresql}
+    # docker images will be pulled down
+    - {name: upstream-images, release: dingo-postgresql}
+    # run registrator daemon
+    - {name: registrator, release: dingo-postgresql}
+    # create uuid for each broker/daemon
+    - {name: container-env-vars, release: dingo-postgresql}
+    # run service broker
+    - name: cf-containers-broker
+      release: dingo-postgresql
+      provides:
+        cf-containers-broker: {as: cell_z2}
+      properties:
+        zone: z2
+        protocol: (( grab meta.cfcontainersbroker.protocol ))
+        ssl_enabled: (( grab meta.cfcontainersbroker.ssl_enabled ))
+        host: (( grab meta.cfcontainersbroker.external_host ))
+        port: 80
+        username: (( grab meta.cfcontainersbroker.username ))
+        password: (( grab meta.cfcontainersbroker.password ))
+        cookie_secret: (( grab meta.cfcontainersbroker.cookie_secret ))
+        max_containers: (( grab meta.cfcontainersbroker.max_containers ))
+        fetch_images: true
+        update_containers: true
+        upstream_images:
+          tag: (( grab meta.docker_image.tag ))
 
 # longer watch times to allow download of docker images
 update:
   canary_watch_time: 30000-300000
   update_watch_time: 30000-300000
-
-properties:
-  cf:
-    api_url: (( grab meta.cfcontainersbroker.cc_api_uri ))
-
-  registrator:
-    backend_uri: (( grab meta.registrator.backend_uri))
-
-  broker:
-    protocol: (( grab meta.cfcontainersbroker.protocol ))
-    ssl_enabled: (( grab meta.cfcontainersbroker.ssl_enabled ))
-    host: (( grab meta.cfcontainersbroker.external_host ))
-    port: 80
-    username: (( grab meta.cfcontainersbroker.username ))
-    password: (( grab meta.cfcontainersbroker.password ))
-    cookie_secret: (( grab meta.cfcontainersbroker.cookie_secret ))
-    max_containers: (( grab meta.cfcontainersbroker.max_containers ))
-    fetch_images: true
-    update_containers: true
-  upstream_images:
-    tag: (( grab meta.docker_image.tag ))

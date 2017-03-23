@@ -2,8 +2,6 @@ meta:
   broker:
     username: starkandwayne
     password: starkandwayne
-  job_templates:
-    patroni: (( param "please provide templates for cells" ))
 
 releases:
 - name: dingo-postgresql
@@ -14,20 +12,16 @@ releases:
 instance_groups:
   - name: cell_z1
     instances: 2
-    jobs: (( grab meta.job_templates.patroni ))
+    jobs: (( params "need a list of jobs" ))
     resource_pool: cell_z1
     networks: [{name: patroni1}]
     persistent_disk: 10240
-    properties:
-      zone: z1
   - name: cell_z2
     instances: 2
-    jobs: (( grab meta.job_templates.patroni ))
+    jobs: (( params "need a list of jobs" ))
     resource_pool: cell_z2
     networks: [{name: patroni2}]
     persistent_disk: 10240
-    properties:
-      zone: z2
   - name: router
     instances: 1
     jobs:
@@ -39,6 +33,9 @@ instance_groups:
           username: (( grab meta.broker.username ))
           password: (( grab meta.broker.password ))
           advertised_hostname: (( param "please provide public hostname for routers" ))
+        consumes:
+          cell: {from: cell_z1}
+          cell_z2: {from: cell_z2}
       - name: router
         release: dingo-postgresql
       - name: dpg-cli

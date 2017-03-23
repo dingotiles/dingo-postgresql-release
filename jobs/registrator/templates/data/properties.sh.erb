@@ -16,13 +16,13 @@ export DOCKER_USER="<%= p('docker.user') %>"
 export DOCKER_GROUP="<%= p('docker.group') %>"
 
 <%
-  registrator_backend_uri=nil
-  if_p('registrator.backend_uri') do |backend_uri|
-    registrator_backend_uri = backend_uri
+  etcd_machine = nil
+  if_p("etcd.machines") do |machines|
+    etcd_machine = machines.first
   end
-  registrator_backend_uri ||= "etcd://#{link('etcd').instances.first.address}:4001"
+  etcd_machine ||= link("etcd").instances.first.address
 -%>
-export REGISTRATOR_BACKEND_URI="<%= registrator_backend_uri %>"
+export REGISTRATOR_BACKEND_URI="etcd://<%= etcd_machine %>:4001"
 
 <%
   require 'json'
