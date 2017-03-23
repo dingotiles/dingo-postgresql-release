@@ -36,7 +36,8 @@ instance_groups:
   instances: 2
   networks: [{name: patroni1, static_ips: [10.58.111.55, 10.58.111.58]}]
   persistent_disk: 10240
-  properties: {zone: z1}
+  properties:
+    release_version: (( grab meta.release_version ))
   resource_pool: cell_z1
   jobs:
   - name: remote-syslog
@@ -45,19 +46,34 @@ instance_groups:
     release: dingo-postgresql
   - name: upstream-images
     release: dingo-postgresql
+    properties:
+      upstream_images:
+        tag: "edge"
   - name: registrator
     release: dingo-postgresql
   - name: container-env-vars
     release: dingo-postgresql
   - name: cf-containers-broker
     release: dingo-postgresql
-  properties:
-    release_version: (( grab meta.release_version ))
+    provides:
+      cf-containers-broker:
+        as: cell_az1
+    properties:
+      cookie_secret: e7247dae-a252-4393-afa3-2219c1c02efd
+      fetch_images: true
+      max_containers: 20
+      username: containers
+      password: containers
+      host: cf-containers-broker.10.244.0.34.xip.io
+      port: 80
+      ssl_enabled: false
+      protocol: http
 - name: cell_z2
   instances: 2
   networks: [{name: patroni1, static_ips: [10.58.111.56, 10.58.111.60]}]
   persistent_disk: 10240
-  properties: {zone: z2}
+  properties:
+    release_version: (( grab meta.release_version ))
   resource_pool: cell_z2
   jobs:
   - name: remote-syslog
@@ -68,60 +84,101 @@ instance_groups:
     release: dingo-postgresql
   - name: upstream-images
     release: dingo-postgresql
+    properties:
+      upstream_images:
+        tag: "edge"
   - name: container-env-vars
     release: dingo-postgresql
   - name: cf-containers-broker
     release: dingo-postgresql
-  properties:
-    release_version: (( grab meta.release_version ))
+    provides:
+      cf-containers-broker:
+        as: cell_az2
+    properties:
+      cookie_secret: e7247dae-a252-4393-afa3-2219c1c02efd
+      fetch_images: true
+      max_containers: 20
+      username: containers
+      password: containers
+      host: cf-containers-broker.10.244.0.34.xip.io
+      port: 80
+      ssl_enabled: false
+      protocol: http
 - name: router
   jobs:
   - name: remote-syslog
     release: simple-remote-syslog
   - name: broker
     release: dingo-postgresql
-    consumes: { cf-containers-broker: nil }
+    consumes:
+      cell:
+        from: cell_az1
+      cell_z2:
+        from: cell_az2
+    properties:
+      username: starkandwayne
+      password: starkandwayne
+      advertised_hostname: 10.58.111.57
+      etcd:
+        machines: [10.58.111.59]
+      backups:
+        clusterdata:
+          aws_access_key_id: (( grab meta.backups.aws_access_key ))
+          aws_secret_access_key: (( grab meta.backups.aws_secret_key ))
+          bucket_name: (( grab meta.backups.clusterdata_bucket ))
+          region: (( grab meta.backups.region ))
+        database_storage:
+          aws_access_key_id: (( grab meta.backups.aws_access_key ))
+          aws_secret_access_key: (( grab meta.backups.aws_secret_key ))
+          bucket_name: (( grab meta.backups.backups_bucket ))
+          region: (( grab meta.backups.region ))
+      services:
+      - name: 'dingo-postgresql'
+        description: 'High-availability cluster of PostgreSQL 9.5'
+        id: beb5973c-e1b2-11e5-a736-c7c0b526363d
+        bindable: true
+        metadata:
+          displayName: 'Dingo PostgreSQL'
+          longDescription: 'High-availability cluster of PostgreSQL 9.5 with continuous backups'
+          providerDisplayName: 'Dingo Tiles'
+          documentationUrl: 'https://pg.dingotiles.com'
+          supportUrl: 'https://slack.dingotiles.com'
+        tags: [postgresql95, postgresql]
+        plans:
+        - name: 'cluster'
+          description: 'High-availability cluster of PostgreSQL with continuous backups'
+          id: 1545e30e-6dc3-11e5-826a-6c4008a663f0
+          free: true
+          metadata:
+            displayName: 'Cluster with continuous backups'
+          container:
+            backend: docker
+            image: dingotiles/dingo-postgresql95
+            tag: "edge"
+            persistent_volumes: [/data]
+            environment:
+            - (( concat "AWS_ACCESS_KEY_ID=" meta.backups.aws_access_key ))
+            - (( concat "AWS_SECRET_ACCESS_KEY=" meta.backups.aws_secret_key ))
+            - (( concat "WAL_S3_BUCKET=" meta.backups.backups_bucket ))
+            - (( concat "AWS_REGION=" meta.backups.region ))
+            - "WALE_BACKUP_THRESHOLD_PERCENTAGE=30"
+            - "WALE_BACKUP_THRESHOLD_MEGABYTES=10240"
   - name: router
     release: dingo-postgresql
-  properties:
-    username: starkandwayne
-    password: starkandwayne
-    advertised_hostname: 10.58.111.57
-    backups:
-      clusterdata:
-        aws_access_key_id: (( grab meta.backups.aws_access_key ))
-        aws_secret_access_key: (( grab meta.backups.aws_secret_key ))
-        bucket_name: (( grab meta.backups.clusterdata_bucket ))
-        region: (( grab meta.backups.region ))
-      database_storage:
-        aws_access_key_id: (( grab meta.backups.aws_access_key ))
-        aws_secret_access_key: (( grab meta.backups.aws_secret_key ))
-        bucket_name: (( grab meta.backups.backups_bucket ))
-        region: (( grab meta.backups.region ))
   resource_pool: router_z1
   instances: 1
   networks: [{name: patroni1, static_ips: [10.58.111.57]}]
 - name: sanity-test
   instances: 1
   lifecycle: errand
-  jobs: [{name: sanity-test, release: dingo-postgresql}]
+  jobs:
+  - name: sanity-test
+    release: dingo-postgresql
+    properties:
+      etcd:
+        machines: [10.58.111.59]
   networks: [{name: patroni1}]
   resource_pool: router_z1
-  properties:
-    servicebroker:
-      machines: [10.58.111.57]
-      port: 8889
-    backups:
-      clusterdata:
-        aws_access_key_id: (( grab meta.backups.aws_access_key ))
-        aws_secret_access_key: (( grab meta.backups.aws_secret_key ))
-        bucket_name: (( grab meta.backups.clusterdata_bucket ))
-        region: (( grab meta.backups.region ))
-      database_storage:
-        aws_access_key_id: (( grab meta.backups.aws_access_key ))
-        aws_secret_access_key: (( grab meta.backups.aws_secret_key ))
-        bucket_name: (( grab meta.backups.clusterdata_bucket ))
-        region: (( grab meta.backups.region ))
 networks:
 - name: patroni1
   type: manual
@@ -145,56 +202,8 @@ networks:
     cloud_properties:
       name: net-10-58-111-0
 properties:
-  upstream-images:
-    tag: "edge"
   etcd:
     machines: [10.58.111.59]
-  broker:
-    cookie_secret: e7247dae-a252-4393-afa3-2219c1c02efd
-    fetch_images: true
-    max_containers: 20
-    username: containers
-    password: containers
-    host: cf-containers-broker.10.244.0.34.xip.io
-    port: 80
-    ssl_enabled: true
-    protocol: https
-    services: &services
-    - name: 'dingo-postgresql'
-      description: 'High-availability cluster of PostgreSQL 9.5'
-      id: beb5973c-e1b2-11e5-a736-c7c0b526363d
-      bindable: true
-      metadata:
-        displayName: 'Dingo PostgreSQL'
-        longDescription: 'High-availability cluster of PostgreSQL 9.5 with continuous backups'
-        providerDisplayName: 'Dingo Tiles'
-        documentationUrl: 'https://pg.dingotiles.com'
-        supportUrl: 'https://slack.dingotiles.com'
-      tags: [postgresql95, postgresql]
-      plans:
-      - name: 'cluster'
-        description: 'High-availability cluster of PostgreSQL with continuous backups'
-        id: 1545e30e-6dc3-11e5-826a-6c4008a663f0
-        free: true
-        metadata:
-          displayName: 'Cluster with continuous backups'
-        container:
-          backend: docker
-          image: dingotiles/dingo-postgresql95
-          tag: "edge"
-          persistent_volumes: [/data]
-          environment:
-          - (( concat "AWS_ACCESS_KEY_ID=" meta.backups.aws_access_key ))
-          - (( concat "AWS_SECRET_ACCESS_KEY=" meta.backups.aws_secret_key ))
-          - (( concat "WAL_S3_BUCKET=" meta.backups.backups_bucket ))
-          - (( concat "AWS_REGION=" meta.backups.region ))
-          - "WALE_BACKUP_THRESHOLD_PERCENTAGE=30"
-          - "WALE_BACKUP_THRESHOLD_MEGABYTES=10240"
-  servicebroker:
-    password: starkandwayne
-    port: 8888
-    services: *services
-    username: starkandwayne
 resource_pools:
 - cloud_properties:
     ram: 4096
