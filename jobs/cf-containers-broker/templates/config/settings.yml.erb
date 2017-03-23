@@ -15,4 +15,4 @@ production:
   allocate_docker_host_ports: <%= p('allocate_docker_host_ports') %>
   container_env_var_dir: <%= p('container_env_var_dir') %>
 
-  services: <%= JSON.pretty_generate(p('services')) %>
+  services: <%= JSON.pretty_generate(link('servicebroker').p('services')) %>

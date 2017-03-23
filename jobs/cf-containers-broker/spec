@@ -10,7 +10,6 @@ provides:
 - name: cf-containers-broker
   type: cf-containers-broker
   properties:
-  - services
   - username
   - password
   - port
@@ -65,8 +64,7 @@ properties:
   update_containers:
     description: "Restart all containers with latest configuration/image on restart"
     default: true
-  services:
-    description: "Services and plans offered by the broker"
+
   container_env_var_dir:
     description: Directory of files that will become environment variables for all containers
     default: /var/vcap/store/cf-containers-broker/envdir

@@ -8,7 +8,7 @@ instance_groups:
   vm_type: default
   stemcell: default
   update: {serial: true, max_in_flight: 1}
-  networks: [{name: private}]
+  networks: [{name: default}]
   jobs:
   - name: etcd
     release: etcd
@@ -30,7 +30,7 @@ instance_groups:
   persistent_disk_type: default
   vm_type: default
   stemcell: default
-  networks: [{name: private}]
+  networks: [{name: default}]
   update: {serial: true, max_in_flight: 1}
   properties:
     username: cellbroker
@@ -39,37 +39,6 @@ instance_groups:
     max_containers: ((cell_max_containers))
     fetch_images: true
     update_containers: true
-    services: # define at cf-containers-broker + provide via link properties
-    - name: dingo-postgresql
-      id: beb5973c-e1b2-11e5-a736-c7c0b526363d
-      bindable: true
-      description: Dedicated PostgreSQL 9.5
-      tags: [postgresql, postgresql95, sql]
-      plans:
-      - name: cluster
-        id: 1545e30e-6dc3-11e5-826a-6c4008a663f0
-        description: Dedicated, highly-available cluster that is continously archived
-        free: true
-        metadata:
-          bullets:
-          - PostgreSQL 9.5
-          - Dedicated secure containers
-          - Highly-available cluster across availability zones
-          - Continuously archived for potential disaster recovery
-          displayname: Cluster
-        container:
-          backend: docker
-          image: dingotiles/dingo-postgresql95
-          tag: 0.10.2
-          environment:
-          - AWS_ACCESS_KEY_ID=((backups_database_storage_aws_access_key_id))
-          - AWS_SECRET_ACCESS_KEY=((backups_clusterdata_aws_secret_access_key))
-          - WAL_S3_BUCKET=((backups_database_storage_bucket_name))
-          - AWS_REGION=((backups_database_storage_region))
-          - WALE_BACKUP_THRESHOLD_PERCENTAGE=30
-          - WALE_BACKUP_THRESHOLD_MEGABYTES=10240
-          persistent_volumes:
-          - /data
   jobs:
   # ship all the logs
   - {name: remote-syslog, release: simple-remote-syslog}
@@ -120,6 +89,37 @@ instance_groups:
           username: ((cf_admin_username))
           password: ((cf_admin_password))
           skip_ssl_validation: ((cf_skip_ssl_validation))
+        services: # define at cf-containers-broker + provide via link properties
+        - name: dingo-postgresql
+          id: beb5973c-e1b2-11e5-a736-c7c0b526363d
+          bindable: true
+          description: Dedicated PostgreSQL 9.5
+          tags: [postgresql, postgresql95, sql]
+          plans:
+          - name: cluster
+            id: 1545e30e-6dc3-11e5-826a-6c4008a663f0
+            description: Dedicated, highly-available cluster that is continously archived
+            free: true
+            metadata:
+              bullets:
+              - PostgreSQL 9.5
+              - Dedicated secure containers
+              - Highly-available cluster across availability zones
+              - Continuously archived for potential disaster recovery
+              displayname: Cluster
+            container:
+              backend: docker
+              image: dingotiles/dingo-postgresql95
+              tag: 0.10.2
+              environment:
+              - AWS_ACCESS_KEY_ID=((backups_database_storage_aws_access_key_id))
+              - AWS_SECRET_ACCESS_KEY=((backups_clusterdata_aws_secret_access_key))
+              - WAL_S3_BUCKET=((backups_database_storage_bucket_name))
+              - AWS_REGION=((backups_database_storage_region))
+              - WALE_BACKUP_THRESHOLD_PERCENTAGE=30
+              - WALE_BACKUP_THRESHOLD_MEGABYTES=10240
+              persistent_volumes:
+              - /data
     - name: router
       release: dingo-postgresql
     - name: dpg-cli
@@ -131,7 +131,7 @@ instance_groups:
   azs: [z1, z2, z3]
   vm_type: default
   stemcell: default
-  networks: [{name: private}]
+  networks: [{name: default}]
   jobs:
   - name: sanity-test
     release: dingo-postgresql
@@ -142,7 +142,7 @@ instance_groups:
   azs: [z1, z2, z3]
   vm_type: default
   stemcell: default
-  networks: [{name: private}]
+  networks: [{name: default}]
   jobs:
   - name: integration-test
     release: dingo-postgresql
@@ -153,7 +153,7 @@ instance_groups:
   azs: [z1, z2, z3]
   vm_type: default
   stemcell: default
-  networks: [{name: private}]
+  networks: [{name: default}]
   jobs:
   - name: disaster-recovery
     release: dingo-postgresql

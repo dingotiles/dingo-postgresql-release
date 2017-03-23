@@ -50,6 +50,7 @@ instance_groups:
   jobs:
   - name: broker
     properties:
+      services: (( grab meta.broker.services ))
       backups:
         clusterdata:
           aws_access_key_id: (( grab meta.backups.aws_access_key ))

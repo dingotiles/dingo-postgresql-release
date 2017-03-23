@@ -18,9 +18,6 @@ instance_groups:
     resource_pool: cell_z1
     networks: [{name: patroni1}]
     persistent_disk: 10240
-    provides:
-      cf-containers-broker:
-        as: cell
     properties:
       zone: z1
   - name: cell_z2
@@ -34,18 +31,18 @@ instance_groups:
   - name: router
     instances: 1
     jobs:
-      - {name: remote-syslog, release: simple-remote-syslog}
+      - name: remote-syslog
+        release: simple-remote-syslog
       - name: broker
         release: dingo-postgresql
-        consumes:
-          cf-containers-broker:
-            from: cell
         properties:
           username: (( grab meta.broker.username ))
           password: (( grab meta.broker.password ))
           advertised_hostname: (( param "please provide public hostname for routers" ))
-      - {name: router, release: dingo-postgresql}
-      - {name: dpg-cli, release: dingo-postgresql}
+      - name: router
+        release: dingo-postgresql
+      - name: dpg-cli
+        release: dingo-postgresql
     resource_pool: router_z1
     networks: [{name: router1}]
   - name: sanity-test

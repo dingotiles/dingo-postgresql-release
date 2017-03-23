@@ -48,8 +48,5 @@ properties:
     max_containers: (( grab meta.cfcontainersbroker.max_containers ))
     fetch_images: true
     update_containers: true
-    services: (( grab meta.broker.services))
-  servicebroker:
-    services: (( grab meta.broker.services))
   upstream_images:
     tag: (( grab meta.docker_image.tag ))

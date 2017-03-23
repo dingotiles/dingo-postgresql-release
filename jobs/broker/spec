@@ -28,6 +28,7 @@ provides:
   - password
   - port
   - advertised_hostname
+  - services
   - cf.api_url
   - cf.username
   - cf.password
@@ -61,6 +62,9 @@ properties:
 
   advertised_hostname:
     description: "Hostname to advertise in binding credentials for routers (defaults to host IP)"
+
+  services:
+    description: "Services and plans offered by the backend cf-containers-brokers"
 
   backups.clusterdata.aws_access_key_id:
     description: Amazon S3 API access key
