@@ -89,6 +89,9 @@ instance_groups:
         tag: "edge"
   - name: container-env-vars
     release: dingo-postgresql
+    properties:
+      etcd:
+        machines: [10.58.111.59]
   - name: cf-containers-broker
     release: dingo-postgresql
     provides:

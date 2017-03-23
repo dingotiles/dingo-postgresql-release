@@ -6,6 +6,12 @@ templates:
   helpers/ctl_setup.sh: helpers/ctl_setup.sh
   helpers/ctl_utils.sh: helpers/ctl_utils.sh
   bin/monit_debugger: bin/monit_debugger
+
+consumes:
+- name: etcd
+  type: etcd_service
+  optional: true
+
 properties:
   container_env_var_dir:
     description: Directory of files that will become environment variables for all containers

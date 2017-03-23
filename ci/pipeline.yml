@@ -183,7 +183,7 @@ jobs:
 
 - name: integration
   public: true
-  serial_groups: [integration-cf, bosh-lite-integration]
+  serial_groups: [test-cf-snw, bosh-lite-integration]
   plan:
   - aggregate:
     - do:
@@ -249,9 +249,9 @@ jobs:
         broker_host: 10.58.111.47
         broker_port: 8888
         router_public_ip: 10.58.111.47
-        cf_system_domain: https://api.system.test-cf.snw
-        cf_admin_password: admin
+        cf_system_domain: system.test-cf.snw
         cf_admin_username: admin
+        cf_admin_password: A8tb4yRlQ3BmKmc1TQSCgiN7rAQXiQ73PkeoyI1qGTHq8y523kPZWjGyedjal6kx
         cf_skip_ssl_validation: true
     - do:
       - put: disaster-recovery
@@ -294,7 +294,7 @@ jobs:
 
 - name: integration-bosh2
   public: true
-  serial_groups: [integration-cf, bosh-lite-integration-bosh2]
+  serial_groups: [bosh-lite-integration-bosh2]
   plan:
   - aggregate:
     - {get: boshrelease-ci}
