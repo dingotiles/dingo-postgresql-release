@@ -249,10 +249,10 @@ jobs:
         broker_host: 10.58.111.47
         broker_port: 8888
         router_public_ip: 10.58.111.47
-        cf_system_domain: {{testflight-bosh2-cf_system_domain}}
-        cf_admin_password: {{testflight-bosh2-cf_admin_password}}
-        cf_admin_username: {{testflight-bosh2-cf_admin_username}}
-        cf_skip_ssl_validation: {{testflight-bosh2-cf_skip_ssl_validation}}
+        cf_system_domain: https://api.system.test-cf.snw
+        cf_admin_password: admin
+        cf_admin_username: admin
+        cf_skip_ssl_validation: true
     - do:
       - put: disaster-recovery
         resource: lite-errand-integration
