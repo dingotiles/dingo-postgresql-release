@@ -6,18 +6,18 @@ wait_for_database() {
     exit 1
   fi
 
-  for ((n=0;n<30;n++)); do
+  for ((n=0;n<60;n++)); do
     in_recovery=$(psql ${uri} -c "SELECT row_to_json(t1) FROM (SELECT pg_is_in_recovery()) t1;" -t | jq -r .pg_is_in_recovery)
     if [[ "${in_recovery}" == "false" ]]; then
       echo "Database finished recovering"
       set -e
       break
     fi
-    echo "Database still recovering"
+    echo "Database still recovering: $in_recovery"
     sleep 10
   done
   if [[ "${in_recovery}" != "false" ]]; then
-    echo "Data was still in recovery after 300s"
+    echo "Data was still in recovery after 600s"
     exit 1
   fi
 
