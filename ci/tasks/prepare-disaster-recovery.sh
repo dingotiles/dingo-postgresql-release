@@ -33,8 +33,8 @@ cf delete-service-broker -f testflight-dingo-pg
 
 broker_host=${broker_host:?required}
 broker_port=${broker_port:?required}
-broker_username=$(bosh2 int manifest/manifest.yml --path /instance_groups/name=router/jobs/name=broker/properties/servicebroker/username)
-broker_password=$(bosh2 int manifest/manifest.yml --path /instance_groups/name=router/jobs/name=broker/properties/servicebroker/password)
+broker_username=$(bosh2 int manifest/manifest.yml --path /instance_groups/name=router/jobs/name=broker/properties/username)
+broker_password=$(bosh2 int manifest/manifest.yml --path /instance_groups/name=router/jobs/name=broker/properties/password)
 broker_url=http://${broker_username}:${broker_password}@${broker_host}:${broker_port}
 
 cf create-service-broker testflight-dingo-pg ${broker_username} ${broker_password} http://${broker_host}:${broker_port}
