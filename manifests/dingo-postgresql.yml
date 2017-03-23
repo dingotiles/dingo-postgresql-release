@@ -70,6 +70,7 @@ instance_groups:
       release: simple-remote-syslog
     - name: broker
       release: dingo-postgresql
+      consumes: {cell_z2: nil}
       properties:
         username: broker
         password: ((servicebroker_password))
