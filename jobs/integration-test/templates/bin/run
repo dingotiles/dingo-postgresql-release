@@ -26,7 +26,7 @@ echo Logging into Cloud Foundry
 
 set +x
 echo cf login -a <%= api_url %> -u <%= username %> -p [REDACTED] <%= cf.p("cf.skip_ssl_validation") ? "--skip-ssl-validation" : "" %>
-cf api "<%= api_url %>" <%= lookup.p("cf.skip_ssl_validation") ? "--skip-ssl-validation" : "" %>
+cf api "<%= api_url %>" <%= cf.p("cf.skip_ssl_validation") ? "--skip-ssl-validation" : "" %>
 cf auth "<%= username %>" "<%= password %>"
 set -x
 
