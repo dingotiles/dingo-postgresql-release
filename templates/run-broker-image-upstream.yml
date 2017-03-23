@@ -27,7 +27,7 @@ instance_groups:
     - name: cf-containers-broker
       release: dingo-postgresql
       provides:
-        cf-containers-broker: {as: cell_z1}
+        cf-containers-broker: {as: cell_az1}
       properties:
         zone: z1
         protocol: (( grab meta.cfcontainersbroker.protocol ))
@@ -58,7 +58,7 @@ instance_groups:
     - name: cf-containers-broker
       release: dingo-postgresql
       provides:
-        cf-containers-broker: {as: cell_z2}
+        cf-containers-broker: {as: cell_az2}
       properties:
         zone: z2
         protocol: (( grab meta.cfcontainersbroker.protocol ))

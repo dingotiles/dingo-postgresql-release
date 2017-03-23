@@ -34,8 +34,8 @@ instance_groups:
           password: (( grab meta.broker.password ))
           advertised_hostname: (( param "please provide public hostname for routers" ))
         consumes:
-          cell: {from: cell_z1}
-          cell_z2: {from: cell_z2}
+          cell: {from: cell_az1}
+          cell_z2: {from: cell_az2}
       - name: router
         release: dingo-postgresql
       - name: dpg-cli
