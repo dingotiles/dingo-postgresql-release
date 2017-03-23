@@ -47,7 +47,12 @@ instance_groups:
   - name: sanity-test
     instances: 1
     lifecycle: errand
-    jobs: [{name: sanity-test, release: dingo-postgresql}]
+    jobs:
+    - name: sanity-test
+      release: dingo-postgresql
+      properties:
+        etcd:
+          machines: (( grab properties.etcd.machines ))
     resource_pool: router_z1
     networks: [{name: router1}]
   - name: disaster-recovery
