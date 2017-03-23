@@ -14,8 +14,18 @@ if [[ "${delete_deployment_first:-false}" != "false" ]]; then
   bosh2 -n delete-deployment
 fi
 
+dingo_postgresql_version=$(cat candidate-release/version)
+bosh2 upload-release candidate-release/*.tgz
+
 cd boshrelease-ci
 mkdir -p tmp
+
+cat > tmp/versions.yml <<YAML
+---
+- type: replace
+  path: /releases/name=dingo-postgresql/version
+  value: ${dingo_postgresql_version}
+YAML
 
 cat > tmp/vars.yml <<YAML
 backups_clusterdata_aws_access_key_id: ${aws_access_key:?required}
@@ -62,10 +72,11 @@ cat > tmp/deployment.yml <<YAML
 YAML
 
 set -x
-bosh2 int manifests/dingo-postgresql.yml \
-  -o           manifests/op.public-router.yml   \
-  -o           tmp/docker_image_tag.yml  \
-  -o           tmp/deployment.yml   \
+bosh2 int manifests/dingo-postgresql.yml       \
+  -o           manifests/op.public-router.yml  \
+  -o           tmp/docker_image_tag.yml        \
+  -o           tmp/deployment.yml              \
+  -o           tmp/versions.yml                \
   --vars-store tmp/creds.yml \
   --vars-file  tmp/vars.yml  \
   --var-errs \
