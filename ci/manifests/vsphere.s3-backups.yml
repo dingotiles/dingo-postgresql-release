@@ -121,6 +121,11 @@ instance_groups:
       advertised_hostname: 10.58.111.57
       etcd:
         machines: [10.58.111.59]
+      cf:
+        api_url: https://api.system.10-58-111-48.sslip.io
+        password: A8tb4yRlQ3BmKmc1TQSCgiN7rAQXiQ73PkeoyI1qGTHq8y523kPZWjGyedjal6kx
+        skip_ssl_validation: true
+        username: admin
       backups:
         clusterdata:
           aws_access_key_id: (( grab meta.backups.aws_access_key ))
