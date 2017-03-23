@@ -8,31 +8,7 @@ templates:
 consumes:
 - name: servicebroker
   type: servicebroker
-  optional: true
 - name: cf-containers-broker
   type: cf-containers-broker
-  optional: true
 
-properties:
-  servicebroker.service_id:
-    description: If dynamically looking up Instance IDs from Cloud Foundry
-
-  cf.api_url:
-    description: '(if not using links) Full URL of Cloud Foundry API'
-  cf.skip_ssl_validation:
-    description: '(if not using links) Set if target CF uses self-signed certificates'
-  cf.username:
-    description: '(if not using links) Name of the Cloud Foundry user for who to perform disaster recovery'
-    default: admin
-  cf.password:
-    description: '(if not using links) Password of the Cloud Foundry user'
-
-  # Target service broker
-  servicebroker.host:
-    description: (if not using links) Host for service broker
-  servicebroker.port:
-    description: (if not using links) Port for service broker
-  servicebroker.username:
-    description: (if not using links) Basic auth username for service broker
-  servicebroker.password:
-    description: (if not using links) Basic auth password for service broker
+properties: {}

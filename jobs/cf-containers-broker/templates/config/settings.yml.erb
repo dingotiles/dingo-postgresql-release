@@ -1,18 +1,18 @@
 production:
-  log_path: '/var/vcap/sys/log/cf-containers-broker/cf-containers-broker.log'
-  auth_username: "<%= p('broker.username') %>"
-  auth_password: "<%= p('broker.password') %>"
-  cookie_secret: "<%= p('broker.cookie_secret') %>"
-  session_expiry: <%= p('broker.session_expiry') %>
+  log_path: '/var/vcap/sys/log/cf-containers-broker/cf-containers-log'
+  auth_username: "<%= p('username') %>"
+  auth_password: "<%= p('password') %>"
+  cookie_secret: "<%= p('cookie_secret') %>"
+  session_expiry: <%= p('session_expiry') %>
 
   external_host: <%= spec.address %>
 
-  ssl_enabled: <%= p('broker.ssl_enabled') %>
-  skip_ssl_validation: <%= p('broker.skip_ssl_validation') %>
+  ssl_enabled: <%= p('ssl_enabled') %>
+  skip_ssl_validation: <%= p('skip_ssl_validation') %>
 
   host_directory: /var/vcap/store/cf-containers-broker/
-  max_containers: <%= p('broker.max_containers') %>
-  allocate_docker_host_ports: <%= p('broker.allocate_docker_host_ports') %>
-  container_env_var_dir: <%= p('broker.container_env_var_dir') %>
+  max_containers: <%= p('max_containers') %>
+  allocate_docker_host_ports: <%= p('allocate_docker_host_ports') %>
+  container_env_var_dir: <%= p('container_env_var_dir') %>
 
-  services: <%= JSON.pretty_generate(p('broker.services')) %>
+  services: <%= JSON.pretty_generate(p('services')) %>

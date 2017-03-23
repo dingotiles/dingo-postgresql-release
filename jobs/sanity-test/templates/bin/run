@@ -18,19 +18,10 @@ check-etcd
 sudo ip link show | grep eth0 && sudo ip link set dev eth0 mtu 1500
 
 <%
-	servicebroker_machine = nil
-
-  lookup = Kernel
-  if_link("servicebroker") do |servicebroker|
-    lookup = servicebroker
-		servicebroker_machine = servicebroker.instances.first.address
-  end
-
-	unless servicebroker_machine
-		servicebroker_machine = p("servicebroker.machines").first
-	end
+  broker = link("servicebroker")
+	broker_machine = broker.instances.first.address
 -%>
-export BROKER_URI=http://<%= lookup.p("servicebroker.username") %>:<%= lookup.p("servicebroker.password") %>@<%= servicebroker_machine %>:<%= lookup.p("servicebroker.port") %>
+export BROKER_URI=http://<%= broker.p("username") %>:<%= broker.p("password") %>@<%= broker_machine %>:<%= broker.p("port") %>
 
 <%
 	etcd_machine = nil

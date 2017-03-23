@@ -35,7 +35,7 @@ case $1 in
     # store pid in $PIDFILE
     echo $$ > $PIDFILE
 
-    env_var_dir='<%= p("broker.container_env_var_dir") %>'
+    env_var_dir='<%= p("container_env_var_dir") %>'
     mkdir -p ${env_var_dir}
     rm -rf ${env_var_dir}/*
 

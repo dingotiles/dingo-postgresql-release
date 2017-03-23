@@ -25,7 +25,6 @@ templates:
 consumes:
 - name: servicebroker
   type: servicebroker
-  optional: true
 - name: etcd
   type: etcd_service
   optional: true

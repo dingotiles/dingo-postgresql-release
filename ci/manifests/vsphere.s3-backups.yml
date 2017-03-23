@@ -84,17 +84,9 @@ instance_groups:
   - name: router
     release: dingo-postgresql
   properties:
-    servicebroker:
-      backends:
-        username: containers
-        password: containers
-        machines:
-          z1: [10.58.111.55, 10.58.111.58]
-          z2: [10.58.111.56, 10.58.111.60]
-      machines: [127.0.0.1]
-      public_port: 8888
-      port: 8889
-      router: {hostname: 10.58.111.57}
+    username: starkandwayne
+    password: starkandwayne
+    advertised_hostname: 10.58.111.57
     backups:
       clusterdata:
         aws_access_key_id: (( grab meta.backups.aws_access_key ))
@@ -160,7 +152,6 @@ properties:
   registrator:
     backend_uri: etcd://10.58.111.59:4001
   broker:
-    drain_endpoint: starkandwayne:starkandwayne@10.58.111.57:8888
     cookie_secret: e7247dae-a252-4393-afa3-2219c1c02efd
     fetch_images: true
     max_containers: 20
@@ -195,7 +186,6 @@ properties:
           tag: "edge"
           persistent_volumes: [/data]
           environment:
-          - ETCD_HOST_PORT=10.58.111.59:4001
           - (( concat "AWS_ACCESS_KEY_ID=" meta.backups.aws_access_key ))
           - (( concat "AWS_SECRET_ACCESS_KEY=" meta.backups.aws_secret_key ))
           - (( concat "WAL_S3_BUCKET=" meta.backups.backups_bucket ))

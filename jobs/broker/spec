@@ -24,10 +24,10 @@ provides:
 - name: servicebroker
   type: servicebroker
   properties:
-  - servicebroker.username
-  - servicebroker.password
-  - servicebroker.port
-  - servicebroker.router.hostname
+  - username
+  - password
+  - port
+  - advertised_hostname
   - cf.api_url
   - cf.username
   - cf.password
@@ -47,20 +47,19 @@ consumes:
   optional: true
 - name: cf-containers-broker
   type: cf-containers-broker
-  optional: true
 
 properties:
-  servicebroker.username:
+  username:
     description: Basic auth username for broker
     default: broker
-  servicebroker.password:
+  password:
     description: Basic auth password for broker
 
-  servicebroker.port:
+  port:
     description: Bind port for inbound API requests
     default: 8889
 
-  servicebroker.router.hostname:
+  advertised_hostname:
     description: "Hostname to advertise in binding credentials for routers (defaults to host IP)"
 
   backups.clusterdata.aws_access_key_id:
@@ -90,17 +89,6 @@ properties:
   cf.skip_ssl_validation:
     description: Set to true if Cloud Foundry API is using self-signed SSL certificate
     default: false
-
-  servicebroker.backends.machines:
-    description: "(if not using links) Hash of {z1: backend broker hostnames:port (NOTE: also becomes permanent GUID at the moment)}"
-  servicebroker.backends.username:
-    description: (if not using links) basic auth username to access each HTTP cf-container-broker backend
-    default: containers
-  servicebroker.backends.password:
-    description: (if not using links) basic auth password to access each HTTP cf-container-broker backend
-
-  servicebroker.services:
-    description: (if not using links) The CF service broker catalog of services/plans
 
   etcd.machines:
     description: (if not using links) hostnames for etcd servers

@@ -7,6 +7,6 @@ templates:
   helpers/ctl_utils.sh: helpers/ctl_utils.sh
   bin/monit_debugger: bin/monit_debugger
 properties:
-  broker.container_env_var_dir:
+  container_env_var_dir:
     description: Directory of files that will become environment variables for all containers
     default: /var/vcap/store/cf-containers-broker/envdir

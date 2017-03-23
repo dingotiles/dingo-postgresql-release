@@ -18,17 +18,14 @@ service=<%= p("cf.integration_test.service_name") %>
 plans=(cluster)
 
 <%
-  lookup = Kernel
-  if_link("servicebroker") do |servicebroker|
-    lookup = servicebroker
-  end
+  # TODO: specific consumes: {name: cf} rather that getting from 'servicebroker'
+  cf = link("servicebroker")
+  cf.if_p("cf.api_url", "cf.username", "cf.password") do |api_url, username, password|
 -%>
-
-<% lookup.if_p("cf.api_url", "cf.username", "cf.password") do |api_url, username, password| -%>
 echo Logging into Cloud Foundry
 
 set +x
-echo cf login -a <%= api_url %> -u <%= username %> -p [REDACTED] <%= lookup.p("cf.skip_ssl_validation") ? "--skip-ssl-validation" : "" %>
+echo cf login -a <%= api_url %> -u <%= username %> -p [REDACTED] <%= cf.p("cf.skip_ssl_validation") ? "--skip-ssl-validation" : "" %>
 cf api "<%= api_url %>" <%= lookup.p("cf.skip_ssl_validation") ? "--skip-ssl-validation" : "" %>
 cf auth "<%= username %>" "<%= password %>"
 set -x

@@ -18,22 +18,14 @@ instance_groups:
     networks:
       - name: router1
         static_ips: (( static_ips(0,1,2,3) ))
-    properties:
-      servicebroker:
-        router:
-          hostname: (( grab instance_groups.router.networks.router1.static_ips.[0] ))
-        backends:
-          machines:
-            z1: (( grab instance_groups.cell_z1.networks.patroni1.static_ips ))
-            z2: (( grab instance_groups.cell_z2.networks.patroni2.static_ips ))
+    jobs:
+    - name: broker
+      properties:
+        advertised_hostname: (( grab instance_groups.router.networks.router1.static_ips.[0] ))
   - name: sanity-test
     properties:
       servicebroker:
         machines: (( grab instance_groups.router.networks.router1.static_ips ))
-
-properties:
-  servicebroker:
-    host: (( grab instance_groups.router.networks.router1.static_ips.[0] ))
 
 compilation:
   cloud_properties: {name: random}

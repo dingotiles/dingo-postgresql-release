@@ -16,18 +16,13 @@ defaults
 	timeout check 5s
 
 <%
-	servicebroker_machines = nil
-	if_p("servicebroker.machines") do |machines|
-		servicebroker_machines = machines
-	end
-	unless servicebroker_machines
-		servicebroker_machines = link("servicebroker").instances.map(&:address)
-	end
+	broker = link("servicebroker")
+	servicebroker_machines = broker.instances.map(&:address)
 -%>
 listen servicebroker
 	bind :<%= p("servicebroker.public_port") %>
-<% servicebroker_machines.each_with_index do |broker, i| %>
-	server leader_<%= i %> <%= broker %>:<%= p("servicebroker.port") %>
+<% servicebroker_machines.each_with_index do |machine, i| %>
+	server leader_<%= i %> <%= machine %>:<%= broker.p("port") %>
 <% end %>
 {{range $name := ls "/routing/allocation"}} {{with getvs (printf "/service/%s/members/*" $name)}}
 frontend {{$name}}

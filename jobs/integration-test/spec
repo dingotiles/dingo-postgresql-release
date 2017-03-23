@@ -13,7 +13,6 @@ templates:
 consumes:
 - name: servicebroker
   type: servicebroker
-  optional: true
 
 properties:
   cf.integration_test.organization:
@@ -25,13 +24,3 @@ properties:
   cf.integration_test.service_name:
     description: Service name to use for Cloud Foundry integration test
     default: dingo-postgresql
-
-  cf.api_url:
-    description: (if not using links) URI for Cloud Foundry API to allow lookup of user-provided service names after provisioning
-  cf.username:
-    description: (if not using links) Username for Cloud Foundry API access allow lookup of user-provided service names after provisioning
-  cf.password:
-    description: (if not using links) Username for Cloud Foundry API access allow lookup of user-provided service names after provisioning
-  cf.skip_ssl_validation:
-    description: (if not using links) Set to true if Cloud Foundry API is using self-signed SSL certificate
-    default: false

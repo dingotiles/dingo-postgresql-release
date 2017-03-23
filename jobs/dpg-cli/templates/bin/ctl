@@ -27,20 +27,17 @@ case $1 in
     mkdir -p ${BOSH_DPG_DIR}
 
     <%
-      lookup = Kernel
       servicebroker_machine = nil
-      if_link("servicebroker") do |servicebroker|
-        lookup = servicebroker
-        servicebroker_machine = servicebroker.instances.first.address
-      end
+      broker = link("servicebroker")
+      servicebroker_machine = broker.instances.first.address
 
-      servicebroker_port     = lookup.p("servicebroker.port")
-      servicebroker_username = lookup.p("servicebroker.username")
-      servicebroker_password = lookup.p("servicebroker.password")
-      cf_endpoint            = lookup.p("cf.api_url")
-      cf_username            = lookup.p("cf.username")
-      cf_password            = lookup.p("cf.password")
-      cf_skip_ssl_validation = lookup.p("cf.skip_ssl_validation")
+      servicebroker_port     = broker.p("port")
+      servicebroker_username = broker.p("username")
+      servicebroker_password = broker.p("password")
+      cf_endpoint            = broker.p("cf.api_url")
+      cf_username            = broker.p("cf.username")
+      cf_password            = broker.p("cf.password")
+      cf_skip_ssl_validation = broker.p("cf.skip_ssl_validation")
 
       servicebroker_machine ||= p("servicebroker.machines").first
     -%>

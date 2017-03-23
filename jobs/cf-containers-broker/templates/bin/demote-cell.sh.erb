@@ -1,18 +1,12 @@
 #!/bin/bash
 
 <%
-  broker_endpoint = nil
-  if_p('broker.drain_endpoint') do |endpoint|
-    broker_endpoint = endpoint
-  end
-  broker_endpoint ||= begin
-    broker   = link("servicebroker")
-    host     = broker.instances.first.address
-    username = broker.p("servicebroker.username")
-    password = broker.p("servicebroker.password")
-    port     = broker.p("servicebroker.port")
-    "http://#{username}:#{password}@#{host}:#{port}"
-  end
+  broker   = link("servicebroker")
+  host     = broker.instances.first.address
+  username = broker.p("username")
+  password = broker.p("password")
+  port     = broker.p("port")
+  broker_endpoint = "http://#{username}:#{password}@#{host}:#{port}"
 -%>
 DRAIN_ENDPOINT=<%= broker_endpoint %>
 

@@ -4,24 +4,12 @@ set -u
 set -x
 
 <%
-  lookup = Kernel
-  servicebroker_host = nil
-  if_link("servicebroker") do |broker|
-    lookup = broker
-    lookup.if_p("servicebroker.router.hostname") do |hostname|
-      servicebroker_host = hostname
-    end
-    servicebroker_host ||= broker.instances.first.address
-  end
-  servicebroker_host ||= p("servicebroker.host")
-
-  lookup.if_p("servicebroker.port") do |port|
-    servicebroker_host = "#{servicebroker_host}:#{port}"
-  end
+  broker = link("servicebroker")
+  broker_host = broker.instances.first.address
+  broker_port = broker.p("port")
 -%>
-
-servicebroker_host=<%= servicebroker_host %>
-servicebroker_auth="<%= lookup.p('servicebroker.username') %>:<%= lookup.p('servicebroker.password') %>"
+servicebroker_host=<%= "#{broker_host}:#{broker.p("port")}" %>
+servicebroker_auth=<%= "#{broker.p('username')}:#{broker.p('password')}" %>
 
 instance_id=$1
 echo deleting ${instance_id}

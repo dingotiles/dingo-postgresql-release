@@ -1,4 +1,7 @@
 meta:
+  broker:
+    username: starkandwayne
+    password: starkandwayne
   job_templates:
     patroni: (( param "please provide templates for cells" ))
 
@@ -15,6 +18,9 @@ instance_groups:
     resource_pool: cell_z1
     networks: [{name: patroni1}]
     persistent_disk: 10240
+    provides:
+      cf-containers-broker:
+        as: cell
     properties:
       zone: z1
   - name: cell_z2
@@ -31,44 +37,32 @@ instance_groups:
       - {name: remote-syslog, release: simple-remote-syslog}
       - name: broker
         release: dingo-postgresql
-        consumes: { cf-containers-broker: nil }
+        consumes:
+          cf-containers-broker:
+            from: cell
         properties:
-          servicebroker:
-            username: (( grab properties.servicebroker.username ))
-            password: (( grab properties.servicebroker.username ))
+          username: (( grab meta.broker.username ))
+          password: (( grab meta.broker.password ))
+          advertised_hostname: (( param "please provide public hostname for routers" ))
       - {name: router, release: dingo-postgresql}
       - {name: dpg-cli, release: dingo-postgresql}
     resource_pool: router_z1
     networks: [{name: router1}]
-    properties:
-      servicebroker:
-        machines: [127.0.0.1]
-        port: 8889 # internally binding
-        public_port: 8888 # exposed on haproxy
-        router:
-          hostname: (( param "please provide public hostname for routers" ))
-        backends:
-          username: (( grab meta.cfcontainersbroker.username ))
-          password: (( grab meta.cfcontainersbroker.password ))
-          machines:
-            z1: (( param "please provide array of z1 service broker hostnames/ips" ))
-            z2: (( param "please provide array of z2 service broker hostnames/ips" ))
   - name: sanity-test
     instances: 1
     lifecycle: errand
     jobs: [{name: sanity-test, release: dingo-postgresql}]
     resource_pool: router_z1
     networks: [{name: router1}]
-    properties:
-      servicebroker:
-        port: 8889 # FIXME: since haproxy isn't always running
   - name: disaster-recovery
     instances: 1
     lifecycle: errand
     jobs:
     - name: disaster-recovery
       release: dingo-postgresql
-      consumes: { cf-containers-broker: nil }
+      consumes:
+        cf-containers-broker:
+          from: cell
     resource_pool: router_z1
     networks: [{name: patroni1}]
 
@@ -92,12 +86,5 @@ networks:
 - name: router1
 
 properties:
-  broker:
-    drain_endpoint: (( concat properties.servicebroker.username ":" properties.servicebroker.password "@" properties.servicebroker.host ":" properties.servicebroker.port ))
-  servicebroker:
-    host: (( param "please provide servicebroker.host, such as the router IP" ))
-    port: 8888
-    username: starkandwayne
-    password: starkandwayne
   etcd:
     machines: (( param "please provide array of etcd hostnames" ))

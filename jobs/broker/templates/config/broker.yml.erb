@@ -1,8 +1,8 @@
 ---
 <%
   bind_host = nil
-  if_p("servicebroker.router.hostname") do |router_hostname|
-    bind_host = router_hostname
+  if_p("advertised_hostname") do |advertised_hostname|
+    bind_host = advertised_hostname
   end
   require 'json'
 
@@ -22,48 +22,21 @@
   bind_host ||= discover_external_ip
 -%>
 broker:
-  username: <%= p("servicebroker.username") %>
-  password: <%= p("servicebroker.password") %>
-  port: <%= p("servicebroker.port") %>
+  username: <%= p("username") %>
+  password: <%= p("password") %>
+  port: <%= p("port") %>
   bind_host: <%= bind_host %>
 
-<%
-  backends = []
-  if_p("servicebroker.backends.machines") do |az_and_machines|
-    az_and_machines.each do |az, machines|
-      machines.each do |machine|
-        backends << {
-          "guid": machine,
-          "az": az.to_s,
-          "uri": machine,
-          "username": p('servicebroker.backends.username'),
-          "password": p('servicebroker.backends.password'),
-          "property-input": "old-style",
-        }
-      end
-    end
-  end
-  if backends.size == 0
-    cells = link("cf-containers-broker")
-    cells.instances.each do |instance|
-      backends << {
-        "guid": instance.address,
-        "az": instance.az,
-        "uri": instance.address,
-        "username": cells.p('broker.username'),
-        "password": cells.p('broker.password'),
-        "property-input": "links",
-      }
-    end
-  end
--%>
 cells:
-<% backends.each do |backend| -%>
-- guid: <%= backend[:guid] %>
-  availability_zone: <%= backend[:az] %>
-  uri: <%= backend[:uri] %>
-  username: <%= backend[:username] %>
-  password: "<%= backend[:password] %>"
+<%
+  cells = link("cf-containers-broker")
+  cells.instances.map do |instance|
+-%>
+- guid: <%= instance.address %>
+  availability_zone: <%= instance.az %>
+  uri: <%= instance.address %>
+  username: <%= cells.p('username') %>
+  password: <%= cells.p('password') %>
 <% end -%>
 
 <%
@@ -101,12 +74,5 @@ cf:
   skip_ssl_validation: <%= p("cf.skip_ssl_validation") %>
 <% end %>
 
-<%
-  services = nil
-  if_p('servicebroker.services') do |s|
-    services = s
-  end
-  services ||= link("cf-containers-broker").p('broker.services')
--%>
 catalog:
-  services: <%= JSON.pretty_generate(services) %>
+  services: <%= JSON.pretty_generate(link("cf-containers-broker").p('services')) %>

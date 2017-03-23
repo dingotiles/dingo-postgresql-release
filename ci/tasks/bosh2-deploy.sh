@@ -40,7 +40,7 @@ YAML
 cat > tmp/docker_image_tag.yml <<YAML
 ---
 - type: replace
-  path: /instance_groups/name=cell/properties/broker/services/name=dingo-postgresql/plans/name=cluster/container/tag
+  path: /instance_groups/name=cell/properties/services/name=dingo-postgresql/plans/name=cluster/container/tag
   value: ${docker_image_tag:?required}
 YAML
 
