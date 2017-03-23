@@ -1,16 +1,13 @@
 <%
-  lookup = Kernel
-  if_link("servicebroker") do |servicebroker|
-    lookup = servicebroker
-  end
-  lookup.if_p("backups.database_storage.aws_access_key_id", "backups.database_storage.aws_secret_access_key", "backups.database_storage.bucket_name") do |aws_access_key_id, aws_secret_access_key, bucket_name|
+  broker = link("servicebroker")
+  broker.if_p("backups.database_storage.aws_access_key_id", "backups.database_storage.aws_secret_access_key", "backups.database_storage.bucket_name") do |aws_access_key_id, aws_secret_access_key, bucket_name|
 %>
 default:
   provider: AWS
   aws_access_key_id: <%= aws_access_key_id %>
   aws_secret_access_key: <%= aws_secret_access_key %>
   bucket_name: <%= bucket_name %>
-<% lookup.if_p("backups.database_storage.region") do |region| %>
+<% broker.if_p("backups.database_storage.region") do |region| %>
   region: <%= region %>
 <% end %>
 <% end %>
