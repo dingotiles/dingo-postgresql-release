@@ -165,6 +165,8 @@ instance_groups:
             - "WALE_BACKUP_THRESHOLD_MEGABYTES=10240"
   - name: router
     release: dingo-postgresql
+  - name: dpg-cli
+    release: dingo-postgresql
   resource_pool: router_z1
   instances: 1
   networks: [{name: patroni1, static_ips: [10.58.111.57]}]
