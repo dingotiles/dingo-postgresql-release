@@ -18,6 +18,8 @@ consumes:
 - name: etcd
   type: etcd_service
   optional: true
+- name: servicebroker
+  type: servicebroker
 
 properties:
   etcd.machines:
