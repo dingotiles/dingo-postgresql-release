@@ -30,7 +30,7 @@ dingo_broker_password: r6sypnm6wp757qichd3o
 ...
 ```
 
-## Store & retrieve variables from Vault
+## Store & retrieve creds from Vault
 
 You might want some input variables to be hidden inside Vault, such as AWS access credentials.
 
