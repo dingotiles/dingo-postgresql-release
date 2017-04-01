@@ -47,9 +47,12 @@ RUN wget https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-0.0.147-linux-amd6
       echo "533342d7663c3e5dc731769e157608c74dd9eccb  /bin/bosh2" | sha1sum -c - && \
       chmod +x /bin/bosh2
 
-RUN mkdir -p $GOPATH/src/github.com/cppforlife && \
-    cd $GOPATH/src/github.com/cppforlife && \
-    git clone https://github.com/cppforlife/bosh-lint && \
-    cd bosh-lint && \
+RUN go get -d github.com/cloudfoundry/bosh-cli &&
+    cd $GOPATH/src/github.com/cloudfoundry/bosh-cli && \
+    bin/build-linux-amd64 &&
+    mv out/bosh $GOPATH/bin/bosh2
+
+RUN go get -d github.com/cppforlife && \
+    cd $GOPATH/src/github.com/cppforlife/bosh-lint && \
     bin/build && \
     mv out/bosh-lint $GOPATH/bin
