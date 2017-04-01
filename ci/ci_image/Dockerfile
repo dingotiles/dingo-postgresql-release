@@ -25,14 +25,12 @@ RUN go get -d github.com/cloudfoundry/bosh-cli && \
     ls -al out/ && \
     mv out/bosh $GOPATH/bin/bosh2
 
-RUN mkdir -p $GOPATH/src/github.com/cppforlife && \
-    cd $GOPATH/src/github.com/cppforlife && \
-    git clone https://github.com/cppforlife/bosh-lint
-
-RUN cd $GOPATH/src/github.com/cppforlife/bosh-lint && \
-    ./bin/build && \
-    ls -al out/ && \
-    mv out/bosh-lint $GOPATH/bin
+# RUN mkdir -p $GOPATH/src/github.com/cppforlife && \
+#     cd $GOPATH/src/github.com/cppforlife && \
+#     git clone https://github.com/cppforlife/bosh-lint && \
+#     cd bosh-lint && \
+#     bin/build && \
+#     mv out/bosh-lint $GOPATH/bin
 
 # install ruby
 RUN cd \
