@@ -1,4 +1,0 @@
-check process cf-containers-broker with pidfile /var/vcap/sys/run/cf-containers-broker/cf-containers-broker.pid
-  group vcap
-  start program "/var/vcap/packages/bosh-helpers/monit_debugger cf-containers-broker_ctl '/var/vcap/jobs/cf-containers-broker/bin/cf-containers-broker_ctl start'"
-  stop program "/var/vcap/packages/bosh-helpers/monit_debugger cf-containers-broker_ctl '/var/vcap/jobs/cf-containers-broker/bin/cf-containers-broker_ctl stop'"
