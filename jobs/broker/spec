@@ -47,9 +47,9 @@ consumes:
   type: etcd_service
   optional: true
 - name: cell
-  type: cf-containers-broker
+  type: servicebroker
 - name: cell_z2
-  type: cf-containers-broker
+  type: servicebroker
   optional: true
 
 properties:
